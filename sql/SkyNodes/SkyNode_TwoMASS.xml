@@ -1,0 +1,583 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>Point source survey objects</summary>
+    <remarks>   This is the Point Source Catalog.</remarks>
+    <column name="[objID]">unique identification number for the PSC source</column>
+    <column name="[ra]" unit="deg">right ascension</column>
+    <column name="[dec]" unit="deg">declination</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+    <column name="[err_maj]" unit="arcsec">major axis of position error ellipse</column>
+    <column name="[err_min]" unit="arcsec">minor axis of position error ellipse</column>
+    <column name="[err_ang]" unit="deg">position angle of error ellipse major axis</column>
+    <column name="[designation]">source designation formed from sexigesimal coordinates</column>
+    <column name="[j_m]" unit="mag">J default magnitude</column>
+    <column name="[j_cmsig]" unit="mag">J corrected magnitude uncertainty</column>
+    <column name="[j_msigcom]" unit="mag">J total mag uncertainty</column>
+    <column name="[j_snr]" unit="mag">J band scan signal-to-noise ratio</column>
+    <column name="[h_m]" unit="mag">H default magnitude</column>
+    <column name="[h_cmsig]" unit="mag">H corrected magnitude uncertainty</column>
+    <column name="[h_msigcom]" unit="mag">H total mag uncertainty</column>
+    <column name="[h_snr]" unit="mag">H band scan signal-to-noise ratio</column>
+    <column name="[k_m]" unit="mag">K default magnitude</column>
+    <column name="[k_cmsig]" unit="mag">K corrected magnitude uncertainty</column>
+    <column name="[k_msigcom]" unit="mag">K total mag uncertainty</column>
+    <column name="[k_snr]" unit="mag">K band scan signal-to-noise ratio</column>
+    <column name="[ph_qual]">photometric quality flag</column>
+    <column name="[rd_flg]">source of JHK default mags (read flag)</column>
+    <column name="[bl_flg]">indicates no of JHK components fit to source (each digit 0|1|2)</column>
+    <column name="[cc_flg]">indicates artifact contamination and/or confusion</column>
+    <column name="[ndet]">frame detection statistics</column>
+    <column name="[prox]" unit="arcsec">distance between this source and its nearest neighbor in the PSC</column>
+    <column name="[pxpa]" unit="deg">position angle on the sky of the vector from the source to the nearest neighbor in the PSC</column>
+    <column name="[pxcntr]">pts_key value of the nearest source in the PSC</column>
+    <column name="[gal_contam]">indicates src associated with or contaminated by an ext. src</column>
+    <column name="[mp_flg]">source is positionally associated with an asteroid or comet</column>
+    <column name="[hemis]">hemisphere (N/S) of observation</column>
+    <column name="[date]">observation date</column>
+    <column name="[scan]">scan number (unique within date)</column>
+    <column name="[glon]" unit="deg">galactic longitude, rounded to 0.001 deg</column>
+    <column name="[glat]" unit="deg">galactic latitude, rounded to 0.001 deg</column>
+    <column name="[x_scan]" unit="arcsec">mean cross-scan focal plane position of the source in the U-scan coordinate system</column>
+    <column name="[jdate]" unit="day">Julian Date of the source measurement accurate to +-30 seconds</column>
+    <column name="[j_psfchi]">J band reduced chi-squared value of fit</column>
+    <column name="[h_psfchi]">H band reduced chi-squared value of fit</column>
+    <column name="[k_psfchi]">K band reduced chi-squared value of fit</column>
+    <column name="[j_m_stdap]" unit="mag">J standard aperture magnitude or BF aperture-photometry mag</column>
+    <column name="[j_msig_stdap]" unit="mag">J standard ap. mag/BF ap.-photometry mag uncertainty</column>
+    <column name="[h_m_stdap]" unit="mag">H standard aperture magnitude or BF aperture-photometry mag</column>
+    <column name="[h_msig_stdap]" unit="mag">H standard ap. mag/BF ap.-photometry mag uncertainty</column>
+    <column name="[k_m_stdap]" unit="mag">K standard aperture magnitude or BF aperture-photometry mag</column>
+    <column name="[k_msig_stdap]" unit="mag">K standard ap. mag/BF ap.-photometry mag uncertainty</column>
+    <column name="[dist_edge_ns]" unit="arcsec">distance from the source to the nearest North or South scan edge</column>
+    <column name="[dist_edge_ew]" unit="arcsec">distance from the source to the nearest East or West scan edge</column>
+    <column name="[dist_edge_flg]">two character flag that specifies to which scan edges a source lies closest</column>
+    <column name="[dup_src]">duplicate source flag</column>
+    <column name="[use_src]">use source flag</column>
+    <column name="[a]">catalog identifier of an optical source from either the Tycho 2 or USNO-A2.0 catalog</column>
+    <column name="[dist_opt]" unit="arcsec">distance in arcsec relative to associated optical source</column>
+    <column name="[phi_opt]" unit="deg">position angle relative to assocaited optical source</column>
+    <column name="[b_m_opt]" unit="mag">catalog blue mag of associated optical source</column>
+    <column name="[vr_m_opt]" unit="mag">catalog red magnitude of the associated optical source</column>
+    <column name="[nopt_mchs]">number of optical sources within 5 arcsec of 2MASS src</column>
+    <column name="[ext_key]">unique identification number of the record in the XSC that corresponds to this point source</column>
+    <column name="[scan_key]">unique identification number of the record in the Scan Information Table</column>
+    <column name="[coadd_key]">unique identification number of the record in the Atlas Image Data Table</column>
+    <column name="[coadd]">sequence number of the Atlas Image in which the position of this source falls</column>
+    <column name="[j_h]" unit="mag">default J-H mag color</column>
+    <column name="[h_k]" unit="mag">default H-K mag color</column>
+    <column name="[j_k]" unit="mag">default J-K mag color</column>
+  </table>
+  <table name="[dbo].[PhotoXSC]">
+    <summary>
+    </summary>
+    <remarks>
+    </remarks>
+    <column name="[jdate]">Julian Date of the source measurement accurate to +30 seconds. (See 2MASS PSC documentation).</column>
+    <column name="[designation]">Sexagesimal, equatorial position-based source name in the form: hhmmssss+ddmmsss[ABC...].</column>
+    <column name="[ra]">
+    </column>
+    <column name="[dec]">
+    </column>
+    <column name="[sup_ra]">Super-coadd centroid RA (J2000 decimal deg).</column>
+    <column name="[sup_dec]">Super-coadd centroid Dec (J2000 decimal deg).</column>
+    <column name="[glon]">
+    </column>
+    <column name="[glat]">
+    </column>
+    <column name="[density]">Coadd log(density) of stars with k&amp;lt;14 mag.</column>
+    <column name="[r_k20fe]" unit="mag">20mag/sq arcsec isophotal K fiducial ell. ap. semi-major axis.</column>
+    <column name="[j_m_k20fe]" unit="mag">J 20mag/sq arcsec isophotal fiducial ell. ap. magnitude.</column>
+    <column name="[j_msig_k20fe]" unit="mag">J 1-sigma uncertainty in 20mag/sq arcsec iso.fid.ell.mag.</column>
+    <column name="[j_flg_k20fe]">J confusion flag for 20mag/sq arcsec iso. fid. ell. mag.</column>
+    <column name="[h_m_k20fe]" unit="mag">H 20mag/sq arcsec isophotal fiducial ell. ap. magnitude.</column>
+    <column name="[h_msig_k20fe]" unit="mag">H 1-sigma uncertainty in 20mag/sq arcsec iso.fid.ell.mag.</column>
+    <column name="[h_flg_k20fe]">
+    </column>
+    <column name="[k_m_k20fe]" unit="mag">K 20mag/sq arcsec isophotal fiducial ell. ap. magnitude.</column>
+    <column name="[k_msig_k20fe]" unit="mag">K 1-sigma uncertainty in 20mag/sq arcsec iso.fid.ell.mag.</column>
+    <column name="[k_flg_k20fe]">K confusion flag for 20mag/sq arcsec iso. fid. ell. mag.</column>
+    <column name="[r_3sig]" unit="arcsec">3-sigma K isophotal semi-major axis.</column>
+    <column name="[j_ba]">J minor/major axis ratio fit to the 3-sigma isophote.</column>
+    <column name="[j_phi]" unit="deg">J angle to 3-sigma major axis (E of N).</column>
+    <column name="[h_ba]">
+    </column>
+    <column name="[h_phi]" unit="deg">H angle to 3-sigma major axis (E of N).</column>
+    <column name="[k_ba]">K minor/major axis ratio fit to the 3-sigma isophote.</column>
+    <column name="[k_phi]" unit="deg">K angle to 3-sigma major axis (E of N).</column>
+    <column name="[sup_r_3sig]">Super-coadd minor/major axis ratio fit to the 3-sigma isophote.</column>
+    <column name="[sup_ba]">K minor/major axis ratio fit to the 3-sigma isophote.</column>
+    <column name="[sup_phi]" unit="deg">K angle to 3-sigma major axis (E of N).</column>
+    <column name="[r_fe]">K fiducial Kron elliptical aperture semi-major axis.</column>
+    <column name="[j_m_fe]" unit="mag">J fiducial Kron elliptical aperture magnitude.</column>
+    <column name="[j_msig_fe]" unit="mag">J 1-sigma uncertainty in fiducial Kron ell. mag.</column>
+    <column name="[j_flg_fe]">J confusion flag for fiducial Kron ell. mag.</column>
+    <column name="[h_m_fe]" unit="mag">H fiducial Kron elliptical aperture magnitude.</column>
+    <column name="[h_msig_fe]" unit="mag">H 1-sigma uncertainty in fiducial Kron ell. mag.</column>
+    <column name="[h_flg_fe]">
+    </column>
+    <column name="[k_m_fe]" unit="mag">K fiducial Kron elliptical aperture magnitude.</column>
+    <column name="[k_msig_fe]" unit="mag">K 1-sigma uncertainty in fiducial Kron ell. mag.</column>
+    <column name="[k_flg_fe]">K confusion flag for fiducial Kron ell. mag.</column>
+    <column name="[r_ext]" unit="arcsec">extrapolation/total radius.</column>
+    <column name="[j_m_ext]" unit="mag">J mag from fit extrapolation.</column>
+    <column name="[j_msig_ext]" unit="mag">J 1-sigma uncertainty in mag from fit extrapolation.</column>
+    <column name="[j_pchi]">J chi^2 of fit to rad. profile</column>
+    <column name="[h_m_ext]" unit="mag">H mag from fit extrapolation.</column>
+    <column name="[h_msig_ext]" unit="mag">H 1-sigma uncertainty in mag from fit extrapolation.</column>
+    <column name="[h_pchi]">H chi^2 of fit to rad. profile</column>
+    <column name="[k_m_ext]" unit="mag">K mag from fit extrapolation.</column>
+    <column name="[k_msig_ext]" unit="mag">K 1-sigma uncertainty in mag from fit extrapolation.</column>
+    <column name="[k_pchi]">K chi^2 of fit to rad. profile</column>
+    <column name="[j_r_eff]" unit="arcsec">J half-light (integrated half-flux point) radius.</column>
+    <column name="[j_mnsurfb_eff]" unit="mag/sq. arcsec">J mean surface brightness at the half-light radius.</column>
+    <column name="[h_r_eff]" unit="arcsec">H half-light (integrated half-flux point) radius.</column>
+    <column name="[h_mnsurfb_eff]" unit="mag/sq. arcsec">H mean surface brightness at the half-light radius.</column>
+    <column name="[k_r_eff]" unit="arcsec">K half-light (integrated half-flux point) radius.</column>
+    <column name="[k_mnsurfb_eff]" unit="mag/sq. arcsec">K mean surface brightness at the half-light radius.</column>
+    <column name="[j_con_indx]">J concentration index r_75%/r_25%.</column>
+    <column name="[h_con_indx]">
+    </column>
+    <column name="[k_con_indx]">K concentration index r_75%/r_25%.</column>
+    <column name="[j_peak]" unit="mag/sq. arcsec">J peak pixel brightness.</column>
+    <column name="[h_peak]" unit="mag/sq. arcsec">H peak pixel brightness.</column>
+    <column name="[k_peak]" unit="mag/sq. arcsec">K peak pixel brightness.</column>
+    <column name="[j_5surf]" unit="mag/sq. arcsec">J central surface brightness (r&amp;lt;=5).</column>
+    <column name="[h_5surf]" unit="mag/sq. arcsec">H central surface brightness (r&amp;lt;=5).</column>
+    <column name="[k_5surf]" unit="mag/sq. arcsec">K central surface brightness (r&amp;lt;=5).</column>
+    <column name="[e_score]">extended score: 1(extended) &amp;lt; e_score &amp;lt; 2(point-like).</column>
+    <column name="[g_score]">galaxy score: 1(extended) &amp;lt; g_score &amp;lt; 2(point-like).</column>
+    <column name="[vc]">visual verification score for source.</column>
+    <column name="[cc_flg]">indicates artifact contamination and/or confusion.</column>
+    <column name="[im_nx]">size of postage stamp image in pixels.</column>
+    <column name="[r_k20fc]" unit="arcsec">20mag/sq arcsec isophotal K fiducial circular ap. radius.</column>
+    <column name="[j_m_k20fc]" unit="mag">J 20mag/sq arcsec isophotal fiducial circ. ap. mag.</column>
+    <column name="[j_msig_k20fc]" unit="mag">J 1-sigma uncertainty in 20mag/sq arcsec iso.fid.circ. mag.</column>
+    <column name="[j_flg_k20fc]">J confusion flag for 20mag/sq arcsec iso. fid. circ. mag.</column>
+    <column name="[h_m_k20fc]" unit="mag">H 20mag/sq arcsec isophotal fiducial circ. ap. mag.</column>
+    <column name="[h_msig_k20fc]" unit="mag">H 1-sigma uncertainty in 20mag/sq arcsec iso.fid.circ. mag.</column>
+    <column name="[h_flg_k20fc]">
+    </column>
+    <column name="[k_m_k20fc]" unit="mag">K 20mag/sq arcsec isophotal fiducial circ. ap. mag.</column>
+    <column name="[k_msig_k20fc]" unit="mag">K 1-sigma uncertainty in 20mag/sq arcsec iso.fid.circ. mag.</column>
+    <column name="[k_flg_k20fc]">K confusion flag for 20mag/sq arcsec iso. fid. circ. mag.</column>
+    <column name="[j_r_e]" unit="arcsec">J Kron elliptical aperture semi-major axis.</column>
+    <column name="[j_m_e]" unit="mag">J Kron elliptical aperture magnitude</column>
+    <column name="[j_msig_e]" unit="mag">J 1-sigma uncertainty in Kron elliptical mag.</column>
+    <column name="[j_flg_e]">J confusion flag for Kron elliptical mag.</column>
+    <column name="[h_r_e]" unit="arcsec">H Kron elliptical aperture semi-major axis.</column>
+    <column name="[h_m_e]" unit="mag">H Kron elliptical aperture magnitude</column>
+    <column name="[h_msig_e]" unit="mag">H 1-sigma uncertainty in Kron elliptical mag.</column>
+    <column name="[h_flg_e]">
+    </column>
+    <column name="[k_r_e]" unit="arcsec">K Kron elliptical aperture semi-major axis.</column>
+    <column name="[k_m_e]" unit="mag">K Kron elliptical aperture magnitude</column>
+    <column name="[k_msig_e]" unit="mag">K 1-sigma uncertainty in Kron elliptical mag.</column>
+    <column name="[k_flg_e]">K confusion flag for Kron elliptical mag.</column>
+    <column name="[j_r_c]" unit="arcsec">J Kron circular aperture radius.</column>
+    <column name="[j_m_c]" unit="mag">J Kron circular aperture magnitude.</column>
+    <column name="[j_msig_c]" unit="mag">J 1-sigma uncertainty in Kron circular mag.</column>
+    <column name="[j_flg_c]">J confusion flag for Kron circular mag.</column>
+    <column name="[h_r_c]" unit="arcsec">H Kron circular aperture radius.</column>
+    <column name="[h_m_c]" unit="mag">H Kron circular aperture magnitude.</column>
+    <column name="[h_msig_c]" unit="mag">H 1-sigma uncertainty in Kron circular mag.</column>
+    <column name="[h_flg_c]">
+    </column>
+    <column name="[k_r_c]" unit="arcsec">K Kron circular aperture radius.</column>
+    <column name="[k_m_c]" unit="mag">K Kron circular aperture magnitude.</column>
+    <column name="[k_msig_c]" unit="mag">K 1-sigma uncertainty in Kron circular mag.</column>
+    <column name="[k_flg_c]">K confusion flag for Kron circular mag.</column>
+    <column name="[r_fc]" unit="arcsec">K fiducial Kron circular aperture radius.</column>
+    <column name="[j_m_fc]" unit="mag">J fiducial Kron circular magnitude.</column>
+    <column name="[j_msig_fc]" unit="mag">J 1-sigma uncertainty in fiducial Kron circ. mag.</column>
+    <column name="[j_flg_fc]">J confusion flag for Kron circular mag. confusion flag for fiducial Kron circ. mag.</column>
+    <column name="[h_m_fc]" unit="mag">H fiducial Kron circular magnitude.</column>
+    <column name="[h_msig_fc]" unit="mag">H 1-sigma uncertainty in fiducial Kron circ. mag.</column>
+    <column name="[h_flg_fc]">
+    </column>
+    <column name="[k_m_fc]" unit="mag">K fiducial Kron circular magnitude.</column>
+    <column name="[k_msig_fc]" unit="mag">K 1-sigma uncertainty in fiducial Kron circ. mag.</column>
+    <column name="[k_flg_fc]">K confusion flag for Kron circular mag. confusion flag for fiducial Kron circ. mag.</column>
+    <column name="[j_r_i20e]" unit="arcsec">J 20mag/sq arcsec isophotal elliptical ap. semi-major axis.</column>
+    <column name="[j_m_i20e]" unit="mag">J 20mag/sq arcsec isophotal elliptical ap. magnitude.</column>
+    <column name="[j_msig_i20e]" unit="mag">J 1-sigma uncertainty in 20mag/sq arcsec iso. ell. mag.</column>
+    <column name="[j_flg_i20e]">J confusion flag for 20mag/sq arcsec iso. ell. mag.</column>
+    <column name="[h_r_i20e]" unit="arcsec">H 20mag/sq arcsec isophotal elliptical ap. semi-major axis.</column>
+    <column name="[h_m_i20e]" unit="mag">H 20mag/sq arcsec isophotal elliptical ap. magnitude.</column>
+    <column name="[h_msig_i20e]" unit="mag">H 1-sigma uncertainty in 20mag/sq arcsec iso. ell. mag.</column>
+    <column name="[h_flg_i20e]">
+    </column>
+    <column name="[k_r_i20e]" unit="arcsec">K 20mag/sq arcsec isophotal elliptical ap. semi-major axis.</column>
+    <column name="[k_m_i20e]" unit="mag">K 20mag/sq arcsec isophotal elliptical ap. magnitude.</column>
+    <column name="[k_msig_i20e]" unit="mag">K 1-sigma uncertainty in 20mag/sq arcsec iso. ell. mag.</column>
+    <column name="[k_flg_i20e]">K confusion flag for 20mag/sq arcsec iso. ell. mag.</column>
+    <column name="[j_r_i20c]" unit="arcsec">J 20mag/sq arcsec isophotal circular aperture radius.</column>
+    <column name="[j_m_i20c]" unit="mag">J 20mag/sq arcsec isophotal circular ap. magnitude.</column>
+    <column name="[j_msig_i20c]" unit="mag">J 1-sigma uncertainty in 20mag/sq arcsec iso. circ. mag.</column>
+    <column name="[j_flg_i20c]">J confusion flag for 20mag/sq arcsec iso. circ. mag.</column>
+    <column name="[h_r_i20c]" unit="arcsec">H 20mag/sq arcsec isophotal circular aperture radius.</column>
+    <column name="[h_m_i20c]" unit="mag">H 20mag/sq arcsec isophotal circular ap. magnitude.</column>
+    <column name="[h_msig_i20c]" unit="mag">H 1-sigma uncertainty in 20mag/sq arcsec iso. circ. mag.</column>
+    <column name="[h_flg_i20c]">
+    </column>
+    <column name="[k_r_i20c]" unit="arcsec">K 20mag/sq arcsec isophotal circular aperture radius.</column>
+    <column name="[k_m_i20c]" unit="mag">K 20mag/sq arcsec isophotal circular ap. magnitude.</column>
+    <column name="[k_msig_i20c]" unit="mag">K 1-sigma uncertainty in 20mag/sq arcsec iso. circ. mag.</column>
+    <column name="[k_flg_i20c]">K confusion flag for 20mag/sq arcsec iso. circ. mag.</column>
+    <column name="[j_r_i21e]" unit="arcsec">J 21mag/sq arcsec isophotal elliptical ap. semi-major axis.</column>
+    <column name="[j_m_i21e]" unit="mag">J 21mag/sq arcsec isophotal elliptical ap. magnitude.</column>
+    <column name="[j_msig_i21e]" unit="mag">J 1-sigma uncertainty in 21mag/sq arcsec iso. ell. mag.</column>
+    <column name="[j_flg_i21e]">J confusion flag for 21mag/sq arcsec iso. ell. mag.</column>
+    <column name="[h_r_i21e]" unit="arcsec">H 21mag/sq arcsec isophotal elliptical ap. semi-major axis.</column>
+    <column name="[h_m_i21e]" unit="mag">H 21mag/sq arcsec isophotal elliptical ap. magnitude.</column>
+    <column name="[h_msig_i21e]" unit="mag">H 1-sigma uncertainty in 21mag/sq arcsec iso. ell. mag.</column>
+    <column name="[h_flg_i21e]">
+    </column>
+    <column name="[k_r_i21e]" unit="arcsec">K 21mag/sq arcsec isophotal elliptical ap. semi-major axis.</column>
+    <column name="[k_m_i21e]" unit="mag">K 21mag/sq arcsec isophotal elliptical ap. magnitude.</column>
+    <column name="[k_msig_i21e]" unit="mag">K 1-sigma uncertainty in 21mag/sq arcsec iso. ell. mag.</column>
+    <column name="[k_flg_i21e]">K confusion flag for 21mag/sq arcsec iso. ell. mag.</column>
+    <column name="[r_j21fe]">
+    </column>
+    <column name="[j_m_j21fe]" unit="mag">J 21mag/sq arcsec isophotal fiducial ell. ap. magnitude.</column>
+    <column name="[j_msig_j21fe]" unit="mag">J 1-sigma uncertainty in 21mag/sq arcsec iso.fid.ell.mag.</column>
+    <column name="[j_flg_j21fe]">J confusion flag for 21mag/sq arcsec iso. fid. ell. mag.</column>
+    <column name="[h_m_j21fe]" unit="mag">H 21mag/sq arcsec isophotal fiducial ell. ap. magnitude.</column>
+    <column name="[h_msig_j21fe]" unit="mag">H 1-sigma uncertainty in 21mag/sq arcsec iso.fid.ell.mag.</column>
+    <column name="[h_flg_j21fe]">
+    </column>
+    <column name="[k_m_j21fe]" unit="mag">K 21mag/sq arcsec isophotal fiducial ell. ap. magnitude.</column>
+    <column name="[k_msig_j21fe]" unit="mag">K 1-sigma uncertainty in 21mag/sq arcsec iso.fid.ell.mag.</column>
+    <column name="[k_flg_j21fe]">K confusion flag for 21mag/sq arcsec iso. fid. ell. mag.</column>
+    <column name="[j_r_i21c]" unit="arcsec">J 21mag/sq arcsec isophotal circular aperture radius.</column>
+    <column name="[j_m_i21c]" unit="mag">J 21mag/sq arcsec isophotal circular ap. magnitude.</column>
+    <column name="[j_msig_i21c]" unit="mag">J 1-sigma uncertainty in 21mag/sq arcsec iso. circ. mag.</column>
+    <column name="[j_flg_i21c]">J confusion flag for 21mag/sq arcsec iso. circ. mag.</column>
+    <column name="[h_r_i21c]" unit="arcsec">H 21mag/sq arcsec isophotal circular aperture radius.</column>
+    <column name="[h_m_i21c]" unit="mag">H 21mag/sq arcsec isophotal circular ap. magnitude.</column>
+    <column name="[h_msig_i21c]" unit="mag">H 1-sigma uncertainty in 21mag/sq arcsec iso. circ. mag.</column>
+    <column name="[h_flg_i21c]">
+    </column>
+    <column name="[k_r_i21c]" unit="arcsec">K 21mag/sq arcsec isophotal circular aperture radius.</column>
+    <column name="[k_m_i21c]" unit="mag">K 21mag/sq arcsec isophotal circular ap. magnitude.</column>
+    <column name="[k_msig_i21c]" unit="mag">K 1-sigma uncertainty in 21mag/sq arcsec iso. circ. mag.</column>
+    <column name="[k_flg_i21c]">K confusion flag for 21mag/sq arcsec iso. circ. mag.</column>
+    <column name="[r_j21fc]" unit="arcsec">21mag/sq arcsec isophotal J fiducial circular ap. radius.</column>
+    <column name="[j_m_j21fc]" unit="mag">J 21mag/sq arcsec isophotal fiducial circ. ap. mag.</column>
+    <column name="[j_msig_j21fc]" unit="mag">J 1-sigma uncertainty in 21mag/sq arcsec iso.fid.circ.mag.</column>
+    <column name="[j_flg_j21fc]">J confusion flag for 21mag/sq arcsec iso. fid. circ. mag.</column>
+    <column name="[h_m_j21fc]" unit="mag">H 21mag/sq arcsec isophotal fiducial circ. ap. mag.</column>
+    <column name="[h_msig_j21fc]" unit="mag">H 1-sigma uncertainty in 21mag/sq arcsec iso.fid.circ.mag.</column>
+    <column name="[h_flg_j21fc]">
+    </column>
+    <column name="[k_m_j21fc]" unit="mag">K 21mag/sq arcsec isophotal fiducial circ. ap. mag.</column>
+    <column name="[k_msig_j21fc]" unit="mag">K 1-sigma uncertainty in 21mag/sq arcsec iso.fid.circ.mag.</column>
+    <column name="[k_flg_j21fc]">K confusion flag for 21mag/sq arcsec iso. fid. circ. mag.</column>
+    <column name="[j_m_5]" unit="mag">J-band circular aperture magnitude (5 arcsec radius)</column>
+    <column name="[j_msig_5]" unit="mag">error in J-band circular aperture magnitude (5 arcsec radius)</column>
+    <column name="[j_flg_5]">J confusion flag for 5 arcsec circular ap. mag.</column>
+    <column name="[h_m_5]">
+    </column>
+    <column name="[h_msig_5]" unit="mag">error in H-band circular aperture magnitude (5 arcsec radius)</column>
+    <column name="[h_flg_5]">
+    </column>
+    <column name="[k_m_5]" unit="mag">K-band circular aperture magnitude (5 arcsec radius)</column>
+    <column name="[k_msig_5]" unit="mag">error in K-band circular aperture magnitude (5 arcsec radius)</column>
+    <column name="[k_flg_5]">K confusion flag for 5 arcsec circular ap. mag.</column>
+    <column name="[j_m_7]" unit="mag">J-band circular aperture magnitude (7 arcsec radius)</column>
+    <column name="[j_msig_7]" unit="mag">error in J-band circular aperture magnitude (7 arcsec radius)</column>
+    <column name="[j_flg_7]">J confusion flag for 7 arcsec circular ap. mag.</column>
+    <column name="[h_m_7]" unit="mag">H-band circular aperture magnitude (7 arcsec radius)</column>
+    <column name="[h_msig_7]" unit="mag">error in H-band circular aperture magnitude (7 arcsec radius)</column>
+    <column name="[h_flg_7]">
+    </column>
+    <column name="[k_m_7]" unit="mag">K-band circular aperture magnitude (7 arcsec radius)</column>
+    <column name="[k_msig_7]" unit="mag">error in K-band circular aperture magnitude (7 arcsec radius)</column>
+    <column name="[k_flg_7]">K confusion flag for 7 arcsec circular ap. mag.</column>
+    <column name="[j_m_10]" unit="mag">J-band circular aperture magnitude (10 arcsec radius)</column>
+    <column name="[j_msig_10]" unit="mag">error in J-band circular aperture magnitude (10 arcsec radius)</column>
+    <column name="[j_flg_10]">J confusion flag for 10 arcsec circular ap. mag.</column>
+    <column name="[h_m_10]">
+    </column>
+    <column name="[h_msig_10]" unit="mag">error in H-band circular aperture magnitude (10 arcsec radius)</column>
+    <column name="[h_flg_10]">
+    </column>
+    <column name="[k_m_10]" unit="mag">K-band circular aperture magnitude (10 arcsec radius)</column>
+    <column name="[k_msig_10]" unit="mag">error in K-band circular aperture magnitude (10 arcsec radius)</column>
+    <column name="[k_flg_10]">K confusion flag for 10 arcsec circular ap. mag.</column>
+    <column name="[j_m_15]" unit="mag">J-band circular aperture magnitude (15 arcsec radius)</column>
+    <column name="[j_msig_15]" unit="mag">error in J-band circular aperture magnitude (15 arcsec radius)</column>
+    <column name="[j_flg_15]">J confusion flag for 15 arcsec circular ap. mag.</column>
+    <column name="[h_m_15]">
+    </column>
+    <column name="[h_msig_15]" unit="mag">error in H-band circular aperture magnitude (15 arcsec radius)</column>
+    <column name="[h_flg_15]">
+    </column>
+    <column name="[k_m_15]" unit="mag">K-band circular aperture magnitude (15 arcsec radius)</column>
+    <column name="[k_msig_15]" unit="mag">error in K-band circular aperture magnitude (15 arcsec radius)</column>
+    <column name="[k_flg_15]">K confusion flag for 15 arcsec circular ap. mag.</column>
+    <column name="[j_m_20]" unit="mag">J-band circular aperture magnitude (20 arcsec radius)</column>
+    <column name="[j_msig_20]" unit="mag">error in J-band circular aperture magnitude (20 arcsec radius)</column>
+    <column name="[j_flg_20]">J confusion flag for 20 arcsec circular ap. mag.</column>
+    <column name="[h_m_20]">
+    </column>
+    <column name="[h_msig_20]" unit="mag">error in H-band circular aperture magnitude (20 arcsec radius)</column>
+    <column name="[h_flg_20]">
+    </column>
+    <column name="[k_m_20]" unit="mag">K-band circular aperture magnitude (20 arcsec radius)</column>
+    <column name="[k_msig_20]" unit="mag">error in K-band circular aperture magnitude (20 arcsec radius)</column>
+    <column name="[k_flg_20]">K confusion flag for 20 arcsec circular ap. mag.</column>
+    <column name="[j_m_25]" unit="mag">J-band circular aperture magnitude (25 arcsec radius)</column>
+    <column name="[j_msig_25]" unit="mag">error in J-band circular aperture magnitude (25 arcsec radius)</column>
+    <column name="[j_flg_25]">J confusion flag for 25 arcsec circular ap. mag.</column>
+    <column name="[h_m_25]">
+    </column>
+    <column name="[h_msig_25]" unit="mag">error in H-band circular aperture magnitude (25 arcsec radius)</column>
+    <column name="[h_flg_25]">
+    </column>
+    <column name="[k_m_25]" unit="mag">K-band circular aperture magnitude (25 arcsec radius)</column>
+    <column name="[k_msig_25]" unit="mag">error in K-band circular aperture magnitude (25 arcsec radius)</column>
+    <column name="[k_flg_25]">K confusion flag for 25 arcsec circular ap. mag.</column>
+    <column name="[j_m_30]" unit="mag">J-band circular aperture magnitude (30 arcsec radius)</column>
+    <column name="[j_msig_30]" unit="mag">error in J-band circular aperture magnitude (30 arcsec radius)</column>
+    <column name="[j_flg_30]">J confusion flag for 30 arcsec circular ap. mag.</column>
+    <column name="[h_m_30]">
+    </column>
+    <column name="[h_msig_30]" unit="mag">error in H-band circular aperture magnitude (30 arcsec radius)</column>
+    <column name="[h_flg_30]">
+    </column>
+    <column name="[k_m_30]" unit="mag">K-band circular aperture magnitude (30 arcsec radius)</column>
+    <column name="[k_msig_30]" unit="mag">error in K-band circular aperture magnitude (30 arcsec radius)</column>
+    <column name="[k_flg_30]">K confusion flag for 30 arcsec circular ap. mag.</column>
+    <column name="[j_m_40]" unit="mag">J-band circular aperture magnitude (40 arcsec radius)</column>
+    <column name="[j_msig_40]" unit="mag">error in J-band circular aperture magnitude (40 arcsec radius)</column>
+    <column name="[j_flg_40]">J confusion flag for 40 arcsec circular ap. mag.</column>
+    <column name="[h_m_40]">
+    </column>
+    <column name="[h_msig_40]" unit="mag">error in H-band circular aperture magnitude (40 arcsec radius)</column>
+    <column name="[h_flg_40]">
+    </column>
+    <column name="[k_m_40]" unit="mag">K-band circular aperture magnitude (40 arcsec radius)</column>
+    <column name="[k_msig_40]" unit="mag">error in K-band circular aperture magnitude (40 arcsec radius)</column>
+    <column name="[k_flg_40]">K confusion flag for 40 arcsec circular ap. mag.</column>
+    <column name="[j_m_50]" unit="mag">J-band circular aperture magnitude (50 arcsec radius)</column>
+    <column name="[j_msig_50]" unit="mag">error in J-band circular aperture magnitude (50 arcsec radius)</column>
+    <column name="[j_flg_50]">J confusion flag for 50 arcsec circular ap. mag.</column>
+    <column name="[h_m_50]">
+    </column>
+    <column name="[h_msig_50]" unit="mag">error in H-band circular aperture magnitude (50 arcsec radius)</column>
+    <column name="[h_flg_50]">
+    </column>
+    <column name="[k_m_50]" unit="mag">K-band circular aperture magnitude (50 arcsec radius)</column>
+    <column name="[k_msig_50]" unit="mag">error in K-band circular aperture magnitude (50 arcsec radius)</column>
+    <column name="[k_flg_50]">K confusion flag for 50 arcsec circular ap. mag.</column>
+    <column name="[j_m_60]" unit="mag">J-band circular aperture magnitude (60 arcsec radius)</column>
+    <column name="[j_msig_60]" unit="mag">error in J-band circular aperture magnitude (60 arcsec radius)</column>
+    <column name="[j_flg_60]">J confusion flag for 60 arcsec circular ap. mag.</column>
+    <column name="[h_m_60]" unit="mag">H-band circular aperture magnitude (60 arcsec radius)</column>
+    <column name="[h_msig_60]" unit="mag">error in H-band circular aperture magnitude (60 arcsec radius)</column>
+    <column name="[h_flg_60]">
+    </column>
+    <column name="[k_m_60]" unit="mag">K-band circular aperture magnitude (60 arcsec radius)</column>
+    <column name="[k_msig_60]" unit="mag">error in K-band circular aperture magnitude (60 arcsec radius)</column>
+    <column name="[k_flg_60]">K confusion flag for 60 arcsec circular ap. mag.</column>
+    <column name="[j_m_70]" unit="mag">J-band circular aperture magnitude (70 arcsec radius)</column>
+    <column name="[j_msig_70]" unit="mag">error in J-band circular aperture magnitude (70 arcsec radius)</column>
+    <column name="[j_flg_70]">J confusion flag for 70 arcsec circular ap. mag.</column>
+    <column name="[h_m_70]" unit="mag">H-band circular aperture magnitude (70 arcsec radius)</column>
+    <column name="[h_msig_70]" unit="mag">error in H-band circular aperture magnitude (70 arcsec radius)</column>
+    <column name="[h_flg_70]">
+    </column>
+    <column name="[k_m_70]" unit="mag">K-band circular aperture magnitude (70 arcsec radius)</column>
+    <column name="[k_msig_70]" unit="mag">error in K-band circular aperture magnitude (70 arcsec radius)</column>
+    <column name="[k_flg_70]">K confusion flag for 70 arcsec circular ap. mag.</column>
+    <column name="[j_m_sys]" unit="mag">J system photometry magnitude.</column>
+    <column name="[j_msig_sys]" unit="mag">J 1-sigma uncertainty in system photometry mag.</column>
+    <column name="[h_m_sys]" unit="mag">H system photometry magnitude.</column>
+    <column name="[h_msig_sys]" unit="mag">H 1-sigma uncertainty in system photometry mag.</column>
+    <column name="[k_m_sys]" unit="mag">K system photometry magnitude.</column>
+    <column name="[k_msig_sys]" unit="mag">K 1-sigma uncertainty in system photometry mag.</column>
+    <column name="[sys_flg]">system flag: 0=no system, 1=nearby galaxy flux incl. in mag.</column>
+    <column name="[contam_flg]">contamination flag: 0=no stars, 1=stellar flux incl. in mag.</column>
+    <column name="[j_5sig_ba]">J minor/major axis ratio fit to the 5-sigma isophote.</column>
+    <column name="[j_5sig_phi]" unit="deg">J angle to 5-sigma major axis (E of N).</column>
+    <column name="[h_5sig_ba]">H minor/major axis ratio fit to the 5-sigma isophote.</column>
+    <column name="[h_5sig_phi]" unit="deg">H angle to 5-sigma major axis (E of N).</column>
+    <column name="[k_5sig_ba]">K minor/major axis ratio fit to the 5-sigma isophote.</column>
+    <column name="[k_5sig_phi]" unit="deg">K angle to 5-sigma major axis (E of N).</column>
+    <column name="[j_d_area]" unit="sq arcsec">J 5-sigma to 3-sigma differential area.</column>
+    <column name="[j_perc_darea]" unit="sq arcsec">J 5-sigma to 3-sigma percent area change.</column>
+    <column name="[h_d_area]">
+    </column>
+    <column name="[h_perc_darea]" unit="sq arcsec">H 5-sigma to 3-sigma percent area change.</column>
+    <column name="[k_d_area]" unit="sq arcsec">K 5-sigma to 3-sigma differential area.</column>
+    <column name="[k_perc_darea]" unit="sq arcsec">K 5-sigma to 3-sigma percent area change.</column>
+    <column name="[j_bisym_rat]">J bi-symmetric flux ratio.</column>
+    <column name="[j_bisym_chi]">J bi-symmetric cross-correlation chi.</column>
+    <column name="[h_bisym_rat]">
+    </column>
+    <column name="[h_bisym_chi]">
+    </column>
+    <column name="[k_bisym_rat]">K bi-symmetric flux ratio.</column>
+    <column name="[k_bisym_chi]">K bi-symmetric cross-correlation chi.</column>
+    <column name="[j_sh0]">J ridge shape (LCSB: BSNR limit).</column>
+    <column name="[j_sig_sh0]">J ridge shape sigma (LCSB: B2SNR limit).</column>
+    <column name="[h_sh0]">H ridge shape (LCSB: BSNR limit).</column>
+    <column name="[h_sig_sh0]">H ridge shape sigma (LCSB: B2SNR limit).</column>
+    <column name="[k_sh0]">K ridge shape (LCSB: BSNR limit).</column>
+    <column name="[k_sig_sh0]">K ridge shape sigma (LCSB: B2SNR limit).</column>
+    <column name="[j_sc_mxdn]">J mxdn (score) (LCSB: BSNR - block/smoothed SNR)</column>
+    <column name="[j_sc_sh]">J shape (score).</column>
+    <column name="[j_sc_wsh]">J wsh (score) (LCSB: PSNR - peak raw SNR).</column>
+    <column name="[j_sc_r23]">J r23 (score) (LCSB: TSNR - integrated SNR for r=15).</column>
+    <column name="[j_sc_1mm]">J 1st moment (score) (LCSB: super blk 2,4,8 SNR).</column>
+    <column name="[j_sc_2mm]">J 2nd moment (score) (LCSB: SNRMAX - super SNR max).</column>
+    <column name="[j_sc_vint]">J vint (score).</column>
+    <column name="[j_sc_r1]">J r1 (score).</column>
+    <column name="[j_sc_msh]">J median shape score.</column>
+    <column name="[h_sc_mxdn]">H mxdn (score) (LCSB: BSNR - block/smoothed SNR)</column>
+    <column name="[h_sc_sh]">H shape (score).</column>
+    <column name="[h_sc_wsh]">H wsh (score) (LCSB: PSNR - peak raw SNR).</column>
+    <column name="[h_sc_r23]">H r23 (score) (LCSB: TSNR - integrated SNR for r=15).</column>
+    <column name="[h_sc_1mm]">H 1st moment (score) (LCSB: super blk 2,4,8 SNR).</column>
+    <column name="[h_sc_2mm]">H 2nd moment (score) (LCSB: SNRMAX - super SNR max).</column>
+    <column name="[h_sc_vint]">H vint (score).</column>
+    <column name="[h_sc_r1]">H r1 (score).</column>
+    <column name="[h_sc_msh]">H median shape score.</column>
+    <column name="[k_sc_mxdn]">K mxdn (score) (LCSB: BSNR - block/smoothed SNR)</column>
+    <column name="[k_sc_sh]">K shape (score).</column>
+    <column name="[k_sc_wsh]">K wsh (score) (LCSB: PSNR - peak raw SNR).</column>
+    <column name="[k_sc_r23]">K r23 (score) (LCSB: TSNR - integrated SNR for r=15).</column>
+    <column name="[k_sc_1mm]">K 1st moment (score) (LCSB: super blk 2,4,8 SNR).</column>
+    <column name="[k_sc_2mm]">K 2nd moment (score) (LCSB: SNRMAX - super SNR max).</column>
+    <column name="[k_sc_vint]">K vint (score).</column>
+    <column name="[k_sc_r1]">K r1 (score).</column>
+    <column name="[k_sc_msh]">K median shape score.</column>
+    <column name="[j_chif_ellf]">J % chi-fraction for elliptical fit to 3-sig isophote.</column>
+    <column name="[k_chif_ellf]">K % chi-fraction for elliptical fit to 3-sig isophote.</column>
+    <column name="[ellfit_flg]">ellipse fitting contamination flag.</column>
+    <column name="[sup_chif_ellf]">super-coadd % chi-fraction for ellip. fit to 3-sig isophote.</column>
+    <column name="[n_blank]">number of blanked source records.</column>
+    <column name="[n_sub]">number of subtracted source records.</column>
+    <column name="[bl_sub_flg]">blanked/subtracted src description flag.</column>
+    <column name="[id_flg]">type/galaxy ID flag (0=non-catalog, 1=catalog, 2=LCSB).</column>
+    <column name="[id_cat]">matched galaxy catalog name.</column>
+    <column name="[fg_flg]">flux-growth convergence flag.</column>
+    <column name="[blk_fac]">LCSB blocking factor (1, 2, 4, 8).</column>
+    <column name="[dup_src]">Duplicate source flag.</column>
+    <column name="[use_src]">Use source flag.</column>
+    <column name="[prox]" unit="arcsec">Proximity. The distance between this source and its nearest neighbor in the PSC.</column>
+    <column name="[pxpa]" unit="deg">The position angle on the sky of the vector from the source to the nearest neighbor in the PSC, East of North.</column>
+    <column name="[pxcntr]">ext_key value of nearest XSC source.</column>
+    <column name="[dist_edge_ns]">The distance from the source to the nearest North or South scan edge.</column>
+    <column name="[dist_edge_ew]" unit="arcsec">The distance from the source to the nearest East or West scan edge.</column>
+    <column name="[dist_edge_flg]">flag indicating which edges ([n|s][e|w]) are nearest to src.</column>
+    <column name="[pts_key]">key to point source data DB record.</column>
+    <column name="[mp_key]">key to minor planet prediction DB record.</column>
+    <column name="[night_key]">key to night data record in "scan DB".</column>
+    <column name="[scan_key]">key to scan data record in "scan DB".</column>
+    <column name="[coadd_key]">key to coadd data record in "scan DB".</column>
+    <column name="[hemis]">hemisphere (N/S) of observation. "n" = North/Mt. Hopkins; "s" = South/CTIO.</column>
+    <column name="[date]">The observation reference date for this source expressed in ISO standard format.</column>
+    <column name="[scan]">scan number (unique within date).</column>
+    <column name="[coadd]">3-digit coadd number (unique within scan).</column>
+    <column name="[id]">
+    </column>
+    <column name="[x_coadd]" unit="pix">x (cross-scan) position (coadd coord.).</column>
+    <column name="[y_coadd]" unit="pix">y (in-scan) position (coadd coord.).</column>
+    <column name="[j_subst2]">J residual background #2 (score).</column>
+    <column name="[h_subst2]">H residual background #2 (score).</column>
+    <column name="[k_subst2]">K residual background #2 (score).</column>
+    <column name="[j_back]" unit="mag/sq arcsec">J coadd median background.</column>
+    <column name="[h_back]">
+    </column>
+    <column name="[k_back]" unit="mag/sq arcsec">K coadd median background.</column>
+    <column name="[j_resid_ann]" unit="mag/sq arcsec">J residual annulus background median.</column>
+    <column name="[h_resid_ann]" unit="mag/sq arcsec">H residual annulus background median.</column>
+    <column name="[k_resid_ann]" unit="mag/sq arcsec">K residual annulus background median.</column>
+    <column name="[j_bndg_per]">J banding Fourier Transf. period on this side of coadd.</column>
+    <column name="[j_bndg_amp]">J banding maximum FT amplitude on this side of coadd.</column>
+    <column name="[h_bndg_per]">
+    </column>
+    <column name="[h_bndg_amp]">
+    </column>
+    <column name="[k_bndg_per]">K banding Fourier Transf. period on this side of coadd.</column>
+    <column name="[k_bndg_amp]">K banding maximum FT amplitude on this side of coadd.</column>
+    <column name="[j_seetrack]">J band seetracking score.</column>
+    <column name="[h_seetrack]">H band seetracking score.</column>
+    <column name="[k_seetrack]">K band seetracking score.</column>
+    <column name="[ext_key]">entry counter (key) number (unique within table).</column>
+  </table>
+  <table name="[dbo].[ScanInfo]">
+    <summary>
+    </summary>
+    <remarks>
+    </remarks>
+    <column name="[scan_key]">The unique identification number for this scan</column>
+    <column name="[hemis]">Observatory from which data were obtained (n/s)</column>
+    <column name="[date]">The observation reference date for this scan expressed in ISO standard format</column>
+    <column name="[scan]">Scan number (unique within date)</column>
+    <column name="[tile]">Tile identification number</column>
+    <column name="[ra]" unit="deg">Right ascension of scan center for equinox J2000</column>
+    <column name="[dec]" unit="deg">Declination of scan center for equinox J2000</column>
+    <column name="[glon]" unit="deg">Galactic longitude of scan center, as computed from ra and dec</column>
+    <column name="[glat]" unit="deg">Galactic latitude of scan center, as computed from ra and dec</column>
+    <column name="[ra_1]" unit="deg">J2000 right ascension of the eastern corner at start of scan</column>
+    <column name="[dec_1]" unit="deg">J2000 declination of the eastern corner at start of scan</column>
+    <column name="[ra_2]" unit="deg">J2000 right ascension of the western corner at start of s</column>
+    <column name="[dec_2]" unit="deg">J2000 declination of the western corner at start of scan</column>
+    <column name="[ra_3]" unit="deg">J2000 right ascension of the eastern corner at end of scan</column>
+    <column name="[dec_3]" unit="deg">J2000 declination of the eastern corner at end of scan</column>
+    <column name="[ra_4]" unit="deg">J2000 right ascension of the western corner at end of scan</column>
+    <column name="[dec_4]" unit="deg">J2000 declination of the western corner at end of scan</column>
+    <column name="[sd]">Scanning direction (north-going or south-going)</column>
+    <column name="[qual]">Quality score for scan (10 is highest grade,0 is lowest)</column>
+    <column name="[hgl]">flag indicating whether(1) or not(0) the scan has a single-frame H-band electronic glitch</column>
+    <column name="[cld]">flag indicating whether or not a cloud was found in the scan after comparison (1 indicates clouds)</column>
+    <column name="[xph]">flag indicating whether(1) or not(0) another photometric problem, not obviously cloud related, was found</column>
+    <column name="[anom]">flag indicating whether(1) or not(0) an unusual problem was found in the Atlas Images for this scan</column>
+    <column name="[ut]" unit="hr">Universal Time (UT) at beginning of scan</column>
+    <column name="[jdate]" unit="day">Julian Date at beginning of scan</column>
+    <column name="[airm]">Airmass at beginning of scan</column>
+    <column name="[zd]" unit="deg">Scan's distance from the zenith at beginning of scan</column>
+    <column name="[ha]" unit="hr">Hour angle at beginning of scan</column>
+    <column name="[rh]" unit="%">Relative humidity of telescope enclosure at beginning of scan</column>
+    <column name="[air_temp]" unit="deg C">Air temperature at beginning of scan</column>
+    <column name="[tel_temp]" unit="deg C">Telescope girdle temperature at beginning of scan</column>
+    <column name="[focus]">Focus setting of telescope at beginning of scan</column>
+    <column name="[hry]">Flag indicating the H-band array configuration for the camera (1 indicates the new  configuration)</column>
+    <column name="[c_strat]">Flag indicating the calibration strategy for this night's data</column>
+    <column name="[j_zp_ap]" unit="mag">Photometric zero-point for J-band aperture photometry</column>
+    <column name="[h_zp_ap]" unit="mag">Photometric zero-point for H-band aperture photometry</column>
+    <column name="[k_zp_ap]" unit="mag">Photometric zero-point for Ks-band aperture photometry</column>
+    <column name="[h_zperr_ap]" unit="mag">RMS-error of zero-point for H-band aperture photometry</column>
+    <column name="[k_zperr_ap]" unit="mag">RMS-error of zero-point for Ks-band aperture photometry</column>
+    <column name="[j_n_snr10]">Number of point sources at J-band with SNR&amp;gt;10 (instrumental mag &amp;lt;=15.8)</column>
+    <column name="[h_n_snr10]">Number of point sources at H-band with SNR&amp;gt;10 (instrumental mag &amp;lt;=15.1)</column>
+    <column name="[k_n_snr10]">Number of point sources at Ks-band with SNR&amp;gt;10 (instrumental mag &amp;lt;=14.3)</column>
+    <column name="[n_ext]">Number of regular extended sources detected in scan</column>
+    <column name="[j_shape_avg]">J-band average seeing shape for scan</column>
+    <column name="[h_shape_avg]">H-band average seeing shape for scan</column>
+    <column name="[k_shape_avg]">Ks-band average seeing shape for scan</column>
+    <column name="[j_shape_rms]">RMS-error of J-band average seeing shape</column>
+    <column name="[h_shape_rms]">RMS-error of H-band average seeing shape</column>
+    <column name="[k_shape_rms]">RMS-error of Ks-band average seeing shape</column>
+    <column name="[j_2mrat]">J-band average 2nd image moment ratio</column>
+    <column name="[h_2mrat]">H-band average 2nd image moment ratio</column>
+    <column name="[k_2mrat]">Ks-band average 2nd image moment ratio</column>
+    <column name="[j_psp]">J-band photometric sensitivity paramater (PSP).</column>
+    <column name="[h_psp]">H-band photometric sensitivity parameter (PSP).</column>
+    <column name="[k_psp]">Ks-band photometric sensitivity parameter (PSP).</column>
+    <column name="[j_pts_noise]">log10 of the mode of the noise distribution (noise estimated from J-band)</column>
+    <column name="[h_pts_noise]">log10 of the mode of the noise distribution (noise estimated from H-band)</column>
+    <column name="[k_pts_noise]">log10 of the mode of the noise distribution (noise estimated from Ks-band)</column>
+    <column name="[j_msnr10]">The J-band magnitude at which SNR=10 is achieved for this scan</column>
+    <column name="[h_msnr10]">The H-band magnitude at which SNR=10 is achieved for this scan</column>
+    <column name="[k_msnr10]">The Ks-band magnitude at which SNR=10 is achieved for this scan</column>
+    <column name="[rel0]">Flag indicating whether the scan is contained in the 2MASS Sampler Release</column>
+    <column name="[rel1]">Flag indicating whether the scan is contained in the 2MASS First Incremental Data Release (IDR1)</column>
+    <column name="[rel2]">Flag indicating whether the scan is contained in the 2MASS Second Incremental Data Release (IDR2)</column>
+  </table>
+</metadata>

@@ -1,0 +1,46 @@
+SELECT alma.a, alma.b
+FROM alma
+
+
+
+SELECT alma.a, alma.b, korte.c
+FROM alma
+CROSS JOIN korte
+
+
+SELECT alma.a, alma.b, korte.c
+FROM alma
+CROSS JOIN (SELECT korte.* FROM korte) k
+
+
+
+
+SELECT alma.a, alma.b, k.c
+FROM alma
+CROSS JOIN (SELECT korte.* FROM korte) k
+
+
+
+SELECT alma.a AS aaa, alma.b, k.c, bbb = 1+2
+FROM alma
+CROSS JOIN (SELECT korte.* FROM korte) k
+
+
+
+SELECT alma.a AS aaa, alma.b, k.c, bbb = 1+2
+FROM alma
+CROSS JOIN (SELECT korte.c FROM korte) k
+WHERE bbb > 3
+
+
+SELECT TOP 10 b.*
+FROM alma
+CROSS JOIN (SELECT TOP 10 b.ID AS q FROM alma
+	CROSS JOIN alma b) s
+
+
+SELECT alma.a AS aaa, alma.a, alma.b, k.c, bbb = 1+2
+FROM alma
+CROSS JOIN (SELECT korte.c FROM korte) k
+WHERE bbb > 3
+GROUP BY a

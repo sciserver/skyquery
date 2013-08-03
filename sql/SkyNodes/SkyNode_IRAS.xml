@@ -1,0 +1,64 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>The main PhotoObj table for the IRAS catalog</summary>
+    <remarks>The main PhotoObj table for the IRAS catalog</remarks>
+    <column name="[objID]">unique object identifier</column>
+    <column name="[name]">IRAS Source Name</column>
+    <column name="[ra]" unit="deg">J2000 right ascension</column>
+    <column name="[dec]" unit="deg">J2000 declination</column>
+    <column name="[err_maj]" unit="arcsec">Uncertainty ellipse major axis</column>
+    <column name="[err_min]" unit="arcsec">Uncertainty ellipse minor axis</column>
+    <column name="[err_ang]" unit="deg">Uncertainty ellipse position angle</column>
+    <column name="[nhcon]">Number of times observed (&lt;25)</column>
+    <column name="[flux_12]" unit="Jansky">Averaged non-color corrected flux density, 12 microns</column>
+    <column name="[flux_25]" unit="Jansky">Averaged non-color corrected flux density, 25 microns</column>
+    <column name="[flux_60]" unit="Jansky">Averaged non-color corrected flux density, 60 microns</column>
+    <column name="[flux_100]" unit="Jansky">Averaged non-color corrected flux density,100 microns</column>
+    <column name="[fqual_12]">flux density quality, 12 microns</column>
+    <column name="[fqual_25]">flux density quality, 25 microns</column>
+    <column name="[fqual_60]">flux density quality, 60 microns</column>
+    <column name="[fqual_100]">flux density quality,100 microns</column>
+    <column name="[nlrs]">Number of significant LRS spectra</column>
+    <column name="[lrschar]">Characterization of averaged LRS spectrum, __ is NULL</column>
+    <column name="[relunc_12]">Percent relative flux density uncertainties, 12 microns</column>
+    <column name="[relunc_25]">Percent relative flux density uncertainties, 25 microns</column>
+    <column name="[relunc_60]">Percent relative flux density uncertainties, 60 microns</column>
+    <column name="[relunc_100]">Percent relative flux density uncertainties,100 microns</column>
+    <column name="[tsnr_12]">Ten times the minimum signal-to-noise ratio, 12 microns</column>
+    <column name="[tsnr_25]">Ten times the minimum signal-to-noise ratio, 25 microns</column>
+    <column name="[tsnr_60]">Ten times the minimum signal-to-noise ratio, 60 microns</column>
+    <column name="[tsnr_100]">Ten times the minimum signal-to-noise ratio,100 microns</column>
+    <column name="[cc_12]">Point source correlation coefficient,_ is NULL, 12 microns</column>
+    <column name="[cc_25]">Point source correlation coefficient,_ is NULL, 25 microns</column>
+    <column name="[cc_60]">Point source correlation coefficient,_ is NULL, 60 microns</column>
+    <column name="[cc_100]">Point source correlation coefficient,_ is NULL,100 microns</column>
+    <column name="[lvar]">Percent Likelihood of Variability</column>
+    <column name="[disc]">Discrepant Fluxes flag (hex-encoded)</column>
+    <column name="[confuse]">Confusion flag (hex-encoded)</column>
+    <column name="[pnearh]">Number of nearby hours-confirmed point sources</column>
+    <column name="[pnearw]">Number of nearby weeks-confirmed point sources</column>
+    <column name="[ses1_12]">Number of seconds-confirmed nearby small extended sources, 12 microns</column>
+    <column name="[ses1_25]">Number of seconds-confirmed nearby small extended sources, 25 microns</column>
+    <column name="[ses1_60]">Number of seconds-confirmed nearby small extended sources, 60 microns</column>
+    <column name="[ses1_100]">Number of seconds-confirmed nearby small extended sources,100 microns</column>
+    <column name="[ses2_12]">Number of nearby weeks-confirmed small extended sources, 12 microns</column>
+    <column name="[ses2_25]">Number of nearby weeks-confirmed small extended sources, 25 microns</column>
+    <column name="[ses2_60]">Number of nearby weeks-confirmed small extended sources, 60 microns</column>
+    <column name="[ses2_100]">Number of nearby weeks-confirmed small extended sources,100 microns</column>
+    <column name="[hsdflag]">Source is located in high source density bin (hex-encoded)</column>
+    <column name="[cirr1]">Number of nearby 100 micron only WSDB sources</column>
+    <column name="[cirr2]">Spatially filtered 100 micron sky brightness ratio to flux density of point source (see text)</column>
+    <column name="[cirr3]" unit="MJy/sr">Total 100 micron sky surface brightness</column>
+    <column name="[nid]">Number of positional associations</column>
+    <column name="[idtype]">Type of Object</column>
+    <column name="[mhcon]">Possible number of HCONs, 99 for NULL</column>
+    <column name="[fcor_12]">Flux correction factor applied (times 1000),9999 is NULL, 12 microns</column>
+    <column name="[fcor_25]">Flux correction factor applied (times 1000),9999 is NULL, 25 microns</column>
+    <column name="[fcor_60]">Flux correction factor applied (times 1000),9999 is NULL, 60 microns</column>
+    <column name="[fcor_100]">Flux correction factor applied (times 1000),9999 is NULL,100 microns</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+  </table>
+</metadata>

@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Jhu.SkyQuery.Parser
+{
+    public abstract class XMatchQuerySpecification : QuerySpecification
+    {
+
+
+        public SearchCondition XMatchConditions
+        {
+            get
+            {
+                return this.FindDescendant<XMatchClause>().FindDescendant<XMatchHavingClause>().FindDescendant<SearchCondition>();
+            }
+        }
+
+        public XMatchQuerySpecification()
+            : base()
+        {
+        }
+
+        public XMatchQuerySpecification(XMatchQuerySpecification old)
+            :base(old)
+        {
+        }
+
+        public XMatchQuerySpecification(QuerySpecification old)
+            :base(old)
+        {
+        }
+
+        public IEnumerable<XMatchTableSpecification> EnumerateXMatchTableSpecifications()
+        {
+            return this.FindDescendant<XMatchClause>().FindDescendant<XMatchTableList>().EnumerateDescendants<XMatchTableSpecification>();
+        }
+    }
+}

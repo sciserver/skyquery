@@ -1,0 +1,51 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>The main PhotoObj table for the 2QZ catalog</summary>
+    <remarks>The main PhotoObj table for the 2QZ catalog</remarks>
+    <column name="[objID]">unique object identifier</column>
+    <column name="[name]">IAU format object name</column>
+    <column name="[ra]" unit="deg">J2000 right ascension</column>
+    <column name="[dec]" unit="deg">J2000 declination</column>
+    <column name="[cat_num]">Internal catalogue object number</column>
+    <column name="[cat_name]">Internal catalogue object name</column>
+    <column name="[sector]">Name of the sector this object inhabits</column>
+    <column name="[raB1950]" unit="deg">Right ascension B1950</column>
+    <column name="[decB1950]" unit="deg">Declination B1950</column>
+    <column name="[UKST]">UKST survey field number</column>
+    <column name="[x_apm]">APM scan X position (~8 micron pixels)</column>
+    <column name="[y_apm]">APM scan Y position (~8 micron pixels)</column>
+    <column name="[raBrad]" unit="rad">
+    </column>
+    <column name="[decBrad]" unit="rad">
+    </column>
+    <column name="[bj]" unit="mag">
+    </column>
+    <column name="[u_bj]">u-bj colour</column>
+    <column name="[bj_r]">bj-r colour [incl. r upper limits as (bj-rlim-10)]</column>
+    <column name="[n_obs]">Number of observations made with 2dF</column>
+    <column name="[z1]">Redshift (Obs.#1)</column>
+    <column name="[q1]">Identification quality x 10 + redshift quality</column>
+    <column name="[id1]">Identification</column>
+    <column name="[date1]">Observation date</column>
+    <column name="[fld1]">2dF field number x 10 + spectrograph number</column>
+    <column name="[fibre1]">2dF fibre number (in spectrograph)</column>
+    <column name="[SN1]">Signal-to-noise ratio in the 4000-5000A band</column>
+    <column name="[z2]">Redshift (Obs.#2)</column>
+    <column name="[q2]">Identification quality x 10 + redshift quality</column>
+    <column name="[id2]">Identification</column>
+    <column name="[date2]">Observation date</column>
+    <column name="[fld2]">2dF field number x 10 + spectrograph number</column>
+    <column name="[fibre2]">2dF fibre number (in spectrograph)</column>
+    <column name="[SN2]">Signal-to-noise ratio in the 4000-5000A band</column>
+    <column name="[zprev]">Previously known redshift (Veron-Cetty &amp; Veron 2000)</column>
+    <column name="[radio]" unit="mJy">NVSS radio flux</column>
+    <column name="[Xray]" unit="keV">RASS  x-ray flux, 0.2-2.4keV (x10-13 erg s-1 cm-2)</column>
+    <column name="[dust]">E_{B-V} (Schlegel, Finkbeiner &amp; Davis 1998)</column>
+    <column name="[comm1]">Specific comments on observation 1</column>
+    <column name="[comm2]">Specific comments on observation 2</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+  </table>
+</metadata>

@@ -1,0 +1,69 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary> The main photometry table for the USNOB1.0 catalog </summary>
+    <remarks> We created a bigint objid that is concatenated from  zone and seqNo, with zone in the upper 4 bytes of objid.  The table has been loaded by the ROE group, and has been  genereously shared with the JHU group. </remarks>
+    <column name="[objid]" content="ID_MAIN">Main unique object identifier</column>
+    <column name="[zone]" content="ID_MAIN:1">The catalog is arranged in zones of 0.1deg in Dec, from 0 in South Pole to 1799 in North Pole</column>
+    <column name="[seqNo]" content="ID_MAIN:2">Sequence number of objects ordered by Right Ascension in the zone.</column>
+    <column name="[cx]" content="POS_EQ_X">unit vector of spherical co-ordinate</column>
+    <column name="[cy]" content="POS_EQ_Y">unit vector of spherical co-ordinate</column>
+    <column name="[cz]" content="POS_EQ_Z">unit vector of spherical co-ordinate</column>
+    <column name="[htmID]" content="POS_GENERAL">HTM index, 20 digits, for co-ordinate</column>
+    <column name="[ra]" unit="deg" content="POS_EQ_RA_MAIN">J2000 Celestial Right Ascension</column>
+    <column name="[dec]" unit="deg" content="POS_EQ_DEC_MAIN">J2000 Celestial Declination</column>
+    <column name="[pmRA]" unit="mas/yr" content="POS_EQ_PMRA">Proper motion in RA (relative to YS4.0)</column>
+    <column name="[pmDEC]" unit="mas/yr" content="POS_EQ_PMDEC">Proper motion in DEC (relative to YS4.0)</column>
+    <column name="[pmPr]" content="STAT_PROBABILITY">Total Proper Motion probability</column>
+    <column name="[mcFlag]" content="CODE_MISC">Motion catalogue flag, 0=no, 1=yes</column>
+    <column name="[e_pmRA]" unit="mas/yr" content="ERROR">Mean error on pmRA</column>
+    <column name="[e_pmDEC]" unit="mas/yr" content="ERROR">Mean error on pmDEC</column>
+    <column name="[e_RAfit]" unit="arcsec" content="FIT_ERROR">Mean error on RA fit</column>
+    <column name="[e_DECfit]" unit="arcsec" content="FIT_ERROR">Mean error on DEC fit</column>
+    <column name="[Ndet]" content="NUMBER">Number of detections</column>
+    <column name="[difSp]" content="CODE_MISC">Diffraction spike flag, 0=no, 1=yes</column>
+    <column name="[e_RA]" unit="mas" content="ERROR">Mean error on ra*cos(dec) at Epoch</column>
+    <column name="[e_DEC]" unit="mas" content="ERROR">Mean error on dec at Epoch</column>
+    <column name="[Epoch]" unit="yr" content="TIME_EPOCH">Mean epoch of observation</column>
+    <column name="[ys40]" content="CODE_MISC">YS4.0 correlation flag, 0=no, 1=yes</column>
+    <column name="[B1Mag]" unit="mag" content="PHOT_PHG_B">First blue magnitude</column>
+    <column name="[B1C]" content="INST_CALIB_PARAM">source of photometric calibration</column>
+    <column name="[B1S]" content="ID_SURVEY">Survey number</column>
+    <column name="[B1F]" content="ID_FIELD">Field number in survey</column>
+    <column name="[B1S_G]" content="CLASS_STAR/GALAXY">Star-galaxy separation</column>
+    <column name="[B1Xi]" unit="arcsec" content="POS_EQ_RA_OFF">Residual in X direction</column>
+    <column name="[B1Eta]" unit="arcsec" content="POS_EQ_DEC_OFF">Residual in Y direction</column>
+    <column name="[R1Mag]" unit="mag" content="PHOT_PHG_R">First red magnitude</column>
+    <column name="[R1C]" content="INST_CALIB_PARAM">source of photometric calibration</column>
+    <column name="[R1S]" content="ID_SURVEY">Survey number</column>
+    <column name="[R1F]" content="ID_FIELD">Field number in survey</column>
+    <column name="[R1S_G]" content="CLASS_STAR/GALAXY">Star-galaxy separation</column>
+    <column name="[R1Xi]" unit="arcsec" content="POS_EQ_RA_OFF">Residual in X direction</column>
+    <column name="[R1Eta]" unit="arcsec" content="POS_EQ_DEC_OFF">Residual in Y direction</column>
+    <column name="[B2Mag]" unit="mag" content="PHOT_PHG_B">Second blue magnitude</column>
+    <column name="[B2C]" content="INST_CALIB_PARAM">source of photometric calibration</column>
+    <column name="[B2S]" content="ID_SURVEY">Survey number</column>
+    <column name="[B2F]" content="ID_FIELD">Field number in survey</column>
+    <column name="[B2S_G]" content="CLASS_STAR/GALAXY">Star-galaxy separation</column>
+    <column name="[B2Xi]" unit="arcsec" content="POS_EQ_RA_OFF">Residual in X direction</column>
+    <column name="[B2Eta]" unit="arcsec" content="POS_EQ_DEC_OFF">Residual in Y direction</column>
+    <column name="[R2Mag]" unit="mag" content="PHOT_PHG_R">Second red magnitude</column>
+    <column name="[R2C]" content="INST_CALIB_PARAM">source of photometric calibration</column>
+    <column name="[R2S]" content="ID_SURVEY">Survey number</column>
+    <column name="[R2F]" content="ID_FIELD">Field number in survey</column>
+    <column name="[R2S_G]" content="CLASS_STAR/GALAXY">Star-galaxy separation</column>
+    <column name="[R2Xi]" unit="arcsec" content="POS_EQ_RA_OFF">Residual in X direction</column>
+    <column name="[R2Eta]" unit="arcsec" content="POS_EQ_DEC_OFF">Residual in Y direction</column>
+    <column name="[NMag]" unit="mag" content="PHOT_PHG_I">Infrared (N) magnitude</column>
+    <column name="[NC]" content="INST_CALIB_PARAM">source of photometric calibration</column>
+    <column name="[NS]" content="ID_SURVEY">Survey number</column>
+    <column name="[NF]" content="ID_FIELD">Field number in survey</column>
+    <column name="[NS_G]" content="CLASS_STAR/GALAXY">Star-galaxy separation</column>
+    <column name="[NXi]" unit="arcses" content="POS_EQ_RA_OFF">Residual in X direction</column>
+    <column name="[NEta]" unit="arcsec" content="POS_EQ_DEC_OFF">Residual in Y direction</column>
+    <column name="[lbIdxB1]" content="CODE_MISC">First blue look-back index into PMM scan file</column>
+    <column name="[lbIdxR1]" content="CODE_MISC">First red look-back index into PMM scan file</column>
+    <column name="[lbIdxB2]" content="CODE_MISC">Second blue look-back index into PMM scan file</column>
+    <column name="[lbIdxR2]" content="CODE_MISC">Second red look-back index into PMM scan file</column>
+    <column name="[lbIdxN]" content="CODE_MISC">N look-back index into PMM scan file</column>
+  </table>
+</metadata>

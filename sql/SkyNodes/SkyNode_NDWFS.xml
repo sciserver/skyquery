@@ -1,0 +1,227 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary> The main Photo table for the NOAO Deep Field catalog containing the individual band detections </summary>
+    <remarks> The main Photo table for the NOAO Deep Field catalog containing detections in   the individual bands. The merged catalog  will be located in the PhotoObjAll table </remarks>
+    <column name="[OBJID]">unique object id, hashed from BAND, FIELD and NUMBER</column>
+    <column name="[BAND]">Designates filter</column>
+    <column name="[FIELD]">Field identifier</column>
+    <column name="[X_IMAGE]" unit="pixel">Object position along x</column>
+    <column name="[Y_IMAGE]" unit="pixel">Object position along y</column>
+    <column name="[XPEAK_IMAGE]" unit="pixel">x-coordinate of the brightest pixel</column>
+    <column name="[YPEAK_IMAGE]" unit="pixel">y-coordinate of the brightest pixel</column>
+    <column name="[NUMBER]">Running object number</column>
+    <column name="[FLUX_ISO]" unit="count">Isophotal flux</column>
+    <column name="[FLUXERR_ISO]" unit="count">RMS error for isophotal flux</column>
+    <column name="[MAG_ISO]" unit="mag">Isophotal magnitude</column>
+    <column name="[MAGERR_ISO]" unit="mag">RMS error for isophotal magnitude</column>
+    <column name="[MAG_ISOCOR]" unit="mag">Corrected isophotal magnitude</column>
+    <column name="[MAGERR_ISOCOR]" unit="mag">RMS error for corrected isophotal magnitude</column>
+    <column name="[FLUX_APER_01]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_02]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_03]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_04]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_05]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_06]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_07]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_08]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_09]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_10]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_15]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_20]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUXERR_APER_01]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_02]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_03]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_04]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_05]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_06]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_07]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_08]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_09]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_10]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_15]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_20]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[MAG_APER_01]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_02]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_03]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_04]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_05]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_06]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_07]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_08]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_09]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_10]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_15]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_20]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAGERR_APER_01]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_02]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_03]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_04]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_05]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_06]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_07]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_08]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_09]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_10]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_15]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_20]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAG_AUTO]" unit="mag">Kron-like elliptical aperture magnitude</column>
+    <column name="[MAGERR_AUTO]" unit="mag">RMS error for AUTO magnitude</column>
+    <column name="[KRON_RADIUS]">Kron apertures in units of A or B</column>
+    <column name="[BACKGROUND]" unit="count">Background at centroid position</column>
+    <column name="[THRESHOLD]" unit="count">Detection threshold above background</column>
+    <column name="[FLUX_MAX]" unit="count">Peak flux above background</column>
+    <column name="[ISOAREA_IMAGE]" unit="pixel**2">Isophotal area above Analysis threshold</column>
+    <column name="[RA]" unit="deg">Right ascension of barycenter (J2000)</column>
+    <column name="[DEC]" unit="deg">Declination of barycenter (J2000)</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+    <column name="[ALPHAPEAK_J2000]" unit="deg">Right ascension of brightest pix (J2000)</column>
+    <column name="[DELTAPEAK_J2000]" unit="deg">Declination of brightest pix (J2000)</column>
+    <column name="[X2_IMAGE]" unit="pixel**2">Variance along x</column>
+    <column name="[Y2_IMAGE]" unit="pixel**2">Variance along y</column>
+    <column name="[XY_IMAGE]" unit="pixel**2">Covariance between x and y</column>
+    <column name="[CXX_IMAGE]" unit="pixel**(-2)">Cxx object ellipse parameter</column>
+    <column name="[CYY_IMAGE]" unit="pixel**(-2)">Cyy object ellipse parameter</column>
+    <column name="[CXY_IMAGE]" unit="pixel**(-2)">Cxy object ellipse parameter</column>
+    <column name="[CXX_WORLD]" unit="deg**(-2)">Cxx object ellipse parameter (WORLD units)</column>
+    <column name="[CYY_WORLD]" unit="deg**(-2)">Cyy object ellipse parameter (WORLD units)</column>
+    <column name="[CXY_WORLD]" unit="deg**(-2)">Cxy object ellipse parameter (WORLD units)</column>
+    <column name="[A_IMAGE]" unit="pixel">Profile RMS along major axis</column>
+    <column name="[B_IMAGE]" unit="pixel">Profile RMS along minor axis</column>
+    <column name="[A_WORLD]" unit="deg">Profile RMS along major axis (world units)</column>
+    <column name="[B_WORLD]" unit="deg">Profile RMS along minor axis (world units)</column>
+    <column name="[THETA_IMAGE]" unit="deg">Position angle (CCW/x)</column>
+    <column name="[THETA_WORLD]" unit="deg">Position angle (CCW/world-x)</column>
+    <column name="[ELONGATION]">A_IMAGE/B_IMAGE</column>
+    <column name="[ELLIPTICITY]">1 - B_IMAGE/A_IMAGE</column>
+    <column name="[ERRX2_IMAGE]" unit="pixel**2">Variance of position along x</column>
+    <column name="[ERRY2_IMAGE]" unit="pixel**2">Variance of position along y</column>
+    <column name="[ERRXY_IMAGE]" unit="pixel**2">Covariance of position between x and y</column>
+    <column name="[ERRA_IMAGE]" unit="pixel">RMS position error along major axis</column>
+    <column name="[ERRB_IMAGE]" unit="pixel">RMS position error along minor axis</column>
+    <column name="[ERRTHETA_IMAGE]" unit="deg">Error ellipse position angle (CCW/x)</column>
+    <column name="[FWHM_IMAGE]" unit="pixel">FWHM assuming a gaussian core</column>
+    <column name="[FLAGS]">Extraction flags</column>
+    <column name="[IMAFLAGS_ISO]">FLAG-image flags OR'ed over the iso. profile</column>
+    <column name="[CLASS_STAR]">S/G classifier output</column>
+  </table>
+  <table name="[dbo].[PhotoObjK]">
+    <summary> The main Photo table for the NOAO Deep Field catalog containing the individual band detections </summary>
+    <remarks> The main Photo table for the NOAO Deep Field catalog containing detections in   the individual bands. The merged catalog  will be located in the PhotoObjAll table </remarks>
+    <column name="[OBJID]">unique object id, hashed from BAND, FIELD and NUMBER</column>
+    <column name="[BAND]">Designates filter</column>
+    <column name="[FIELD]">Field identifier</column>
+    <column name="[X_IMAGE]" unit="pixel">Object position along x</column>
+    <column name="[Y_IMAGE]" unit="pixel">Object position along y</column>
+    <column name="[XPEAK_IMAGE]" unit="pixel">x-coordinate of the brightest pixel</column>
+    <column name="[YPEAK_IMAGE]" unit="pixel">y-coordinate of the brightest pixel</column>
+    <column name="[NUMBER]">Running object number</column>
+    <column name="[FLUX_ISO]" unit="count">Isophotal flux</column>
+    <column name="[FLUXERR_ISO]" unit="count">RMS error for isophotal flux</column>
+    <column name="[MAG_ISO]" unit="mag">Isophotal magnitude</column>
+    <column name="[MAGERR_ISO]" unit="mag">RMS error for isophotal magnitude</column>
+    <column name="[MAG_ISOCOR]" unit="mag">Corrected isophotal magnitude</column>
+    <column name="[MAGERR_ISOCOR]" unit="mag">RMS error for corrected isophotal magnitude</column>
+    <column name="[FLUX_APER_01]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_02]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_03]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_04]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_05]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_06]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_07]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_08]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_09]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_10]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_15]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUX_APER_20]" unit="count">Flux vector within fixed circular aperture(s)</column>
+    <column name="[FLUXERR_APER_01]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_02]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_03]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_04]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_05]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_06]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_07]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_08]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_09]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_10]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_15]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[FLUXERR_APER_20]" unit="count">RMS error vector for aperture flux(es)</column>
+    <column name="[MAG_APER_01]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_02]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_03]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_04]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_05]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_06]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_07]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_08]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_09]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_10]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_15]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAG_APER_20]" unit="mag">Fixed aperture magnitude vector</column>
+    <column name="[MAGERR_APER_01]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_02]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_03]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_04]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_05]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_06]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_07]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_08]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_09]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_10]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_15]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAGERR_APER_20]" unit="mag">RMS error vector for fixed aperture mag.</column>
+    <column name="[MAG_AUTO]" unit="mag">Kron-like elliptical aperture magnitude</column>
+    <column name="[MAGERR_AUTO]" unit="mag">RMS error for AUTO magnitude</column>
+    <column name="[KRON_RADIUS]">Kron apertures in units of A or B</column>
+    <column name="[BACKGROUND]" unit="count">Background at centroid position</column>
+    <column name="[THRESHOLD]" unit="count">Detection threshold above background</column>
+    <column name="[FLUX_MAX]" unit="count">Peak flux above background</column>
+    <column name="[ISOAREA_IMAGE]" unit="pixel**2">Isophotal area above Analysis threshold</column>
+    <column name="[RA]" unit="deg">Right ascension of barycenter (J2000)</column>
+    <column name="[DEC]" unit="deg">Declination of barycenter (J2000)</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+    <column name="[ALPHAPEAK_J2000]" unit="deg">Right ascension of brightest pix (J2000)</column>
+    <column name="[DELTAPEAK_J2000]" unit="deg">Declination of brightest pix (J2000)</column>
+    <column name="[X2_IMAGE]" unit="pixel**2">Variance along x</column>
+    <column name="[Y2_IMAGE]" unit="pixel**2">Variance along y</column>
+    <column name="[XY_IMAGE]" unit="pixel**2">Covariance between x and y</column>
+    <column name="[CXX_IMAGE]" unit="pixel**(-2)">Cxx object ellipse parameter</column>
+    <column name="[CYY_IMAGE]" unit="pixel**(-2)">Cyy object ellipse parameter</column>
+    <column name="[CXY_IMAGE]" unit="pixel**(-2)">Cxy object ellipse parameter</column>
+    <column name="[CXX_WORLD]" unit="deg**(-2)">Cxx object ellipse parameter (WORLD units)</column>
+    <column name="[CYY_WORLD]" unit="deg**(-2)">Cyy object ellipse parameter (WORLD units)</column>
+    <column name="[CXY_WORLD]" unit="deg**(-2)">Cxy object ellipse parameter (WORLD units)</column>
+    <column name="[A_IMAGE]" unit="pixel">Profile RMS along major axis</column>
+    <column name="[B_IMAGE]" unit="pixel">Profile RMS along minor axis</column>
+    <column name="[A_WORLD]" unit="deg">Profile RMS along major axis (world units)</column>
+    <column name="[B_WORLD]" unit="deg">Profile RMS along minor axis (world units)</column>
+    <column name="[THETA_IMAGE]" unit="deg">Position angle (CCW/x)</column>
+    <column name="[THETA_WORLD]" unit="deg">Position angle (CCW/world-x)</column>
+    <column name="[ELONGATION]">A_IMAGE/B_IMAGE</column>
+    <column name="[ELLIPTICITY]">1 - B_IMAGE/A_IMAGE</column>
+    <column name="[ERRX2_IMAGE]" unit="pixel**2">Variance of position along x</column>
+    <column name="[ERRY2_IMAGE]" unit="pixel**2">Variance of position along y</column>
+    <column name="[ERRXY_IMAGE]" unit="pixel**2">Covariance of position between x and y</column>
+    <column name="[ERRA_IMAGE]" unit="pixel">RMS position error along major axis</column>
+    <column name="[ERRB_IMAGE]" unit="pixel">RMS position error along minor axis</column>
+    <column name="[ERRTHETA_IMAGE]" unit="deg">Error ellipse position angle (CCW/x)</column>
+    <column name="[FWHM_IMAGE]" unit="pixel">FWHM assuming a gaussian core</column>
+    <column name="[FLAGS]">Extraction flags</column>
+    <column name="[IMAFLAGS_ISO]">FLAG-image flags OR'ed over the iso. profile</column>
+    <column name="[CLASS_STAR]">S/G classifier output</column>
+  </table>
+  <table name="[dbo].[Neighbors]">
+    <summary> All PhotoObjAll pairs within 2 arcseconds  </summary>
+    <remarks> SDSS objects within 2 arcsec and their match parameters stored here.   The two halves of the pair come from different bands. The first  half of the pair  </remarks>
+    <column name="[objID]" content="ID_CATALOG">The unique objId of the center object</column>
+    <column name="[neighborObjID]" content="ID_CATALOG">The objId of the neighbor</column>
+    <column name="[distance]" unit="arcmins" content="POS_ANG_DIST_GENERAL">Distance between center and neighbor</column>
+    <column name="[band]" content="CLASS_OBJECT">Filter band of the center</column>
+    <column name="[neighborBand]" content="CLASS_OBJECT">Filter band of the neighbor</column>
+  </table>
+</metadata>

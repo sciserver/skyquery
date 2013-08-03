@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2887F181-7F61-4DF5-BD89-2800503D5F84}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Jhu.SkyQuery</RootNamespace>
+    <AssemblyName>Jhu.SkyQuery</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Install\SkyQueryInstaller.cs" />
+    <Compile Include="Jobs\Query\AppSettings.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchScripts.Designer.cs">
+      <DependentUpon>BayesFactorXMatchScripts.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Jobs\Query\ComputeSearchRadius.cs" />
+    <Compile Include="Jobs\Query\CreateLinkTable.cs" />
+    <Compile Include="Jobs\Query\CreateMatchTable.cs" />
+    <Compile Include="Jobs\Query\CreatePairTable.cs" />
+    <Compile Include="Jobs\Query\CreateZoneDefTable.cs" />
+    <Compile Include="Jobs\Query\CreateZoneTable.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
+    <Compile Include="Jobs\Query\XMatchQuery.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryFactory.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
+    <Compile Include="Jobs\Query\XMatchScripts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XMatchScripts.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Activities\Jhu.Graywulf.Activities.csproj">
+      <Project>{57392DA3-E280-48EE-80C8-64E09FD8AFB5}</Project>
+      <Name>Jhu.Graywulf.Activities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Format\Jhu.Graywulf.Format.csproj">
+      <Project>{AAF4C238-C3A9-422F-BE3F-6FF10D9D0062}</Project>
+      <Name>Jhu.Graywulf.Format</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Install\Jhu.Graywulf.Install.csproj">
+      <Project>{AC357A2C-5388-4D7F-B1AF-C78D9BF8326C}</Project>
+      <Name>Jhu.Graywulf.Install</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
+      <Project>{6797ED88-1D8C-491B-A036-4C42C4BF2EAF}</Project>
+      <Name>Jhu.Graywulf.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
+      <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
+      <Name>Jhu.Graywulf.Jobs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.ParserLib\Jhu.Graywulf.ParserLib.csproj">
+      <Project>{4039B7D0-F8E5-49D8-A770-133DBED2EA75}</Project>
+      <Name>Jhu.Graywulf.ParserLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry.Enum\Jhu.Graywulf.Registry.Enum.csproj">
+      <Project>{71599792-21CC-4E63-AFB5-2AFBDB3DF418}</Project>
+      <Name>Jhu.Graywulf.Registry.Enum</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry\Jhu.Graywulf.Registry.csproj">
+      <Project>{59BFB28B-3F97-4714-B8D7-A1B40F668831}</Project>
+      <Name>Jhu.Graywulf.Registry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.RemoteService\Jhu.Graywulf.RemoteService.csproj">
+      <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
+      <Name>Jhu.Graywulf.RemoteService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
+      <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
+      <Name>Jhu.Graywulf.Schema</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.SqlParser\Jhu.Graywulf.SqlParser.csproj">
+      <Project>{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}</Project>
+      <Name>Jhu.Graywulf.SqlParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
+      <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
+      <Name>Jhu.SkyQuery.Parser</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <XamlAppdef Include="Jobs\Query\XMatchQueryJob.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppdef>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\BuildMatchTableIndex.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\ComputeRSquared.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\CreateMatchTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\CreateZoneTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateLinkTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateMatchTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulatePairTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateZoneTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Jobs\Query\BayesFactorXMatchScripts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Jobs\Query\XMatchScripts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XMatchScripts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\XMatchResources\CreateLinkTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\XMatchResources\CreatePairTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\XMatchResources\CreateZoneDefTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\XMatchResources\PopulateZoneDefTable.sql" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)Jhu.SkyQuery.dll $(SolutionDir)$(OutDir)
+copy $(TargetDir)Jhu.SkyQuery.pdb $(SolutionDir)$(OutDir)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

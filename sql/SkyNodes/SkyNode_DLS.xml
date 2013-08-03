@@ -1,0 +1,101 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary> The main PhotoObj table for the Deep Lens Survey catalog </summary>
+    <remarks> The main PhotoObj table for the DLS catalog </remarks>
+    <column name="[objid]">primary key</column>
+    <column name="[ra]" unit="deg">master right ascension</column>
+    <column name="[dec]" unit="deg">master declination</column>
+    <column name="[band]">master coordinate origin</column>
+    <column name="[AlphaB]" unit="deg">RA in B</column>
+    <column name="[DeltaB]" unit="deg">DEC in B</column>
+    <column name="[XB]" unit="pix">position on CCD in B</column>
+    <column name="[YB]" unit="pix">position on CCD in B</column>
+    <column name="[AB]" unit="pix">Semi-major axis in B</column>
+    <column name="[BB]" unit="pix">Semi-minor axis in B</column>
+    <column name="[THETAB]" unit="deg">Position angle</column>
+    <column name="[FLAGSB]">Flags from Sextractor</column>
+    <column name="[MAG_APERB]" unit="mag">Aperture magnitude in B</column>
+    <column name="[MAGERR_APERB]" unit="mag">error in aperture magnitude in B</column>
+    <column name="[MAGB]" unit="mag">Best magnitude in B</column>
+    <column name="[MAGERRB]" unit="mag">Error in best magnitude in B</column>
+    <column name="[MAG_ISOB]" unit="mag">Isophotal magnitude in B</column>
+    <column name="[MAGERR_ISOB]" unit="mag">Error in isophotal magnitude in B</column>
+    <column name="[ISOAREAB]" unit="pix^2">Isophotal area</column>
+    <column name="[CLASS_STARB]">Fuzzy classifier</column>
+    <column name="[AlphaV]" unit="deg">RA in V</column>
+    <column name="[DeltaV]" unit="deg">DEC in V</column>
+    <column name="[XV]" unit="pix">position on CCD in V</column>
+    <column name="[YV]" unit="pix">position on CCD in V</column>
+    <column name="[AV]" unit="pix">Semi-major axis in V</column>
+    <column name="[BV]" unit="pix">Semi-minor axis in V</column>
+    <column name="[THETAV]" unit="deg">Position angle in V</column>
+    <column name="[FLAGSV]">Flags from Sextractor</column>
+    <column name="[MAG_APERV]" unit="mag">Aperture magnitude in V</column>
+    <column name="[MAGERR_APERV]" unit="mag">error in aperture magnitude in V</column>
+    <column name="[MAGV]" unit="mag">Best magnitude in V</column>
+    <column name="[MAGERRV]" unit="mag">Error in best magnitude in V</column>
+    <column name="[MAG_ISOV]" unit="mag">Isophotal magnitude in V</column>
+    <column name="[MAGERR_ISOV]" unit="mag">Error in isophotal magnitude in V</column>
+    <column name="[ISOAREAV]" unit="pix^2">Isophotal area</column>
+    <column name="[CLASS_STARV]">Fuzzy classifier</column>
+    <column name="[AlphaR]" unit="deg">RA in R</column>
+    <column name="[DeltaR]" unit="deg">DEC in R</column>
+    <column name="[XR]" unit="pix">position on CCD in R</column>
+    <column name="[YR]" unit="pix">position on CCD in R</column>
+    <column name="[AR]" unit="pix">Semi-major axis in R</column>
+    <column name="[BR]" unit="pix">Semi-minor axis in R</column>
+    <column name="[THETAR]" unit="deg">Position angle in R</column>
+    <column name="[FLAGSR]">Flags from Sextractor</column>
+    <column name="[MAG_APERR]" unit="mag">Aperture magnitude in R</column>
+    <column name="[MAGERR_APERR]" unit="mag">error in aperture magnitude in R</column>
+    <column name="[MAGR]" unit="mag">Best magnitude in R</column>
+    <column name="[MAGERRR]" unit="mag">Error in best magnitude in R</column>
+    <column name="[MAG_ISOR]" unit="mag">Isophotal magnitude in R</column>
+    <column name="[MAGERR_ISOR]" unit="mag">Error in isophotal magnitude in R</column>
+    <column name="[ISOAREAR]" unit="pix^2">Isophotal area</column>
+    <column name="[CLASS_STARR]">Fuzzy classifier</column>
+    <column name="[Alphaz]" unit="deg">RA in z</column>
+    <column name="[Deltaz]" unit="deg">DEC in z</column>
+    <column name="[Xz]" unit="pix">position on CCD in z</column>
+    <column name="[Yz]" unit="pix">position on CCD in z</column>
+    <column name="[Az]" unit="pix">Semi-major axis in z</column>
+    <column name="[Bz]" unit="pix">Semi-minor axis in z</column>
+    <column name="[THETAz]" unit="deg">Position angle in z</column>
+    <column name="[FLAGSz]">Flags from Sextractor</column>
+    <column name="[MAG_APERz]" unit="mag">Aperture magnitude in z</column>
+    <column name="[MAGERR_APERz]" unit="mag">error in aperture magnitude in z</column>
+    <column name="[MAGz]" unit="mag">Best magnitude in z</column>
+    <column name="[MAGERRz]" unit="mag">Error in best magnitude in z</column>
+    <column name="[MAG_ISOz]" unit="mag">Isophotal magnitude in z</column>
+    <column name="[MAGERR_ISOz]" unit="mag">Error in isophotal magnitude in z</column>
+    <column name="[ISOAREAz]" unit="pix^2">Isophotal area</column>
+    <column name="[CLASS_STARz]">Fuzzy classifier</column>
+    <column name="[htmid]">htmid for spatial searches</column>
+    <column name="[cx]">cartesian x coordinate</column>
+    <column name="[cy]">cartesian x coordinate</column>
+    <column name="[cz]">cartesian x coordinate</column>
+  </table>
+  <table name="[dbo].[Frame]">
+    <summary> Table to store precomputed JPEG images </summary>
+    <remarks> Images are stored with their WCS.   </remarks>
+    <column name="[fieldid]">unique identifier of the field</column>
+    <column name="[name]">field name</column>
+    <column name="[raCen]" unit="deg">ra of center</column>
+    <column name="[decCen]" unit="deg">dec of center</column>
+    <column name="[crpix1]" unit="pix">pixel location of center</column>
+    <column name="[crpix2]" unit="pix">pixel location of center</column>
+    <column name="[cd1_1]" unit="deg/pix">element of WCS CD matrix</column>
+    <column name="[cd1_2]" unit="deg/pix">element of WCS CD matrix</column>
+    <column name="[cd2_1]" unit="deg/pix">element of WCS CD matrix</column>
+    <column name="[cd2_2]" unit="deg/pix">element of WCS CD matrix</column>
+    <column name="[zoom]">log2 of zoom factor</column>
+    <column name="[width]" unit="pix">width of image</column>
+    <column name="[height]" unit="pix">height of image</column>
+    <column name="[scale]" unit="arcsec/pix">pixel scale</column>
+    <column name="[htmid]">htmid for spatial searches</column>
+    <column name="[cx]">cartesian x coordinate</column>
+    <column name="[cy]">cartesian x coordinate</column>
+    <column name="[cz]">cartesian x coordinate</column>
+    <column name="[img]">the binary blob of the image</column>
+  </table>
+</metadata>

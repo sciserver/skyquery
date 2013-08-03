@@ -1,0 +1,104 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>A view of the SpecObj table so SkyNode queries will work</summary>
+    <remarks>Using the FUSE SkyNode for cross-matching requires it to have a table named PhotoPrimary.  Even though FUSE data is spectroscopic data, a PhotoPrimary view of the main SpecObj table is defined for this purpose.</remarks>
+    <column name="[objID]">Unique ID of each object</column>
+    <column name="[TELESCOP]">
+    </column>
+    <column name="[ROOTNAME]">Rootname of the observation ppppttooeee</column>
+    <column name="[PRGRM_ID]">PROGRAM IDENTIFICATION</column>
+    <column name="[TARG_ID]">Target ID</column>
+    <column name="[PR_INV_L]"> Last name of principal investigator</column>
+    <column name="[PR_INV_R]"> First name of principal investigator </column>
+    <column name="[TARGNAME]">Target name on proposal</column>
+    <column name="[RA]" unit="deg">Right ascension of the target</column>
+    <column name="[DEC]" unit="deg">Declination of the target</column>
+    <column name="[APER_PA]" unit="deg">Position angle of Y axis</column>
+    <column name="[ELAT]" unit="deg">Ecliptic latitud</column>
+    <column name="[ELONG]" unit="deg">Ecliptic longitud</column>
+    <column name="[GLAT]" unit="deg">Galactic latitud</column>
+    <column name="[GLONG]" unit="deg">Galactic longitud</column>
+    <column name="[OBJCLASS]">Object class</column>
+    <column name="[SP_TYPE]"> MK spectral type and luminosity class </column>
+    <column name="[SRC_TYPE]">Point or Extended Continuum Emission</column>
+    <column name="[VMAG]">Target V magnitud</column>
+    <column name="[EBV]">Color excess</column>
+    <column name="[Z]">Redshift</column>
+    <column name="[HIGH_PM]">High proper motion target</column>
+    <column name="[MOV_TARG]">Fixed or Moving target</column>
+    <column name="[DATEOBS]">UT date of start of exposure yyyy-mm-dd</column>
+    <column name="[OBSSTART]">Exposure start time - Modified Julian Date</column>
+    <column name="[OBSEND]">Exposure end time - Modified Julian Date</column>
+    <column name="[OBSTIME]" unit="s"> Total time after screening </column>
+    <column name="[RAWTIME]" unit="s">Exposure duration of raw data file</column>
+    <column name="[OBSNIGHT]" unit="s">Night time after screening</column>
+    <column name="[INSTMODE]">Instrument mode TTAG or HIST</column>
+    <column name="[APERTURE]">Planned target aperture</column>
+    <column name="[CF_VERS]">CALFUSE pipeline version number</column>
+    <column name="[BANDWID]" unit="Angstroms">Bandwidth of the data</column>
+    <column name="[CENTRWV]" unit="Angstroms">Central wavelenght of the data</column>
+    <column name="[WAVEMIN]" unit="Angstroms">Minimun wavelenght of the data</column>
+    <column name="[WAVEMAX]" unit="Angstroms">Maximun wavelenght of the data</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+  </table>
+  <table name="[dbo].[SpecLine]">
+    <summary>The flux for each spectral line is in this table</summary>
+    <remarks>
+    </remarks>
+    <column name="[SpecObjID]">
+    </column>
+    <column name="[LineID]">Unique ID for each spectral line</column>
+    <column name="[WAVE]">Wavelength</column>
+    <column name="[FLUX]">Flux</column>
+    <column name="[ERROR]">Error</column>
+  </table>
+  <table name="[dbo].[SpecObj]">
+    <summary>The main table containing the astronomical data</summary>
+    <remarks>
+    </remarks>
+    <column name="[objID]">Unique ID of each object</column>
+    <column name="[TELESCOP]">
+    </column>
+    <column name="[ROOTNAME]">Rootname of the observation ppppttooeee</column>
+    <column name="[PRGRM_ID]">PROGRAM IDENTIFICATION</column>
+    <column name="[TARG_ID]">Target ID</column>
+    <column name="[PR_INV_L]"> Last name of principal investigator</column>
+    <column name="[PR_INV_R]"> First name of principal investigator </column>
+    <column name="[TARGNAME]">Target name on proposal</column>
+    <column name="[RA]" unit="deg">Right ascension of the target</column>
+    <column name="[DEC]" unit="deg">Declination of the target</column>
+    <column name="[APER_PA]" unit="deg">Position angle of Y axis</column>
+    <column name="[ELAT]" unit="deg">Ecliptic latitud</column>
+    <column name="[ELONG]" unit="deg">Ecliptic longitud</column>
+    <column name="[GLAT]" unit="deg">Galactic latitud</column>
+    <column name="[GLONG]" unit="deg">Galactic longitud</column>
+    <column name="[OBJCLASS]">Object class</column>
+    <column name="[SP_TYPE]"> MK spectral type and luminosity class </column>
+    <column name="[SRC_TYPE]">Point or Extended Continuum Emission</column>
+    <column name="[VMAG]">Target V magnitud</column>
+    <column name="[EBV]">Color excess</column>
+    <column name="[Z]">Redshift</column>
+    <column name="[HIGH_PM]">High proper motion target</column>
+    <column name="[MOV_TARG]">Fixed or Moving target</column>
+    <column name="[DATEOBS]">UT date of start of exposure yyyy-mm-dd</column>
+    <column name="[OBSSTART]">Exposure start time - Modified Julian Date</column>
+    <column name="[OBSEND]">Exposure end time - Modified Julian Date</column>
+    <column name="[OBSTIME]" unit="s"> Total time after screening </column>
+    <column name="[RAWTIME]" unit="s">Exposure duration of raw data file</column>
+    <column name="[OBSNIGHT]" unit="s">Night time after screening</column>
+    <column name="[INSTMODE]">Instrument mode TTAG or HIST</column>
+    <column name="[APERTURE]">Planned target aperture</column>
+    <column name="[CF_VERS]">CALFUSE pipeline version number</column>
+    <column name="[BANDWID]" unit="Angstroms">Bandwidth of the data</column>
+    <column name="[CENTRWV]" unit="Angstroms">Central wavelenght of the data</column>
+    <column name="[WAVEMIN]" unit="Angstroms">Minimun wavelenght of the data</column>
+    <column name="[WAVEMAX]" unit="Angstroms">Maximun wavelenght of the data</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+  </table>
+</metadata>

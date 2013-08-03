@@ -1,0 +1,24 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>The main PhotoObj table for the First catalog</summary>
+    <remarks>The main PhotoObj table for the First catalog</remarks>
+    <column name="[objID]">unique object identifier</column>
+    <column name="[ra]" unit="deg">J2000 right ascension</column>
+    <column name="[dec]" unit="deg">J2000 declination</column>
+    <column name="[w]">W warning flag</column>
+    <column name="[fpeak]" unit="mJy">peak flux density</column>
+    <column name="[fint]" unit="mJy">integrated flux density</column>
+    <column name="[rms]" unit="mJy">local rms noise estimate</column>
+    <column name="[maj]" unit="arcsec">major axis raw</column>
+    <column name="[min]" unit="arcsec">minor axis raw</column>
+    <column name="[pa]" unit="deg">position angle raw</column>
+    <column name="[fmaj]" unit="arcsec">major axis (fitted)</column>
+    <column name="[fmin]" unit="arcsec">minor axis (fitted)</column>
+    <column name="[fpa]" unit="deg">position angle (fitted)</column>
+    <column name="[fieldname]">name of the coadded image containing the source</column>
+    <column name="[htmid]">htmid for spatial searches</column>
+    <column name="[cx]">cartesian x coordinate</column>
+    <column name="[cy]">cartesian x coordinate</column>
+    <column name="[cz]">cartesian x coordinate</column>
+  </table>
+</metadata>

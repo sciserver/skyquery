@@ -1,0 +1,144 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>The main PhotoObj table for the PSCz catalog</summary>
+    <remarks>The main PhotoObj table for the PSCz catalog</remarks>
+    <column name="[objID]">unique object identifier</column>
+    <column name="[cname]">PSCz name e.g. Q12345+4856</column>
+    <column name="[ra]" unit="deg">J2000 right ascension</column>
+    <column name="[dec]" unit="deg">J2000 declination</column>
+    <column name="[flux_12]" unit="Jy">non-color corrected flux, 12 um</column>
+    <column name="[flux_25]" unit="Jy">non-color corrected flux, 25 um</column>
+    <column name="[flux_60]" unit="Jy">non-color corrected flux, 60 um</column>
+    <column name="[flux_100]" unit="Jy">non-color corrected flux, 100 um</column>
+    <column name="[iq_12]">Flux origin and quality flag, 12 um</column>
+    <column name="[iq_25]">Flux origin and quality flag, 25 um</column>
+    <column name="[iq_60]">Flux origin and quality flag, 60 um</column>
+    <column name="[iq_100]">Flux origin and quality flag, 100 um</column>
+    <column name="[ises_12]">SES flag, derived from SES2, 12 um</column>
+    <column name="[ises_25]">SES flag, derived from SES2, 25 um</column>
+    <column name="[ises_60]">SES flag, derived from SES2, 60 um</column>
+    <column name="[ises_100]">SES flag, derived from SES2, 100 um</column>
+    <column name="[iu_12]" unit="%">flux uncertainty (%), 12 um</column>
+    <column name="[iu_25]" unit="%">flux uncertainty (%), 25 um</column>
+    <column name="[iu_60]" unit="%">flux uncertainty (%), 60 um</column>
+    <column name="[iu_100]" unit="%">flux uncertainty (%), 100 um</column>
+    <column name="[mine]">Minor axe of 2 sig er ellipse</column>
+    <column name="[maje]">Major axe of 2 sig er ellipse,</column>
+    <column name="[ipose]">PA of 2 sig er ellipse</column>
+    <column name="[ic1]">CIRR1 flag</column>
+    <column name="[ic2]">CIRR2 flag</column>
+    <column name="[ic3]">CIRR3 flag</column>
+    <column name="[cc_12]">Correlation Coefficient, 12 um (NULL allowed)</column>
+    <column name="[cc_25]">Correlation Coefficient, 25 um (NULL allowed)</column>
+    <column name="[cc_60]">Correlation Coefficient, 60 um (NULL allowed)</column>
+    <column name="[cc_100]">Correlation Coefficient, 100 um (NULL allowed)</column>
+    <column name="[conf]">Confusion flag (NULL allowed)</column>
+    <column name="[cdisc]">Discrepant flux flag (NULL allowed)</column>
+    <column name="[chsd]">HSD flag (NULL allowed)</column>
+    <column name="[ipnearh]">Nearby confirmed sources</column>
+    <column name="[ipnearw]">Nearby confirmed sources</column>
+    <column name="[ises1_12]">nearby seconds confirmed extended sources, 12 um</column>
+    <column name="[ises1_25]">nearby seconds confirmed extended sources, 25 um</column>
+    <column name="[ises1_60]">nearby seconds confirmed extended sources, 60 um</column>
+    <column name="[ises1_100]">nearby seconds confirmed extended sources, 100 um</column>
+    <column name="[isnr3]">10* s/n at 60um</column>
+    <column name="[nhcon]">Number of HCONS with source detected</column>
+    <column name="[mhcon]">Number of HCONS covering sourc</column>
+    <column name="[ifcor3]">flux correction factor</column>
+    <column name="[cplate]">Plate number (POSS or SRC)</column>
+    <column name="[cnom]">Nominal plate centre</column>
+    <column name="[num]">Identifier for igal source on this plate</column>
+    <column name="[iarh]" unit="HH">RA hours of best optical id</column>
+    <column name="[iarm]" unit="MIN">RA mins of best optical id</column>
+    <column name="[iars]" unit="SEC">RA secs of best optical id INTEGER PART!</column>
+    <column name="[ars]" unit="SEC">RA secs of best optical id DECIMAL PART!</column>
+    <column name="[cadsn]">Dec SIGN (+ if NULL)</column>
+    <column name="[iadd]" unit="DEG">Dec DEG part of best optical id</column>
+    <column name="[iadm]" unit="MIN">Dec MINS part of best optical id</column>
+    <column name="[iads]" unit="SEC">Dec SEC INTEGER part of best optical id</column>
+    <column name="[ads]" unit="SEC">Dec SEC DECIMAL part of best optical id</column>
+    <column name="[iadx]" unit="arcsec">Delta X from IRAS posn</column>
+    <column name="[iady]" unit="arcsec">Delta Y from IRAS posn</column>
+    <column name="[alk]">log likelihood</column>
+    <column name="[irel]" unit="%">% chance this is right id</column>
+    <column name="[cand]">Candidate A,B etc (NULL allowed)</column>
+    <column name="[iopt]">Schmidt plate material</column>
+    <column name="[amag]" unit="mag">APM magnitude</column>
+    <column name="[iad1]" unit="arcsec">APM d1</column>
+    <column name="[iad2]" unit="arcsec">APM d2</column>
+    <column name="[iapa]">APM PA</column>
+    <column name="[amu]" unit="(mags/arcsecs^2)">surface brightness</column>
+    <column name="[idtype]">ID type</column>
+    <column name="[coname]">Optical name (NULL allowed)</column>
+    <column name="[amzw]" unit="mag">Zwicky/De Vauc magnitude</column>
+    <column name="[d1x]">RC3/UGC/MCG/ESO diameter (X for CATX)</column>
+    <column name="[iar]">100*(d25/D25)</column>
+    <column name="[ivhel]">Best heliocentric Vel from Literature or PSCz.</column>
+    <column name="[iverr]">Error</column>
+    <column name="[ivref]">Reference</column>
+    <column name="[ivhelp]">PSCz heliocentric Vel</column>
+    <column name="[iverrp]">Error</column>
+    <column name="[ivrefp]">Reference</column>
+    <column name="[it]">De Vauc Type, 99 = unknown</column>
+    <column name="[cpgc]">PGC name (NULL allowed)</column>
+    <column name="[rad]" unit="deg">RA (equinox B1950, degrees)</column>
+    <column name="[decd]" unit="deg">Dec (equinox B1950, degrees)</column>
+    <column name="[glon]" unit="deg">Galactic longitude</column>
+    <column name="[glat]" unit="deg">Galactic latitude</column>
+    <column name="[ivgal]">Velocity cz in LG frame (IVHEL + 300 sin(l) cos(b))</column>
+    <column name="[dist]">Distance (Rowan-Robinson 1988)</column>
+    <column name="[iclus]">Cluster id (Rowan-Robinson 1988)</column>
+    <column name="[ali4]">log10(100um background in MJy/sr), (see note)</column>
+    <column name="[ali4b]">log10(100um background in MJy/sr), (see note)</column>
+    <column name="[nlbin]">lune bin as from P2BIN</column>
+    <column name="[class]">optical classification (see note)</column>
+    <column name="[csec]">PSC-z sector, e.g. A/123</column>
+    <column name="[platex]" unit="mm">posn from bottom left corner of Schmidt plate in mm</column>
+    <column name="[platey]" unit="mm">posn from bottom left corner of Schmidt plate in mm</column>
+    <column name="[cstat]">optical material E,O,R,J,X,Polaroid,Scan (NULL allowed)</column>
+    <column name="[carea]">h=high|b|, p=other PSCz, l=low|b|, c=in coverage gaps (NULL allowed)</column>
+    <column name="[czstat]">Redshift status (see note)</column>
+    <column name="[c12class]">1.2Jy classification (NULL allowed)</column>
+    <column name="[f3psc]">Original PSC fluxes</column>
+    <column name="[f4psc]">Original PSC fluxes</column>
+    <column name="[abb]">Extinction A_B in lune bin derived from 100 um background, dust temp corrected (see note)</column>
+    <column name="[cpscz]">Source category (see note)</column>
+    <column name="[mhconb]">2/3 HCON sky, calculated on lune bin basis</column>
+    <column name="[cqdot]">q = in QDOT 1-in-6 sample (NULL allowed)</column>
+    <column name="[iw20]">HI (21cm) 20% vel width (see note)</column>
+    <column name="[iw20e]">error</column>
+    <column name="[iw50]">HI 50% vel width, codes as IW20</column>
+    <column name="[iw50e]">error</column>
+    <column name="[ihiref]">HI reference.</column>
+    <column name="[fp_12]">Addscan flux using point source template</column>
+    <column name="[fp_25]">Addscan flux using point source template</column>
+    <column name="[fp_60]">Addscan flux using point source template</column>
+    <column name="[fp_100]">Addscan flux using point source template</column>
+    <column name="[iep_12]" unit="mJy">Statistical error</column>
+    <column name="[iep_25]" unit="mJy">Statistical error</column>
+    <column name="[iep_60]" unit="mJy">Statistical error</column>
+    <column name="[iep_100]" unit="mJy">Statistical error</column>
+    <column name="[ibp_12]">1 for background fit, 0 for none (extended or bright)</column>
+    <column name="[ibp_25]">1 for background fit, 0 for none (extended or bright)</column>
+    <column name="[ibp_60]">1 for background fit, 0 for none (extended or bright)</column>
+    <column name="[ibp_100]">1 for background fit, 0 for none (extended or bright)</column>
+    <column name="[fe_12]">Rice or Yahil/Addscan flux for source with size given by WIDTH2</column>
+    <column name="[fe_25]">Rice or Yahil/Addscan flux for source with size given by WIDTH2</column>
+    <column name="[fe_60]">Rice or Yahil/Addscan flux for source with size given by WIDTH2</column>
+    <column name="[fe_100]">Rice or Yahil/Addscan flux for source with size given by WIDTH2</column>
+    <column name="[iee_12]" unit="mJy">Statistical error</column>
+    <column name="[iee_25]" unit="mJy">Statistical error</column>
+    <column name="[iee_60]" unit="mJy">Statistical error</column>
+    <column name="[iee_100]" unit="mJy">Statistical error</column>
+    <column name="[ibe_12]">1 for background fit, 0 for none (extended or bright), 2 = Rice</column>
+    <column name="[ibe_25]">1 for background fit, 0 for none (extended or bright), 2 = Rice</column>
+    <column name="[ibe_60]">1 for background fit, 0 for none (extended or bright), 2 = Rice</column>
+    <column name="[ibe_100]">1 for background fit, 0 for none (extended or bright), 2 = Rice</column>
+    <column name="[width2]" unit="arcmin^2">best fit width**2 at 60um</column>
+    <column name="[ewidth]">error on WIDTH2</column>
+    <column name="[cx]">Cartesian coordinate x</column>
+    <column name="[cy]">Cartesian coordinate y</column>
+    <column name="[cz]">Cartesian coordinate z</column>
+    <column name="[htmid]">Unique HTM ID</column>
+  </table>
+</metadata>

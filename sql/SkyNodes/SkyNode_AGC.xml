@@ -1,0 +1,35 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>Arecibo Galaxy Catalog</summary>
+    <remarks>Objects from the Arecibo Galaxy Catalog, which provide 
+ HI measurements of about 100,000 bright galaxies. Galaxy redshifts 
+ are in km/s</remarks>
+    <column name="[objid]">Unique object identifier</column>
+    <column name="[ra]" unit="deg">RA (J2000)</column>
+    <column name="[dec]" unit="deg">Dec (J2000)</column>
+    <column name="[cx]">Cartesian x</column>
+    <column name="[cy]">Cartesian y</column>
+    <column name="[cz]">Cartesian z</column>
+    <column name="[htmID]">the htmid of the object</column>
+    <column name="[a]" unit="arcmin">Major axis</column>
+    <column name="[b]" unit="arcmin">Major axis</column>
+    <column name="[Bmag]" unit="mag">B magnitude</column>
+    <column name="[angle]" unit="deg">Position angle</column>
+    <column name="[type]">Morphological type</column>
+    <column name="[btype]">Burstein morph type (enum)</column>
+    <column name="[velocity]" unit="km/s">Optical velocity</column>
+    <column name="[velocityError]" unit="km/s">Error of optical velocity</column>
+    <column name="[objname]">Object name</column>
+    <column name="[fluxHI]" unit="Jy*km/s">HI flux</column>
+    <column name="[fluxHInoise]" unit="Jy*km/s">Noise HI rms</column>
+    <column name="[centerVelocity]" unit="km/s">HI center velocity</column>
+    <column name="[velocityWidth]" unit="km/s">Velocity width</column>
+    <column name="[velocityWidthError]" unit="km/s">Error of velocity width</column>
+    <column name="[telescopeCode]">Telescope code</column>
+    <column name="[HIdetectionCode]">HI detection code</column>
+    <column name="[HIsnr]">HI signal-to-noise ratio</column>
+    <column name="[IbandQ]">I band quality index</column>
+    <column name="[RC3flag]">Indicator of galaxy is part of RC3 catalog</column>
+    <column name="[IrotCat]">Flag for rotation curve database</column>
+  </table>
+</metadata>

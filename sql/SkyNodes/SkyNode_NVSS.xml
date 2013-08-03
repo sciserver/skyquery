@@ -1,0 +1,32 @@
+<metadata>
+  <table name="[dbo].[PhotoObj]">
+    <summary>The main PhotoObj table for the NVSS catalog</summary>
+    <remarks>The main PhotoObj table for the NVSS catalog</remarks>
+    <column name="[objID]">unique object identifier</column>
+    <column name="[ra]" unit="deg">J2000 right ascension</column>
+    <column name="[raErr]" unit="deg">Estimate of J2000 right ascension standard deviation</column>
+    <column name="[dec]" unit="deg">J2000 declination</column>
+    <column name="[decErr]" unit="deg">Estimate of J2000 declination standard deviation</column>
+    <column name="[flux]" unit="mJy">Strength of the source</column>
+    <column name="[fluxErr]" unit="mJy">Standard deviation estimate of the flux</column>
+    <column name="[major]">Major axis size of the source</column>
+    <column name="[majorErr]">Estimated standard deviation of the major axis size (nulls allowed)</column>
+    <column name="[minor]">Minor axis size of the source</column>
+    <column name="[minorErr]">Estimated standard deviation of the minor axis size (nulls allowed)</column>
+    <column name="[pa]" unit="deg">Orientation of the major axis on the sky (from N through E) (nulls allowed)</column>
+    <column name="[paErr]" unit="deg">Standard deviation estimate of Pa</column>
+    <column name="[res]">Code indicating structure more complex than can be fitted by the Gaussian model(P=peak, R=RMS, S=integrated) (nulls allowed)</column>
+    <column name="[resOff]" unit="100s of mJy">offending value (nulls allowed)</column>
+    <column name="[p_flux]" unit="mJy">Integrated linearly polarized flux density (nulls allowed)</column>
+    <column name="[p_fluxErr]" unit="mJy">Standard deviation estimate of the integrated linearly polarized flux density (nulls allowed)</column>
+    <column name="[p_ang]" unit="deg">Position angle of the "E" vectors on the sky if the source was detected in linear polarization (nulls allowed)</column>
+    <column name="[p_angErr]" unit="deg">Standard deviation estimate of p_ang (nulls allowed)</column>
+    <column name="[field]">Name of the original survey image field</column>
+    <column name="[x_pix]">X(Ra) pixel numbers of the center of the component</column>
+    <column name="[y_pix]">Y(Dec) pixel numbers of the center of the component</column>
+    <column name="[htmid]">htmid for spatial searches</column>
+    <column name="[cx]">cartesian x coordinate</column>
+    <column name="[cy]">cartesian x coordinate</column>
+    <column name="[cz]">cartesian x coordinate</column>
+  </table>
+</metadata>
