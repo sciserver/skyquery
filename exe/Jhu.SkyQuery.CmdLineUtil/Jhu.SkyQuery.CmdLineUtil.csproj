@@ -103,6 +103,10 @@
       <Project>{48DED106-FDAF-4310-AC05-37DB1A315711}</Project>
       <Name>Jhu.Graywulf.CommandLineParser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry.Enum\Jhu.Graywulf.Registry.Enum.csproj">
+      <Project>{71599792-21CC-4E63-AFB5-2AFBDB3DF418}</Project>
+      <Name>Jhu.Graywulf.Registry.Enum</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry\Jhu.Graywulf.Registry.csproj">
       <Project>{59BFB28B-3F97-4714-B8D7-A1B40F668831}</Project>
       <Name>Jhu.Graywulf.Registry</Name>
@@ -112,9 +116,12 @@
       <Name>Jhu.SkyQuery</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="App.original.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>copy "$(SolutionDir)Config\App.config" "$(TargetPath).config"</PreBuildEvent>
+    <PreBuildEvent>$(ProjectDir)..\..\..\Graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj $(ProjectName)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

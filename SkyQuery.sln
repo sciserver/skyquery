@@ -116,7 +116,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "voservices.net", "voservices.net", "{078A5A50-2832-4A6E-BDB2-866E750E7817}"
 	ProjectSection(SolutionItems) = preProject
 		config\voservices.net\activities.config = config\voservices.net\activities.config
-		config\voservices.net\App.config = config\voservices.net\App.config
 		config\voservices.net\cluster.config = config\voservices.net\cluster.config
 		config\voservices.net\connectionStrings.config = config\voservices.net\connectionStrings.config
 		config\voservices.net\domain.config = config\voservices.net\domain.config

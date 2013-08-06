@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<config root="Config\Default">
+<config root="Config\voservices.net">
   <projects>
-    <project name="Jhu.Graywulf.Web.Admin" path="..\Graywulf\Exe\Jhu.Graywulf.Web.Admin" type="web">
+    <project name="Jhu.Graywulf.Web.Admin" path="..\Graywulf\Web\Jhu.Graywulf.Web.Admin" type="web">
       <merge file="connectionStrings.config" />
       <merge file="activities.config" />
       <merge file="remoteService.config" />
     </project>
-    <project name="Jhu.Graywulf.Web.Auth" path="..\Graywulf\Exe\Jhu.Graywulf.Web.Auth" type="web">
+    <project name="Jhu.Graywulf.Web.Auth" path="..\Graywulf\Web\Jhu.Graywulf.Web.Auth" type="web">
       <merge file="connectionStrings.config" />
       <merge file="mailSettings.config" />
       <merge file="cluster.config" />
       <merge file="domain.config" />
       <merge file="web.config" />
     </project>
-    <project name="Jhu.Graywulf.Web.UI" path="..\Graywulf\Exe\Jhu.Graywulf.Web.UI" type="web">
+    <project name="Jhu.Graywulf.Web.UI" path="..\Graywulf\Web\Jhu.Graywulf.Web.UI" type="web">
       <merge file="connectionStrings.config" />
       <merge file="mailSettings.config" />
       <merge file="cluster.config" />
@@ -95,6 +95,9 @@
       <merge file="activities.config" />
       <merge file="scheduler.config" />
       <merge file="remoteService.config" />
+    </project>
+    <project name="Jhu.SkyQuery.CmdLineUtil" path="..\SkyQuery\Exe\Jhu.SkyQuery.CmdLineUtil" type="console">
+      <merge file="connectionStrings.config" />
     </project>
     <project name="Jhu.SkyQuery.Install.CmdLineUtil" path="..\SkyQuery\Exe\Jhu.SkyQuery.Install.CmdLineUtil" type="console">
       <merge file="connectionStrings.config" />

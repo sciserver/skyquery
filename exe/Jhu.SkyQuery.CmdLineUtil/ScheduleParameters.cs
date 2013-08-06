@@ -5,8 +5,7 @@ using System.Text;
 using System.Configuration;
 using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Registry;
-using Jhu.SkyQuery.Lib;
-using Jhu.SkyQuery.Schema;
+using Jhu.SkyQuery;
 
 namespace Jhu.SkyQuery.CmdLineUtil
 {
