@@ -154,6 +154,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.Parser.Test", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.Test", "test\Jhu.SkyQuery.Test\Jhu.SkyQuery.Test.csproj", "{4F27F7FE-7C79-4584-867E-EF17B017F4DB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev.voservices.net", "dev.voservices.net", "{4349441F-9512-4D9D-A045-120E8CFEE430}"
+	ProjectSection(SolutionItems) = preProject
+		config\dev.voservices.net\activities.config = config\dev.voservices.net\activities.config
+		config\dev.voservices.net\cluster.config = config\dev.voservices.net\cluster.config
+		config\dev.voservices.net\connectionStrings.config = config\dev.voservices.net\connectionStrings.config
+		config\dev.voservices.net\domain.config = config\dev.voservices.net\domain.config
+		config\dev.voservices.net\federation.config = config\dev.voservices.net\federation.config
+		config\dev.voservices.net\mailSettings.config = config\dev.voservices.net\mailSettings.config
+		config\dev.voservices.net\remoteService.config = config\dev.voservices.net\remoteService.config
+		config\dev.voservices.net\scheduler.config = config\dev.voservices.net\scheduler.config
+		config\dev.voservices.net\web.config = config\dev.voservices.net\web.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Graywulf.vsmdi
@@ -251,7 +264,6 @@ Global
 		{59BFB28B-3F97-4714-B8D7-A1B40F668831}.Release|x86.ActiveCfg = Release|Any CPU
 		{71599792-21CC-4E63-AFB5-2AFBDB3DF418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71599792-21CC-4E63-AFB5-2AFBDB3DF418}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{71599792-21CC-4E63-AFB5-2AFBDB3DF418}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{71599792-21CC-4E63-AFB5-2AFBDB3DF418}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{71599792-21CC-4E63-AFB5-2AFBDB3DF418}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71599792-21CC-4E63-AFB5-2AFBDB3DF418}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -449,7 +461,6 @@ Global
 		{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}.Release|x86.ActiveCfg = Release|Any CPU
 		{10036FFB-1ADE-4B0D-9249-0A5971F1F983}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{10036FFB-1ADE-4B0D-9249-0A5971F1F983}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{10036FFB-1ADE-4B0D-9249-0A5971F1F983}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{10036FFB-1ADE-4B0D-9249-0A5971F1F983}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{10036FFB-1ADE-4B0D-9249-0A5971F1F983}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10036FFB-1ADE-4B0D-9249-0A5971F1F983}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -496,6 +507,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{30859602-EBCE-4886-BE45-444EA42EEB76} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
 		{078A5A50-2832-4A6E-BDB2-866E750E7817} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
+		{4349441F-9512-4D9D-A045-120E8CFEE430} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
 		{8FA54973-7055-4E53-9BE2-9326DB062BEE} = {2C0C403F-4604-4DA8-8A2E-C593288D5D57}
 		{2939F058-FEE3-4142-BF45-8672DCFD4C11} = {2C0C403F-4604-4DA8-8A2E-C593288D5D57}
 		{4F1895F8-526E-4F3B-868F-580C86D3EFAD} = {2C0C403F-4604-4DA8-8A2E-C593288D5D57}

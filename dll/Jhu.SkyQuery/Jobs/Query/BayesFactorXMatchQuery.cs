@@ -166,7 +166,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                     qp.ID = Partitions.Count;
                     qp.GenerateSteps(tables);
 
-                    qp.PartitioningKeyTo = stat.KeyValue[(i + 1) * s];
+                    // *** TODO: verify bounds
+                    qp.PartitioningKeyTo = stat.KeyValue[Math.Min((i + 1) * s, stat.KeyValue.Count -1)];
                     if (i == 0)
                     {
                         qp.PartitioningKeyFrom = double.NegativeInfinity;

@@ -562,14 +562,16 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         private void PopulateZoneTable(XMatchQueryStep step)
         {
-            XMatchTableSpecification table = xmatchTables[step.XMatchTable];
+            var table = xmatchTables[step.XMatchTable];
 
-            string zonetablename = GetZoneTableName(table);
-            string zonedeftablename = GetZoneDefTableName(step.StepNumber);
+            // Check if table is remote and cached locally
+            var tablename = SubstituteRemoteTableName(table.TableReference);
+            var zonetablename = GetZoneTableName(table);
+            var zonedeftablename = GetZoneDefTableName(step.StepNumber);
 
             // --- Build SQL query
 
-            StringBuilder sql = new StringBuilder(GetPopulateZoneTableScript(table));
+            var sql = new StringBuilder(GetPopulateZoneTableScript(table));
             sql.Replace("[$ra]", table.Position.RA);
             sql.Replace("[$dec]", table.Position.Dec);
             sql.Replace("[$cx]", table.Position.Cx);
@@ -577,13 +579,13 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$cz]", table.Position.Cz);
             sql.Replace("[$zonetablename]", String.Format("[{0}].[{1}]", Query.TemporarySchemaName, zonetablename));
             sql.Replace("[$zonedeftable]", String.Format("[{0}].[{1}]", Query.TemporarySchemaName, zonedeftablename));
-            sql.Replace("[$tablename]", table.TableReference.GetFullyResolvedName());
+            sql.Replace("[$tablename]", tablename);
             sql.Replace("[$tablealias]", table.TableReference.Alias);
             sql.Replace("[$columnlist]", GetPropagatedColumnList(table, ColumnListType.ForSelectWithOriginalName, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
             sql.Replace("[$columnlist2]", GetPropagatedColumnList(table, ColumnListType.ForInsert, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
             sql.Replace("[$where]", GetPartitioningKeyWhereClause(table, GetBufferZoneSize(step)));
 
-            using (SqlCommand cmd = new SqlCommand(sql.ToString()))
+            using (var cmd = new SqlCommand(sql.ToString()))
             {
                 cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
 
@@ -791,7 +793,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         private void PopulateInitialMatchTable(XMatchQueryStep step)
         {
-            string tablename = GetMatchTableName(step.StepNumber);
+            var table = xmatchTables[step.XMatchTable];
+
+            var tablename = SubstituteRemoteTableName(table.TableReference);
+            var newtablename = QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber));
 
             ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
 
@@ -801,7 +806,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 XMatchTableSpecification sxt = xmatchTables[step.XMatchTable];
 
-                sql.Replace("[$newtablename]", QuoteSchemaAndTableName(tablename));
+                sql.Replace("[$newtablename]", newtablename);
                 sql.Replace("[$tablename]", sxt.TableReference.GetFullyResolvedName());
                 sql.Replace("[$tablealias]", sxt.TableReference.Alias);
 
@@ -847,15 +852,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="step">Reference to the XMatch step.</param>
         private void PopulateMatchTable(XMatchQueryStep step)
         {
-            string newtablename = GetMatchTableName(step.StepNumber);
-            string schemaname = Query.TemporarySchemaName;
+            var table = xmatchTables[step.XMatchTable];
 
-            ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
+            var tablename = SubstituteRemoteTableName(table.TableReference);
+            var newtablename = GetMatchTableName(step.StepNumber);
+            var schemaname = Query.TemporarySchemaName;
+
+            var include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
 
             // --- Propagated columns
             // Gather all columns from previous steps
-            StringBuilder insertcolumnlist = new StringBuilder();
-            StringBuilder selectcolumnlist = new StringBuilder();
+            var insertcolumnlist = new StringBuilder();
+            var selectcolumnlist = new StringBuilder();
             for (int i = 0; i <= step.StepNumber; i++)
             {
                 if (xmatchTables[steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
@@ -866,8 +874,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                         selectcolumnlist.Append(", ");
                     }
 
-                    string tablealias = (i < step.StepNumber) ? "tableA" : "tableB";
-                    ColumnListType listtype = (i < step.StepNumber) ? ColumnListType.ForSelectNoAlias : ColumnListType.ForSelectWithOriginalName;
+                    var tablealias = (i < step.StepNumber) ? "tableA" : "tableB";
+                    var listtype = (i < step.StepNumber) ? ColumnListType.ForSelectNoAlias : ColumnListType.ForSelectWithOriginalName;
 
                     // ForSelectNoalias -> ForInsert
                     insertcolumnlist.Append(GetPropagatedColumnList(xmatchTables[steps[i].XMatchTable], ColumnListType.ForSelectNoAlias, include, ColumnListNullType.Nothing, null));
@@ -876,7 +884,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // --- Zone table join conditions
-            StringBuilder join = new StringBuilder();
+            var join = new StringBuilder();
 
             // *** TODO:
             // unique keys can be figured out by calling DataReader.GetSchemaTable and
@@ -886,18 +894,20 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new NotImplementedException("Only tables are supported in xmatch queries.");
             }
 
-            Table t = (Table)xmatchTables[step.XMatchTable].TableReference.DatabaseObject;
+            var t = (Table)xmatchTables[step.XMatchTable].TableReference.DatabaseObject;
 
-            foreach (Column c in t.PrimaryKey.Columns.Values)
+            foreach (var c in t.PrimaryKey.Columns.Values)
             {
                 join.AppendLine(String.Format("[tableB].[{1}] = [pairtable].[{0}]",
                                               GetEscapedPropagatedColumnName(xmatchTables[step.XMatchTable].TableReference, c.Name),
                                               c.Name));
             }
 
-            using (SqlCommand cmd = new SqlCommand())
+            //
+
+            using (var cmd = new SqlCommand())
             {
-                StringBuilder sql = new StringBuilder(GetPopulateMatchTableScript(step, cmd));
+                var sql = new StringBuilder(GetPopulateMatchTableScript(step, cmd));
 
                 sql.Replace("[$newtablename]", QuoteSchemaAndTableName(newtablename));     // new match table
                 sql.Replace("[$insertcolumnlist]", insertcolumnlist.ToString());
@@ -906,7 +916,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$pairtable]", QuoteSchemaAndTableName(GetPairTableName(step.StepNumber)));
                 sql.Replace("[$matchtable]", QuoteSchemaAndTableName((GetMatchTableName(step.StepNumber - 1))));        // tableA (old match table)
                 sql.Replace("[$matchidcolumn]", String.Format("PK_Match_{0}_MatchID", step.StepNumber - 1));
-                sql.Replace("[$table]", xmatchTables[step.XMatchTable].TableReference.GetFullyResolvedName());        // tableB (source table)
+                sql.Replace("[$table]", tablename);        // tableB (source table)
                 sql.Replace("[$tablejoinconditions]", join.ToString());
 
                 cmd.CommandText = sql.ToString();
@@ -939,6 +949,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     cr.ColumnName = GetEscapedPropagatedColumnName(cr.TableReference, cr.ColumnName);
                 }
 
+                // *** TODO: delete
                 /*if (cr.TableReference != null && cr.TableReference.IsComputed)
                 {
                     // In case of a computed table (typically xmatch results table)

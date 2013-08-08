@@ -378,5 +378,64 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
             }
         }
+
+        [TestMethod]
+        public void MyDBMatchQueryTest()
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+
+                var sql =
+@"SELECT m.ra, m.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:PhotoObjAll AS s
+CROSS JOIN MyCatalog m
+XMATCH BAYESFACTOR x
+MUST EXIST s ON POINT(s.ra, s.dec), s.raErr, 0.05, 0.1
+MUST EXIST m ON POINT(m.ra, m.dec), 0.2
+HAVING LIMIT 1e3
+WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5
+";
+
+                var guid = ScheduleQueryJob(
+                    sql.Replace("[$targettable]", "XMatchQueryTest_MyDBMatchQueryTest"),
+                    QueueType.Long);
+
+                WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                var ji = LoadJob(guid);
+                Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+            }
+        }
+
+        [TestMethod]
+        public void MyDBSelfXMatchQueryTest()
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+
+                var sql =
+@"SELECT m.ra, m.dec, x.ra, x.dec
+INTO [$targettable]
+FROM MyCatalog AS s
+CROSS JOIN MyCatalog m
+XMATCH BAYESFACTOR x
+MUST EXIST s ON POINT(s.ra, s.dec), 0.3
+MUST EXIST m ON POINT(m.ra, m.dec), 0.2
+HAVING LIMIT 1e3
+";
+
+                var guid = ScheduleQueryJob(
+                    sql.Replace("[$targettable]", "XMatchQueryTest_MyDBSelfXMatchQueryTest"),
+                    QueueType.Long);
+
+                WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                var ji = LoadJob(guid);
+                Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+            }
+        }
     }
 }
