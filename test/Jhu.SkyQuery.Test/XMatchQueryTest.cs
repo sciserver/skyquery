@@ -420,7 +420,7 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5
 @"SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
 FROM MyCatalog AS s
-CROSS JOIN MyCatalog m
+CROSS JOIN MyCatalog2 m
 XMATCH BAYESFACTOR x
 MUST EXIST s ON POINT(s.ra, s.dec), 0.3
 MUST EXIST m ON POINT(m.ra, m.dec), 0.2
