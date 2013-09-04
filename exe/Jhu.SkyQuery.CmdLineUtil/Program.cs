@@ -12,9 +12,6 @@ using System.Xml.Serialization;
 using System.Data;
 using System.Data.SqlClient;
 using Jhu.SkyQuery.Parser;
-using Jhu.SkyQuery.Parser.NameResolver;
-using Jhu.SkyQuery.Schema;
-using Jhu.SkyQuery.Lib;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.CommandLineParser;
 
@@ -24,13 +21,16 @@ namespace Jhu.SkyQuery.CmdLineUtil
     {
         static void Main(string[] args)
         {
-            List<Type> verbs = new List<Type>() { typeof(RunParameters), typeof(ScheduleParameters) };            
-            Parameters par = null;
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+            List<Type> verbs = new List<Type>() { typeof(Query) };
+
+            Verb v = null;
 
             try
             {
                 PrintHeader();
-                par = (Parameters)ArgumentParser.Parse(args, verbs);
+                v = (Verb)ArgumentParser.Parse(args, verbs);
             }
             catch (ArgumentParserException ex)
             {
@@ -40,9 +40,9 @@ namespace Jhu.SkyQuery.CmdLineUtil
                 ArgumentParser.PrintUsage(verbs, Console.Out);
             }
 
-            if (par != null)
+            if (v != null)
             {
-                par.Run();
+                v.Run();
             }
         }
 

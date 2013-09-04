@@ -88,20 +88,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enum.cs" />
     <Compile Include="Program.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Parameters.cs" />
-    <Compile Include="RunParameters.cs" />
-    <Compile Include="ScheduleParameters.cs" />
-    <Compile Include="WorkflowHost.cs" />
+    <Compile Include="Query.cs" />
+    <Compile Include="Verb.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Activities\Jhu.Graywulf.Activities.csproj">
+      <Project>{57392DA3-E280-48EE-80C8-64E09FD8AFB5}</Project>
+      <Name>Jhu.Graywulf.Activities</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.CommandLineParser\Jhu.Graywulf.CommandLineParser.csproj">
       <Project>{48DED106-FDAF-4310-AC05-37DB1A315711}</Project>
       <Name>Jhu.Graywulf.CommandLineParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
+      <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
+      <Name>Jhu.Graywulf.Jobs</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry.Enum\Jhu.Graywulf.Registry.Enum.csproj">
       <Project>{71599792-21CC-4E63-AFB5-2AFBDB3DF418}</Project>
@@ -111,12 +116,25 @@
       <Project>{59BFB28B-3F97-4714-B8D7-A1B40F668831}</Project>
       <Name>Jhu.Graywulf.Registry</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.RemoteService\Jhu.Graywulf.RemoteService.csproj">
+      <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
+      <Name>Jhu.Graywulf.RemoteService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.SqlParser\Jhu.Graywulf.SqlParser.csproj">
+      <Project>{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}</Project>
+      <Name>Jhu.Graywulf.SqlParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
+      <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
+      <Name>Jhu.SkyQuery.Parser</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
       <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
       <Name>Jhu.SkyQuery</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="App.original.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

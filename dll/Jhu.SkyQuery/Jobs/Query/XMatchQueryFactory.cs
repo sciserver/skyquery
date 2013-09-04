@@ -91,5 +91,19 @@ namespace Jhu.SkyQuery.Jobs.Query
                 return job;
             }
         }
+
+        public override System.Activities.Activity GetAsWorkflow(QueryBase query)
+        {
+            if (!(query is XMatchQuery))
+            {
+                return base.GetAsWorkflow(query);
+            }
+            else
+            {
+                var wf = new XMatchQueryJob();
+                SetWorkflowParameters(wf, query);
+                return wf;
+            }
+        }
     }
 }
