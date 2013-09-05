@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using gw = Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Activities;
 using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.SqlParser;
 using Jhu.Graywulf.SqlParser.SqlCodeGen;
@@ -27,7 +28,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #region Constructors and initializer functions
 
         public BayesFactorXMatchQueryPartition()
-            :base()
+            : base()
         {
             InitializeMembers(new StreamingContext());
         }
@@ -108,10 +109,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     CalculateSums(step, cmd);
 
-                    sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber - 1)));
-                    sql.Replace("[$tablename]", QuoteSchemaAndTableName(GetLinkTableName(step.StepNumber)));        // new table name
-                    sql.Replace("[$zonetable1]", QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                    sql.Replace("[$zonetable2]", QuoteSchemaAndTableName(GetZoneTableName(xmatchTables[step.XMatchTable])));
+                    sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));
+                    sql.Replace("[$tablename]", QuoteSchemaAndTableName(GetLinkTable(step.StepNumber)));        // new table name
+                    sql.Replace("[$zonetable1]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
+                    sql.Replace("[$zonetable2]", QuoteSchemaAndTableName(GetZoneTable(xmatchTables[step.XMatchTable])));
 
                     cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
 
@@ -133,11 +134,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulateLinkTable);
 
-                sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber - 1)));
-                sql.Replace("[$tablename]", QuoteSchemaAndTableName(GetLinkTableName(step.StepNumber)));        // new table name
-                sql.Replace("[$zonetable1]", QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                sql.Replace("[$zonetable2]", QuoteSchemaAndTableName(GetZoneTableName(xmatchTables[step.XMatchTable])));
-                sql.Replace("[$zonedeftable]", QuoteSchemaAndTableName(GetZoneDefTableName(step.StepNumber)));
+                sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));
+                sql.Replace("[$tablename]", QuoteSchemaAndTableName(GetLinkTable(step.StepNumber)));        // new table name
+                sql.Replace("[$zonetable1]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
+                sql.Replace("[$zonetable2]", QuoteSchemaAndTableName(GetZoneTable(xmatchTables[step.XMatchTable])));
+                sql.Replace("[$zonedeftable]", QuoteSchemaAndTableName(GetZoneDefTable(step.StepNumber)));
 
                 cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
                 cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
@@ -158,13 +159,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulatePairTable);
 
-                    sql.Replace("[$pairtable]", QuoteSchemaAndTableName(GetPairTableName(step.StepNumber)));
+                    sql.Replace("[$pairtable]", QuoteSchemaAndTableName(GetPairTable(step.StepNumber)));
                     sql.Replace("[$columnlist1]", "[tableA].[MatchID]");
                     sql.Replace("[$columnlist2]", GetPropagatedColumnList(xmatchTables[step.XMatchTable], ColumnListType.ForSelectNoAlias, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
-                    sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber - 1)));
-                    sql.Replace("[$matchzonetable]", QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                    sql.Replace("[$linktable]", QuoteSchemaAndTableName((GetLinkTableName(step.StepNumber))));
-                    sql.Replace("[$zonetable]", QuoteSchemaAndTableName(GetZoneTableName(xmatchTables[step.XMatchTable])));
+                    sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));
+                    sql.Replace("[$matchzonetable]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
+                    sql.Replace("[$linktable]", QuoteSchemaAndTableName((GetLinkTable(step.StepNumber))));
+                    sql.Replace("[$zonetable]", QuoteSchemaAndTableName(GetZoneTable(xmatchTables[step.XMatchTable])));
 
                     cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
 
@@ -201,7 +202,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     stepmax = max;
                 }
-                
+
                 lmax += Math.Log(GetWeight(min));
                 amin += GetWeight(max);
             }
@@ -276,40 +277,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             return BayesFactorXMatchScripts.BuildMatchTableIndex;
         }
 
-
-        public override void ExecuteQuery()
-        {
-            // Idáig egész jó, de itt valamiért már nem megy az xmatch query
-
-            string sql = GetOutputSelectQuery();
-            string temptable = GetTemporaryTableName(Query.TemporaryDestinationTableName);
-            SqlConnectionStringBuilder cs;
-
-            switch (Query.ExecutionMode)
-            {
-                case Graywulf.Jobs.Query.ExecutionMode.SingleServer:
-                    cs = GetTemporaryDatabaseConnectionString();
-                    break;
-                case Graywulf.Jobs.Query.ExecutionMode.Graywulf:
-                    cs = GetTemporaryDatabaseConnectionString();;
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-
-            ExecuteSelectInto(cs.ConnectionString,
-                sql,
-                cs.InitialCatalog, 
-                Query.TemporarySchemaName,
-                temptable,
-                Query.QueryTimeout);
-
-            if ((Query.ResultsetTarget & Jhu.Graywulf.Jobs.Query.ResultsetTarget.TemporaryTable) == 0)
-            {
-                TemporaryTables.TryAdd(temptable, temptable);
-            }
-        }
-
         public override DatasetBase GetDestinationTableSchemaSourceDataset()
         {
             return new SqlServerDataset()
@@ -321,90 +288,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         public override string GetDestinationTableSchemaSourceQuery()
         {
             String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
-                QuoteSchemaAndTableName(GetTemporaryTableName(Query.TemporaryDestinationTableName)));
+                QuoteSchemaAndTableName(GetTemporaryTable(Query.TemporaryDestinationTableName)));
 
             return sql;
         }
-
-#if false
-        private string GetOutputSelectQuery()
-        {
-            // **** TODO: this disrupts the select statement
-            // a copy could be made of the entire parsing tree
-            // but reparsing is easier so it will be reset at the end
-
-            var qs = SelectStatement.EnumerateQuerySpecifications().First<Jhu.Graywulf.SqlParser.QuerySpecification>();
-
-            // Collect tables that are part of the XMatch operation
-            var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-            var xmc = qs.FindDescendant<XMatchClause>();
-            var xmtstr = new List<TableReference>(xmc.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
-
-            var matchtable = GetMatchTableName(steps.Count - 1);
-
-            // Replace column references to point to match table
-            foreach (ColumnReference cr in qs.ColumnReferences)
-            {
-                if (cr.TableReference != null && cr.TableReference.IsComputed)
-                {
-                    // In case of a computed table (typically xmatch results table)
-                }
-                else if (cr.TableReference != null && !cr.TableReference.IsComputed && !cr.TableReference.IsSubquery && !cr.TableReference.IsUdf)
-                {
-                    // In case of other tables
-                    // See if it's an xmatched table or not
-                    if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() == null)
-                    {
-                        continue;
-                    }
-
-                    cr.ColumnName = GetEscapedPropagatedColumnName(cr.TableReference, cr.ColumnName);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            // Replace table references
-            // This must be a separate step to save original table aliases in escaped names
-            foreach (ColumnReference cr in qs.ColumnReferences)
-            {
-                if (cr.TableReference != null && cr.TableReference.IsComputed)
-                {
-                    // In case of a computed table (typically xmatch results table)
-                    cr.TableReference.Alias = "matchtable";
-                }
-                else if (cr.TableReference != null && !cr.TableReference.IsComputed && !cr.TableReference.IsSubquery && !cr.TableReference.IsUdf)
-                {
-                    // In case of other tables
-                    // See if it's an xmatched table or not
-                    if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() == null)
-                    {
-                        continue;
-                    }
-                    cr.TableReference.Alias = "matchtable";
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            // Remove table specifications used in xmatch
-            ReplaceXMatchTableSources(fc, xmtstr);
-
-            // Remove XMatch clause
-            xmc.Parent.Stack.Remove(xmc);
-
-            var code = SqlServerCodeGenerator.GetCode(SelectStatement, true);
-
-            // Now zero out the selectStatement to force reparsing
-            SelectStatement = null;
-
-            return code;
-        }
-#endif
 
         #endregion
 

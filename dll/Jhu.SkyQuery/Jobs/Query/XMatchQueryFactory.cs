@@ -100,9 +100,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             else
             {
-                var wf = new XMatchQueryJob();
-                SetWorkflowParameters(wf, query);
-                return wf;
+                return new XMatchQueryJob();
             }
         }
     }

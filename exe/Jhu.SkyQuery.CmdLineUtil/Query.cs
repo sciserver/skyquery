@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Data.SqlClient;
 using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Activities;
+using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Jobs.Query;
 
@@ -18,6 +21,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
         private string userId;
         private string password;
         private string myDB;
+        private string tempDB;
         private string input;
 
         AutoResetEvent workflowCompleted;
@@ -57,6 +61,13 @@ namespace Jhu.SkyQuery.CmdLineUtil
             set { myDB = value; }
         }
 
+        [Parameter(Name = "TempDB", Description = "Temporary database")]
+        public string TempDB
+        {
+            get { return tempDB; }
+            set { tempDB = value; }
+        }
+
         [Parameter(Name = "Input", Description = "Input file containing the query")]
         public string Input
         {
@@ -76,9 +87,30 @@ namespace Jhu.SkyQuery.CmdLineUtil
             this.userId = null;
             this.password = null;
             this.myDB = "SkyQuery_MYDB";
+            this.myDB = "SkyQuery_TEMP";
             this.input = null;
 
             this.workflowCompleted = new AutoResetEvent(false);
+        }
+
+        private string GetConnectionString()
+        {
+            var csb = new SqlConnectionStringBuilder();
+
+            csb.DataSource = this.server;
+
+            if (this.integratedSecurity)
+            {
+                csb.IntegratedSecurity = true;
+            }
+            else
+            {
+                csb.IntegratedSecurity = false;
+                csb.UserID = this.userId;
+                csb.Password = this.password;
+            }
+
+            return csb.ConnectionString;
         }
 
         public override void Run()
@@ -86,13 +118,26 @@ namespace Jhu.SkyQuery.CmdLineUtil
             // Load query string from file
             var query = System.IO.File.ReadAllText(input);
 
-            // Create query and verify query
+            // MyDB
+            var mydbds = new SqlServerDataset();
+            mydbds.Name = "MYDB";
+            mydbds.DefaultSchemaName = "dbo";
+            mydbds.ConnectionString = GetConnectionString();
+            mydbds.DatabaseName = myDB;
+
+            var tempds = new SqlServerDataset();
+            tempds.IsOnLinkedServer = false;
+            tempds.ConnectionString = GetConnectionString();
+            tempds.DatabaseName = tempDB;
+
+            // Create query and verify
             var f = new XMatchQueryFactory();
-            var q = f.CreateQuery(query, ExecutionMode.SingleServer, "");
+            var q = f.CreateQuery(query, ExecutionMode.SingleServer, null, mydbds, tempds);
             q.Verify();
 
             // Create a workflow
             var wf = f.GetAsWorkflow(q);
+            var par = f.GetWorkflowParameters(q);
 
             // Submit for execution
             var wfhost = new WorkflowApplicationHost();
@@ -100,7 +145,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
 
             wfhost.Start();
 
-            var guid = wfhost.PrepareStartWorkflow(wf);
+            var guid = wfhost.PrepareStartWorkflow(wf, par);
             wfhost.RunWorkflow(guid);
 
             // Wait for workflow to complete

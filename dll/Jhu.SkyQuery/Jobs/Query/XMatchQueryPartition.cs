@@ -91,9 +91,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Temporary table name generator functions
 
-        protected string GetZoneDefTableName(int stepNumber)
+        protected Table GetZoneDefTable(int stepNumber)
         {
-            return GetTemporaryTableName(String.Format("ZoneDef_{0}", stepNumber));
+            return GetTemporaryTable(String.Format("ZoneDef_{0}", stepNumber));
         }
 
         /// <summary>
@@ -106,9 +106,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         /// <param name="table">Reference to the source table</param>
         /// <returns>The escaped name of a temporary table.</returns>
-        protected string GetZoneTableName(XMatchTableSpecification table)
+        protected Table GetZoneTable(XMatchTableSpecification table)
         {
-            return GetTemporaryTableName(String.Format("Zone_{0}_{1}_{2}_{3}",
+            return GetTemporaryTable(String.Format("Zone_{0}_{1}_{2}_{3}",
                                                        table.TableReference.DatasetName,
                                                        table.TableReference.SchemaName,
                                                        table.TableReference.DatabaseObjectName,
@@ -125,9 +125,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         /// <param name="stepNumber">Number of the XMatch step</param>
         /// <returns>The escaped name of a temporary table.</returns>
-        protected string GetZoneTableName(int stepNumber)
+        protected Table GetZoneTable(int stepNumber)
         {
-            return GetTemporaryTableName(String.Format("Zone_Match_{0}", stepNumber));
+            return GetTemporaryTable(String.Format("Zone_Match_{0}", stepNumber));
         }
 
         /// <summary>
@@ -140,9 +140,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         /// <param name="stepNumber">Number of the XMatch step.</param>
         /// <returns>The escaped name of a temporary table.</returns>
-        protected string GetLinkTableName(int stepNumber)
+        protected Table GetLinkTable(int stepNumber)
         {
-            return GetTemporaryTableName(String.Format("Link_{0}", stepNumber));
+            return GetTemporaryTable(String.Format("Link_{0}", stepNumber));
         }
 
         /// <summary>
@@ -155,9 +155,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         /// <param name="stepNumber">Number of the XMatch step.</param>
         /// <returns>The escaped name of a temporary table.</returns>
-        protected string GetPairTableName(int stepNumber)
+        protected Table GetPairTable(int stepNumber)
         {
-            return GetTemporaryTableName(String.Format("Pair_{0}", stepNumber));
+            return GetTemporaryTable(String.Format("Pair_{0}", stepNumber));
         }
 
         /// <summary>
@@ -170,14 +170,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         /// <param name="stepNumber">Number of the XMatch step.</param>
         /// <returns>The escaped name of a temporary table.</returns>
-        protected string GetMatchTableName(int stepNumber)
+        protected Table GetMatchTable(int stepNumber)
         {
-            return GetTemporaryTableName(String.Format("Match_{0}", stepNumber));
+            return GetTemporaryTable(String.Format("Match_{0}", stepNumber));
         }
 
         protected string GetMatchTableZoneIndexName(int stepNumber)
         {
-            return GetTemporaryTableName(String.Format("IX_Match_{0}_Zone", stepNumber));
+            return String.Format("IX_{0}_Zone", GetMatchTable(stepNumber).TableName);
         }
 
         /// <summary>
@@ -185,9 +185,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="tableName"></param>
         /// <returns>Quoted schema name and table name</returns>
-        protected string QuoteSchemaAndTableName(string tableName)
+        protected string QuoteSchemaAndTableName(Table table)
         {
-            return String.Format("[{0}].[{1}]", Query.TemporarySchemaName, tableName);
+            return String.Format("[{0}].[{1}]", table.SchemaName, table.TableName);
         }
 
         /// <summary>
@@ -460,18 +460,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber != 0)
             {
-                string zonedeftablename = GetZoneDefTableName(step.StepNumber);
+                var zonedeftable = GetZoneDefTable(step.StepNumber);
 
-                DropTemporaryTable(zonedeftablename);
+                DropTableOrView(zonedeftable);
 
-                StringBuilder sql = new StringBuilder(XMatchScripts.CreateZoneDefTable);
+                var sql = new StringBuilder(XMatchScripts.CreateZoneDefTable);
 
-                sql.Replace("[$tablename]", QuoteSchemaAndTableName(zonedeftablename));
-                sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", Query.TemporarySchemaName, zonedeftablename));
+                sql.Replace("[$tablename]", QuoteSchemaAndTableName(zonedeftable));
+                sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", zonedeftable.SchemaName, zonedeftable.TableName));
 
                 ExecuteSqlCommandOnTemporaryDatabase(sql.ToString());
 
-                TemporaryTables.TryAdd(zonedeftablename, zonedeftablename);
+                TemporaryTables.TryAdd(zonedeftable.TableName, zonedeftable);
 
                 PopulateZoneDefTable(step);
             }
@@ -479,14 +479,14 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void PopulateZoneDefTable(XMatchQueryStep step)
         {
-            string zonedeftablename = GetZoneDefTableName(step.StepNumber);
+            var zonedeftablename = GetZoneDefTable(step.StepNumber);
 
-            StringBuilder sql = new StringBuilder(XMatchScripts.PopulateZoneDefTable);
+            var sql = new StringBuilder(XMatchScripts.PopulateZoneDefTable);
 
             sql.Replace("[$tablename]", QuoteSchemaAndTableName(zonedeftablename));
             sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", Query.TemporarySchemaName, zonedeftablename));
 
-            using (SqlCommand cmd = new SqlCommand(sql.ToString()))
+            using (var cmd = new SqlCommand(sql.ToString()))
             {
                 cmd.Parameters.Add("@ZoneHeight", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
                 cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
@@ -523,12 +523,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected abstract string GetCreateZoneTableScript();
 
-        private string GetCreateZoneTableScript(XMatchTableSpecification table, string zonetablename)
+        private string GetCreateZoneTableScript(XMatchTableSpecification table, Table zonetable)
         {
             var sql = new StringBuilder(GetCreateZoneTableScript());
 
-            sql.Replace("[$tablename]", QuoteSchemaAndTableName(zonetablename));
-            sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", Query.TemporarySchemaName, zonetablename));
+            sql.Replace("[$tablename]", QuoteSchemaAndTableName(zonetable));
+            sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", zonetable.SchemaName, zonetable.TableName));
             sql.Replace("[$columnlist]", GetPropagatedColumnList(table, ColumnListType.ForCreateTable, ColumnListInclude.PrimaryKey, ColumnListNullType.NotNull, null));
 
             return sql.ToString();
@@ -540,12 +540,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="table">Reference to the source table.</param>
         private void CreateZoneTable(XMatchTableSpecification table)
         {
-            var zonetablename = GetZoneTableName(table);
-            var sql = GetCreateZoneTableScript(table, zonetablename);
+            var zonetable = GetZoneTable(table);
+            var sql = GetCreateZoneTableScript(table, zonetable);
 
             ExecuteSqlCommandOnTemporaryDatabase(sql);
 
-            TemporaryTables.TryAdd(zonetablename, zonetablename);
+            TemporaryTables.TryAdd(zonetable.TableName, zonetable);
         }
 
         protected abstract string GetPopulateZoneTableScript(XMatchTableSpecification table);
@@ -566,8 +566,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Check if table is remote and cached locally
             var tablename = SubstituteRemoteTableName(table.TableReference);
-            var zonetablename = GetZoneTableName(table);
-            var zonedeftablename = GetZoneDefTableName(step.StepNumber);
+            var zonetable = GetZoneTable(table);
+            var zonedeftable = GetZoneDefTable(step.StepNumber);
 
             // --- Build SQL query
 
@@ -577,8 +577,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$cx]", table.Position.Cx);
             sql.Replace("[$cy]", table.Position.Cy);
             sql.Replace("[$cz]", table.Position.Cz);
-            sql.Replace("[$zonetablename]", String.Format("[{0}].[{1}]", Query.TemporarySchemaName, zonetablename));
-            sql.Replace("[$zonedeftable]", String.Format("[{0}].[{1}]", Query.TemporarySchemaName, zonedeftablename));
+            sql.Replace("[$zonetablename]", String.Format("[{0}].[{1}]", zonetable.SchemaName, zonetable.TableName));
+            sql.Replace("[$zonedeftable]", String.Format("[{0}].[{1}]", zonedeftable.SchemaName, zonedeftable.TableName));
             sql.Replace("[$tablename]", tablename);
             sql.Replace("[$tablealias]", table.TableReference.Alias);
             sql.Replace("[$columnlist]", GetPropagatedColumnList(table, ColumnListType.ForSelectWithOriginalName, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
@@ -619,16 +619,16 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber != 0)
             {
-                string linktable = GetLinkTableName(step.StepNumber);
+                var linktable = GetLinkTable(step.StepNumber);
 
-                StringBuilder sql = new StringBuilder(XMatchScripts.CreateLinkTable);
+                var sql = new StringBuilder(XMatchScripts.CreateLinkTable);
 
                 sql.Replace("[$tablename]", QuoteSchemaAndTableName(linktable));
-                sql.Replace("[$indexname]", String.Format("PK_{0}", linktable));
+                sql.Replace("[$indexname]", String.Format("PK_{0}", linktable.TableName));
 
                 ExecuteSqlCommandOnTemporaryDatabase(sql.ToString());
 
-                TemporaryTables.TryAdd(linktable, linktable);
+                TemporaryTables.TryAdd(linktable.TableName, linktable);
 
                 PopulateLinkTable(step);
             }
@@ -671,9 +671,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber != 0)
             {
-                string pairtable = GetPairTableName(step.StepNumber);
+                var pairtable = GetPairTable(step.StepNumber);
 
-                StringBuilder sql = new StringBuilder(XMatchScripts.CreatePairTable);
+                var sql = new StringBuilder(XMatchScripts.CreatePairTable);
 
                 sql.Replace("[$tablename]", QuoteSchemaAndTableName(pairtable));
                 sql.Replace("[$createcolumnlist1]", String.Format("PK_Match_{0}_MatchID [bigint] NOT NULL", step.StepNumber - 1));
@@ -681,7 +681,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 ExecuteSqlCommandOnTemporaryDatabase(sql.ToString());
 
-                TemporaryTables.TryAdd(pairtable, pairtable);
+                TemporaryTables.TryAdd(pairtable.TableName, pairtable);
 
                 PopulatePairTable(step);
             }
@@ -730,10 +730,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         public void CreateMatchTable(XMatchQueryStep step)
         {
             // Create real match tables
-            string tablename = GetMatchTableName(step.StepNumber);
-            string indexname = String.Format("[IXC_{0}_{1}]", Query.TemporarySchemaName, tablename);
+            var matchtable = GetMatchTable(step.StepNumber);
+            var indexname = String.Format("[IXC_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
 
-            DropTemporaryTable(tablename);
+            DropTableOrView(matchtable);
 
             ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
 
@@ -751,11 +751,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
 
-            using (SqlCommand cmd = new SqlCommand())
+            using (var cmd = new SqlCommand())
             {
-                StringBuilder sql = new StringBuilder(GetCreateMatchTableScript(step));
+                var sql = new StringBuilder(GetCreateMatchTableScript(step));
 
-                sql.Replace("[$tablename]", tablename);
+                sql.Replace("[$tablename]", matchtable.TableName);
                 sql.Replace("[$indexname]", indexname);
                 sql.Replace("[$columnlist]", columnlist.ToString());
 
@@ -764,7 +764,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 ExecuteSqlCommandOnTemporaryDatabase(cmd);
             }
 
-            TemporaryTables.TryAdd(tablename, tablename);
+            TemporaryTables.TryAdd(matchtable.TableName, matchtable);
 
             if (step.StepNumber == 0)
             {
@@ -796,7 +796,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var table = xmatchTables[step.XMatchTable];
 
             var tablename = SubstituteRemoteTableName(table.TableReference);
-            var newtablename = QuoteSchemaAndTableName(GetMatchTableName(step.StepNumber));
+            var newtablename = QuoteSchemaAndTableName(GetMatchTable(step.StepNumber));
 
             ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
 
@@ -833,13 +833,13 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void BuildInitialMatchTableIndex(XMatchTableSpecification table, int stepNumber)
         {
-            string tablename = GetMatchTableName(stepNumber);
-            string indexname = GetMatchTableZoneIndexName(stepNumber);
+            var matchtable = GetMatchTable(stepNumber);
+            var indexname = GetMatchTableZoneIndexName(stepNumber);
 
             StringBuilder sql = new StringBuilder(GetBuildMatchTableIndexScript(table, stepNumber));
 
             sql.Replace("[$indexname]", indexname);
-            sql.Replace("[$tablename]", tablename);
+            sql.Replace("[$tablename]", matchtable.TableName);
             sql.Replace("[$columnlist]", GetPropagatedColumnList(table, ColumnListType.ForInsert, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
 
             ExecuteSqlCommandOnTemporaryDatabase(sql.ToString());
@@ -855,7 +855,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var table = xmatchTables[step.XMatchTable];
 
             var tablename = SubstituteRemoteTableName(table.TableReference);
-            var newtablename = GetMatchTableName(step.StepNumber);
+            var newtablename = GetMatchTable(step.StepNumber);
             var schemaname = Query.TemporarySchemaName;
 
             var include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
@@ -913,8 +913,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$insertcolumnlist]", insertcolumnlist.ToString());
                 sql.Replace("[$selectcolumnlist]", selectcolumnlist.ToString());
                 sql.Replace("[$selectcolumnlist2]", insertcolumnlist.ToString());
-                sql.Replace("[$pairtable]", QuoteSchemaAndTableName(GetPairTableName(step.StepNumber)));
-                sql.Replace("[$matchtable]", QuoteSchemaAndTableName((GetMatchTableName(step.StepNumber - 1))));        // tableA (old match table)
+                sql.Replace("[$pairtable]", QuoteSchemaAndTableName(GetPairTable(step.StepNumber)));
+                sql.Replace("[$matchtable]", QuoteSchemaAndTableName((GetMatchTable(step.StepNumber - 1))));        // tableA (old match table)
                 sql.Replace("[$matchidcolumn]", String.Format("PK_Match_{0}_MatchID", step.StepNumber - 1));
                 sql.Replace("[$table]", tablename);        // tableB (source table)
                 sql.Replace("[$tablejoinconditions]", join.ToString());
@@ -948,28 +948,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     cr.ColumnName = GetEscapedPropagatedColumnName(cr.TableReference, cr.ColumnName);
                 }
-
-                // *** TODO: delete
-                /*if (cr.TableReference != null && cr.TableReference.IsComputed)
-                {
-                    // In case of a computed table (typically xmatch results table)
-                }
-                else if (cr.TableReference != null && !cr.TableReference.IsComputed && !cr.TableReference.IsSubquery && !cr.TableReference.IsUdf)
-                {
-                    // In case of other tables
-                    // See if it's an xmatched table or not
-                    if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() == null)
-                    {
-                        continue;
-                    }
-
-                    // TODO: decide whether to use column name or alias here!
-                    cr.ColumnName = GetEscapedPropagatedColumnName(cr.TableReference, cr.ColumnName);
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }*/
             }
         }
 
@@ -1075,13 +1053,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
                 else
                 {
-                    var matchtable = GetMatchTableName(steps.Count - 1);
+                    var matchtable = GetMatchTable(steps.Count - 1);
 
                     var nts = new Jhu.Graywulf.SqlParser.ComputedTableSource();
                     nts.TableReference = new TableReference();
-                    nts.TableReference.DatabaseName = GetTemporaryDatabaseConnectionString().InitialCatalog;
-                    nts.TableReference.SchemaName = Query.TemporarySchemaName;
-                    nts.TableReference.DatabaseObjectName = matchtable;
+                    nts.TableReference.DatabaseName = matchtable.DatabaseName;
+                    nts.TableReference.SchemaName = matchtable.SchemaName;
+                    nts.TableReference.DatabaseObjectName = matchtable.TableName;
                     nts.TableReference.Alias = "matchtable";
 
                     nts.Stack.AddLast(TableOrViewName.Create(nts.TableReference));
@@ -1101,7 +1079,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        protected string GetOutputSelectQuery()
+        protected override string GetOutputSelectQuery()
         {
             // **** TODO: this disrupts the select statement
             // a copy could be made of the entire parsing tree
@@ -1113,7 +1091,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
             var xmc = qs.FindDescendant<XMatchClause>();
             var xmtstr = new List<TableReference>(xmc.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
-            var matchtable = GetMatchTableName(steps.Count - 1);
+            var matchtable = GetMatchTable(steps.Count - 1);
 
             SubstituteEscapedColumnNames(qs, xmtstr);
             SubstituteMatchTableName(qs, xmtstr);
@@ -1165,42 +1143,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             return wherestring.ToString();
-        }
-
-        public override void CopyResultset()
-        {
-            SqlConnectionStringBuilder cs = GetTemporaryDatabaseConnectionString();
-
-            string sql = String.Format("SELECT tablealias.* FROM [{0}].{1} AS tablealias",
-                cs.InitialCatalog,
-                QuoteSchemaAndTableName(GetTemporaryTableName(Query.TemporaryDestinationTableName)));
-
-            if ((Query.ResultsetTarget & (ResultsetTarget.TemporaryTable | ResultsetTarget.DestinationTable)) != 0)
-            {
-                switch (Query.ExecutionMode)
-                {
-                    case ExecutionMode.SingleServer:
-                        ExecuteInsertInto(
-                            cs.ConnectionString,
-                            sql,
-                            ((SqlServerDataset)Query.Destination.Table.Dataset).DatabaseName,
-                            Query.Destination.Table.SchemaName,
-                            Query.Destination.Table.TableName,
-                            Query.QueryTimeout);
-                        break;
-                    case ExecutionMode.Graywulf:
-                        ExecuteBulkCopy(
-                            GetTemporaryDatabaseDataset(),
-                            sql,
-                            Query.GetDestinationDatabaseConnectionString().ConnectionString,
-                            Query.Destination.Table.SchemaName,
-                            Query.Destination.Table.TableName,
-                            Query.QueryTimeout);
-                        break;
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
         }
     }
 }

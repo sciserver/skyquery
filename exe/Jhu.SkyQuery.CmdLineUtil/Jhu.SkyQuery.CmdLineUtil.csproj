@@ -104,6 +104,10 @@
       <Project>{48DED106-FDAF-4310-AC05-37DB1A315711}</Project>
       <Name>Jhu.Graywulf.CommandLineParser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
       <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
       <Name>Jhu.Graywulf.Jobs</Name>
@@ -119,6 +123,10 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.RemoteService\Jhu.Graywulf.RemoteService.csproj">
       <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
+      <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
+      <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.SqlParser\Jhu.Graywulf.SqlParser.csproj">
       <Project>{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}</Project>
