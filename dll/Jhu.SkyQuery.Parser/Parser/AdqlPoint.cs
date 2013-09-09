@@ -47,7 +47,8 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isXyzSpecified)
                 {
-                    return "";
+                    // TODO: change it to use spherical lib function from SkyQuery_CODE
+                    return String.Format("SkyQuery_Code.dbo.CartesianToEqRa(({0}),({1}),({2}))", Cx, Cy, Cz);
                 }
                 else
                 {
@@ -66,7 +67,8 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isXyzSpecified)
                 {
-                    return "";
+                    // TODO: change it to use spherical lib function from SkyQuery_CODE
+                    return String.Format("SkyQuery_Code.dbo.CartesianToEqDec(({0}),({1}),({2}))", Cx, Cy, Cz);
                 }
                 else
                 {
@@ -85,7 +87,9 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isEqSpecified)
                 {
-                    return String.Format("COS(RADIANS({1}))*COS(RADIANS({0}))", RA, Dec);
+                    // TODO: change it to use spherical lib function from SkyQuery_CODE
+                    //return String.Format("COS(RADIANS({1}))*COS(RADIANS({0}))", RA, Dec);
+                    return String.Format("SkyQuery_Code.dbo.EqToCartesianX(({0}),({1}))", RA, Dec);
                 }
                 else
                 {
@@ -104,7 +108,9 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isEqSpecified)
                 {
-                    return String.Format("COS(RADIANS({1}))*SIN(RADIANS({0}))", RA, Dec);
+                    // TODO: change it to use spherical lib function from SkyQuery_CODE
+                    //return String.Format("COS(RADIANS({1}))*SIN(RADIANS({0}))", RA, Dec);
+                    return String.Format("SkyQuery_Code.dbo.EqToCartesianY(({0}),({1}))", RA, Dec);
                 }
                 else
                 {
@@ -123,7 +129,8 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isEqSpecified)
                 {
-                    return String.Format("SIN(RADIANS({1}))", RA, Dec);
+                    //return String.Format("SIN(RADIANS({1}))", RA, Dec);
+                    return String.Format("SkyQuery_Code.dbo.EqToCartesianZ(({0}),({1}))", RA, Dec);
                 }
                 else
                 {

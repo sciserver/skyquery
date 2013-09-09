@@ -4,106 +4,109 @@ using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
 
-public partial class UserDefinedFunctions
+namespace Jhu.SkyQuery.SqlClrLib
 {
-    [Microsoft.SqlServer.Server.SqlFunction(
-        DataAccess=DataAccessKind.None,
-        IsDeterministic=true,
-        IsPrecise=false,
-        SystemDataAccess=SystemDataAccessKind.None)]
-    public static BayesFactorPoint BayesFactorCalcPosition(
-        double cx, double cy, double cz,    
-        double a,
-        double l,
-        double logBF,
-        double w,                           
-        double dx, double dy, double dz     // separation
-        )
+    public partial class UserDefinedFunctions
     {
-        double rx, ry, rz, r, ra, dec;
-        rx = cx + w / (a + w) * dx;
-        ry = cy + w / (a + w) * dy;
-        rz = cz + w / (a + w) * dz;
-        r = Math.Sqrt(rx * rx + ry * ry + rz * rz);
-
-        rx /= r;
-        ry /= r;
-        rz /= r;
-
-        if (rz >= 1)
+        [Microsoft.SqlServer.Server.SqlFunction(
+            DataAccess = DataAccessKind.None,
+            IsDeterministic = true,
+            IsPrecise = false,
+            SystemDataAccess = SystemDataAccessKind.None)]
+        public static BayesFactorPoint BayesFactorCalcPosition(
+            double cx, double cy, double cz,
+            double a,
+            double l,
+            double logBF,
+            double w,
+            double dx, double dy, double dz     // separation
+            )
         {
-            dec = Const.HalfPI;
-        }
-        else if (rz <= -1)
-        {
-            dec = Const.MinusHalfPI;
-        }
-        else
-        {
-            dec = Math.Asin(rz);
-        }
+            double rx, ry, rz, r, ra, dec;
+            rx = cx + w / (a + w) * dx;
+            ry = cy + w / (a + w) * dy;
+            rz = cz + w / (a + w) * dz;
+            r = Math.Sqrt(rx * rx + ry * ry + rz * rz);
 
-        const double eps = 4e-15;
-        double cd = Math.Cos(dec);
+            rx /= r;
+            ry /= r;
+            rz /= r;
 
-        if (cd > eps || cd < -eps)
-        {
-            if (ry > eps || ry < -eps)
+            if (rz >= 1)
             {
-                double arg = rx / cd;
-                double acos;
+                dec = Constants.HalfPI;
+            }
+            else if (rz <= -1)
+            {
+                dec = Constants.MinusHalfPI;
+            }
+            else
+            {
+                dec = Math.Asin(rz);
+            }
 
-                if (arg <= -1)
+            const double eps = 4e-15;
+            double cd = Math.Cos(dec);
+
+            if (cd > eps || cd < -eps)
+            {
+                if (ry > eps || ry < -eps)
                 {
-                    acos = Const.HalfPI;
-                }
-                else if (arg >= 1)
-                {
-                    acos = 0;
+                    double arg = rx / cd;
+                    double acos;
+
+                    if (arg <= -1)
+                    {
+                        acos = Constants.HalfPI;
+                    }
+                    else if (arg >= 1)
+                    {
+                        acos = 0;
+                    }
+                    else
+                    {
+                        acos = Math.Acos(arg);
+                    }
+                    if (ry < 0)
+                    {
+                        ra = Constants.TwoPI - acos;
+                    }
+                    else
+                    {
+                        ra = acos;
+                    }
                 }
                 else
                 {
-                    acos = Math.Acos(arg);
-                }
-                if (ry < 0)
-                {
-                    ra = Const.TwoPI - acos;
-                }
-                else
-                {
-                    ra = acos;
+                    if (rx < 0)
+                    {
+                        ra = Constants.HalfPI;
+                    }
+                    else
+                    {
+                        ra = 0;
+                    }
                 }
             }
             else
             {
-                if (rx < 0)
-                {
-                    ra = Const.HalfPI;
-                }
-                else
-                {
-                    ra = 0;
-                }
+                ra = 0;
             }
-        }
-        else
-        {
-            ra = 0;
-        }
 
-        return new BayesFactorPoint()
-        {
-            Ra = ra * 180.0 / Math.PI,
-            Dec = dec * 180.0 / Math.PI,
-            Cx = rx,
-            Cy = ry,
-            Cz = rz,
-            A = a + w,
-            L = l + Math.Log(w),
-            LogBF = logBF + Math.Log(w) + Math.Log(a) - Math.Log(a + w) - (a / (a + w) * w * (dx * dx + dy * dy + dz * dz)) / 2.0,
-            dQ = a / (a + w) * w * (dx * dx + dy * dy + dz * dz)
-        };
+            return new BayesFactorPoint()
+            {
+                Ra = ra * 180.0 / Math.PI,
+                Dec = dec * 180.0 / Math.PI,
+                Cx = rx,
+                Cy = ry,
+                Cz = rz,
+                A = a + w,
+                L = l + Math.Log(w),
+                LogBF = logBF + Math.Log(w) + Math.Log(a) - Math.Log(a + w) - (a / (a + w) * w * (dx * dx + dy * dy + dz * dz)) / 2.0,
+                dQ = a / (a + w) * w * (dx * dx + dy * dy + dz * dz)
+            };
 
+        }
     }
-};
 
+}

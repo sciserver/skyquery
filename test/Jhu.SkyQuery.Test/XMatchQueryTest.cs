@@ -23,9 +23,8 @@ XMATCH BAYESFACTOR AS x
  MUST EXIST p ON Point(p.ra, p.dec), 0.1, 0.1, 0.1
  MUST EXIST s ON Point(s.ra, s.dec), 0.1, 0.1, 0.1
  HAVING LIMIT 1e3
-WHERE 
---p.RA > -9999 AND p.Dec > -9999 AND s.RA > -9999 AND s.Dec > -9999
- p.RA BETWEEN 0 AND 5 AND p.Dec > -9999 AND s.RA > -9999 AND s.Dec > -9999 ";
+WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
+      AND s.RA BETWEEN 0 AND 5 AND s.Dec BETWEEN 0 AND 5 ";
 
         [TestMethod]
         public void XMatchQuerySerializableTest()
@@ -102,6 +101,35 @@ WHERE
                 WaitJobComplete(guid, TimeSpan.FromSeconds(10));
 
                 ji = LoadJob(guid);
+                Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+            }
+        }
+
+        [TestMethod]
+        public void CartesianCoordinatesTest()
+        {
+            var sql =
+@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:PhotoObjAll AS s
+CROSS JOIN Galex:PhotoObjAll AS g
+XMATCH BAYESFACTOR x
+MUST EXIST s ON POINT(s.cx, s.cy, s.cz), 0.1, 0.1, 0.1
+MUST EXIST g ON POINT(g.ra, g.dec), 0.2, 0.2, 0.2
+HAVING LIMIT 1e3
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+                var guid = ScheduleQueryJob(
+                                    sql.Replace("[$targettable]", "XMatchQueryTest_CartesianCoordinatesTest"),
+                                    QueueType.Long);
+
+                WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                var ji = LoadJob(guid);
                 Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
             }
         }

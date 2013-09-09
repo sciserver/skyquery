@@ -67,7 +67,9 @@
     <Compile Include="SqlClrLib\BayesFactorPoint.cs" />
     <Compile Include="SqlClrLib\CalculateAlpha.cs" />
     <Compile Include="SqlClrLib\CalculateZones.cs" />
-    <Compile Include="SqlClrLib\Const.cs" />
+    <Compile Include="SqlClrLib\Cartesian.cs" />
+    <Compile Include="SqlClrLib\Constants.cs" />
+    <Compile Include="SqlClrLib\CoordinateConverters.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Test Scripts\Test.sql">

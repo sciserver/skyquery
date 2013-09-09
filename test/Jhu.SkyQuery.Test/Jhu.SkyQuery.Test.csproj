@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BayesFactorXMatchQueryPartitionTest.cs" />
+    <Compile Include="CatalogTest.cs" />
     <Compile Include="PartitionedSqlQueryTest.cs" />
     <Compile Include="MyDBSqlQueryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
