@@ -1,0 +1,12 @@
+-	Scheduler lehal, ha a configban rossz bin könyvtár van, ellenorizni induláskor
+-	quick jobok az ui-ban nem látszanak
++	copy templates and docs on build
++	gw09
+-	maintenance jobs (output, tempdb)
+-	output virtual directory on production
+-	validate xmatch tables (PK)
+-	create PK on remote tables
+-	create PK on results
+-	no self xmatch join
+-	add create/modify date to schema (mydb tables)
++	command-line xmatch
