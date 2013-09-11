@@ -77,7 +77,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 s.StepNumber = i;
                 s.PreviousXMatchTable = (i == 0) ? null : tables[i - 1].TableReference.FullyQualifiedName;
-                s.XMatchTable = tables[i].TableReference.FullyQualifiedName;
+                s.XMatchTable = tables[i].TableReference.UniqueName;
 
                 steps.Add(s);
             }
@@ -243,7 +243,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // has to change alias to tableB and back to avoid side-effects
             string oldalias = xmatchTables[step.XMatchTable].TableReference.Alias;
-            xmatchTables[step.XMatchTable].TableReference.Alias = "tableB";
+            xmatchTables[step.XMatchTable].TableReference.Alias = "tableB";         // *** TODO
             sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTables[step.XMatchTable].ErrorExpression, true)));
             xmatchTables[step.XMatchTable].TableReference.Alias = oldalias;
 

@@ -444,10 +444,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected override void FinishInterpret(bool forceReinitialize)
         {
             // Find xmatch tables
-            xmatchTables = new Dictionary<string, XMatchTableSpecification>();
+            xmatchTables = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
             foreach (var xt in SelectStatement.EnumerateQuerySpecifications().First().FindDescendant<XMatchClause>().EnumerateXMatchTableSpecifications())
             {
-                xmatchTables.Add(xt.TableReference.FullyQualifiedName, xt);
+                xmatchTables.Add(xt.TableReference.UniqueName, xt);
             }
 
             base.FinishInterpret(forceReinitialize);

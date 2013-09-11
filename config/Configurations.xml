@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<config root="Config\voservices.net">
+<config root="Config\dev.voservices.net">
   <projects>
     <project name="Jhu.Graywulf.Web.Admin" path="..\Graywulf\Web\Jhu.Graywulf.Web.Admin" type="web">
       <merge file="connectionStrings.config" />
