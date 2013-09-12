@@ -484,7 +484,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var sql = new StringBuilder(XMatchScripts.PopulateZoneDefTable);
 
             sql.Replace("[$tablename]", QuoteSchemaAndTableName(zonedeftablename));
-            sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", Query.TemporarySchemaName, zonedeftablename));
+            sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", Query.TemporaryDataset.DefaultSchemaName, zonedeftablename));
 
             using (var cmd = new SqlCommand(sql.ToString()))
             {
@@ -856,7 +856,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var tablename = SubstituteRemoteTableName(table.TableReference);
             var newtablename = GetMatchTable(step.StepNumber);
-            var schemaname = Query.TemporarySchemaName;
+            var schemaname = Query.TemporaryDataset.DefaultSchemaName;
 
             var include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
 
