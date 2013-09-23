@@ -34,6 +34,8 @@ namespace Jhu.SkyQuery.Parser.Test
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = "Test";
             nr.DefaultTableSchemaName = "dbo";
+            nr.DefaultFunctionDatasetName = "Code";
+            nr.DefaultFunctionSchemaName = "dbo";
             nr.SchemaManager = CreateSchemaManager();
             nr.Execute(ss);
 

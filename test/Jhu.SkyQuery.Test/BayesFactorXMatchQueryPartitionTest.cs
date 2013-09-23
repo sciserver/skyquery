@@ -33,6 +33,8 @@ namespace Jhu.SkyQuery.Test
             var nr = new Jhu.SkyQuery.Parser.SkyQueryNameResolver();
             nr.DefaultTableDatasetName = "Test";
             nr.DefaultTableSchemaName = "dbo";
+            nr.DefaultFunctionDatasetName = "Code";
+            nr.DefaultFunctionSchemaName = "dbo";
             nr.SchemaManager = CreateSchemaManager();
             nr.Execute(ss);
 
@@ -48,7 +50,7 @@ namespace Jhu.SkyQuery.Test
             var xmq = new BayesFactorXMatchQuery(null);
             xmq.QueryString = query;
             xmq.QueryFactoryTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName;
-            xmq.DefaultDatasetName = "Test";
+            xmq.DefaultDataset = (SqlServerDataset)sm.Datasets["Test"];
             xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets["Test"];
 
             var xmqp = new BayesFactorXMatchQueryPartition(xmq, null);
@@ -144,7 +146,7 @@ HAVING LIMIT 1e3";
             var xmq = new BayesFactorXMatchQuery(null);
             xmq.QueryString = query;
             xmq.QueryFactoryTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName;
-            xmq.DefaultDatasetName = "Test";
+            xmq.DefaultDataset = (SqlServerDataset)sm.Datasets["Test"];
             xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets["Test"];
 
             var xmqp = new BayesFactorXMatchQueryPartition(xmq, null);

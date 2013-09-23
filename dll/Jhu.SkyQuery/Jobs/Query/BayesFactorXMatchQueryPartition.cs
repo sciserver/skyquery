@@ -288,7 +288,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         public override string GetDestinationTableSchemaSourceQuery()
         {
             String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
-                QuoteSchemaAndTableName(GetTemporaryTable(Query.TemporaryDestinationTableName)));
+                QuoteSchemaAndTableName(GetOutputTable()));
 
             return sql;
         }

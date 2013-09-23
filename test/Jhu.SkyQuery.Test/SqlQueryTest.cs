@@ -224,5 +224,29 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
                 }
             }
         }
+
+        [TestMethod]
+        public void TableValuedFunctionTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                DropMyDBTable("dbo", "SqlQueryTest_TableValuedFunctionTest");
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = "SELECT * INTO SqlQueryTest_TableValuedFunctionTest FROM dbo.fHtmCoverCircleEq(0, 0, 10) htm";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
     }
 }
