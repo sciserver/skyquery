@@ -248,5 +248,143 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
                 }
             }
         }
+
+        [TestMethod]
+        public void TableValuedFunctionJoinTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                DropMyDBTable("dbo", "SqlQueryTest_TableValuedFunctionTest");
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = @"
+SELECT TOP 100 objid, ra, dec
+INTO SqlQueryTest_TableValuedFunctionJoinTest
+FROM dbo.fHtmCoverCircleEq(0, 0, 10) htm
+INNER JOIN SDSSDR7:PhotoObj p
+    ON p.htmid BETWEEN htm.htmidstart AND htm.htmidend";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void TableValuedFunctionCrossApplyTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                DropMyDBTable("dbo", "SqlQueryTest_TableValuedFunctionCrossApplyTest");
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = @"
+SELECT htm.htmidstart, htm.htmidend
+INTO SqlQueryTest_TableValuedFunctionCrossApplyTest
+FROM (SELECT TOP 10 ra, dec FROM SDSSDR7:PhotoObj) p
+CROSS APPLY dbo.fHtmCoverCircleEq(p.ra, p.dec, 10) htm";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ScalarFunctionTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                DropMyDBTable("dbo", "SqlQueryTest_ScalarFunctionTest");
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = @"
+SELECT dbo.fDistanceEq(0, 0, 1, 1)
+INTO SqlQueryTest_ScalarFunctionTest";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ScalarFunctionOnTableTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                DropMyDBTable("dbo", "SqlQueryTest_ScalarFunctionOnTableTest");
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = @"
+SELECT TOP 100 dbo.fDistanceEq(0, 0, p.ra, p.dec) sep
+INTO SqlQueryTest_ScalarFunctionOnTableTest
+FROM SDSSDR7:PhotoObj p";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ScalarFunctionInWhereTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                DropMyDBTable("dbo", "SqlQueryTest_ScalarFunctionInWhereTest");
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = @"
+SELECT p.objid, p.ra, p.dec
+INTO SqlQueryTest_ScalarFunctionInWhereTest
+FROM (SELECT TOP 100 * FROM SDSSDR7:PhotoObj) p
+WHERE dbo.fDistanceEq(0, 0, p.ra, p.dec) > 1000";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
     }
 }
