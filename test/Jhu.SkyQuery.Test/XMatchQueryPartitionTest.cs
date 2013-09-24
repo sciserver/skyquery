@@ -48,6 +48,7 @@ namespace Jhu.SkyQuery.Test
             xmq.QueryFactoryTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName;
             xmq.DefaultDataset = (SqlServerDataset)sm.Datasets["Test"];
             xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets["Test"];
+            xmq.CodeDataset = (SqlServerDataset)sm.Datasets["Test"];
 
             var xmqp = new BayesFactorXMatchQueryPartition(xmq, null);
             xmqp.ID = 0;
