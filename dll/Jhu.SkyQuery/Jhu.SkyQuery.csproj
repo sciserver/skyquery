@@ -81,6 +81,10 @@
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Types\Jhu.Graywulf.Types.csproj">
+      <Project>{72607E61-5546-453A-8CFB-DD2A061B5C34}</Project>
+      <Name>Jhu.Graywulf.Types</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Format\Jhu.Graywulf.Format.csproj">
       <Project>{AAF4C238-C3A9-422F-BE3F-6FF10D9D0062}</Project>
       <Name>Jhu.Graywulf.Format</Name>

@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Runtime.Serialization;
 using System.IO;
 using gw = Jhu.Graywulf.Registry;
+using Jhu.Graywulf.Types;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
