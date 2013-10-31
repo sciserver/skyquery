@@ -3,40 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Jhu.Graywulf.Format
+namespace Jhu.SkyQuery.Format
 {
     class VOTableKeywords
     {
-        /// <summary>
-        /// Different Key used in VOTable document
-        /// </summary>
-        public static String VOTableStart  = "VOTABLE";
-        public static String VOResource    = "RESOURCE";
-        public static String VOTable       = "TABLE";
-        public static String VOField       = "FIELD";
-        public static String VOTabledata   = "TABLEDATA";
-        public static String VOdata        = "Data";
-        public static String TR            = "TR";
-        public static String TD            = "TD";
-        public static String name          = "name";
-        public static String description   = "description";
-        public static String utype         = "Utype";
-        public static String datatype      = "datatype";
-        public static String ucd           = "UCD";        
-        public static String unit          = "unit";
-        public static String precision     = "precision";
-        public static String width         = "width";
-        public static String arraysize     = "arraysize";
-        /// <summary>
-        /// Name spaces
-        /// </summary>
-        public static String dtdFilename        = "http://www.ivoa.net/internal/IVOA/IvoaVOTable/VOTable-1.2.dtd";
-        public static String xsdFileName        = "http://www.ivoa.net/xml/VOTable/VOTable-1.2.xsd";
-        public static String votableNameSpace   = "http://www.ivoa.net/xml/VOTable/v1.2";
+        // Different Key used in VOTable document
+        public const string VoTable = "VOTABLE";
+        public const string Resource = "RESOURCE";
+        public const string Table = "TABLE";
+        public const string Field = "FIELD";
+        public const string TableData = "TABLEDATA";
+        public const string Data = "DATA";
+        public const string TR = "TR";
+        public const string TD = "TD";
+        public const string Name = "name";
+        public const string Description = "description";
+        public const string UType = "Utype";
+        public const string DataType = "datatype";
+        public const string Ucd = "UCD";
+        public const string Unit = "unit";
+        public const string Precision = "precision";
+        public const string Width = "width";
+        public const string ArraySize = "arraysize";
+        
+        // Name spaces
+        public const String dtdFilename = "http://www.ivoa.net/internal/IVOA/IvoaVOTable/VOTable-1.2.dtd";
+        public const String xsdFileName = "http://www.ivoa.net/xml/VOTable/VOTable-1.2.xsd";
+        public const String votableNameSpace = "http://www.ivoa.net/xml/VOTable/v1.2";
 
         public static String[] vodatatypes = new String[] { 
            "boolean", "bit","unsignedbyte","short","int","long","char","unicodechar","float","double","floatcomplex","doublecomplex"
         };
     }
-    
+
 }

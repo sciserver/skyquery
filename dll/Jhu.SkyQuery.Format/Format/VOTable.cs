@@ -7,20 +7,26 @@ using System.Globalization;
 using System.Xml;
 using System.Collections;
 using System.Data;
+using Jhu.Graywulf.Format;
 
-namespace Jhu.Graywulf.Format
+namespace Jhu.SkyQuery.Format
 {
     [Serializable]
-    public class VOTable : FormattedData, IDisposable 
+    public class VOTable : FormattedDataFile, IDisposable
     {
-        private bool generateIdentity;
-        private long rowCounter;
-        private XmlReader reader;
-        private XmlTextWriter writer;
+        public static readonly StringComparer Comparer = StringComparer.InvariantCulture;
 
-        private char comment;
-        private char quote;
-        private char separator;
+        [NonSerialized]
+        private XmlReader inputReader;
+
+        [NonSerialized]
+        private bool ownsInputReader;
+
+        [NonSerialized]
+        private XmlWriter outputWriter;
+
+        [NonSerialized]
+        private bool ownsOutputWriter;
 
         public override FileFormatDescription Description
         {
@@ -28,14 +34,46 @@ namespace Jhu.Graywulf.Format
             {
                 return new FileFormatDescription()
                 {
-                    DisplayName = FileFormatNames.Jhu_Graywulf_Format_CsvFile,
-                    DefaultExtension = ".xml",
+                    DisplayName = FileFormatNames.Jhu_SkyQuery_Format_VOTable,
+                    DefaultExtension = ".votable",
                     CanCompress = true,
                 };
             }
-        }                
+        }
 
-        public VOTable(XmlReader input, CultureInfo culture) 
+        protected internal XmlReader XmlReader
+        {
+            get { return inputReader; }
+        }
+
+        protected internal XmlWriter XmlWriter
+        {
+            get { return outputWriter; }
+        }
+
+        #region Constructors and initializers
+
+        public VOTable()
+            : base()
+        {
+            InitializeMembers();
+        }
+
+        public VOTable(Uri uri, DataFileMode fileMode)
+            : this(uri, fileMode, Encoding.UTF8)
+        {
+            // overload
+        }
+
+        public VOTable(Uri uri, DataFileMode fileMode, Encoding encoding)
+            : base(uri, fileMode, encoding, CultureInfo.InvariantCulture)
+        {
+            InitializeMembers();
+
+            Open();
+        }
+
+        /*public VOTable(XmlReader input, CultureInfo culture) 
             : base(input,culture )   
         {           
             Open(input);
@@ -100,173 +138,181 @@ namespace Jhu.Graywulf.Format
             //: base(ds, fileMode)
         {
             InitializeMembers();
-        }
+        }*/
 
         private void InitializeMembers()
         {
+            this.inputReader = null;
+            this.ownsInputReader = false;
 
-             //this.nextResultsCalled = false;
-             this.comment = '#';
-             //this.quote = '"';
-             //this.separator = ',';
+            this.outputWriter = null;
+            this.ownsOutputWriter = false;
         }
 
-        public bool GenerateIdentity
+        public override void Dispose()
         {
-            get { return generateIdentity; }
-            set { generateIdentity = value; }
-        }               
+            Close();
+            base.Dispose();
+        }
 
-        protected DataType GetSqlDataType(String votableType) {
+        #endregion
+        #region Stream open and close
 
-            switch (votableType.ToLower()) { 
-
-                case "boolean"       : return DataType.Bit ;
-                case "bit"           : return DataType.Bit;
-                case "unsignedbyte"  : return DataType.Binary;
-                case "short"         : return DataType.SmallInt ;
-                case "int"           : return DataType.Int;
-                case "long"          : return DataType.BigInt;
-                case "char"          : return DataType.Char;
-                case "unicodechar"   : return DataType.Char;
-                case "float"         : return DataType.Float;
-                case "double"        : return DataType.Real;
-                case "floatcomplex"  : return DataType.Unknown;
-                case "doublecomplex" : return DataType.Unknown;
-                default              : return DataType.Text; 
-            }           
-        }        
-
-        public void DetectColumns() {
-
-            ArrayList columnNames = new ArrayList();
-            ArrayList columnTypes = new ArrayList();
-            int count = 0;
-            reader.ReadToDescendant(VOTableKeywords.VOTable);
-            while (reader.Read() && reader.NodeType == XmlNodeType.Element && reader.Name == VOTableKeywords.VOField)
+        protected override void EnsureNotOpen()
+        {
+            if (ownsInputReader && inputReader != null ||
+                ownsOutputWriter && outputWriter != null)
             {
-                columnNames.Add(reader.GetAttribute(VOTableKeywords.name));
-                columnTypes.Add(GetSqlDataType(reader.GetAttribute(VOTableKeywords.datatype)));
-                count++;
+                throw new InvalidOperationException();
             }
-            UpdateColumns(columnNames, columnTypes, count);
         }
 
-        
-        protected void UpdateColumns(ArrayList names, ArrayList types, int count)
+        //
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// This function is called by the infrastructure when starting to read
+        /// the file by the FileDataReader
+        /// </remarks>
+        protected override void OpenForRead()
         {
-
-            DataFileColumn[] columns = new DataFileColumn[count];
-
-            for (int i = 0; i < count; i++)
+            if (inputReader == null)
             {
-                columns[i] = new DataFileColumn();
-                columns[i].Name = names[i].ToString();
-                columns[i].DataType = (DataType)types[i];
-            }
+                // No open text reader yet
+                base.OpenForRead();
 
-            this.Columns.Clear();
-            this.Columns.AddRange(columns);
-        }
-
-        
-        protected override bool OnNextResult()
-        {
-            return true;
-        }
-
-        protected override bool OnRead(object[] values )
-        {
-            string[] parts = null;
-            var res = GetVOTableData(out parts);
-
-            if (!res)
-            {
-                return false;
-            }
-
-            // Now parse the parts
-            int pi = 0;
-            for (int i = 0; i < Columns.Count; i++)
-            {
-                if (Columns[i].IsIdentity && GenerateIdentity)
+                var settings = new XmlReaderSettings()
                 {
-                    // IDs are 1 based (like in SQL server)
-                    values[i] = rowCounter + 1;     // TODO: might need to convert to a smaller type?
-                }
-                else
-                {
-                    if (!ColumnParsers[i](parts[pi], out values[i]))
-                    {
-                        throw new FormatException();    // TODO: add logic to skip exceptions
-                    }
-                    pi++;
-                }
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true,
+                };
+
+                inputReader = System.Xml.XmlReader.Create(base.Stream, settings);
+
+                ownsInputReader = true;
             }
-
-            // TODO: add logic to handle nulls
-            rowCounter++;
-
-            return true;
-        }
-
-
-        protected override bool OnRead(object[] values, XmlReader reader)
-        {
-            string[] parts ;
-
-            var res = GetVOTableData(out parts);
-
-            if (!res)
-            {
-                return false;
-            }
-
-            // Now parse the parts
-            int pi = 0;
-            for (int i = 0; i < Columns.Count; i++)
-            {
-                if (Columns[i].IsIdentity && GenerateIdentity)
-                {
-                    // IDs are 1 based (like in SQL server)
-                    values[i] = rowCounter + 1;     // TODO: might need to convert to a smaller type?
-                }
-                else
-                {
-                    if (!ColumnParsers[i](parts[pi], out values[i]))
-                    {
-                        throw new FormatException();    // TODO: add logic to skip exceptions
-                    }
-
-                    pi++;
-                }
-            }
-
-            // TODO: add logic to handle nulls
-            rowCounter++;
-
-            return true;
         }
 
         protected override void OpenForWrite()
         {
-            if (writer == null)
+            if (outputWriter == null)
             {
                 // No open TextWriter yet
                 base.OpenForWrite();
-                
-                // Open TextWriter
-                if (base.Encoding == null)
-                {
-                    writer = new XmlTextWriter(base.Stream,Encoding.UTF8);//new StreamWriter(base.Stream);
-                }
-                else
-                {
-                    writer = new XmlTextWriter(base.Stream, base.Encoding);//writer = new StreamWriter(base.Stream, base.Encoding);
-                }
-                //ownsOutputWriter = true;
+
+                outputWriter = new XmlTextWriter(base.Stream, Encoding);
+                ownsOutputWriter = true;
             }
         }
+
+        public override void Close()
+        {
+            if (ownsInputReader && inputReader != null)
+            {
+                inputReader.Close();
+                inputReader = null;
+                ownsInputReader = false;
+            }
+
+            if (ownsOutputWriter && outputWriter != null)
+            {
+                outputWriter.Close();
+                outputWriter = null;
+                ownsOutputWriter = false;
+            }
+
+            base.Close();
+        }
+
+        public override bool IsClosed
+        {
+            get
+            {
+                switch (FileMode)
+                {
+                    case DataFileMode.Read:
+                        return inputReader == null;
+                    case DataFileMode.Write:
+                        return outputWriter == null;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+
+        #endregion
+
+        protected override void OnBlockAppended(DataFileBlockBase block)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnReadHeader()
+        {
+            XmlReader.ReadStartElement(VOTableKeywords.VoTable);
+
+            // consume info tags in the header before the first resource
+            if (XmlReader.NodeType != XmlNodeType.Element ||
+                Comparer.Compare(XmlReader.Name, VOTableKeywords.Resource) != 0)
+            {
+                XmlReader.Read();
+            }
+
+            // Reader is positioned on the first RESOURCE tag now
+            
+            // Read VOTable until the first RESOURCE tag
+            //inputReader.ReadToNextSibling(VOTableKeywords.Resource);
+        }
+
+        protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
+        {
+            // Reader must now be positioned on a RESOUCE tag
+            if (XmlReader.NodeType == XmlNodeType.Element &&
+                VOTable.Comparer.Compare(XmlReader.Name, VOTableKeywords.Resource) == 0)
+            {
+                // Read next tag
+                if (XmlReader.Read())
+                {
+                    if (XmlReader.NodeType == XmlNodeType.Element &&
+                        Comparer.Compare(XmlReader.Name, VOTableKeywords.Table) == 0)
+                    {
+
+                        return block ?? new VOTableResource(this);
+                    }
+                    else
+                    {
+                        throw new FileFormatException();    //  *** TODO
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        protected override void OnReadFooter()
+        {
+            // Tags to consume: /DATA /TABLE /RESOURCE
+        }
+
+        protected override void OnWriteHeader()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override DataFileBlockBase OnWriteNextBlock(DataFileBlockBase block, IDataReader dr)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnWriteFooter()
+        {
+            throw new NotImplementedException();
+        }
+
+#if false
+        
 
         protected override void OnWriteHeader()
         {
@@ -274,10 +320,10 @@ namespace Jhu.Graywulf.Format
 
             for (int i = 0; i < Columns.Count; i++)
             {
-                writer.WriteStartElement(VOTableKeywords.VOField);
-                writer.WriteAttributeString(VOTableKeywords.name, Columns[i].Name.Replace(separator, '_'));
-                writer.WriteAttributeString(VOTableKeywords.datatype, Columns[i].DataType.Name.ToString());
-                writer.WriteEndElement();               
+                outputWriter.WriteStartElement(VOTableKeywords.Field);
+                outputWriter.WriteAttributeString(VOTableKeywords.Name, Columns[i].Name.Replace(separator, '_'));
+                outputWriter.WriteAttributeString(VOTableKeywords.DataType, Columns[i].DataType.Name.ToString());
+                outputWriter.WriteEndElement();               
             }
 
             StartVOTableData();
@@ -285,33 +331,33 @@ namespace Jhu.Graywulf.Format
 
         private void StartVoTable() {
             
-            writer.WriteStartElement(VOTableKeywords.VOTableStart);
-            writer.WriteStartElement(VOTableKeywords.VOResource);
-            writer.WriteStartElement(VOTableKeywords.VOTable);                    
+            outputWriter.WriteStartElement(VOTableKeywords.VoTable);
+            outputWriter.WriteStartElement(VOTableKeywords.Resource);
+            outputWriter.WriteStartElement(VOTableKeywords.Table);                    
         }
 
         private void StartVOTableData()
         {
-            writer.WriteStartElement(VOTableKeywords.VOdata);
-            writer.WriteStartElement(VOTableKeywords.VOTabledata);
+            outputWriter.WriteStartElement(VOTableKeywords.Data);
+            outputWriter.WriteStartElement(VOTableKeywords.TableData);
         }
 
         protected override void OnWrite(object[] values)
         {           
-            writer.WriteStartElement(VOTableKeywords.TR);
+            outputWriter.WriteStartElement(VOTableKeywords.TR);
             for (int i = 0; i < Columns.Count; i++)
             {
-                writer.WriteElementString(VOTableKeywords.TD, ColumnFormatters[i](values[i], Columns[i].Format));   
+                outputWriter.WriteElementString(VOTableKeywords.TD, ColumnFormatters[i](values[i], Columns[i].Format));   
             }
-            writer.WriteEndElement();
+            outputWriter.WriteEndElement();
             
         }
         protected override void OnWriteFooter()
         {
-            writer.WriteEndElement();
-            writer.WriteEndElement();
-            writer.Flush();
-            writer.Close();            
+            outputWriter.WriteEndElement();
+            outputWriter.WriteEndElement();
+            outputWriter.Flush();
+            outputWriter.Close();            
         }
        
         public override bool IsClosed {
@@ -334,14 +380,14 @@ namespace Jhu.Graywulf.Format
             parts = new string[Columns.Count];
             try
             {
-                reader.ReadToFollowing(VOTableKeywords.TD);
+                inputReader.ReadToFollowing(VOTableKeywords.TD);
                 do
                 {
-                    parts[cnt] = reader.ReadString();
+                    parts[cnt] = inputReader.ReadString();
                     cnt++;
-                } while (reader.ReadToNextSibling(VOTableKeywords.TD));
+                } while (inputReader.ReadToNextSibling(VOTableKeywords.TD));
 
-                reader.ReadToNextSibling(VOTableKeywords.TR);
+                inputReader.ReadToNextSibling(VOTableKeywords.TR);
                 return true;
 
             }catch(Exception exp){
@@ -349,23 +395,26 @@ namespace Jhu.Graywulf.Format
             }
         }
 
+        /*
         public void Open(XmlTextWriter output, Encoding en, CultureInfo culture) {
             EnsureNotOpen();
             this.FileMode = DataFileMode.Write;
-            this.writer = output;            
+            this.outputWriter = output;            
         }
         
         public void Open(XmlReader input)
         {
             EnsureNotOpen();
             this.FileMode = DataFileMode.Read;
-            this.reader = input;            
+            this.inputReader = input;            
         }
 
         public void EnsureNotOpen() {
-            if (this.reader != null) {
+            if (this.inputReader != null) {
                 throw new InvalidOperationException();
             }
         }
+         * */
+#endif
     }
 }

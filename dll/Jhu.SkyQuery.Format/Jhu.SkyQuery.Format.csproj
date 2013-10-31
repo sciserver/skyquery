@@ -40,6 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Format\FileFormatNames.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FileFormatNames.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Format\VOTable.cs" />
+    <Compile Include="Format\VOTableResource.cs" />
+    <Compile Include="Format\VOTableKeywords.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -52,8 +60,12 @@
       <Name>Jhu.Graywulf.Types</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Format\" />
+    <EmbeddedResource Include="Format\FileFormatNames.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileFormatNames.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
