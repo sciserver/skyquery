@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VOTABLE xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ivoa.net/xml/VOTable/v1.1">
+  <INFO name="QUERY_STATUS" value="OK"/>
+  <RESOURCE>
+    <TABLE>
+      <FIELD datatype="char" arraysize="15" name="objid"/>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <DATA>
+        <TABLEDATA test="test">
+		  <TR>
+            <TD>test</TD>
+            <TD>270.000683875077</TD>
+            <TD>0.00379192855675463</TD>
+          </TR>
+          <TR>
+            <TD></TD>
+            <TD>270.000683875077</TD>
+            <TD>0.00379192855675463</TD>
+          </TR>
+          <TR>
+            <TD/>
+            <TD>1</TD>
+            <TD/>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

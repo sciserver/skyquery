@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VOTABLE xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ivoa.net/xml/VOTable/v1.1">
+  <INFO name="QUERY_STATUS" value="OK"/>
+  <RESOURCE>
+    <TABLE>
+      <FIELD datatype="long" name="objid"/>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <FIELD datatype="float" name="u"/>
+      <FIELD datatype="float" name="g"/>
+      <FIELD datatype="float" name="r"/>
+      <FIELD datatype="float" name="i"/>
+      <FIELD datatype="float" name="z"/>
+      <DATA>
+	  <TABLEDATA test="test" />
+         
+		</DATA>
+    </TABLE>
+  </RESOURCE>
+  <RESOURCE>
+    <TABLE>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <DATA>
+	  
+        <TABLEDATA test="test">
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VOTABLE xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.ivoa.net/xml/VOTable/v1.1">
+  <INFO name="QUERY_STATUS" value="OK"/>
+  <RESOURCE>
+    <TABLE>
+      <FIELD datatype="long" name="objid"/>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <FIELD datatype="float" name="u"/>
+      <FIELD datatype="float" name="g"/>
+      <FIELD datatype="float" name="r"/>
+      <FIELD datatype="float" name="i"/>
+      <FIELD datatype="float" name="z"/>
+      <DATA>
+        <TABLEDATA test="test">
+          <TR>
+            <TD>1237651758284999317</TD>
+            <TD>270.000683875077</TD>
+            <TD>0.00379192855675463</TD>
+            <TD>19.12505</TD>
+            <TD>17.33891</TD>
+            <TD>16.45144</TD>
+            <TD>16.02683</TD>
+            <TD>15.72931</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284999332</TD>
+            <TD>270.004117139224</TD>
+            <TD>0.00564105267499225</TD>
+            <TD>19.24092</TD>
+            <TD>17.48754</TD>
+            <TD>16.69331</TD>
+            <TD>16.35028</TD>
+            <TD>16.12469</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284996806</TD>
+            <TD>269.993675734068</TD>
+            <TD>0.00885350745442452</TD>
+            <TD>19.55755</TD>
+            <TD>17.44263</TD>
+            <TD>16.1676</TD>
+            <TD>15.58734</TD>
+            <TD>15.3131</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284996808</TD>
+            <TD>269.987571393666</TD>
+            <TD>0.00422952677850295</TD>
+            <TD>19.39876</TD>
+            <TD>17.31217</TD>
+            <TD>16.25227</TD>
+            <TD>15.77084</TD>
+            <TD>15.4546</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284997753</TD>
+            <TD>270.013518236457</TD>
+            <TD>-0.00122235200573972</TD>
+            <TD>19.28469</TD>
+            <TD>16.51726</TD>
+            <TD>14.99872</TD>
+            <TD>14.42446</TD>
+            <TD>14.19263</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284996805</TD>
+            <TD>269.985054291693</TD>
+            <TD>0.0016110544060379</TD>
+            <TD>17.57965</TD>
+            <TD>15.70379</TD>
+            <TD>14.83279</TD>
+            <TD>14.48186</TD>
+            <TD>14.27198</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284997690</TD>
+            <TD>270.006304127296</TD>
+            <TD>0.0156323161721455</TD>
+            <TD>17.85667</TD>
+            <TD>15.54247</TD>
+            <TD>14.43041</TD>
+            <TD>16.45018</TD>
+            <TD>13.62155</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284997756</TD>
+            <TD>270.016064711089</TD>
+            <TD>0.0101951980420328</TD>
+            <TD>19.47193</TD>
+            <TD>17.34929</TD>
+            <TD>16.34202</TD>
+            <TD>15.86653</TD>
+            <TD>15.53357</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284997754</TD>
+            <TD>270.021069004891</TD>
+            <TD>0.00212050582333935</TD>
+            <TD>18.91979</TD>
+            <TD>16.90169</TD>
+            <TD>15.83084</TD>
+            <TD>15.33428</TD>
+            <TD>14.99224</TD>
+          </TR>
+          <TR>
+            <TD>1237651758284999225</TD>
+            <TD>269.990404261775</TD>
+            <TD>0.0197862524303847</TD>
+            <TD>19.27604</TD>
+            <TD>17.30541</TD>
+            <TD>16.45096</TD>
+            <TD>16.0836</TD>
+            <TD>15.85072</TD>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+  <RESOURCE>
+    <TABLE>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <DATA>
+        <TABLEDATA test="test">
+          <TR>
+            <TD>270.000683875077</TD>
+            <TD>0.00379192855675463</TD>
+          </TR>
+          <TR>
+            <TD>270.004117139224</TD>
+            <TD>0.00564105267499225</TD>
+          </TR>
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+</VOTABLE>

@@ -38,6 +38,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
@@ -47,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BayesFactorXMatchQueryPartitionTest.cs" />
     <Compile Include="CatalogTest.cs" />
+    <Compile Include="Format\VOTableReaderTest.cs" />
     <Compile Include="PartitionedSqlQueryTest.cs" />
     <Compile Include="MyDBSqlQueryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,6 +64,10 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Format\Jhu.Graywulf.Format.csproj">
+      <Project>{AAF4C238-C3A9-422F-BE3F-6FF10D9D0062}</Project>
+      <Name>Jhu.Graywulf.Format</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
       <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
@@ -94,6 +100,10 @@
     <ProjectReference Include="..\..\..\GrayWulf\Test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
       <Name>Jhu.Graywulf.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Format\Jhu.SkyQuery.Format.csproj">
+      <Project>{8F2875D9-C190-4A01-B756-FE39B9D171B7}</Project>
+      <Name>Jhu.SkyQuery.Format</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
