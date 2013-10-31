@@ -9,7 +9,7 @@ using System.Collections;
 using System.Data;
 using Jhu.Graywulf.Format;
 
-namespace Jhu.SkyQuery.Format
+namespace Jhu.SkyQuery.Format.VOTable
 {
     [Serializable]
     public class VOTable : FormattedDataFile, IDisposable

@@ -6,7 +6,7 @@ using System.Xml;
 using Jhu.Graywulf.Types;
 using Jhu.Graywulf.Format;
 
-namespace Jhu.SkyQuery.Format
+namespace Jhu.SkyQuery.Format.VOTable
 {
     public class VOTableResource : FormattedDataFileBlock
     {

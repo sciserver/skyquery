@@ -45,9 +45,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FileFormatNames.resx</DependentUpon>
     </Compile>
-    <Compile Include="Format\VOTable.cs" />
-    <Compile Include="Format\VOTableResource.cs" />
-    <Compile Include="Format\VOTableKeywords.cs" />
+    <Compile Include="Format\VOTable\VOTable.cs" />
+    <Compile Include="Format\VOTable\VOTableKeywords.cs" />
+    <Compile Include="Format\VOTable\VOTableResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

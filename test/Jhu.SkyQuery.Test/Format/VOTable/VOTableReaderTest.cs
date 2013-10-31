@@ -7,7 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using Jhu.Graywulf.Format;
-using Jhu.SkyQuery.Format;
+using Jhu.SkyQuery.Format.VOTable;
 
 namespace Jhu.SkyQuery.Test.Format
 {
