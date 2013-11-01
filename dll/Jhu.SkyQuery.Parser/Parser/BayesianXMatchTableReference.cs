@@ -23,15 +23,15 @@ namespace Jhu.SkyQuery.Parser
 
             DatabaseObject = new Table();
 
-            AddColumn("LogBF", DataType.Float);
-            AddColumn("RA", DataType.Float);
-            AddColumn("Dec", DataType.Float);
-            AddColumn("Q", DataType.Float);
-            AddColumn("L", DataType.Float);
-            AddColumn("A", DataType.Float);
-            AddColumn("Cx", DataType.Float);
-            AddColumn("Cy", DataType.Float);
-            AddColumn("Cz", DataType.Float);
+            AddColumn("LogBF", DataType.SqlFloat);
+            AddColumn("RA", DataType.SqlFloat);
+            AddColumn("Dec", DataType.SqlFloat);
+            AddColumn("Q", DataType.SqlFloat);
+            AddColumn("L", DataType.SqlFloat);
+            AddColumn("A", DataType.SqlFloat);
+            AddColumn("Cx", DataType.SqlFloat);
+            AddColumn("Cy", DataType.SqlFloat);
+            AddColumn("Cz", DataType.SqlFloat);
         }
 
         private void AddColumn(string name, DataType type)

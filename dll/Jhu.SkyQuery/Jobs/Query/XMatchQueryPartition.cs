@@ -397,7 +397,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                                             tableAlias == null ? String.Empty : String.Format("[{0}].", tableAlias),
                                             GetEscapedPropagatedColumnName(table.TableReference, cd.Name),
                                             cd.Name,
-                                            cd.DataType.NameWithSize,
+                                            cd.DataType.NameWithLength,
                                             nullstring);
 
                     referencedcolumns.Add(GetEscapedColumnName(table.TableReference, cd.Name));
@@ -427,7 +427,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                                                 tableAlias == null ? String.Empty : String.Format("[{0}].", tableAlias),
                                                 escapedname,
                                                 cr.ColumnName,
-                                                cr.DataType.NameWithSize,
+                                                cr.DataType.NameWithLength,
                                                 nullstring);
 
                             referencedcolumns.Add(key);
