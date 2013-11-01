@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             {
                 return new FileFormatDescription()
                 {
-                    DisplayName = FileFormatNames.Jhu_SkyQuery_Format_VOTable,
+                    DisplayName = FileFormatNames.VOTable,
                     DefaultExtension = ".votable",
                     CanCompress = true,
                 };
@@ -60,18 +60,25 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, Encoding.UTF8)
+            : this(uri, fileMode, CompressionMethod.Automatic, Encoding.UTF8)
         {
-            // overload
+            // Overload
         }
 
-        public VOTable(Uri uri, DataFileMode fileMode, Encoding encoding)
-            : base(uri, fileMode, encoding, CultureInfo.InvariantCulture)
+        public VOTable(Uri uri, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
+            : base(uri, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
             Open();
         }
+
+        /*
+        public VOTable(Uri uri, DataFileMode fileMode)
+            : this(uri, fileMode, Encoding.UTF8)
+        {
+            // overload
+        }*/
 
         /*public VOTable(XmlReader input, CultureInfo culture) 
             : base(input,culture )   
@@ -178,11 +185,10 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </remarks>
         protected override void OpenForRead()
         {
+            base.OpenForRead();
+
             if (inputReader == null)
             {
-                // No open text reader yet
-                base.OpenForRead();
-
                 var settings = new XmlReaderSettings()
                 {
                     IgnoreComments = true,
@@ -197,11 +203,10 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         protected override void OpenForWrite()
         {
+            base.OpenForWrite();
+
             if (outputWriter == null)
             {
-                // No open TextWriter yet
-                base.OpenForWrite();
-
                 outputWriter = new XmlTextWriter(base.Stream, Encoding);
                 ownsOutputWriter = true;
             }

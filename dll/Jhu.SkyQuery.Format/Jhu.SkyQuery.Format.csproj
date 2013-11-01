@@ -45,6 +45,23 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FileFormatNames.resx</DependentUpon>
     </Compile>
+    <Compile Include="Format\Fits\BinaryTableHdu.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Format\Fits\Card.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Format\Fits\CardCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Format\Fits\Fits.cs" />
+    <Compile Include="Format\Fits\Constants.cs" />
+    <Compile Include="Format\Fits\HduBase.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Format\Fits\ImageHdu.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Format\VOTable\VOTable.cs" />
     <Compile Include="Format\VOTable\VOTableKeywords.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />

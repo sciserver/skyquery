@@ -48,7 +48,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     var datatype = File.XmlReader.GetAttribute(VOTableKeywords.DataType);
                     var arraysize = File.XmlReader.GetAttribute(VOTableKeywords.ArraySize);
 
-                    col.DataType = GetDataType(datatype, arraysize);
+                    col.DataType = GetVOTableDataType(datatype, arraysize);
 
                     // *** TODO fill in additional column properties
                     //arraysize
@@ -86,55 +86,85 @@ namespace Jhu.SkyQuery.Format.VOTable
             CreateColumns(cols.ToArray());
         }
 
-        private DataType GetDataType(string voTableType, string arraySizeString)
+        private DataType GetVOTableDataType(string voTableType, string arraySizeString)
         {
-            int arraySize = -1;
-            bool arrayInfinity = false;
-
-            if (!String.IsNullOrEmpty(arraySizeString))
-            {
-                arrayInfinity = arraySizeString.Contains('*');
-                
-                if (!int.TryParse(arraySizeString.Replace("*", ""), out arraySize))
-                {
-                    arraySize = -1;
-                }
-            }
+            int arraySize;
+            bool arrayVariable;
+            GetArrayDimensions(arraySizeString, out arraySize, out arrayVariable);
 
             // TODO: implement arrays
-            DataType dataType;
+            DataType dt;
 
             switch (voTableType.ToLower(System.Globalization.CultureInfo.InvariantCulture))
             {
                 case "boolean":
-                    dataType = DataType.Bit;
+                    dt = DataType.Boolean;
                     break;
                 case "bit":
-                    dataType = DataType.Bit;
+                    dt = DataType.Boolean;    // This is union bit
                     break;
                 case "unsignedbyte":
-                    dataType = DataType.VarBinary;
+                    if (arraySize == -1)
+                    {
+                        dt = DataType.SqlVarBinaryMax;
+                    }
+                    else if (arrayVariable)
+                    {
+                        dt = DataType.SqlVarBinary;
+                        dt.Length = arraySize;
+                    }
+                    else
+                    {
+                        dt = DataType.SqlBinary;
+                        dt.Length = arraySize;
+                    }
                     break;
                 case "short":
-                    dataType = DataType.SmallInt;
+                    dt = DataType.SqlSmallInt;
                     break;
                 case "int":
-                    dataType = DataType.Int;
+                    dt = DataType.SqlInt;
                     break;
                 case "long":
-                    dataType = DataType.BigInt;
+                    dt = DataType.SqlBigInt;
                     break;
                 case "char":
-                    dataType = DataType.VarChar;
+                    if (arraySize == -1)
+                    {
+                        dt = DataType.SqlVarCharMax;
+                    }
+                    else if (arrayVariable)
+                    {
+                        dt = DataType.SqlVarChar;
+                        dt.Length = arraySize;
+                    }
+                    else
+                    {
+                        dt = DataType.SqlChar;
+                        dt.Length = arraySize;
+                    }
                     break;
                 case "unicodechar":
-                    dataType = DataType.NVarChar;
+                    if (arraySize == -1)
+                    {
+                        dt = DataType.SqlNVarCharMax;
+                    }
+                    else if (arrayVariable)
+                    {
+                        dt = DataType.SqlNVarChar;
+                        dt.Length = arraySize;
+                    }
+                    else
+                    {
+                        dt = DataType.SqlNChar;
+                        dt.Length = arraySize;
+                    }
                     break;
                 case "float":
-                    dataType = DataType.Real;
+                    dt = DataType.SqlReal;
                     break;
                 case "double":
-                    dataType = DataType.Float;
+                    dt = DataType.SqlFloat;
                     break;
                 case "floatcomplex":
                 case "doublecomplex":
@@ -142,27 +172,29 @@ namespace Jhu.SkyQuery.Format.VOTable
                     throw new NotImplementedException();
             }
 
-            if (dataType.HasSize)
+            if (!dt.HasLength && arraySize > 1)
             {
-                if (arrayInfinity)
-                {
-                    dataType.VarSize = true;
-                }
-                else if (arraySize != -1)
-                {
-                    // TODO: test this
-                    dataType.Size = arraySize;
-                }
-            }
-            else
-            {
-                if (arrayInfinity || arraySize > 1)
-                {
-                    throw new NotImplementedException();    // No arrays implemented yet
-                }
+                // Array, not implemented
+                throw new NotImplementedException();
             }
 
-            return dataType;
+            return dt;
+        }
+
+        private void GetArrayDimensions(string arraySizeString, out int size, out bool variable)
+        {
+            size = 1;
+            variable = false;
+
+            if (!String.IsNullOrEmpty(arraySizeString))
+            {
+                variable = arraySizeString.Contains('*');
+
+                if (!int.TryParse(arraySizeString.Replace("*", ""), out size))
+                {
+                    size = -1;
+                }
+            }
         }
 
         #endregion

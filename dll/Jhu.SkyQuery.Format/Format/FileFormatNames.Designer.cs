@@ -61,11 +61,20 @@ namespace Jhu.SkyQuery.Format {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Flexible Image Transport System (FITS).
+        /// </summary>
+        internal static string Fits {
+            get {
+                return ResourceManager.GetString("Fits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to VOTable.
         /// </summary>
-        internal static string Jhu_SkyQuery_Format_VOTable {
+        internal static string VOTable {
             get {
-                return ResourceManager.GetString("Jhu.SkyQuery.Format.VOTable", resourceCulture);
+                return ResourceManager.GetString("VOTable", resourceCulture);
             }
         }
     }
