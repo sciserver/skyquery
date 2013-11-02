@@ -86,12 +86,6 @@ namespace Jhu.SkyQuery.Format.Fits
             InitializeMembers();
         }
 
-        public Fits(Uri uri, DataFileMode fileMode)
-            :this(uri, fileMode, CompressionMethod.Automatic, Endianness.LittleEndian)
-        {
-            // Overload
-        }
-
         public Fits(Uri uri, DataFileMode fileMode, CompressionMethod compression, Endianness endianness)
             : base(uri, fileMode, compression)
         {
@@ -102,56 +96,45 @@ namespace Jhu.SkyQuery.Format.Fits
             Open();
         }
 
-        /*
-        public Fits(Stream stream, FitsFileMode fileMode, FitsEndianness endianness)
+        public Fits(Uri uri, DataFileMode fileMode)
+            : this(uri, fileMode, CompressionMethod.None, Endianness.LittleEndian)
+        {
+            // Overload
+        }
+
+        public Fits(Stream stream, DataFileMode fileMode, CompressionMethod compression, Endianness endianness)
+            : base(stream, fileMode, compression)
         {
             InitializeMembers();
 
-            this.baseStream = stream;
-            this.fileMode = fileMode;
             this.endianness = endianness;
 
             Open();
         }
 
-        public Fits(string path, FitsFileMode fileMode)
-            : this(path, fileMode, FitsCompressionMethod.None, FitsEndianness.LittleEndian)
+        public Fits(Stream stream, DataFileMode fileMode)
+            : this(stream, fileMode, CompressionMethod.None, Endianness.LittleEndian)
         {
+            // Overload
         }
-
-        public Fits(string path, FitsFileMode fileMode, FitsEndianness endianness)
-            : this(path, fileMode, FitsCompressionMethod.None, endianness)
-        {
-        }
-
-        public Fits(string path, FitsFileMode fileMode, FitsCompressionMethod compression)
-            : this(path, fileMode, compression, FitsEndianness.LittleEndian)
-        {
-        }*/
-
-        /*public Fits(string path, FitsFileMode fileMode, FitsCompressionMethod compression, FitsEndianness endianness)
-        {
-            InitializeMembers();
-
-            this.path = path;
-            this.fileMode = fileMode;
-            this.compression = compression;
-            this.endianness = endianness;
-
-            Open();
-        }*/
 
         private void InitializeMembers()
         {
             this.forwardStream = null;
             this.bitConverter = null;
-            
+
             this.endianness = Endianness.LittleEndian;
         }
 
         #endregion
         #region Stream open/close
 
+        public override void Open(Stream stream, DataFileMode fileMode)
+        {
+            base.Open(stream, fileMode);
+
+            Open();
+        }
 
         protected override void OpenForRead()
         {
@@ -229,7 +212,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
             if (hdu.IsSimple)
             {
-                return new ImageHdu(hdu);   
+                return new ImageHdu(hdu);
             }
             else
             {

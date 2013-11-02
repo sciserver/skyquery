@@ -59,12 +59,6 @@ namespace Jhu.SkyQuery.Format.VOTable
             InitializeMembers();
         }
 
-        public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, CompressionMethod.Automatic, Encoding.UTF8)
-        {
-            // Overload
-        }
-
         public VOTable(Uri uri, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
             : base(uri, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
@@ -73,79 +67,53 @@ namespace Jhu.SkyQuery.Format.VOTable
             Open();
         }
 
-        /*
         public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, Encoding.UTF8)
+            : this(uri, fileMode, CompressionMethod.None, Encoding.UTF8)
         {
-            // overload
-        }*/
-
-        /*public VOTable(XmlReader input, CultureInfo culture) 
-            : base(input,culture )   
-        {           
-            Open(input);
+            // Overload
         }
 
-        public VOTable(String filepath, CultureInfo culture) 
-        {
-            reader = XmlReader.Create(filepath);
-            Open(reader);
-        }
-
-        public VOTable(TextReader txtReader, CultureInfo culture) 
-        {
-            reader = XmlReader.Create(txtReader);
-            Open(reader);
-        }
-
-        public VOTable(Stream stream, CultureInfo culture) 
-        {
-            reader = XmlReader.Create(stream);
-            Open(reader);
-        }
-        
-        public VOTable(string path, DataFileMode fileMode)
-            : base(path, fileMode,null,null)
+        public VOTable(Stream stream, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
+            : base(stream, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
-            this.FileMode = fileMode;
+
+            Open();
         }
 
-        public VOTable(string path, CultureInfo culture, DataFileMode fileMode) 
-            :base(path,culture)
+        public VOTable(Stream stream, DataFileMode fileMode)
+            : this(stream, fileMode, CompressionMethod.None, Encoding.UTF8)
         {
-            InitializeMembers();            
+            // Overload
         }
 
-
-
-        public VOTable(XmlWriter writer, DataFileMode fileMode)
-            : base(writer, fileMode)
-        {
-           //base.Encoding = Encoding.UTF8;
-            InitializeMembers();
-        }
-
-        public VOTable(XmlTextWriter writer, CultureInfo culture)
-            : base(writer, null, culture)
+        public VOTable(XmlReader inputReader, Encoding encoding)
+            : base((Stream)null, DataFileMode.Read, CompressionMethod.None, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
-            Open(writer, null, culture);
-        
-           // this.writer = writer;
+
+            this.inputReader = inputReader;
         }
 
-        public VOTable(TextWriter writer, CultureInfo culture)
-            : base(writer,null, culture) 
+        public VOTable(XmlReader inputReader)
+            : this(inputReader, Encoding.UTF8)
         {
-            InitializeMembers();
+            // Overload
         }
 
-        public VOTable(DataSet ds, DataFileMode fileMode)
-            //: base(ds, fileMode)
+        public VOTable(XmlWriter outputWriter, Encoding encoding)
+            : base((Stream)null, DataFileMode.Write, CompressionMethod.None, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
-        }*/
+
+            this.outputWriter = outputWriter;
+        }
+
+        public VOTable(XmlWriter outputWriter)
+            : this(outputWriter, Encoding.UTF8)
+        {
+            // Overload
+        }
 
         private void InitializeMembers()
         {
@@ -164,6 +132,31 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         #endregion
         #region Stream open and close
+
+        public override void Open(Stream stream, DataFileMode fileMode)
+        {
+            base.Open(stream, fileMode);
+
+            Open();
+        }
+
+        public virtual void Open(XmlReader inputReader)
+        {
+            base.Open(null, DataFileMode.Read);
+
+            this.inputReader = inputReader;
+
+            Open();
+        }
+
+        public virtual void Open(XmlWriter outputWriter)
+        {
+            base.Open(null, DataFileMode.Write);
+
+            this.outputWriter = outputWriter;
+
+            Open();
+        }
 
         protected override void EnsureNotOpen()
         {
@@ -266,7 +259,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             }
 
             // Reader is positioned on the first RESOURCE tag now
-            
+
             // Read VOTable until the first RESOURCE tag
             //inputReader.ReadToNextSibling(VOTableKeywords.Resource);
         }
