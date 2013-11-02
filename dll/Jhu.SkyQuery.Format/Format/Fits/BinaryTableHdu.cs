@@ -64,13 +64,17 @@ namespace Jhu.SkyQuery.Format.Fits
         private void DetectColumns()
         {
             // Loop though header cards and 
-
+            Card card;
             var cols = new DataFileColumn[FieldCount];
 
             for (int i = 0; i < cols.Length; i++)
             {
                 // Get data type
-                var tform = Cards[(Constants.FitsKeywordTForm + i.ToString())].GetString();
+                if (!TryGetCard(Constants.FitsKeywordTForm, i, out card))
+                {
+                    throw new FileFormatException();    // *** TODO
+                }
+                var tform = card.GetString();
 
                 char type;
                 int repeat;
@@ -82,7 +86,6 @@ namespace Jhu.SkyQuery.Format.Fits
                 cols[i].ID = i;
 
                 // Set optional parameters
-                Card card;
 
                 // - Column name
                 if (TryGetCard(Constants.FitsKeywordTType, i, out card))
@@ -193,11 +196,11 @@ namespace Jhu.SkyQuery.Format.Fits
                 case 'A':
                     if (repeat == 1)
                     {
-                        dt = DataType.Char;
+                        dt = DataType.SqlChar;
                     }
                     else
                     {
-                        dt = DataType.String;
+                        dt = DataType.SqlChar;
                         dt.Length = repeat;
                     }
                     break;
@@ -230,7 +233,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         private bool TryGetCard(string key, int id, out Card card)
         {
-            key += id.ToString();
+            key += (id + 1).ToString();
             return Cards.TryGetValue(key, out card);
         }
 
@@ -251,7 +254,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override bool OnReadNextRow(object[] values)
         {
-            if (!HasMoreStrides)
+            if (HasMoreStrides)
             {
                 ReadStride();
 

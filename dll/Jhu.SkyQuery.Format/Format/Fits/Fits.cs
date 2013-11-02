@@ -236,8 +236,7 @@ namespace Jhu.SkyQuery.Format.Fits
                 switch (hdu.Extension)
                 {
                     case Constants.FitsKeywordBinTable:
-                        //return new BinTableHdu();
-                        return null;
+                        return new BinaryTableHdu(hdu);
                     default:
                         throw new NotImplementedException();
                 }

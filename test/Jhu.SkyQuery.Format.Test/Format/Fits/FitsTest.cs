@@ -100,19 +100,18 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             f.Close();
         }
 
-#if false
         [TestMethod]
         public void ReadSdssDR7SpectrumTest2()
         {
-            var f = new Fits(@"..\..\..\fits\sdssdr7_spSpec.fit", FitsFileMode.Read, FitsEndianness.BigEndian);
+            var f = OpenFits("sdssdr7_spSpec.fit");
 
             HduBase hdu;
-            while ((hdu = f.ReadNextHdu()) != null)
+            while ((hdu = (HduBase)f.ReadNextBlock()) != null)
             {
             }
 
             f.Close();
         }
-#endif
+
     }
 }

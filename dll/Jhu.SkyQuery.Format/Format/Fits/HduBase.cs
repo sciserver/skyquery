@@ -177,7 +177,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OnColumnsCreated()
         {
-            throw new NotImplementedException();
+            // Nothing to do with the columns
         }
 
         #endregion
