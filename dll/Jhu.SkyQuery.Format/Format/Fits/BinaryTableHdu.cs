@@ -13,6 +13,11 @@ namespace Jhu.SkyQuery.Format.Fits
     {
         private static readonly Regex FormatRegex = new Regex(@"([0-9]*)([LXBIJAEDCMP]+)");
 
+        private delegate int ByteReaderDelegate(BitConverterBase converter, byte[] buffer, int startIndex, int count, out object value);
+
+        [NonSerialized]
+        private ByteReaderDelegate[] columnByteReaders;
+
         internal BinaryTableHdu(Fits fits)
             : base(fits)
         {
@@ -48,14 +53,31 @@ namespace Jhu.SkyQuery.Format.Fits
 
         #region Column functions
 
+        protected override void OnColumnsCreated()
+        {
+            if ((file.FileMode & DataFileMode.Read) != 0)
+            {
+                InitializeColumnByteReader();
+            }
+        }
+
+        private void InitializeColumnByteReader()
+        {
+            columnByteReaders = new ByteReaderDelegate[Columns.Count];
+
+            for (int i = 0; i < columnByteReaders.Length; i++)
+            {
+                columnByteReaders[i] = GetByteReaderDelegate(Columns[i]);
+            }
+        }
+
         public override int GetStrideLength()
         {
             int res = 0;
 
             for (int i = 0; i < Columns.Count; i++)
             {
-
-                res += Columns[i].DataType.GetBinarySize();
+                res += GetColumnBinarySize(Columns[i]);
             }
 
             return res;
@@ -239,19 +261,6 @@ namespace Jhu.SkyQuery.Format.Fits
 
         #endregion
 
-#if false
-        private void ProcessField(Card card)
-        {
-            int index = GetFieldIndex(card);
-            fields[index].ReadFromCard(card);
-        }
-
-        private int GetFieldIndex(Card card)
-        {
-            return int.Parse(card.Keyword.Substring(5)) - 1;
-        }
-#endif
-
         protected override bool OnReadNextRow(object[] values)
         {
             if (HasMoreStrides)
@@ -261,7 +270,7 @@ namespace Jhu.SkyQuery.Format.Fits
                 int startIndex = 0;
                 for (int i = 0; i < Columns.Count; i++)
                 {
-                    var res = Columns[i].DataType.ReadFromBytes(
+                    var res = columnByteReaders[i](
                                 Fits.BitConverter,
                                 StrideBuffer,
                                 startIndex,
@@ -297,5 +306,338 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
+        public int GetColumnBinarySize(DataFileColumn column)
+        {
+            if (column.DataType.IsMaxLength)
+            {
+                // varchar(max), varbinary(max) - no known size
+                return -1;
+            }
+            else if (column.DataType.HasLength)
+            {
+                return column.DataType.Length * column.DataType.ByteSize;
+            }
+            else if (column.DataType.IsSqlArray)
+            {
+                return column.DataType.ArrayLength * column.DataType.ByteSize;
+            }
+            else
+            {
+                return column.DataType.ByteSize;
+            }
+        }
+
+        private ByteReaderDelegate GetByteReaderDelegate(DataFileColumn column)
+        {
+            // Complex types firts, then scalar and arrays
+            if (column.DataType.Type == typeof(String))
+            {
+                return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                {
+                    value = Encoding.ASCII.GetString(bytes, startIndex, count);
+                    return count;
+                };
+            }
+            else if (!column.DataType.HasLength && !column.DataType.IsSqlArray)
+            {
+                // Scalars
+                if (column.DataType.Type == typeof(Boolean))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Boolean val;
+                        var res = converter.ToBoolean(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(SByte))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        SByte val;
+                        var res = converter.ToSByte(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Byte))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Byte val;
+                        var res = converter.ToByte(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Char))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Char val;
+                        var res = converter.ToChar(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Int16))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Int16 val;
+                        var res = converter.ToInt16(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(UInt16))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        UInt16 val;
+                        var res = converter.ToUInt16(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Int32))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Int32 val;
+                        var res = converter.ToInt32(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(UInt32))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        UInt32 val;
+                        var res = converter.ToUInt32(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Int64))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Int64 val;
+                        var res = converter.ToInt64(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(UInt64))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        UInt64 val;
+                        var res = converter.ToUInt64(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Single))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Single val;
+                        var res = converter.ToSingle(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Double))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Double val;
+                        var res = converter.ToDouble(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(SingleComplex))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        SingleComplex val;
+                        var res = converter.ToSingleComplex(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(DoubleComplex))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        DoubleComplex val;
+                        var res = converter.ToDoubleComplex(bytes, startIndex, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
+                // TODO: date time etc.
+            }
+            else
+            {
+                // Arrays
+                if (column.DataType.Type == typeof(Boolean))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Boolean[] val;
+                        var res = converter.ToBoolean(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(SByte))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        SByte[] val;
+                        var res = converter.ToSByte(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Byte))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Byte[] val;
+                        var res = converter.ToByte(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Char))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Char[] val;
+                        var res = converter.ToChar(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Int16))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Int16[] val;
+                        var res = converter.ToInt16(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(UInt16))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        UInt16[] val;
+                        var res = converter.ToUInt16(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Int32))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Int32[] val;
+                        var res = converter.ToInt32(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(UInt32))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        UInt32[] val;
+                        var res = converter.ToUInt32(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Int64))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Int64[] val;
+                        var res = converter.ToInt64(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(UInt64))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        UInt64[] val;
+                        var res = converter.ToUInt64(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Single))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Single[] val;
+                        var res = converter.ToSingle(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(Double))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        Double[] val;
+                        var res = converter.ToDouble(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(SingleComplex))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        SingleComplex[] val;
+                        var res = converter.ToSingleComplex(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else if (column.DataType.Type == typeof(DoubleComplex))
+                {
+                    return delegate(BitConverterBase converter, byte[] bytes, int startIndex, int count, out object value)
+                    {
+                        DoubleComplex[] val;
+                        var res = converter.ToDoubleComplex(bytes, startIndex, count, out val);
+                        value = val;
+                        return res;
+                    };
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
+                // TODO: implement, maybe, string
+            }
+        }
     }
 }
