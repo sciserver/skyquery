@@ -39,8 +39,12 @@ namespace Jhu.SkyQuery.Format.Fits
                 return new FileFormatDescription()
                 {
                     DisplayName = FileFormatNames.Fits,
-                    DefaultExtension = ".fits",
-                    CanCompress = true,
+                    DefaultExtension = Constants.FileExtensionFits,
+                    CanRead = true,
+                    CanWrite = false,
+                    CanDetectColumnNames = false,
+                    MultipleDatasets = true,
+                    IsCompressed = false
                 };
             }
         }

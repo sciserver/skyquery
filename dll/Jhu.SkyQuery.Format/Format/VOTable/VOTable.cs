@@ -35,8 +35,12 @@ namespace Jhu.SkyQuery.Format.VOTable
                 return new FileFormatDescription()
                 {
                     DisplayName = FileFormatNames.VOTable,
-                    DefaultExtension = ".votable",
-                    CanCompress = true,
+                    DefaultExtension = Constants.FileExtensionVOTable,
+                    CanRead = true,
+                    CanWrite = false,
+                    CanDetectColumnNames = false,
+                    MultipleDatasets = true,
+                    IsCompressed = false
                 };
             }
         }
@@ -249,11 +253,11 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         protected override void OnReadHeader()
         {
-            XmlReader.ReadStartElement(VOTableKeywords.VoTable);
+            XmlReader.ReadStartElement(Constants.VOTableKeywordVOTable);
 
             // consume info tags in the header before the first resource
             if (XmlReader.NodeType != XmlNodeType.Element ||
-                Comparer.Compare(XmlReader.Name, VOTableKeywords.Resource) != 0)
+                Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordResource) != 0)
             {
                 XmlReader.Read();
             }
@@ -268,13 +272,13 @@ namespace Jhu.SkyQuery.Format.VOTable
         {
             // Reader must now be positioned on a RESOUCE tag
             if (XmlReader.NodeType == XmlNodeType.Element &&
-                VOTable.Comparer.Compare(XmlReader.Name, VOTableKeywords.Resource) == 0)
+                VOTable.Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordResource) == 0)
             {
                 // Read next tag
                 if (XmlReader.Read())
                 {
                     if (XmlReader.NodeType == XmlNodeType.Element &&
-                        Comparer.Compare(XmlReader.Name, VOTableKeywords.Table) == 0)
+                        Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordTable) == 0)
                     {
 
                         return block ?? new VOTableResource(this);

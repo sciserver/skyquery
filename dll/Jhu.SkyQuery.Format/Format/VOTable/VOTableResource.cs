@@ -37,16 +37,16 @@ namespace Jhu.SkyQuery.Format.VOTable
             while (true)
             {
                 if (File.XmlReader.NodeType == XmlNodeType.Element &&
-                    VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.Field) == 0)
+                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordField) == 0)
                 {
                     // Column found
 
                     var col = new DataFileColumn();
 
-                    col.Name = File.XmlReader.GetAttribute(VOTableKeywords.Name);
+                    col.Name = File.XmlReader.GetAttribute(Constants.VOTableKeywordName);
 
-                    var datatype = File.XmlReader.GetAttribute(VOTableKeywords.DataType);
-                    var arraysize = File.XmlReader.GetAttribute(VOTableKeywords.ArraySize);
+                    var datatype = File.XmlReader.GetAttribute(Constants.VOTableKeywordDataType);
+                    var arraysize = File.XmlReader.GetAttribute(Constants.VOTableKeywordArraySize);
 
                     col.DataType = GetVOTableDataType(datatype, arraysize);
 
@@ -70,7 +70,7 @@ namespace Jhu.SkyQuery.Format.VOTable
 
                     File.XmlReader.Read();
                 }
-                else if (VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.Data) == 0)
+                else if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordData) == 0)
                 {
                     // End of header reached, return
 
@@ -202,13 +202,13 @@ namespace Jhu.SkyQuery.Format.VOTable
         protected override void OnReadHeader()
         {
             // Reader must now be positioned on a TABLE tag
-            File.XmlReader.ReadStartElement(VOTableKeywords.Table);
+            File.XmlReader.ReadStartElement(Constants.VOTableKeywordTable);
 
             DetectColumns();
             
             // Consume beginning tags: Data and TableData
-            File.XmlReader.ReadStartElement(VOTableKeywords.Data);
-            File.XmlReader.ReadStartElement(VOTableKeywords.TableData);
+            File.XmlReader.ReadStartElement(Constants.VOTableKeywordData);
+            File.XmlReader.ReadStartElement(Constants.VOTableKeywordTableData);
             
             // Reader is positioned on the first TR tag now
         }
@@ -218,8 +218,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             parts = new string[Columns.Count];
 
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
-                (VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.TableData) == 0 ||
-                 VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.Data) == 0))
+                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTableData) == 0 ||
+                 VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordData) == 0))
             {
                 File.XmlReader.ReadEndElement();
 
@@ -229,14 +229,14 @@ namespace Jhu.SkyQuery.Format.VOTable
             else
             {
                 // Consume TR tag
-                File.XmlReader.ReadStartElement(VOTableKeywords.TR);
+                File.XmlReader.ReadStartElement(Constants.VOTableKeywordTR);
 
                 // Read the TD tags
                 int q = 0;
                 while (true)
                 {
                     if (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.TD) == 0)
+                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTD) == 0)
                     {
                         if (!File.XmlReader.IsEmptyElement)
                         {
@@ -256,7 +256,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                         q++;
                     }
                     else if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.TR) == 0)
+                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTR) == 0)
                     {
                         // End of a row found
                         File.XmlReader.ReadEndElement();
@@ -277,7 +277,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         {
             // If the current element is not a /TABLE, read until the next one
             while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
-                VOTable.Comparer.Compare(File.XmlReader.Name, VOTableKeywords.Table) != 0)
+                VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTable) != 0)
             {
                 File.XmlReader.Read();
             }
