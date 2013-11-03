@@ -62,6 +62,7 @@
     <Compile Include="Format\Fits\ImageHdu.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
     <Compile Include="Format\VOTable\VOTableKeywords.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />

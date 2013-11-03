@@ -48,7 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Format\Fits\CardCollectionTest.cs" />
+    <Compile Include="Format\Fits\FitsReaderTest.cs" />
     <Compile Include="Format\Fits\FitsTest.cs" />
+    <Compile Include="Format\Fits\HduBaseTest.cs" />
+    <Compile Include="Format\Fits\ImageHduTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
