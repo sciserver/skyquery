@@ -142,19 +142,24 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OpenForRead()
         {
-            base.OpenForRead();
-
             if (forwardStream == null)
             {
-                forwardStream = new SeekForwardStream(base.Stream);
+                base.OpenForRead();
 
-                CreateBitConverter();
+                forwardStream = new SeekForwardStream(base.Stream);
             }
+
+            CreateBitConverter();
         }
 
         protected override void OpenForWrite()
         {
-            base.OpenForWrite();
+            if (forwardStream == null)
+            {
+                base.OpenForWrite();
+
+                forwardStream = new SeekForwardStream(base.Stream);
+            }
 
             CreateBitConverter();
         }
