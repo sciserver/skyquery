@@ -59,7 +59,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             InitializeMembers();
         }
 
-        public VOTable(Uri uri, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
+        public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
             : base(uri, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
@@ -68,12 +68,12 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, CompressionMethod.None, Encoding.UTF8)
+            : this(uri, fileMode, DataFileCompression.None, Encoding.UTF8)
         {
             // Overload
         }
 
-        public VOTable(Stream stream, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
+        public VOTable(Stream stream, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
             : base(stream, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
@@ -82,13 +82,13 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         public VOTable(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, CompressionMethod.None, Encoding.UTF8)
+            : this(stream, fileMode, DataFileCompression.None, Encoding.UTF8)
         {
             // Overload
         }
 
         public VOTable(XmlReader inputReader, Encoding encoding)
-            : base((Stream)null, DataFileMode.Read, CompressionMethod.None, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Read, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
@@ -102,7 +102,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         public VOTable(XmlWriter outputWriter, Encoding encoding)
-            : base((Stream)null, DataFileMode.Write, CompressionMethod.None, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Write, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 

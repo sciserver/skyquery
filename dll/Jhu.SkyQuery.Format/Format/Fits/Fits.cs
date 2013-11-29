@@ -86,7 +86,7 @@ namespace Jhu.SkyQuery.Format.Fits
             InitializeMembers();
         }
 
-        public Fits(Uri uri, DataFileMode fileMode, CompressionMethod compression, Endianness endianness)
+        public Fits(Uri uri, DataFileMode fileMode, DataFileCompression compression, Endianness endianness)
             : base(uri, fileMode, compression)
         {
             InitializeMembers();
@@ -97,12 +97,12 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         public Fits(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, CompressionMethod.None, Endianness.LittleEndian)
+            : this(uri, fileMode, DataFileCompression.None, Endianness.LittleEndian)
         {
             // Overload
         }
 
-        public Fits(Stream stream, DataFileMode fileMode, CompressionMethod compression, Endianness endianness)
+        public Fits(Stream stream, DataFileMode fileMode, DataFileCompression compression, Endianness endianness)
             : base(stream, fileMode, compression)
         {
             InitializeMembers();
@@ -113,7 +113,7 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         public Fits(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, CompressionMethod.None, Endianness.LittleEndian)
+            : this(stream, fileMode, DataFileCompression.None, Endianness.LittleEndian)
         {
             // Overload
         }
