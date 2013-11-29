@@ -63,8 +63,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
+    <Compile Include="Format\VOTable\Constants.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
-    <Compile Include="Format\VOTable\VOTableKeywords.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -86,6 +86,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)
+copy $(TargetDir)$(TargetName).pdb $(SolutionDir)$(OutDir)
+
+copy $(TargetDir)$(TargetName).dll $(SolutionDir)..\graywulf\web\Jhu.Graywulf.Web.UI\bin
+copy $(TargetDir)$(TargetName).pdb $(SolutionDir)..\graywulf\web\Jhu.Graywulf.Web.UI\bin</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

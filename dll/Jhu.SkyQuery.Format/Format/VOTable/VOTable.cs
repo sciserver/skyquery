@@ -11,23 +11,46 @@ using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
+    /// <summary>
+    /// Implements functionality to read and write VOTables.
+    /// </summary>
     [Serializable]
     public class VOTable : FormattedDataFile, IDisposable
     {
+        /// <summary>
+        /// Used to compare VOTABLE tags and attribute names. Must be case-sensitive.
+        /// </summary>
         public static readonly StringComparer Comparer = StringComparer.InvariantCulture;
 
+        /// <summary>
+        /// XmlReader that wraps the stream and used to retreive xml elements.
+        /// </summary>
         [NonSerialized]
         private XmlReader inputReader;
 
+        /// <summary>
+        /// If true, the input reader is opened by the class and will need to be closed
+        /// and disposed when the VOTable object is disposed.
+        /// </summary>
         [NonSerialized]
         private bool ownsInputReader;
 
+        /// <summary>
+        /// XmlWriter that wraps the output stream and used to write xml elements.
+        /// </summary>
         [NonSerialized]
         private XmlWriter outputWriter;
 
+        /// <summary>
+        /// If true, the output reader is opened by the class and will need to be closed
+        /// on disposed when the VOTable object is disposed.
+        /// </summary>
         [NonSerialized]
         private bool ownsOutputWriter;
 
+        /// <summary>
+        /// Returns the description of the file format
+        /// </summary>
         public override FileFormatDescription Description
         {
             get
@@ -35,17 +58,27 @@ namespace Jhu.SkyQuery.Format.VOTable
                 return new FileFormatDescription()
                 {
                     DisplayName = FileFormatNames.VOTable,
-                    DefaultExtension = ".votable",
-                    CanCompress = true,
+                    DefaultExtension = Constants.FileExtensionVOTable,
+                    CanRead = true,
+                    CanWrite = false,
+                    CanDetectColumnNames = false,
+                    MultipleDatasets = true,
+                    IsCompressed = false
                 };
             }
         }
 
+        /// <summary>
+        /// Gets the xml readed opened for this VOTable.
+        /// </summary>
         protected internal XmlReader XmlReader
         {
             get { return inputReader; }
         }
 
+        /// <summary>
+        /// Gets the xml writer opened for this VOTable.
+        /// </summary>
         protected internal XmlWriter XmlWriter
         {
             get { return outputWriter; }
@@ -53,12 +86,23 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         #region Constructors and initializers
 
+        /// <summary>
+        /// Initializes a VOTable object without opening any underlying stream.
+        /// </summary>
         public VOTable()
             : base()
         {
             InitializeMembers();
         }
 
+        /// <summary>
+        /// Initializes a VOTable object by automatically opening an underlying stream
+        /// identified by an URI.
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="fileMode"></param>
+        /// <param name="compression"></param>
+        /// <param name="encoding"></param>
         public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
             : base(uri, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
@@ -67,12 +111,25 @@ namespace Jhu.SkyQuery.Format.VOTable
             Open();
         }
 
-        public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, DataFileCompression.None, Encoding.UTF8)
+        public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression)
+            : this(uri, fileMode, compression, Encoding.UTF8)
         {
             // Overload
         }
 
+        public VOTable(Uri uri, DataFileMode fileMode)
+            : this(uri, fileMode, DataFileCompression.None)
+        {
+            // Overload
+        }
+
+        /// <summary>
+        /// Initializes a VOTable object by automatically wrapping and already open binary stream.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="fileMode"></param>
+        /// <param name="compression"></param>
+        /// <param name="encoding"></param>
         public VOTable(Stream stream, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
             : base(stream, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
@@ -87,6 +144,11 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Overload
         }
 
+        /// <summary>
+        /// Initializes a VOTable object by re-using an already open xml reader.
+        /// </summary>
+        /// <param name="inputReader"></param>
+        /// <param name="encoding"></param>
         public VOTable(XmlReader inputReader, Encoding encoding)
             : base((Stream)null, DataFileMode.Read, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
         {
@@ -101,6 +163,11 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Overload
         }
 
+        /// <summary>
+        /// Initializes a VOTable object by re-using an already open xml writer.
+        /// </summary>
+        /// <param name="outputWriter"></param>
+        /// <param name="encoding"></param>
         public VOTable(XmlWriter outputWriter, Encoding encoding)
             : base((Stream)null, DataFileMode.Write, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
         {
@@ -133,6 +200,11 @@ namespace Jhu.SkyQuery.Format.VOTable
         #endregion
         #region Stream open and close
 
+        /// <summary>
+        /// Wraps a binary stream to read or write as a VOTable.
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <param name="fileMode"></param>
         public override void Open(Stream stream, DataFileMode fileMode)
         {
             base.Open(stream, fileMode);
@@ -140,6 +212,10 @@ namespace Jhu.SkyQuery.Format.VOTable
             Open();
         }
 
+        /// <summary>
+        /// Starts reading a VOTable from an already open xml reader.
+        /// </summary>
+        /// <param name="inputReader"></param>
         public virtual void Open(XmlReader inputReader)
         {
             base.Open(null, DataFileMode.Read);
@@ -149,6 +225,10 @@ namespace Jhu.SkyQuery.Format.VOTable
             Open();
         }
 
+        /// <summary>
+        /// Starts writing a VOTable into an already open xml writer.
+        /// </summary>
+        /// <param name="outputWriter"></param>
         public virtual void Open(XmlWriter outputWriter)
         {
             base.Open(null, DataFileMode.Write);
@@ -158,6 +238,9 @@ namespace Jhu.SkyQuery.Format.VOTable
             Open();
         }
 
+        /// <summary>
+        /// Makes sure that no stream is opened yet.
+        /// </summary>
         protected override void EnsureNotOpen()
         {
             if (ownsInputReader && inputReader != null ||
@@ -165,12 +248,14 @@ namespace Jhu.SkyQuery.Format.VOTable
             {
                 throw new InvalidOperationException();
             }
+
+            // TODO: check if base method has to be called or not
         }
 
         //
 
         /// <summary>
-        /// 
+        /// If necessary, opens an XmlReader and wraps the underlying stream in it.
         /// </summary>
         /// <remarks>
         /// This function is called by the infrastructure when starting to read
@@ -178,10 +263,10 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </remarks>
         protected override void OpenForRead()
         {
-            base.OpenForRead();
-
             if (inputReader == null)
             {
+                base.OpenForRead();
+
                 var settings = new XmlReaderSettings()
                 {
                     IgnoreComments = true,
@@ -194,17 +279,23 @@ namespace Jhu.SkyQuery.Format.VOTable
             }
         }
 
+        /// <summary>
+        /// If necessary, opens an XmlWriter and wraps the underlying stream in it.
+        /// </summary>
         protected override void OpenForWrite()
         {
-            base.OpenForWrite();
-
             if (outputWriter == null)
             {
+                base.OpenForWrite();
+
                 outputWriter = new XmlTextWriter(base.Stream, Encoding);
                 ownsOutputWriter = true;
             }
         }
 
+        /// <summary>
+        /// Closes the streams, if they were opened by the object itself.
+        /// </summary>
         public override void Close()
         {
             if (ownsInputReader && inputReader != null)
@@ -216,6 +307,7 @@ namespace Jhu.SkyQuery.Format.VOTable
 
             if (ownsOutputWriter && outputWriter != null)
             {
+                outputWriter.Flush();
                 outputWriter.Close();
                 outputWriter = null;
                 ownsOutputWriter = false;
@@ -224,6 +316,9 @@ namespace Jhu.SkyQuery.Format.VOTable
             base.Close();
         }
 
+        /// <summary>
+        /// Gets the state of the underlying data stream.
+        /// </summary>
         public override bool IsClosed
         {
             get
@@ -242,39 +337,57 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         #endregion
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="block"></param>
+        /// <remarks>
+        /// Called by the infrastructure after a new block is appended to the file.
+        /// </remarks>
         protected override void OnBlockAppended(DataFileBlockBase block)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Reads the file header but stops at the block (resource) header.
+        /// </summary>
         protected override void OnReadHeader()
         {
-            XmlReader.ReadStartElement(VOTableKeywords.VoTable);
+            XmlReader.ReadStartElement(Constants.VOTableKeywordVOTable);
 
             // consume info tags in the header before the first resource
             if (XmlReader.NodeType != XmlNodeType.Element ||
-                Comparer.Compare(XmlReader.Name, VOTableKeywords.Resource) != 0)
+                Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordResource) != 0)
             {
                 XmlReader.Read();
             }
 
             // Reader is positioned on the first RESOURCE tag now
-
-            // Read VOTable until the first RESOURCE tag
-            //inputReader.ReadToNextSibling(VOTableKeywords.Resource);
         }
 
+        /// <summary>
+        /// Starts reading the next block from the file.
+        /// </summary>
+        /// <param name="block"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// Called by the infrastructure when the stream is advanced to the next file block.
+        /// If the block parameter is null a new VOTableResource should be created. If it isn't null
+        /// the supplied block object has to be reused. This usually happens when the user passes a
+        /// predefined block that has some column mapping defined.
+        /// </remarks>
         protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
         {
             // Reader must now be positioned on a RESOUCE tag
             if (XmlReader.NodeType == XmlNodeType.Element &&
-                VOTable.Comparer.Compare(XmlReader.Name, VOTableKeywords.Resource) == 0)
+                VOTable.Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordResource) == 0)
             {
                 // Read next tag
                 if (XmlReader.Read())
                 {
                     if (XmlReader.NodeType == XmlNodeType.Element &&
-                        Comparer.Compare(XmlReader.Name, VOTableKeywords.Table) == 0)
+                        Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordTable) == 0)
                     {
 
                         return block ?? new VOTableResource(this);
@@ -289,24 +402,51 @@ namespace Jhu.SkyQuery.Format.VOTable
             return null;
         }
 
+        /// <summary>
+        /// Reads the file footer
+        /// </summary>
         protected override void OnReadFooter()
         {
-            // Tags to consume: /DATA /TABLE /RESOURCE
+            // Not important, do nothing
         }
 
+        /// <summary>
+        /// Writes the file header but stops before the block header.
+        /// </summary>
+        /// <remarks>
+        /// Writes from VOTABLE until the RESOURCE tag.
+        /// </remarks>
         protected override void OnWriteHeader()
         {
-            throw new NotImplementedException();
+            XmlWriter.WriteStartElement(Constants.VOTableKeywordVOTable);
+            XmlWriter.WriteAttributeString(Constants.VOTableKeywordVersion, Constants.VOTableVersion);
+
+            // *** TODO: how to add these?
+            //XmlWriter.WriteAttributeString("xmlns", Constants.VOTableXsi);
+            //XmlWriter.WriteAttributeString("xmlns:xsi", Constants.VOTableXsi);
+            //XmlWriter.WriteAttributeString("xmlns:stc", Constants.StcNs);
         }
 
+        /// <summary>
+        /// Initializes writing of the next block.
+        /// </summary>
+        /// <param name="block"></param>
+        /// <param name="dr"></param>
+        /// <returns></returns>
         protected override DataFileBlockBase OnWriteNextBlock(DataFileBlockBase block, IDataReader dr)
         {
-            throw new NotImplementedException();
+            return block ?? new VOTableResource(this);
         }
 
+        /// <summary>
+        /// Writes the file footer.
+        /// </summary>
+        /// <remarks>
+        /// Writes tags after the last RESOURCE tag till the closing VOTABLE
+        /// </remarks>
         protected override void OnWriteFooter()
         {
-            throw new NotImplementedException();
+            XmlWriter.WriteEndElement();
         }
 
 #if false
@@ -331,7 +471,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             
             outputWriter.WriteStartElement(VOTableKeywords.VoTable);
             outputWriter.WriteStartElement(VOTableKeywords.Resource);
-            outputWriter.WriteStartElement(VOTableKeywords.Table);                    
+            outputWriter.WriteStartElement(VOTableKeywords.Table);
         }
 
         private void StartVOTableData()
