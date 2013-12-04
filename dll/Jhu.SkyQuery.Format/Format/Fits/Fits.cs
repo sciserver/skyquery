@@ -146,7 +146,7 @@ namespace Jhu.SkyQuery.Format.Fits
             {
                 base.OpenForRead();
 
-                forwardStream = new SeekForwardStream(base.Stream);
+                forwardStream = new SeekForwardStream(base.BaseStream);
             }
 
             CreateBitConverter();
@@ -158,7 +158,7 @@ namespace Jhu.SkyQuery.Format.Fits
             {
                 base.OpenForWrite();
 
-                forwardStream = new SeekForwardStream(base.Stream);
+                forwardStream = new SeekForwardStream(base.BaseStream);
             }
 
             CreateBitConverter();

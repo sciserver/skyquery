@@ -273,7 +273,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     IgnoreWhitespace = true,
                 };
 
-                inputReader = System.Xml.XmlReader.Create(base.Stream, settings);
+                inputReader = System.Xml.XmlReader.Create(base.BaseStream, settings);
 
                 ownsInputReader = true;
             }
@@ -288,7 +288,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             {
                 base.OpenForWrite();
 
-                outputWriter = new XmlTextWriter(base.Stream, Encoding);
+                outputWriter = new XmlTextWriter(base.BaseStream, Encoding);
                 ownsOutputWriter = true;
             }
         }

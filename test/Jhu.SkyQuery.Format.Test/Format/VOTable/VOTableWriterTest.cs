@@ -10,7 +10,7 @@ using System.Xml;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.VOTable;
 
-namespace Jhu.SkyQuery.Test.Format
+namespace Jhu.SkyQuery.Format.VOTable.Test
 {
     [TestClass]
     public class VOTableWriterTest
