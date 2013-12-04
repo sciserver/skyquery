@@ -11,7 +11,7 @@ namespace Jhu.SkyQuery.Format
 {
     public class SkyQueryFileFormatFactory : Jhu.Graywulf.Format.FileFormatFactory
     {
-        public SkyQueryFileFormatFactory()
+        protected SkyQueryFileFormatFactory()
         {
         }
 

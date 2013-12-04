@@ -10,7 +10,7 @@ using System.Xml;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.VOTable;
 
-namespace Jhu.SkyQuery.Test.Format
+namespace Jhu.SkyQuery.Format.VOTable.Test
 {
     [TestClass]
     public class VOTableWriterTest
@@ -55,7 +55,7 @@ namespace Jhu.SkyQuery.Test.Format
         {
             var uri = new Uri("VOTableWriterTest_CompressedWriterTest.csv.gz", UriKind.Relative);
 
-            using (var votable = new VOTable(uri, DataFileMode.Write, CompressionMethod.GZip))
+            using (var votable = new VOTable(uri, DataFileMode.Write, DataFileCompression.GZip))
             {
                 using (var cn = new SqlConnection(Jhu.Graywulf.Test.Constants.TestConnectionString))
                 {

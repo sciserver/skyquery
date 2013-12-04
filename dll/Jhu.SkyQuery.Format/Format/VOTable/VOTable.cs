@@ -103,7 +103,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="fileMode"></param>
         /// <param name="compression"></param>
         /// <param name="encoding"></param>
-        public VOTable(Uri uri, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
+        public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
             : base(uri, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
@@ -111,14 +111,14 @@ namespace Jhu.SkyQuery.Format.VOTable
             Open();
         }
 
-        public VOTable(Uri uri, DataFileMode fileMode, CompressionMethod compression)
+        public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression)
             : this(uri, fileMode, compression, Encoding.UTF8)
         {
             // Overload
         }
 
         public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, CompressionMethod.None)
+            : this(uri, fileMode, DataFileCompression.None)
         {
             // Overload
         }
@@ -130,7 +130,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="fileMode"></param>
         /// <param name="compression"></param>
         /// <param name="encoding"></param>
-        public VOTable(Stream stream, DataFileMode fileMode, CompressionMethod compression, Encoding encoding)
+        public VOTable(Stream stream, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
             : base(stream, fileMode, compression, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
@@ -139,7 +139,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         public VOTable(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, CompressionMethod.None, Encoding.UTF8)
+            : this(stream, fileMode, DataFileCompression.None, Encoding.UTF8)
         {
             // Overload
         }
@@ -150,7 +150,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="inputReader"></param>
         /// <param name="encoding"></param>
         public VOTable(XmlReader inputReader, Encoding encoding)
-            : base((Stream)null, DataFileMode.Read, CompressionMethod.None, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Read, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
@@ -169,7 +169,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="outputWriter"></param>
         /// <param name="encoding"></param>
         public VOTable(XmlWriter outputWriter, Encoding encoding)
-            : base((Stream)null, DataFileMode.Write, CompressionMethod.None, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Write, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
@@ -273,7 +273,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     IgnoreWhitespace = true,
                 };
 
-                inputReader = System.Xml.XmlReader.Create(base.Stream, settings);
+                inputReader = System.Xml.XmlReader.Create(base.BaseStream, settings);
 
                 ownsInputReader = true;
             }
@@ -288,7 +288,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             {
                 base.OpenForWrite();
 
-                outputWriter = new XmlTextWriter(base.Stream, Encoding);
+                outputWriter = new XmlTextWriter(base.BaseStream, Encoding);
                 ownsOutputWriter = true;
             }
         }
