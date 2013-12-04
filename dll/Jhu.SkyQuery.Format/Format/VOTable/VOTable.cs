@@ -60,7 +60,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     DisplayName = FileFormatNames.VOTable,
                     DefaultExtension = Constants.FileExtensionVOTable,
                     CanRead = true,
-                    CanWrite = false,
+                    CanWrite = true,
                     CanDetectColumnNames = false,
                     MultipleDatasets = true,
                     IsCompressed = false
