@@ -124,6 +124,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "voservices.net", "voservice
 		config\voservices.net\mailSettings.config = config\voservices.net\mailSettings.config
 		config\voservices.net\remoteService.config = config\voservices.net\remoteService.config
 		config\voservices.net\scheduler.config = config\voservices.net\scheduler.config
+		config\voservices.net\test.config = config\voservices.net\test.config
 		config\voservices.net\web.config = config\voservices.net\web.config
 	EndProjectSection
 EndProject
@@ -165,6 +166,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev.voservices.net", "dev.v
 		config\dev.voservices.net\mailSettings.config = config\dev.voservices.net\mailSettings.config
 		config\dev.voservices.net\remoteService.config = config\dev.voservices.net\remoteService.config
 		config\dev.voservices.net\scheduler.config = config\dev.voservices.net\scheduler.config
+		config\dev.voservices.net\test.config = config\dev.voservices.net\test.config
 		config\dev.voservices.net\web.config = config\dev.voservices.net\web.config
 	EndProjectSection
 EndProject
