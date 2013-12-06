@@ -15,7 +15,7 @@ namespace Jhu.SkyQuery.Format.VOTable
     /// Implements functionality to read and write VOTables.
     /// </summary>
     [Serializable]
-    public class VOTable : FormattedDataFile, IDisposable
+    public class VOTable : FormattedDataFileBase, IDisposable
     {
         /// <summary>
         /// Used to compare VOTABLE tags and attribute names. Must be case-sensitive.
@@ -62,7 +62,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     CanRead = true,
                     CanWrite = true,
                     CanDetectColumnNames = false,
-                    MultipleDatasets = true,
+                    CanHoldMultipleDatasets = true,
                     IsCompressed = false
                 };
             }
@@ -103,22 +103,16 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="fileMode"></param>
         /// <param name="compression"></param>
         /// <param name="encoding"></param>
-        public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
-            : base(uri, fileMode, compression, encoding, CultureInfo.InvariantCulture)
+        public VOTable(Uri uri, DataFileMode fileMode, Encoding encoding)
+            : base(uri, fileMode, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
             Open();
         }
 
-        public VOTable(Uri uri, DataFileMode fileMode, DataFileCompression compression)
-            : this(uri, fileMode, compression, Encoding.UTF8)
-        {
-            // Overload
-        }
-
         public VOTable(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, DataFileCompression.None)
+            : this(uri, fileMode, Encoding.UTF8)
         {
             // Overload
         }
@@ -130,8 +124,8 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="fileMode"></param>
         /// <param name="compression"></param>
         /// <param name="encoding"></param>
-        public VOTable(Stream stream, DataFileMode fileMode, DataFileCompression compression, Encoding encoding)
-            : base(stream, fileMode, compression, encoding, CultureInfo.InvariantCulture)
+        public VOTable(Stream stream, DataFileMode fileMode, Encoding encoding)
+            : base(stream, fileMode, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
@@ -139,7 +133,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         public VOTable(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, DataFileCompression.None, Encoding.UTF8)
+            : this(stream, fileMode, Encoding.UTF8)
         {
             // Overload
         }
@@ -150,7 +144,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="inputReader"></param>
         /// <param name="encoding"></param>
         public VOTable(XmlReader inputReader, Encoding encoding)
-            : base((Stream)null, DataFileMode.Read, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Read, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
@@ -169,7 +163,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="outputWriter"></param>
         /// <param name="encoding"></param>
         public VOTable(XmlWriter outputWriter, Encoding encoding)
-            : base((Stream)null, DataFileMode.Write, DataFileCompression.None, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Write, encoding, CultureInfo.InvariantCulture)
         {
             InitializeMembers();
 
@@ -199,18 +193,6 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         #endregion
         #region Stream open and close
-
-        /// <summary>
-        /// Wraps a binary stream to read or write as a VOTable.
-        /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="fileMode"></param>
-        public override void Open(Stream stream, DataFileMode fileMode)
-        {
-            base.Open(stream, fileMode);
-
-            Open();
-        }
 
         /// <summary>
         /// Starts reading a VOTable from an already open xml reader.

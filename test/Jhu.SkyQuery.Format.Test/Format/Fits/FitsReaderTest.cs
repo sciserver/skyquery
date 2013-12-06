@@ -16,7 +16,6 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             var f = new Fits(
                 new Uri(String.Format("../../../test/files/{0}", path), UriKind.Relative),
                 DataFileMode.Read,
-                DataFileCompression.Automatic,
                 Graywulf.Types.Endianness.BigEndian
                 );
 

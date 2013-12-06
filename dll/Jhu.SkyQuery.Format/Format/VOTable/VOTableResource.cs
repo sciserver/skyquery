@@ -13,7 +13,7 @@ namespace Jhu.SkyQuery.Format.VOTable
     /// resource block within a VOTable.
     /// </summary>
     [Serializable]
-    public class VOTableResource : FormattedDataFileBlock
+    public class VOTableResource : FormattedDataFileBlockBase
     {
         /// <summary>
         /// Gets the objects wrapping the whole VOTABLE file.
@@ -58,7 +58,6 @@ namespace Jhu.SkyQuery.Format.VOTable
                     var col = new DataFileColumn()
                     {
                         Name = File.XmlReader.GetAttribute(Constants.VOTableKeywordName),
-                        IsNullable = true,  // *** TODO: implement correct null logic
                         DataType = GetVOTableDataType(),
                         Metadata = GetVOTableMetaData(),
                     };
@@ -184,6 +183,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                 // Array, not implemented
                 throw new NotImplementedException();
             }
+
+            dt.IsNullable = true;  // *** TODO: implement correct null logic
 
             return dt;
         }

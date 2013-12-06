@@ -49,7 +49,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
 
         }
         
-
+        /*
         [TestMethod]
         public void CompressedWriterTest()
         {
@@ -74,5 +74,6 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             Assert.IsTrue(File.Exists(uri.ToString()));
             File.Delete(uri.ToString());
         }
+         * */
     }
 }

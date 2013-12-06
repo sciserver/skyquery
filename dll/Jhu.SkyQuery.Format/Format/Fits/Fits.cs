@@ -43,7 +43,7 @@ namespace Jhu.SkyQuery.Format.Fits
                     CanRead = true,
                     CanWrite = false,
                     CanDetectColumnNames = false,
-                    MultipleDatasets = true,
+                    CanHoldMultipleDatasets = true,
                     IsCompressed = false
                 };
             }
@@ -90,8 +90,8 @@ namespace Jhu.SkyQuery.Format.Fits
             InitializeMembers();
         }
 
-        public Fits(Uri uri, DataFileMode fileMode, DataFileCompression compression, Endianness endianness)
-            : base(uri, fileMode, compression)
+        public Fits(Uri uri, DataFileMode fileMode, Endianness endianness)
+            : base(uri, fileMode)
         {
             InitializeMembers();
 
@@ -101,13 +101,13 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         public Fits(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, DataFileCompression.None, Endianness.LittleEndian)
+            : this(uri, fileMode, Endianness.LittleEndian)
         {
             // Overload
         }
 
-        public Fits(Stream stream, DataFileMode fileMode, DataFileCompression compression, Endianness endianness)
-            : base(stream, fileMode, compression)
+        public Fits(Stream stream, DataFileMode fileMode, Endianness endianness)
+            : base(stream, fileMode)
         {
             InitializeMembers();
 
@@ -117,7 +117,7 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         public Fits(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, DataFileCompression.None, Endianness.LittleEndian)
+            : this(stream, fileMode, Endianness.LittleEndian)
         {
             // Overload
         }
@@ -132,13 +132,6 @@ namespace Jhu.SkyQuery.Format.Fits
 
         #endregion
         #region Stream open/close
-
-        public override void Open(Stream stream, DataFileMode fileMode)
-        {
-            base.Open(stream, fileMode);
-
-            Open();
-        }
 
         protected override void OpenForRead()
         {
