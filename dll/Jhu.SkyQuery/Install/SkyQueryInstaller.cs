@@ -42,8 +42,6 @@ namespace Jhu.SkyQuery.Install
                 TempDatabaseVersion = tempDatabaseVersion,
                 ControllerMachine = controllerMachine,
                 SchemaSourceServerInstance = schemaSourceServerInstance,
-                QueryFactoryTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName,
-                FileFormatFactoryTypeName = typeof(Jhu.Graywulf.Format.FileFormatFactory).AssemblyQualifiedName // TODO
             };
             federation.Save();
 
