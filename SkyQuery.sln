@@ -185,6 +185,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Types.Test", "..\graywulf\test\Jhu.Graywulf.Types.Test\Jhu.Graywulf.Types.Test.csproj", "{10706E37-0EF0-4EA2-9219-4F14DCF696AF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "command-line", "command-line", "{96CABD47-1762-479B-860D-1821319B9A9E}"
+	ProjectSection(SolutionItems) = preProject
+		config\command-line\activities.config = config\command-line\activities.config
+		config\command-line\cluster.config = config\command-line\cluster.config
+		config\command-line\connectionStrings.config = config\command-line\connectionStrings.config
+		config\command-line\domain.config = config\command-line\domain.config
+		config\command-line\federation.config = config\command-line\federation.config
+		config\command-line\mailSettings.config = config\command-line\mailSettings.config
+		config\command-line\remoteService.config = config\command-line\remoteService.config
+		config\command-line\scheduler.config = config\command-line\scheduler.config
+		config\command-line\test.config = config\command-line\test.config
+		config\command-line\web.config = config\command-line\web.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SkyQuery.vsmdi
@@ -550,6 +564,7 @@ Global
 		{30859602-EBCE-4886-BE45-444EA42EEB76} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
 		{078A5A50-2832-4A6E-BDB2-866E750E7817} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
 		{4349441F-9512-4D9D-A045-120E8CFEE430} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
+		{96CABD47-1762-479B-860D-1821319B9A9E} = {C1B23ACA-3EF8-4EEF-9192-938632124F27}
 		{8FA54973-7055-4E53-9BE2-9326DB062BEE} = {2C0C403F-4604-4DA8-8A2E-C593288D5D57}
 		{2939F058-FEE3-4142-BF45-8672DCFD4C11} = {2C0C403F-4604-4DA8-8A2E-C593288D5D57}
 		{4F1895F8-526E-4F3B-868F-580C86D3EFAD} = {2C0C403F-4604-4DA8-8A2E-C593288D5D57}

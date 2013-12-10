@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Configuration;
 using System.Data.SqlClient;
 using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Activities;
@@ -20,8 +21,6 @@ namespace Jhu.SkyQuery.CmdLineUtil
         private bool integratedSecurity;
         private string userId;
         private string password;
-        private string myDB;
-        private string tempDB;
         private string input;
 
         AutoResetEvent workflowCompleted;
@@ -54,20 +53,6 @@ namespace Jhu.SkyQuery.CmdLineUtil
             set { password = value; }
         }
 
-        [Parameter(Name = "MyDB", Description = "Database for results")]
-        public string MyDB
-        {
-            get { return myDB; }
-            set { myDB = value; }
-        }
-
-        [Parameter(Name = "TempDB", Description = "Temporary database")]
-        public string TempDB
-        {
-            get { return tempDB; }
-            set { tempDB = value; }
-        }
-
         [Parameter(Name = "Input", Description = "Input file containing the query")]
         public string Input
         {
@@ -86,8 +71,6 @@ namespace Jhu.SkyQuery.CmdLineUtil
             this.integratedSecurity = true;
             this.userId = null;
             this.password = null;
-            this.myDB = "SkyQuery_MYDB";
-            this.myDB = "SkyQuery_TEMP";
             this.input = null;
 
             this.workflowCompleted = new AutoResetEvent(false);
@@ -113,26 +96,39 @@ namespace Jhu.SkyQuery.CmdLineUtil
             return csb.ConnectionString;
         }
 
+        private SqlServerDataset CreateDataset(string name)
+        {
+            var svrcs = GetConnectionString();
+
+            var csname = String.Format("{0}.{1}", SqlServerSchemaManager.ConnectionStringNamePrefix, name);
+            var dscsb = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings[csname].ConnectionString);
+
+            var ds = new SqlServerDataset();
+            ds.Name = name;
+            ds.DefaultSchemaName = "dbo";
+            ds.ConnectionString = GetConnectionString();
+            ds.DatabaseName = dscsb.InitialCatalog;
+
+            return ds;
+        }
+
         public override void Run()
         {
             // Load query string from file
             var query = System.IO.File.ReadAllText(input);
 
             // MyDB
-            var mydbds = new SqlServerDataset();
-            mydbds.Name = "MYDB";
-            mydbds.DefaultSchemaName = "dbo";
-            mydbds.ConnectionString = GetConnectionString();
-            mydbds.DatabaseName = myDB;
+            var mydbds = CreateDataset("MYDB");
 
-            var tempds = new SqlServerDataset();
-            tempds.IsOnLinkedServer = false;
-            tempds.ConnectionString = GetConnectionString();
-            tempds.DatabaseName = tempDB;
+            // TempDB
+            var tempds = CreateDataset("TEMP");
+
+            // CodeDB
+            var codeds = CreateDataset("CODE");
 
             // Create query and verify
             var f = new XMatchQueryFactory();
-            var q = f.CreateQuery(query, ExecutionMode.SingleServer, null, mydbds, tempds);
+            var q = f.CreateQuery(query, ExecutionMode.SingleServer, null, mydbds, tempds, codeds);
             q.Verify();
 
             // Create a workflow

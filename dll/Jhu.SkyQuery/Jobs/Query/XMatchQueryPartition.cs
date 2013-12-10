@@ -463,6 +463,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var zonedeftable = GetZoneDefTable(step.StepNumber);
 
+                // Drop table if it exists (unlikely, but might happen during debugging)
                 DropTableOrView(zonedeftable);
 
                 var sql = new StringBuilder(XMatchScripts.CreateZoneDefTable);
@@ -542,8 +543,11 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void CreateZoneTable(XMatchTableSpecification table)
         {
             var zonetable = GetZoneTable(table);
-            var sql = GetCreateZoneTableScript(table, zonetable);
 
+            // Drop table if it exists (unlikely, but might happen during debugging)
+            DropTableOrView(zonetable);
+
+            var sql = GetCreateZoneTableScript(table, zonetable);
             ExecuteSqlCommandOnTemporaryDatabase(sql);
 
             TemporaryTables.TryAdd(zonetable.TableName, zonetable);
@@ -622,6 +626,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var linktable = GetLinkTable(step.StepNumber);
 
+                // Drop table if it exists (unlikely, but might happen during debugging)
+                DropTableOrView(linktable);
+
                 var sql = new StringBuilder(XMatchScripts.CreateLinkTable);
 
                 sql.Replace("[$tablename]", QuoteSchemaAndTableName(linktable));
@@ -673,6 +680,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber != 0)
             {
                 var pairtable = GetPairTable(step.StepNumber);
+
+                // Drop table if it exists (unlikely, but might happen during debugging)
+                DropTableOrView(pairtable);
 
                 var sql = new StringBuilder(XMatchScripts.CreatePairTable);
 
@@ -734,6 +744,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var matchtable = GetMatchTable(step.StepNumber);
             var indexname = String.Format("[IXC_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
 
+            // Drop table if it exists (unlikely, but might happen during debugging)
             DropTableOrView(matchtable);
 
             ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
