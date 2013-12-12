@@ -73,7 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parser\AdqlPoint.cs" />
     <Compile Include="Parser\BayesianXMatchClause.cs" />
     <Compile Include="Parser\BayesianXMatchQuerySpecification.cs" />
     <Compile Include="Parser\BayesianXMatchTableReference.cs" />
@@ -91,6 +90,7 @@
     <Compile Include="Parser\SkyQueryParser.cs" />
     <Compile Include="Parser\SkyQueryValidator.cs" />
     <Compile Include="Parser\XMatchClause.cs" />
+    <Compile Include="Parser\XMatchPoint.cs" />
     <Compile Include="Parser\XMatchQuerySpecification.cs" />
     <Compile Include="Parser\XMatchSelectStatement.cs" />
     <Compile Include="Parser\XMatchTableSpecification.cs" />

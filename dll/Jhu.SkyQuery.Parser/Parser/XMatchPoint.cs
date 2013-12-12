@@ -8,7 +8,7 @@ using Jhu.Graywulf.SqlParser.SqlCodeGen;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public partial class AdqlPoint
+    public partial class XMatchPoint
     {
         private int eqIndex;
         private int xyzIndex;
@@ -18,16 +18,18 @@ namespace Jhu.SkyQuery.Parser
 
         private List<Argument> arguments;
 
+        /// <summary>
+        /// Gets the string specifying the coordinate system
+        /// </summary>
         public string CoordinateSystem
         {
             get
             {
-                //StringConstant sc = this.FindAscendant<StringConstant>();
-                StringConstant sc = this.FindDescendant<StringConstant>();
+                // The only string parameter is the coordinate system
+                var sc = this.FindDescendant<StringConstant>();
 
                 if (sc != null)
                 {
-                    //return sc.FirstToken.ToString();
                     return sc.Value;
                 }
                 else
@@ -37,17 +39,21 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        /// <summary>
+        /// Gets the expression for right ascension
+        /// </summary>
         public string RA
         {
             get
             {
+                // Check if RA is specified in the query or we have to compute from cartesian coordinates
                 if (isEqSpecified)
                 {
                     return SqlServerCodeGenerator.GetCode(arguments[eqIndex].FindDescendant<Expression>(), true);
                 }
                 else if (isXyzSpecified)
                 {
-                    // TODO: change it to use spherical lib function from SkyQuery_CODE
+                    // TODO: change it to use spherical lib function from SkyQuery_CODE?
                     return String.Format("SkyQuery_Code.dbo.CartesianToEqRa(({0}),({1}),({2}))", Cx, Cy, Cz);
                 }
                 else
@@ -57,17 +63,21 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        /// <summary>
+        /// Gets the expression for declination
+        /// </summary>
         public string Dec
         {
             get
             {
+                // Check if Dec is specified in the query or we have to compute from cartesian coordinates
                 if (isEqSpecified)
                 {
                     return SqlServerCodeGenerator.GetCode(arguments[eqIndex + 1].FindDescendant<Expression>(), true);
                 }
                 else if (isXyzSpecified)
                 {
-                    // TODO: change it to use spherical lib function from SkyQuery_CODE
+                    // TODO: change it to use spherical lib function from SkyQuery_CODE?
                     return String.Format("SkyQuery_Code.dbo.CartesianToEqDec(({0}),({1}),({2}))", Cx, Cy, Cz);
                 }
                 else
@@ -77,10 +87,14 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        /// <summary>
+        /// Gets the X coordinate of the cartesian unit vector
+        /// </summary>
         public string Cx
         {
             get
             {
+                // Check if X is specified in the query or we have to compute from equatorial coordinates
                 if (isXyzSpecified)
                 {
                     return SqlServerCodeGenerator.GetCode(arguments[xyzIndex].FindDescendant<Expression>(), true);
@@ -88,7 +102,6 @@ namespace Jhu.SkyQuery.Parser
                 else if (isEqSpecified)
                 {
                     // TODO: change it to use spherical lib function from SkyQuery_CODE
-                    //return String.Format("COS(RADIANS({1}))*COS(RADIANS({0}))", RA, Dec);
                     return String.Format("SkyQuery_Code.dbo.EqToCartesianX(({0}),({1}))", RA, Dec);
                 }
                 else
@@ -98,10 +111,14 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        /// <summary>
+        /// Gets the Y coordinate of the cartesian unit vector
+        /// </summary>
         public string Cy
         {
             get
             {
+                // Check if Y is specified in the query or we have to compute from equatorial coordinates
                 if (isXyzSpecified)
                 {
                     return SqlServerCodeGenerator.GetCode(arguments[xyzIndex + 1].FindDescendant<Expression>(), true);
@@ -109,7 +126,6 @@ namespace Jhu.SkyQuery.Parser
                 else if (isEqSpecified)
                 {
                     // TODO: change it to use spherical lib function from SkyQuery_CODE
-                    //return String.Format("COS(RADIANS({1}))*SIN(RADIANS({0}))", RA, Dec);
                     return String.Format("SkyQuery_Code.dbo.EqToCartesianY(({0}),({1}))", RA, Dec);
                 }
                 else
@@ -119,10 +135,14 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        /// <summary>
+        /// Gets the Z coordinate of the cartesian unit vector
+        /// </summary>
         public string Cz
         {
             get
             {
+                // Check if Z is specified in the query or we have to compute from equatorial coordinates
                 if (isXyzSpecified)
                 {
                     return SqlServerCodeGenerator.GetCode(arguments[xyzIndex + 2].FindDescendant<Expression>(), true);
@@ -139,13 +159,13 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public AdqlPoint()
+        public XMatchPoint()
             : base()
         {
             InitializeMembers();
         }
 
-        public AdqlPoint(AdqlPoint old)
+        public XMatchPoint(XMatchPoint old)
             : base(old)
         {
             CopyMembers(old);
@@ -162,17 +182,15 @@ namespace Jhu.SkyQuery.Parser
             this.arguments = new List<Argument>();
         }
 
-        private void CopyMembers(AdqlPoint old)
+        private void CopyMembers(XMatchPoint old)
         {
-
-
             this.arguments = new List<Argument>(old.arguments);
         }
 
         public override Node Interpret()
         {
             arguments.Clear();
-            arguments.AddRange(this.FindDescendant<FunctionCall>().FindDescendant<ArgumentList>().EnumerateDescendants<Argument>());
+            arguments.AddRange(this.FindDescendant<FunctionArguments>().FindDescendant<ArgumentList>().EnumerateDescendants<Argument>());
 
             switch (arguments.Count)
             {
@@ -201,7 +219,7 @@ namespace Jhu.SkyQuery.Parser
 
         public object Clone()
         {
-            return new AdqlPoint(this);
+            return new XMatchPoint(this);
         }
     }
 }

@@ -22,10 +22,65 @@ namespace Jhu.SkyQuery.Parser.Generator
                 May(Sequence(CommentOrWhitespace, XMatchClause)),
                 May(Sequence(CommentOrWhitespace, WhereClause)),
                 May(Sequence(CommentOrWhitespace, GroupByClause)),
-                May(Sequence(CommentOrWhitespace, HavingClause))
+                May(Sequence(CommentOrWhitespace, HavingClause)),
+                May(Sequence(CommentOrWhitespace, RegionClause))
             );
 
-        
+        #region Table hint extensions to support POINT and ERROR
+
+        public static new Expression<Rule> TableSource = () =>
+            Must
+            (
+                XMatchTableSource,
+                FunctionTableSource,
+                SimpleTableSource,
+                VariableTableSource,
+                SubqueryTableSource
+            );
+
+        public static Expression<Rule> XMatchTableSource = () =>
+            Sequence
+            (
+                TableOrViewName,
+                May(Sequence(CommentOrWhitespace, May(Sequence(Keyword("AS"), CommentOrWhitespace)), TableAlias)),   // Optional
+                May(Sequence(CommentOrWhitespace, XMatchHintClause))
+            );
+
+        public static Expression<Rule> XMatchHintClause = () =>
+            Sequence
+            (
+                Keyword("WITH"),
+                May(CommentOrWhitespace), BracketOpen, May(CommentOrWhitespace),
+                XMatchTableHintList,
+                May(CommentOrWhitespace), BracketClose
+            );
+
+        public static new Expression<Rule> XMatchTableHintList = () =>
+            Sequence
+            (
+                Must(
+                    XMatchPoint,
+                    XMatchError
+                ),
+                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), TableHintList))
+            );
+
+        public static Expression<Rule> XMatchPoint = () =>
+            Sequence
+            (
+                Keyword("POINT"),
+                FunctionArguments
+            );
+
+        public static Expression<Rule> XMatchError = () =>
+            Sequence
+            (
+                Keyword("ERROR"),
+                FunctionArguments
+            );
+
+        #endregion
+        #region XMatch clause
 
         public static Expression<Rule> XMatchClause = () =>
             Sequence
@@ -52,23 +107,14 @@ namespace Jhu.SkyQuery.Parser.Generator
             Sequence
             (
                 XMatchTableInclusion,
-                CommentOrWhitespace, TableOrViewName,
-                CommentOrWhitespace, XMatchArgumentList
+                CommentOrWhitespace, TableOrViewName
             );
 
         public static Expression<Rule> XMatchTableInclusion = () =>
             Sequence
             (
-                May(Sequence(Must(Keyword("Must"), Keyword("MAY"), Keyword("NOT")), CommentOrWhitespace)),
+                May(Sequence(Must(Keyword("MUST"), Keyword("MAY"), Keyword("NOT")), CommentOrWhitespace)),
                 Keyword("EXIST")
-            );
-
-        public static Expression<Rule> XMatchArgumentList = () =>
-            Sequence
-            (
-                Keyword("ON"),
-                CommentOrWhitespace, AdqlPoint,
-                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), ArgumentList))
             );
 
         public static Expression<Rule> XMatchHavingClause = () =>
@@ -77,6 +123,16 @@ namespace Jhu.SkyQuery.Parser.Generator
                 Keyword("HAVING"), CommentOrWhitespace, Keyword("LIMIT"), CommentOrWhitespace, Number
             );
 
-        public static Expression<Rule> AdqlPoint = () => FunctionCall;
+        #endregion
+        #region Region clause
+
+        public static Expression<Rule> RegionClause = () =>
+            Sequence
+            (
+                Keyword("REGION"),
+                FunctionArguments
+            );
+
+        #endregion
     }
 }

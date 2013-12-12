@@ -31,15 +31,16 @@ namespace Jhu.SkyQuery.Parser.Test
         }
 
         [TestMethod]
-        public void XMatchTableSpecificationArgumentListTest()
+        public void XMatchTableHintsTest()
         {
             var sql =
 @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
-FROM d1:c1, d2:c2
-XMATCH BAYESFACTOR AS x
-MUST EXIST c1 ON POINT(c1.ra, c1.dec), 0.1
-MUST EXIST c2 ON POINT(c2.ra, c2.dec), c2.err, 0.1, 0.5
-HAVING LIMIT 1e3
+FROM d1:c1 WITH(NOLOCK), --WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
+     d2:c2 --WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))
+--XMATCH BAYESFACTOR AS x
+--MUST EXIST c1
+--MUST EXIST c2
+--HAVING LIMIT 1e3
 ";
 
             var qs = Parse(sql);
