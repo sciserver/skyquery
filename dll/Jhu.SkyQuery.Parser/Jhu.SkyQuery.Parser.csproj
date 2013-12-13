@@ -89,10 +89,12 @@
     <Compile Include="Parser\SkyQueryNameResolver.cs" />
     <Compile Include="Parser\SkyQueryParser.cs" />
     <Compile Include="Parser\SkyQueryValidator.cs" />
+    <Compile Include="Parser\TableSource.cs" />
     <Compile Include="Parser\XMatchClause.cs" />
     <Compile Include="Parser\XMatchPoint.cs" />
     <Compile Include="Parser\XMatchQuerySpecification.cs" />
     <Compile Include="Parser\XMatchSelectStatement.cs" />
+    <Compile Include="Parser\XMatchTableSource.cs" />
     <Compile Include="Parser\XMatchTableSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Parser\ExceptionMessages.resx">

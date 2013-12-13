@@ -78,10 +78,11 @@ namespace Jhu.SkyQuery.Test
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
@@ -99,10 +100,11 @@ HAVING LIMIT 1e3";
         {
             var sql =
 @"SELECT a.ra
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.ra, a.dec)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.ra, a.dec)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
@@ -120,10 +122,11 @@ HAVING LIMIT 1e3";
         {
             var sql =
 @"SELECT a.ra colalias
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.ra, a.dec)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.ra, a.dec)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
@@ -175,10 +178,11 @@ HAVING LIMIT 1e3";
 @"SELECT a.objID, a.ra, a.dec,
 b.objID, b.ra, b.dec,
 x.ra, x.dec
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var res = GetOutputSelectQueryTestHelper(sql);
@@ -199,11 +203,13 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b CROSS JOIN CatalogC c
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+CROSS JOIN CatalogC c WITH(POINT(c.cx, c.cy, c.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
-MUST EXIST c on POINT(c.cx, c.cy, c.cz)
+MUST EXIST a
+MUST EXIST b
+MUST EXIST c
 HAVING LIMIT 1e3";
 
             Assert.AreEqual(
@@ -222,10 +228,12 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]
          b.objID, b.ra, b.dec,
          c.objID, c.ra, c.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b CROSS JOIN CatalogC c
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+CROSS JOIN CatalogC c
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             Assert.AreEqual(
@@ -245,10 +253,12 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] CROSS JOIN [S
          b.objID, b.ra, b.dec,
          c.objID, c.ra, c.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b INNER JOIN CatalogC c ON c.objId = a.objId
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+INNER JOIN CatalogC c ON c.objId = a.objId
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var res = GetOutputSelectQueryTestHelper(sql);
@@ -267,10 +277,11 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] INNER JOIN [S
         {
             var sql =
 @"SELECT a.objID, b.objID
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3
 WHERE a.ra BETWEEN 1 AND 2";
 
@@ -288,10 +299,12 @@ WHERE [matchtable].[_Test_dbo_CatalogA_a_ra] BETWEEN 1 AND 2", res);
         {
             var sql =
 @"SELECT a.objID, b.objID
-FROM CatalogA a, CatalogB b, CatalogC c
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     CatalogC c
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3
 WHERE c.ra BETWEEN 1 AND 2";
 
@@ -299,7 +312,8 @@ WHERE c.ra BETWEEN 1 AND 2";
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_Test_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_Test_dbo_CatalogB_b_objId] AS [b_objId]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] , [SkyNode_Test].[dbo].[CatalogC] [c]
+FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] ,
+     [SkyNode_Test].[dbo].[CatalogC] [c]
 
 WHERE [c].[ra] BETWEEN 1 AND 2", res);
 
@@ -310,10 +324,12 @@ WHERE [c].[ra] BETWEEN 1 AND 2", res);
         {
             var sql =
 @"SELECT a.objID, b.objID, c.objID
-FROM CatalogA a, CatalogB b, (SELECT * FROM CatalogC) c
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (SELECT * FROM CatalogC) c
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3
 WHERE c.ra BETWEEN 1 AND 2";
 
@@ -321,7 +337,8 @@ WHERE c.ra BETWEEN 1 AND 2";
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_Test_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_Test_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] , (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
+FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] ,
+     (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
 
 WHERE [c].[ra] BETWEEN 1 AND 2", res);
         }

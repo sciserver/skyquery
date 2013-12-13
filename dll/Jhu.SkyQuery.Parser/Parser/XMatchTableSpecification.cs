@@ -52,6 +52,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        /*
         public TableSource TableSource
         {
             get
@@ -113,7 +114,7 @@ namespace Jhu.SkyQuery.Parser
                 var ar = ErrorArgumentList.FindDescendant<Argument>(2);
                 return ar == null ? null : ar.FindDescendant<Expression>();
             }
-        }
+        }*/
 
         public XMatchTableSpecification()
             : base()
