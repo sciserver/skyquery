@@ -52,69 +52,6 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public TableSource TableSource
-        {
-            get
-            {
-                return (TableSource)TableReference.Node;
-            }
-        }
-
-        private TableHintList TableHintList
-        {
-            get { return TableSource.FindDescendant<SimpleTableSource>().FindDescendant<TableHintClause>().FindDescendant<TableHintList>(); }
-        }
-
-        public XMatchPoint Position
-        {
-            get
-            {
-                return TableHintList.FindDescendant<XMatchPoint>();
-            }
-        }
-
-        public bool IsConstantError
-        {
-            get
-            {
-                var al = Position.FindDescendant<FunctionArguments>().FindDescendant<ArgumentList>();
-                var ars = al.EnumerateDescendants<Argument>().ToArray();
-                return ars.Length == 1 && ars[0].FindDescendant<Expression>().IsConstantNumber;
-            }
-        }
-
-        private ArgumentList ErrorArgumentList
-        {
-            get { return TableHintList.FindDescendant<XMatchError>().FindDescendant<FunctionArguments>().FindDescendant<ArgumentList>(); }
-        }
-
-        public Expression ErrorExpression
-        {
-            get
-            {
-                var ar = ErrorArgumentList.FindDescendant<Argument>(0);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
-        }
-
-        public Expression MinErrorExpression
-        {
-            get
-            {
-                var ar = ErrorArgumentList.FindDescendant<Argument>(1);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
-        }
-
-        public Expression MaxErrorExpression
-        {
-            get
-            {
-                var ar = ErrorArgumentList.FindDescendant<Argument>(2);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
-        }
-
         public XMatchTableSpecification()
             : base()
         {

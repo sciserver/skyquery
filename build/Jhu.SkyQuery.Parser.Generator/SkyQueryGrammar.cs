@@ -62,7 +62,7 @@ namespace Jhu.SkyQuery.Parser.Generator
                     XMatchPoint,
                     XMatchError
                 ),
-                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), TableHintList))
+                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), XMatchTableHintList))
             );
 
         public static Expression<Rule> XMatchPoint = () =>
