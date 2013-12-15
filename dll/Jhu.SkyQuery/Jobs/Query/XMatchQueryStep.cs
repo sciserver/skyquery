@@ -11,14 +11,16 @@ using Jhu.SkyQuery.Parser;
 namespace Jhu.SkyQuery.Jobs.Query
 {
     [Serializable]
-    [DataContract]
     public abstract class XMatchQueryStep
     {
         protected QueryPartitionBase queryPartition;
 
         protected int stepNumber;
+
         protected string previousXMatchTable;
+
         protected string xMatchTable;
+        
         protected double searchRadius;
 
         public QueryPartitionBase QueryPartition
@@ -32,14 +34,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             set { stepNumber = value; }
         }
 
-        [IgnoreDataMember]
         public string PreviousXMatchTable
         {
             get { return previousXMatchTable; }
             set { previousXMatchTable = value; }
         }
 
-        [IgnoreDataMember]
         public string XMatchTable
         {
             get { return xMatchTable; }
