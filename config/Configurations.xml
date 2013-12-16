@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<config root="Config\dev.voservices.net">
+<config root="Config\Default">
   <projects>
     <project name="Jhu.Graywulf.Web.Admin" path="..\Graywulf\Web\Jhu.Graywulf.Web.Admin" type="web">
       <merge file="connectionStrings.config" />
@@ -87,6 +87,9 @@
       <merge file="cluster.config" />
       <merge file="domain.config" />
       <merge file="federation.config" />
+      <merge file="test.config" />
+    </project>
+    <project name="Jhu.Graywulf.Schema.Test" path="..\Graywulf\Test\Jhu.Graywulf.Schema.Test" type="console">
       <merge file="test.config" />
     </project>
     <project name="Jhu.Graywulf.Jobs.Test" path="..\Graywulf\Test\Jhu.Graywulf.Jobs.Test" type="console">
