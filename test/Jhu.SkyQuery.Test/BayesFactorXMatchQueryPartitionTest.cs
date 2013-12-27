@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.Test
         private SchemaManager CreateSchemaManager()
         {
             var sm = new SqlServerSchemaManager();
-            var ds = new SqlServerDataset("Test", "Data Source=localhost;Initial Catalog=SkyNode_Test;Integrated Security=true");
+            var ds = new SqlServerDataset("Test",  "Data Source=localhost;Initial Catalog=SkyNode_Test;Integrated Security=true");
 
             sm.Datasets[ds.Name] = ds;
 
