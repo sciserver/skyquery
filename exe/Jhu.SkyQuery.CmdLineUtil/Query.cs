@@ -118,13 +118,13 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var query = System.IO.File.ReadAllText(input);
 
             // MyDB
-            var mydbds = CreateDataset("MYDB");
+            var mydbds = CreateDataset("MYDB");     //*** TODO
 
             // TempDB
-            var tempds = CreateDataset("TEMP");
+            var tempds = CreateDataset("TEMP");     //*** TODO
 
             // CodeDB
-            var codeds = CreateDataset("CODE");
+            var codeds = CreateDataset("CODE");     //*** TODO
 
             // Create query and verify
             var f = new XMatchQueryFactory();

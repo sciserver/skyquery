@@ -16,7 +16,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         private SchemaManager CreateSchemaManager()
         {
             var sm = new SqlServerSchemaManager();
-            var ds = new SqlServerDataset("Test", "Data Source=localhost;Initial Catalog=SkyNode_Test;Integrated Security=true");
+            var ds = new SqlServerDataset(Jhu.Graywulf.Test.Constants.TestDatasetName, Jhu.SkyQuery.Test.AppSettings.SkyQueryTestConnectionString);
 
             sm.Datasets[ds.Name] = ds;
 
@@ -29,8 +29,8 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var ss = (SelectStatement)p.Execute(query);
 
             var nr = new Jhu.SkyQuery.Parser.SkyQueryNameResolver();
-            nr.DefaultTableDatasetName = "Test";
-            nr.DefaultFunctionDatasetName = "Code";
+            nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
+            nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
             nr.Execute(ss);
 
@@ -44,9 +44,9 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var xmq = new BayesFactorXMatchQuery(null);
             xmq.QueryString = query;
             xmq.QueryFactoryTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName;
-            xmq.DefaultDataset = (SqlServerDataset)sm.Datasets["Test"];
-            xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets["Test"];
-            xmq.CodeDataset = (SqlServerDataset)sm.Datasets["Test"];
+            xmq.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+            xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+            xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
 
             var xmqp = new BayesFactorXMatchQueryPartition(xmq, null);
             xmqp.ID = 0;

@@ -71,9 +71,17 @@
       <Project>{54517A77-C93A-424E-A6B3-C74973632995}</Project>
       <Name>Jhu.Graywulf.SqlParser.Test</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
+      <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
+      <Name>Jhu.Graywulf.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jhu.SkyQuery.Test\Jhu.SkyQuery.Test.csproj">
+      <Project>{4F27F7FE-7C79-4584-867E-EF17B017F4DB}</Project>
+      <Name>Jhu.SkyQuery.Test</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

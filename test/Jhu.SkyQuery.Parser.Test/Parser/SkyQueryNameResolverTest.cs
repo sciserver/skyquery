@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.Parser.Test
         private SchemaManager CreateSchemaManager()
         {
             var sm = new SqlServerSchemaManager();
-            var ds = new SqlServerDataset("Test", "Data Source=localhost;Initial Catalog=SkyNode_Test;Integrated Security=true");
+            var ds = new SqlServerDataset(Jhu.Graywulf.Test.Constants.TestDatasetName, Jhu.SkyQuery.Test.AppSettings.SkyQueryTestConnectionString);
 
             sm.Datasets[ds.Name] = ds;
 
@@ -32,8 +32,8 @@ namespace Jhu.SkyQuery.Parser.Test
             var qs = (SkyQuery.Parser.QuerySpecification)ss.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
-            nr.DefaultTableDatasetName = "Test";
-            nr.DefaultFunctionDatasetName = "Code";
+            nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
+            nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
             nr.Execute(ss);
 
