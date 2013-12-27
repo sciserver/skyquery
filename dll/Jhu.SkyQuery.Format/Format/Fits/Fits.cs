@@ -45,6 +45,7 @@ namespace Jhu.SkyQuery.Format.Fits
                     CanWrite = false,
                     CanDetectColumnNames = false,
                     CanHoldMultipleDatasets = true,
+                    RequiresArchive = false,
                     IsCompressed = false
                 };
             }
