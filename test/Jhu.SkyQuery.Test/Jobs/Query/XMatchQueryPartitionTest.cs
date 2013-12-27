@@ -15,12 +15,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     {
         private SchemaManager CreateSchemaManager()
         {
-            var sm = new SqlServerSchemaManager();
-            var ds = new SqlServerDataset(Jhu.Graywulf.Test.Constants.TestDatasetName, Jhu.SkyQuery.Test.AppSettings.SkyQueryTestConnectionString);
-
-            sm.Datasets[ds.Name] = ds;
-
-            return sm;
+            return new SqlServerSchemaManager();
         }
 
         private QuerySpecification Parse(string query)

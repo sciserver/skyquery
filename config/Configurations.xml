@@ -103,6 +103,9 @@
       <merge file="test.config" />
     </project>
     <!-- SKYQUERY -->
+    <project name="Jhu.SkyQuery.Parser.Test" path="..\SkyQuery\Test\Jhu.SkyQuery.Parser.Test" type="console">
+      <merge file="test.config" />
+    </project>
     <project name="Jhu.SkyQuery.Test" path="..\SkyQuery\Test\Jhu.SkyQuery.Test" type="console">
       <merge file="connectionStrings.config" />
       <merge file="cluster.config" />
@@ -111,6 +114,7 @@
       <merge file="activities.config" />
       <merge file="scheduler.config" />
       <merge file="remoteService.config" />
+      <merge file="test.config" />
     </project>
     <project name="Jhu.SkyQuery.CmdLineUtil" path="..\SkyQuery\Exe\Jhu.SkyQuery.CmdLineUtil" type="console">
       <merge file="connectionStrings.config" />
