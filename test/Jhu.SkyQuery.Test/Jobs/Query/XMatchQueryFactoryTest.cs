@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Jobs.Query;
 
-namespace Jhu.SkyQuery.Test
+namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
     public class XMatchQueryFactoryTest

@@ -8,7 +8,7 @@ using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.SkyQuery.Jobs.Query;
 using System.Reflection;
 
-namespace Jhu.SkyQuery.Test
+namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
     public class XMatchQueryPartitionTest

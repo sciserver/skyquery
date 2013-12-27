@@ -8,13 +8,13 @@ using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
 using Jhu.SkyQuery.Jobs.Query;
 
-namespace Jhu.SkyQuery.Test
+namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     public class XMatchQueryTestBase : TestClassBase
     {
         protected Guid ScheduleQueryJob(string query, QueueType queueType)
         {
-            var queue = String.Format("Graywulf.Controller.Controller.{0}", queueType.ToString());
+            var queue = String.Format("Graywulf.Controller.Controller.{0}", queueType.ToString());  // *** TODO
 
             using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
             {

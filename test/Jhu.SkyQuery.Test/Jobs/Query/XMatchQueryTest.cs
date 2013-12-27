@@ -8,7 +8,7 @@ using Jhu.Graywulf.Test;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Scheduler;
 
-namespace Jhu.SkyQuery.Test
+namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
     public class XMatchQueryTest : XMatchQueryTestBase

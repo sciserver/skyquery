@@ -9,7 +9,7 @@ using Jhu.Graywulf.RemoteService;
 using Jhu.Graywulf.Registry;
 using Jhu.SkyQuery.Jobs.Query;
 
-namespace Jhu.SkyQuery.Test
+namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
     public class PartitionedSqlQueryTest : XMatchQueryTestBase

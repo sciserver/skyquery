@@ -9,7 +9,7 @@
     <ProjectGuid>{4F27F7FE-7C79-4584-867E-EF17B017F4DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jhu.SkyQuery.Test</RootNamespace>
+    <RootNamespace>Jhu.SkyQuery</RootNamespace>
     <AssemblyName>Jhu.SkyQuery.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -46,18 +47,16 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BayesFactorXMatchQueryPartitionTest.cs" />
-    <Compile Include="CatalogTest.cs" />
-    <Compile Include="PartitionedSqlQueryTest.cs" />
-    <Compile Include="MyDBSqlQueryTest.cs" />
+    <Compile Include="AppSettings.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartitionTest.cs" />
+    <Compile Include="Jobs\Query\MyDBSqlQueryTest.cs" />
+    <Compile Include="Jobs\Query\PartitionedSqlQueryTest.cs" />
+    <Compile Include="Jobs\Query\SqlQueryTest.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryFactoryTest.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryPartitionTest.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryTest.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XMatchQueryTestBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SqlQueryTest.cs" />
-    <Compile Include="XMatchQueryFactoryTest.cs" />
-    <Compile Include="XMatchQueryPartitionTest.cs" />
-    <Compile Include="XMatchQueryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
