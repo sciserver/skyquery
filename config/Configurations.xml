@@ -92,6 +92,9 @@
     <project name="Jhu.Graywulf.Schema.Test" path="..\Graywulf\Test\Jhu.Graywulf.Schema.Test" type="console">
       <merge file="test.config" />
     </project>
+    <project name="Jhu.Graywulf.SqlParser.Test" path="..\Graywulf\Test\Jhu.Graywulf.SqlParser.Test" type="console">
+      <merge file="test.config" />
+    </project>
     <project name="Jhu.Graywulf.Jobs.Test" path="..\Graywulf\Test\Jhu.Graywulf.Jobs.Test" type="console">
       <merge file="connectionStrings.config" />
       <merge file="cluster.config" />
