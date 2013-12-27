@@ -27,7 +27,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             };
             var xw = XmlWriter.Create(w, s);
 
-            using (var cn = new SqlConnection(Jhu.Graywulf.Test.AppSettings.SqlServerConnectionString))
+            using (var cn = new SqlConnection(Jhu.Graywulf.Test.AppSettings.SqlServerSchemaTestConnectionString))
             {
                 cn.Open();
 

@@ -58,6 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Default", "Default", "{3085
 		config\default\mailSettings.config = config\default\mailSettings.config
 		config\default\remoteService.config = config\default\remoteService.config
 		config\default\scheduler.config = config\default\scheduler.config
+		config\default\test.config = config\default\test.config
 		config\default\web.config = config\default\web.config
 	EndProjectSection
 EndProject
