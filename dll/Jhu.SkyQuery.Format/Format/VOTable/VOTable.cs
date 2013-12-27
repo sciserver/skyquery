@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Xml;
 using System.Collections;
 using System.Data;
+using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.VOTable

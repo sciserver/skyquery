@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.IO.Compression;
 using Jhu.Graywulf.Types;
+using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits

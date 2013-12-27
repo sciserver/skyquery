@@ -63,10 +63,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
-    <Compile Include="Format\SkyQueryStreamFactory.cs" />
     <Compile Include="Format\VOTable\Constants.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />
+    <Compile Include="IO\SkyQueryStreamFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

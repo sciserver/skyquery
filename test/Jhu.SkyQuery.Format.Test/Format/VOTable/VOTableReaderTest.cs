@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.VOTable;
 

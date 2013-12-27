@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.Format;
+using Jhu.Graywulf.IO;
 
-namespace Jhu.SkyQuery.Format
+namespace Jhu.SkyQuery.IO
 {
     public class SkyQueryStreamFactory : StreamFactory
     {
