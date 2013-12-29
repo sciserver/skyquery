@@ -27,8 +27,9 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         public void ReadSdssDR7SpectrumTest()
         {
             var f = OpenFits("sdssdr7_spSpec.fit");
+            var cmd = new FileCommand(f);
 
-            using (var dr = f.OpenDataReader())
+            using (var dr = cmd.ExecuteReader())
             {
                 Assert.AreEqual(0, dr.FieldCount);
 

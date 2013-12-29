@@ -22,7 +22,9 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
                 DataFileMode.Read
                 );
 
-            return f.OpenDataReader();
+            var cmd = new FileCommand(f);
+
+            return cmd.ExecuteReader();
         }
 
         [TestMethod]
