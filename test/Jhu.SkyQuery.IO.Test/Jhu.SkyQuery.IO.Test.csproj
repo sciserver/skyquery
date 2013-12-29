@@ -69,9 +69,9 @@
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
       <Name>Jhu.Graywulf.Test</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Format\Jhu.SkyQuery.Format.csproj">
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{8F2875D9-C190-4A01-B756-FE39B9D171B7}</Project>
-      <Name>Jhu.SkyQuery.Format</Name>
+      <Name>Jhu.SkyQuery.IO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -80,7 +80,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)..\..\..\Graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj Jhu.SkyQuery.Format.Test</PreBuildEvent>
+    <PreBuildEvent>$(ProjectDir)..\..\..\Graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj Jhu.SkyQuery.IO.Test</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

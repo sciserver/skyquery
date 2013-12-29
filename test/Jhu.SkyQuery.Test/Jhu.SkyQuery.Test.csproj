@@ -95,10 +95,6 @@
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
       <Name>Jhu.Graywulf.Test</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Format\Jhu.SkyQuery.Format.csproj">
-      <Project>{8F2875D9-C190-4A01-B756-FE39B9D171B7}</Project>
-      <Name>Jhu.SkyQuery.Format</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>

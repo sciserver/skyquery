@@ -109,7 +109,7 @@
     <project name="Jhu.SkyQuery.Parser.Test" path="..\SkyQuery\Test\Jhu.SkyQuery.Parser.Test" type="console">
       <merge file="test.config" />
     </project>
-    <project name="Jhu.SkyQuery.Format.Test" path="..\SkyQuery\Test\Jhu.SkyQuery.Format.Test" type="console">
+    <project name="Jhu.SkyQuery.IO.Test" path="..\SkyQuery\Test\Jhu.SkyQuery.IO.Test" type="console">
       <merge file="federation.config" />
       <merge file="test.config" />
     </project>

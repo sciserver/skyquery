@@ -166,10 +166,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev.voservices.net", "dev.v
 		config\dev.voservices.net\web.config = config\dev.voservices.net\web.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.Format", "dll\Jhu.SkyQuery.Format\Jhu.SkyQuery.Format.csproj", "{8F2875D9-C190-4A01-B756-FE39B9D171B7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.Format.Test", "test\Jhu.SkyQuery.Format.Test\Jhu.SkyQuery.Format.Test.csproj", "{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{26EAD0E5-8D2F-4AC6-96BB-B3FD57F8FAA8}"
 	ProjectSection(SolutionItems) = preProject
 		Local.testsettings = Local.testsettings
@@ -190,6 +186,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "command-line", "command-lin
 		config\command-line\test.config = config\command-line\test.config
 		config\command-line\web.config = config\command-line\web.config
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.IO", "dll\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj", "{8F2875D9-C190-4A01-B756-FE39B9D171B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.IO.Test", "test\Jhu.SkyQuery.IO.Test\Jhu.SkyQuery.IO.Test.csproj", "{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -591,7 +591,7 @@ Global
 		{9957F3EB-C6AE-4D7E-951D-AB6F4310EFDB} = {A345CE3F-DDE3-40E4-9F53-9ACF32490191}
 		{0C317B62-C844-44BE-BFC5-974F4C1166FC} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
 		{4F27F7FE-7C79-4584-867E-EF17B017F4DB} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
-		{95AEABCA-55A3-4A34-BFCD-1469A646D5DB} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
 		{26EAD0E5-8D2F-4AC6-96BB-B3FD57F8FAA8} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
+		{95AEABCA-55A3-4A34-BFCD-1469A646D5DB} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
 	EndGlobalSection
 EndGlobal
