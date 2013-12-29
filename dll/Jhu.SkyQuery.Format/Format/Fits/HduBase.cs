@@ -9,7 +9,7 @@ using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class HduBase : DataFileBlockBase
+    public class HduBase : DataFileBlockBase, ICloneable
     {
         private bool headerRead;
         private long headerPosition;
@@ -171,6 +171,11 @@ namespace Jhu.SkyQuery.Format.Fits
             this.strideBuffer = null;
             this.totalStrides = 0;
             this.strideCounter = 0;
+        }
+
+        public override object Clone()
+        {
+            return new HduBase(this);
         }
 
         #region Column functions

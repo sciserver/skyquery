@@ -10,7 +10,7 @@ using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class Fits : DataFileBase, IDisposable
+    public class Fits : DataFileBase, IDisposable, ICloneable
     {
         public static readonly StringComparison Comparision = StringComparison.InvariantCultureIgnoreCase;
         public static readonly StringComparer Comparer = StringComparer.InvariantCultureIgnoreCase;
@@ -92,6 +92,11 @@ namespace Jhu.SkyQuery.Format.Fits
             InitializeMembers();
         }
 
+        public Fits(Fits old)
+        {
+            CopyMembers(old);
+        }
+
         public Fits(Uri uri, DataFileMode fileMode, Endianness endianness)
             : base(uri, fileMode)
         {
@@ -130,6 +135,19 @@ namespace Jhu.SkyQuery.Format.Fits
             this.bitConverter = null;
 
             this.endianness = Endianness.LittleEndian;
+        }
+
+        private void CopyMembers(Fits old)
+        {
+            this.forwardStream = null;
+            this.bitConverter = old.bitConverter;
+
+            this.endianness = old.endianness;
+        }
+
+        public override object Clone()
+        {
+            return new Fits(this);
         }
 
         #endregion

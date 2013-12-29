@@ -16,7 +16,7 @@ namespace Jhu.SkyQuery.Format.VOTable
     /// Implements functionality to read and write VOTables.
     /// </summary>
     [Serializable]
-    public class VOTable : FormattedDataFileBase, IDisposable
+    public class VOTable : FormattedDataFileBase, IDisposable, ICloneable
     {
         /// <summary>
         /// Used to compare VOTABLE tags and attribute names. Must be case-sensitive.
@@ -95,6 +95,12 @@ namespace Jhu.SkyQuery.Format.VOTable
             : base()
         {
             InitializeMembers();
+        }
+
+        public VOTable(VOTable old)
+            : base(old)
+        {
+            CopyMembers(old);
         }
 
         /// <summary>
@@ -187,10 +193,20 @@ namespace Jhu.SkyQuery.Format.VOTable
             this.ownsOutputWriter = false;
         }
 
+        private void CopyMembers(VOTable old)
+        {
+            InitializeMembers();
+        }
+
         public override void Dispose()
         {
             Close();
             base.Dispose();
+        }
+
+        public override object Clone()
+        {
+            return new VOTable(this);
         }
 
         #endregion

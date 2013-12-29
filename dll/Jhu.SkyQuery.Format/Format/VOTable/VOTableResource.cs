@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.VOTable
@@ -13,7 +14,7 @@ namespace Jhu.SkyQuery.Format.VOTable
     /// resource block within a VOTable.
     /// </summary>
     [Serializable]
-    public class VOTableResource : FormattedDataFileBlockBase
+    public class VOTableResource : FormattedDataFileBlockBase, ICloneable
     {
         /// <summary>
         /// Gets the objects wrapping the whole VOTABLE file.
@@ -33,8 +34,23 @@ namespace Jhu.SkyQuery.Format.VOTable
             InitializeMembers();
         }
 
+        public VOTableResource(VOTableResource old)
+            : base(old)
+        {
+            CopyMembers(old);
+        }
+
         private void InitializeMembers()
         {
+        }
+
+        private void CopyMembers(VOTableResource old)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new VOTableResource(this);
         }
 
         #region Column functions
@@ -46,7 +62,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         private void DetectColumns()
         {
             // Read a series for FIELD tags
-            var cols = new List<DataFileColumn>();
+            var cols = new List<Column>();
 
             while (true)
             {
@@ -55,7 +71,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                 {
                     // Column found
 
-                    var col = new DataFileColumn()
+                    var col = new Column()
                     {
                         Name = File.XmlReader.GetAttribute(Constants.VOTableKeywordName),
                         DataType = GetVOTableDataType(),
@@ -216,7 +232,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// the xml reader stream.
         /// </summary>
         /// <returns></returns>
-        private DataFileColumnMetadata GetVOTableMetaData()
+        private VariableMetadata GetVOTableMetaData()
         {
             // *** TODO fill in additional column properties
             // read metadata
@@ -366,7 +382,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             File.XmlWriter.WriteStartElement(Constants.VOTableKeywordTableData);
         }
 
-        private void WriteColumn(DataFileColumn column)
+        private void WriteColumn(Column column)
         {
             File.XmlWriter.WriteStartElement(Constants.VOTableKeywordField);
 

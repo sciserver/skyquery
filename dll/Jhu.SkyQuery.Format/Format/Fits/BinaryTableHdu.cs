@@ -5,12 +5,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class BinaryTableHdu : HduBase
+    public class BinaryTableHdu : HduBase, ICloneable
     {
         private static readonly Regex FormatRegex = new Regex(@"([0-9]*)([LXBIJAEDCMP]+)");
 
@@ -33,8 +34,23 @@ namespace Jhu.SkyQuery.Format.Fits
             DetectColumns();
         }
 
+        private BinaryTableHdu(BinaryTableHdu old)
+            : base(old)
+        {
+            CopyMembers(old);
+        }
+
         private void InitializeMembers()
         {
+        }
+
+        private void CopyMembers(BinaryTableHdu old)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new BinaryTableHdu(this);
         }
 
         protected int GroupCount
@@ -88,7 +104,7 @@ namespace Jhu.SkyQuery.Format.Fits
         {
             // Loop though header cards and 
             Card card;
-            var cols = new DataFileColumn[FieldCount];
+            var cols = new Column[FieldCount];
 
             for (int i = 0; i < cols.Length; i++)
             {
@@ -105,7 +121,7 @@ namespace Jhu.SkyQuery.Format.Fits
                 var dt = GetFitsDataType(type, repeat);
 
                 // Create column
-                cols[i] = new DataFileColumn(String.Format("Col_{0}", i + 1), dt);
+                cols[i] = new Column(String.Format("Col_{0}", i + 1), dt);
                 cols[i].ID = i;
 
                 // Set optional parameters
@@ -307,7 +323,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        public int GetColumnBinarySize(DataFileColumn column)
+        public int GetColumnBinarySize(Column column)
         {
             if (column.DataType.IsMaxLength)
             {
@@ -328,7 +344,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        private ByteReaderDelegate GetByteReaderDelegate(DataFileColumn column)
+        private ByteReaderDelegate GetByteReaderDelegate(Column column)
         {
             // Complex types firts, then scalar and arrays
             if (column.DataType.Type == typeof(String))

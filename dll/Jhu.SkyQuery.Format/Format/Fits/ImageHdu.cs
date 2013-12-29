@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class ImageHdu : HduBase
+    public class ImageHdu : HduBase, ICloneable
     {
         internal ImageHdu(Fits fits)
             : base(fits)
@@ -19,8 +19,23 @@ namespace Jhu.SkyQuery.Format.Fits
             InitializeMembers();
         }
 
+        private ImageHdu(ImageHdu old)
+            : base(old)
+        {
+            CopyMembers(old);
+        }
+
         private void InitializeMembers()
         {
+        }
+
+        private void CopyMembers(ImageHdu old)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new ImageHdu(this);
         }
 
         #region Column functions

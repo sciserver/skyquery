@@ -74,9 +74,9 @@
       <Project>{AAF4C238-C3A9-422F-BE3F-6FF10D9D0062}</Project>
       <Name>Jhu.Graywulf.Format</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Types\Jhu.Graywulf.Types.csproj">
-      <Project>{72607E61-5546-453A-8CFB-DD2A061B5C34}</Project>
-      <Name>Jhu.Graywulf.Types</Name>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
+      <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
+      <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
