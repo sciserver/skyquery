@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 
 namespace Jhu.SkyQuery.Format.Fits
 {

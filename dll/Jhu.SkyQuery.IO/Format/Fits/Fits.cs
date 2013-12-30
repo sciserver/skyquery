@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.IO.Compression;
-using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 

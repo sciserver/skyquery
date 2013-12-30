@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
-using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;

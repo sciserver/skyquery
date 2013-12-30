@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Jhu.Graywulf.ParserLib;
 using Jhu.Graywulf.SqlParser;
-using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema;
 
 namespace Jhu.SkyQuery.Parser

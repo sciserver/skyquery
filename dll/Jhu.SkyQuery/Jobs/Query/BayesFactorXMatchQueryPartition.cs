@@ -279,13 +279,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override DatasetBase GetDestinationTableSchemaSourceDataset()
         {
+            // TODO: is this override here necessary? Test without and delete
+
             return new SqlServerDataset()
             {
                 ConnectionString = TemporaryDatabaseInstanceReference.Value.GetConnectionString().ConnectionString
             };
         }
 
-        public override string GetDestinationTableSchemaSourceQuery()
+        public override string GetOutputSourceQuery()
         {
             String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
                 QuoteSchemaAndTableName(GetOutputTable()));

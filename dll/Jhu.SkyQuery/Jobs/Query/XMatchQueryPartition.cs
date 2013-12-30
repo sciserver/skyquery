@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using System.Runtime.Serialization;
 using System.IO;
 using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Types;
+using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
@@ -1091,7 +1091,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        protected override string GetOutputSelectQuery()
+        protected override string GetOutputQueryText()
         {
             // **** TODO: this disrupts the select statement
             // a copy could be made of the entire parsing tree

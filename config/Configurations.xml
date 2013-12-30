@@ -63,6 +63,7 @@
       <merge file="connectionStrings.config" />
       <merge file="remoteService.config" />
       <merge file="test.config" />
+      <merge file="federation.config" />
     </project>
     <project name="Jhu.Graywulf.Scheduler.Test" path="..\Graywulf\Test\Jhu.Graywulf.Scheduler.Test" type="console">
       <merge file="connectionStrings.config" />
