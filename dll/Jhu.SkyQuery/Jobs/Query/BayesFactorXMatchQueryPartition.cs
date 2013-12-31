@@ -277,6 +277,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return BayesFactorXMatchScripts.BuildMatchTableIndex;
         }
 
+        /*
         public override DatasetBase GetDestinationTableSchemaSourceDataset()
         {
             // TODO: is this override here necessary? Test without and delete
@@ -288,6 +289,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         public override string GetOutputSourceQuery()
+        {
+            String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
+                QuoteSchemaAndTableName(GetOutputTable()));
+
+            return sql;
+        }*/
+
+        protected override string GetOutputQueryText()
         {
             String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
                 QuoteSchemaAndTableName(GetOutputTable()));

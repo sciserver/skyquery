@@ -57,6 +57,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
       <Project>{6797ED88-1D8C-491B-A036-4C42C4BF2EAF}</Project>
       <Name>Jhu.Graywulf.IO</Name>

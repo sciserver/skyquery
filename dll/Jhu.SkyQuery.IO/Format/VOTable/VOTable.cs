@@ -218,7 +218,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="inputReader"></param>
         public virtual void Open(XmlReader inputReader)
         {
-            base.Open(null, DataFileMode.Read);
+            base.Open((Stream)null, DataFileMode.Read);
 
             this.inputReader = inputReader;
 
@@ -231,7 +231,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="outputWriter"></param>
         public virtual void Open(XmlWriter outputWriter)
         {
-            base.Open(null, DataFileMode.Write);
+            base.Open((Stream)null, DataFileMode.Write);
 
             this.outputWriter = outputWriter;
 

@@ -464,7 +464,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var zonedeftable = GetZoneDefTable(step.StepNumber);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
-                DropTableOrView(zonedeftable);
+                zonedeftable.Drop();
 
                 var sql = new StringBuilder(XMatchScripts.CreateZoneDefTable);
 
@@ -545,7 +545,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var zonetable = GetZoneTable(table);
 
             // Drop table if it exists (unlikely, but might happen during debugging)
-            DropTableOrView(zonetable);
+            zonetable.Drop();
 
             var sql = GetCreateZoneTableScript(table, zonetable);
             ExecuteSqlCommandOnTemporaryDatabase(sql);
@@ -627,7 +627,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var linktable = GetLinkTable(step.StepNumber);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
-                DropTableOrView(linktable);
+                linktable.Drop();
 
                 var sql = new StringBuilder(XMatchScripts.CreateLinkTable);
 
@@ -682,7 +682,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var pairtable = GetPairTable(step.StepNumber);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
-                DropTableOrView(pairtable);
+                pairtable.Drop();
 
                 var sql = new StringBuilder(XMatchScripts.CreatePairTable);
 
@@ -745,7 +745,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var indexname = String.Format("[IXC_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
 
             // Drop table if it exists (unlikely, but might happen during debugging)
-            DropTableOrView(matchtable);
+            matchtable.Drop();
 
             ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
 
