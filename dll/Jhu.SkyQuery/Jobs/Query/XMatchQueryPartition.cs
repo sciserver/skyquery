@@ -1091,7 +1091,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        protected override string GetOutputQueryText()
+        protected override string GetExecuteQueryText()
         {
             // **** TODO: this disrupts the select statement
             // a copy could be made of the entire parsing tree

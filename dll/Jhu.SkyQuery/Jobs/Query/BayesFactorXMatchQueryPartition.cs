@@ -277,6 +277,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             return BayesFactorXMatchScripts.BuildMatchTableIndex;
         }
 
+        #endregion
+
         /*
         public override DatasetBase GetDestinationTableSchemaSourceDataset()
         {
@@ -296,6 +298,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return sql;
         }*/
 
+        /*
         protected override string GetOutputQueryText()
         {
             String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
@@ -303,8 +306,13 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return sql;
         }
+         * */
 
-        #endregion
+        /* TODO: delete
+        public override Graywulf.IO.Tasks.SourceTableQuery GetOutputSourceQuery()
+        {
+            return base.GetOutputSourceQuery();
+        }*/
 
         public override object Clone()
         {

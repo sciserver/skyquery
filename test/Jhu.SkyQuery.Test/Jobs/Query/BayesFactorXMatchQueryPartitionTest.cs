@@ -133,7 +133,7 @@ HAVING LIMIT 1e3";
 
         // ---
 
-        private string GetOutputQueryTextTestHelper(string query)
+        private string GetExecuteQueryTextTestHelper(string query)
         {
             var sm = CreateSchemaManager();
 
@@ -157,7 +157,7 @@ HAVING LIMIT 1e3";
 
             var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
 
-            var m = xmqp.GetType().GetMethod("GetOutputQueryText", BindingFlags.NonPublic | BindingFlags.Instance);
+            var m = xmqp.GetType().GetMethod("GetExecuteQueryText", BindingFlags.NonPublic | BindingFlags.Instance);
             Assert.IsNotNull(m);
 
             return (string)m.Invoke(xmqp, null);
@@ -176,7 +176,7 @@ MUST EXIST a on POINT(a.cx, a.cy, a.cz)
 MUST EXIST b on POINT(b.cx, b.cy, b.cz)
 HAVING LIMIT 1e3";
 
-            var res = GetOutputQueryTextTestHelper(sql);
+            var res = GetExecuteQueryTextTestHelper(sql);
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
@@ -206,7 +206,7 @@ HAVING LIMIT 1e3";
          [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
 FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]
-", GetOutputQueryTextTestHelper(sql));
+", GetExecuteQueryTextTestHelper(sql));
         }
 
         [TestMethod]
@@ -229,7 +229,7 @@ HAVING LIMIT 1e3";
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
 FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]
-", GetOutputQueryTextTestHelper(sql));
+", GetExecuteQueryTextTestHelper(sql));
         }
 
         [TestMethod]
@@ -246,7 +246,7 @@ MUST EXIST a on POINT(a.cx, a.cy, a.cz)
 MUST EXIST b on POINT(b.cx, b.cy, b.cz)
 HAVING LIMIT 1e3";
 
-            var res = GetOutputQueryTextTestHelper(sql);
+            var res = GetExecuteQueryTextTestHelper(sql);
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
@@ -269,7 +269,7 @@ MUST EXIST b on POINT(b.cx, b.cy, b.cz)
 HAVING LIMIT 1e3
 WHERE a.ra BETWEEN 1 AND 2";
 
-            var res = GetOutputQueryTextTestHelper(sql);
+            var res = GetExecuteQueryTextTestHelper(sql);
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
@@ -290,7 +290,7 @@ MUST EXIST b on POINT(b.cx, b.cy, b.cz)
 HAVING LIMIT 1e3
 WHERE c.ra BETWEEN 1 AND 2";
 
-            var res = GetOutputQueryTextTestHelper(sql);
+            var res = GetExecuteQueryTextTestHelper(sql);
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
@@ -312,7 +312,7 @@ MUST EXIST b on POINT(b.cx, b.cy, b.cz)
 HAVING LIMIT 1e3
 WHERE c.ra BETWEEN 1 AND 2";
 
-            var res = GetOutputQueryTextTestHelper(sql);
+            var res = GetExecuteQueryTextTestHelper(sql);
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
