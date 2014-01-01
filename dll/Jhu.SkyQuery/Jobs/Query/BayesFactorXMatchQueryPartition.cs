@@ -207,8 +207,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                 amin += GetWeight(max);
             }
 
-            //var stepmax = double.Parse(SqlServerCodeGenerator.GetCode(xmatchTables[step.XMatchTable].MaxErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);
-
             double factor = (steps.Count - 1) * Math.Log(2);
             double wmin = GetWeight(stepmax);
 
@@ -278,41 +276,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
-
-        /*
-        public override DatasetBase GetDestinationTableSchemaSourceDataset()
-        {
-            // TODO: is this override here necessary? Test without and delete
-
-            return new SqlServerDataset()
-            {
-                ConnectionString = TemporaryDatabaseInstanceReference.Value.GetConnectionString().ConnectionString
-            };
-        }
-
-        public override string GetOutputSourceQuery()
-        {
-            String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
-                QuoteSchemaAndTableName(GetOutputTable()));
-
-            return sql;
-        }*/
-
-        /*
-        protected override string GetOutputQueryText()
-        {
-            String sql = String.Format("SELECT tablealias.* FROM {0} AS tablealias",
-                QuoteSchemaAndTableName(GetOutputTable()));
-
-            return sql;
-        }
-         * */
-
-        /* TODO: delete
-        public override Graywulf.IO.Tasks.SourceTableQuery GetOutputSourceQuery()
-        {
-            return base.GetOutputSourceQuery();
-        }*/
 
         public override object Clone()
         {

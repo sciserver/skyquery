@@ -121,13 +121,5 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             base.FinishInterpret(forceReinitialize);
         }
-
-        /* TODO: delete
-        protected TableStatistics ComputeTableStatistics(XMatchQuerySpecification qs, XMatchTableSpecification table, decimal binSize)
-        {
-            // Partitioning key is overriden here! Always partition on Dec
-            return ComputeTableStatistics(qs, table.TableReference, table.Position.Dec, binSize);
-        }
-        */
     }
 }
