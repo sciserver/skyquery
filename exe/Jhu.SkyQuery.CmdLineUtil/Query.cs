@@ -119,9 +119,11 @@ namespace Jhu.SkyQuery.CmdLineUtil
 
             // MyDB
             var mydbds = CreateDataset("MYDB");     //*** TODO
+            mydbds.IsMutable = true;
 
             // TempDB
             var tempds = CreateDataset("TEMP");     //*** TODO
+            tempds.IsMutable = true;
 
             // CodeDB
             var codeds = CreateDataset("CODE");     //*** TODO
