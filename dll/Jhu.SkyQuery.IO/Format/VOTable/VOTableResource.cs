@@ -402,8 +402,16 @@ namespace Jhu.SkyQuery.Format.VOTable
             
             for (int i = 0; i < Columns.Count; i++)
             {
-                // Do not use format here!
-                File.XmlWriter.WriteElementString(Constants.VOTableKeywordTD, ColumnFormatters[i](values[i], "{0}"));
+                // TODO: Do not use format here, or use standard votable formatting
+                if (values[i] == DBNull.Value)
+                {
+                    // TODO: how to handle nulls in VOTable?
+                    // Leave field blank
+                }
+                else
+                {
+                    File.XmlWriter.WriteElementString(Constants.VOTableKeywordTD, ColumnFormatters[i](values[i], "{0}"));
+                }
             }
             
             File.XmlWriter.WriteEndElement();
