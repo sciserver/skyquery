@@ -289,10 +289,14 @@ namespace Jhu.SkyQuery.Format.VOTable
 
                 var settings = new XmlWriterSettings()
                 {
-                    Encoding = Encoding,
                     Indent = true,
                     NamespaceHandling = NamespaceHandling.OmitDuplicates,
                 };
+
+                if (Encoding != null)
+                {
+                    settings.Encoding = Encoding;
+                }
 
                 outputWriter = XmlWriter.Create(new DetachedStream(BaseStream), settings);
                 ownsOutputWriter = true;
