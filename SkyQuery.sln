@@ -15,36 +15,75 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.CommandLineParser", "..\graywulf\dll\Jhu.Graywulf.CommandLineParser\Jhu.Graywulf.CommandLineParser.csproj", "{48DED106-FDAF-4310-AC05-37DB1A315711}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.ParserLib", "..\graywulf\dll\Jhu.Graywulf.ParserLib\Jhu.Graywulf.ParserLib.csproj", "{4039B7D0-F8E5-49D8-A770-133DBED2EA75}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.SqlParser.Generator", "..\graywulf\build\Jhu.Graywulf.SqlParser.Generator\Jhu.Graywulf.SqlParser.Generator.csproj", "{77BE21A2-3AF7-478A-8279-3C741BF3BD59}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Graywulf", "Graywulf", "{2C0C403F-4604-4DA8-8A2E-C593288D5D57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Activities", "..\graywulf\dll\Jhu.Graywulf.Activities\Jhu.Graywulf.Activities.csproj", "{57392DA3-E280-48EE-80C8-64E09FD8AFB5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Components", "..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj", "{ABB4C403-720A-47E1-9485-CFAADD696656}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Install", "..\graywulf\dll\Jhu.Graywulf.Install\Jhu.Graywulf.Install.csproj", "{AC357A2C-5388-4D7F-B1AF-C78D9BF8326C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.IO", "..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj", "{6797ED88-1D8C-491B-A036-4C42C4BF2EAF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Jobs", "..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj", "{2BD2D467-D003-468D-9B97-83DDC6F2ED78}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Logging", "..\graywulf\dll\Jhu.Graywulf.Logging\Jhu.Graywulf.Logging.csproj", "{FD98FB58-A3E5-4D32-B6D6-3E20609C4D09}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Metadata", "..\graywulf\dll\Jhu.Graywulf.Metadata\Jhu.Graywulf.Metadata.csproj", "{129E1B6F-B0B3-4C7C-8FE2-4B1B8556B96D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Registry", "..\graywulf\dll\Jhu.Graywulf.Registry\Jhu.Graywulf.Registry.csproj", "{59BFB28B-3F97-4714-B8D7-A1B40F668831}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Registry.Enum", "..\graywulf\dll\Jhu.Graywulf.Registry.Enum\Jhu.Graywulf.Registry.Enum.csproj", "{71599792-21CC-4E63-AFB5-2AFBDB3DF418}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.RemoteService", "..\graywulf\dll\Jhu.Graywulf.RemoteService\Jhu.Graywulf.RemoteService.csproj", "{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Schema", "..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj", "{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.SqlParser", "..\graywulf\dll\Jhu.Graywulf.SqlParser\Jhu.Graywulf.SqlParser.csproj", "{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Web", "..\graywulf\dll\Jhu.Graywulf.Web\Jhu.Graywulf.Web.csproj", "{E9D182CF-746E-4E40-B01C-74A32FB70749}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Default", "Default", "{30859602-EBCE-4886-BE45-444EA42EEB76}"
 	ProjectSection(SolutionItems) = preProject
@@ -71,6 +110,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.RemoteService.Server", "..\graywulf\exe\Jhu.Graywulf.RemoteService.Server\Jhu.Graywulf.RemoteService.Server.csproj", "{3AC81304-44BA-4D55-A872-469BC11C9CBC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Scheduler", "..\graywulf\exe\Jhu.Graywulf.Scheduler\Jhu.Graywulf.Scheduler.csproj", "{94AB6A2E-6877-4FED-87E2-1F9F17622F43}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{08B75CEE-73A4-4EB5-8C79-2EB3A1DF628C}"
 EndProject
@@ -89,6 +131,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Components.Test", "..\graywulf\test\Jhu.Graywulf.Components.Test\Jhu.Graywulf.Components.Test.csproj", "{CFB7B2D2-C676-4378-8C4D-D3640C40D0A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Test", "..\graywulf\test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj", "{EA6164BA-B283-46C2-874B-348D6BAD41AD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.IO.Test", "..\graywulf\test\Jhu.Graywulf.IO.Test\Jhu.Graywulf.IO.Test.csproj", "{672333CE-F524-4D0C-B1A7-401170C9F212}"
 EndProject
