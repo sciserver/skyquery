@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Copyright.cs" />
     <Compile Include="Install\SkyQueryInstaller.cs" />
     <Compile Include="Jobs\Query\AppSettings.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />

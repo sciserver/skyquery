@@ -77,6 +77,10 @@
       <Project>{8F2875D9-C190-4A01-B756-FE39B9D171B7}</Project>
       <Name>Jhu.SkyQuery.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
+      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
+      <Name>Jhu.SkyQuery</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

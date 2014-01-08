@@ -7,12 +7,15 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("AdqlParser")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("AdqlParser")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+/*
+ * How to avoid circular references?
+[assembly: AssemblyConfiguration(Jhu.SkyQuery.Constants.InfoConfiguration)]
+[assembly: AssemblyCompany(Jhu.SkyQuery.Constants.InfoCompany)]
+[assembly: AssemblyProduct(Jhu.SkyQuery.Constants.InfoProduct)]
+[assembly: AssemblyCopyright(Jhu.SkyQuery.Constants.InfoCopyright)]
+[assembly: AssemblyTrademark(Jhu.SkyQuery.Constants.InfoTrademark)]
+[assembly: AssemblyCulture(Jhu.SkyQuery.Constants.InfoCulture)]
+ * */
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

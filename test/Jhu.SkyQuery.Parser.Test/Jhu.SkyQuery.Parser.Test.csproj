@@ -79,6 +79,10 @@
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
+      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
+      <Name>Jhu.SkyQuery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.Test\Jhu.SkyQuery.Test.csproj">
       <Project>{4F27F7FE-7C79-4584-867E-EF17B017F4DB}</Project>
       <Name>Jhu.SkyQuery.Test</Name>

@@ -48,12 +48,8 @@ namespace Jhu.SkyQuery.CmdLineUtil
 
         private static void PrintHeader()
         {
-            Console.WriteLine(
-@"JHU SkyQuery Command Line Utility
-(c) 2008-2012 László Dobos dobos@pha.jhu.edu
-Department of Physics and Astronomy, The Johns Hopkins University
-
-");
+            Console.WriteLine("SkyQuery Command Line Utility");
+            Console.WriteLine(Copyright.InfoCopyright);
         }
        
     }

@@ -38,12 +38,8 @@ namespace Jhu.SkyQuery.Parser.Generator
 
         private static void PrintHeader()
         {
-            Console.WriteLine(
-@"JHU Graywulf SQL Parser Generator
-(c) 2008-2012 László Dobos dobos@pha.jhu.edu
-Department of Physics and Astronomy, The Johns Hopkins University
-
-");
+            Console.WriteLine("Graywulf SQL Parser Generator");
+            Console.WriteLine(Copyright.InfoCopyright);
         }
     }
 }

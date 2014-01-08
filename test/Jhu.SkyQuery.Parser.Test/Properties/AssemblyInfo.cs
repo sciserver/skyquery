@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Jhu.SkyQuery.Parser.Test")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Jhu.SkyQuery.Parser.Test")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2012")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyConfiguration(Jhu.SkyQuery.Copyright.InfoConfiguration)]
+[assembly: AssemblyCompany(Jhu.SkyQuery.Copyright.InfoCompany)]
+[assembly: AssemblyProduct(Jhu.SkyQuery.Copyright.InfoProduct)]
+[assembly: AssemblyCopyright(Jhu.SkyQuery.Copyright.InfoCopyright)]
+[assembly: AssemblyTrademark(Jhu.SkyQuery.Copyright.InfoTrademark)]
+[assembly: AssemblyCulture(Jhu.SkyQuery.Copyright.InfoCulture)]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

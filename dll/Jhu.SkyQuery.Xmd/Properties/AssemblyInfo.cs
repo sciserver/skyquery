@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Jhu.SkyQuery.Xmd")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Jhu.SkyQuery.Xmd")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyConfiguration(Jhu.SkyQuery.Copyright.InfoConfiguration)]
+[assembly: AssemblyCompany(Jhu.SkyQuery.Copyright.InfoCompany)]
+[assembly: AssemblyProduct(Jhu.SkyQuery.Copyright.InfoProduct)]
+[assembly: AssemblyCopyright(Jhu.SkyQuery.Copyright.InfoCopyright)]
+[assembly: AssemblyTrademark(Jhu.SkyQuery.Copyright.InfoTrademark)]
+[assembly: AssemblyCulture(Jhu.SkyQuery.Copyright.InfoCulture)]
 
 // Version information for an assembly consists of the following four values:
 //

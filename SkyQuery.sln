@@ -29,9 +29,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Activities", "
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Components", "..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj", "{ABB4C403-720A-47E1-9485-CFAADD696656}"
-	ProjectSection(ProjectDependencies) = postProject
-		{04B142F2-23C8-4ADC-B296-AA5228B87064} = {04B142F2-23C8-4ADC-B296-AA5228B87064}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Install", "..\graywulf\dll\Jhu.Graywulf.Install\Jhu.Graywulf.Install.csproj", "{AC357A2C-5388-4D7F-B1AF-C78D9BF8326C}"
 	ProjectSection(ProjectDependencies) = postProject

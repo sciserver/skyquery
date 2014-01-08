@@ -78,6 +78,10 @@
       <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
       <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
+      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
+      <Name>Jhu.SkyQuery</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

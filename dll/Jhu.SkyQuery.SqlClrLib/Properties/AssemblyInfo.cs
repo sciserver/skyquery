@@ -8,12 +8,14 @@ using System.Data.Sql;
 // associated with an assembly.
 [assembly: AssemblyTitle("SkyQueryCLR")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("SkyQueryCLR")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+/*
+[assembly: AssemblyConfiguration(Jhu.SkyQuery.Constants.InfoConfiguration)]
+[assembly: AssemblyCompany(Jhu.SkyQuery.Constants.InfoCompany)]
+[assembly: AssemblyProduct(Jhu.SkyQuery.Constants.InfoProduct)]
+[assembly: AssemblyCopyright(Jhu.SkyQuery.Constants.InfoCopyright)]
+[assembly: AssemblyTrademark(Jhu.SkyQuery.Constants.InfoTrademark)]
+[assembly: AssemblyCulture(Jhu.SkyQuery.Constants.InfoCulture)]
+ * */
 
 [assembly: ComVisible(false)]
 
