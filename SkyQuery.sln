@@ -82,6 +82,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Web", "..\gray
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Default", "Default", "{30859602-EBCE-4886-BE45-444EA42EEB76}"
 	ProjectSection(SolutionItems) = preProject
+		config\default\binaries.config = config\default\binaries.config
 		config\default\connectionStrings.config = config\default\connectionStrings.config
 		config\default\mailSettings.config = config\default\mailSettings.config
 		config\default\registry.config = config\default\registry.config
@@ -147,6 +148,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.SqlParser.UI",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "voservices.net", "voservices.net", "{078A5A50-2832-4A6E-BDB2-866E750E7817}"
 	ProjectSection(SolutionItems) = preProject
+		config\voservices.net\binaries.config = config\voservices.net\binaries.config
 		config\voservices.net\connectionStrings.config = config\voservices.net\connectionStrings.config
 		config\voservices.net\mailSettings.config = config\voservices.net\mailSettings.config
 		config\voservices.net\registry.config = config\voservices.net\registry.config
@@ -186,6 +188,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.Test", "test\J
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev.voservices.net", "dev.voservices.net", "{4349441F-9512-4D9D-A045-120E8CFEE430}"
 	ProjectSection(SolutionItems) = preProject
+		config\dev.voservices.net\binaries.config = config\dev.voservices.net\binaries.config
 		config\dev.voservices.net\connectionStrings.config = config\dev.voservices.net\connectionStrings.config
 		config\dev.voservices.net\mailSettings.config = config\dev.voservices.net\mailSettings.config
 		config\dev.voservices.net\registry.config = config\dev.voservices.net\registry.config
@@ -204,6 +207,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "command-line", "command-line", "{96CABD47-1762-479B-860D-1821319B9A9E}"
 	ProjectSection(SolutionItems) = preProject
+		config\command-line\binaries.config = config\command-line\binaries.config
 		config\command-line\connectionStrings.config = config\command-line\connectionStrings.config
 		config\command-line\mailSettings.config = config\command-line\mailSettings.config
 		config\command-line\registry.config = config\command-line\registry.config
