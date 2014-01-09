@@ -82,12 +82,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Web", "..\gray
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Default", "Default", "{30859602-EBCE-4886-BE45-444EA42EEB76}"
 	ProjectSection(SolutionItems) = preProject
-		config\default\activities.config = config\default\activities.config
-		config\default\cluster.config = config\default\cluster.config
 		config\default\connectionStrings.config = config\default\connectionStrings.config
-		config\default\domain.config = config\default\domain.config
-		config\default\federation.config = config\default\federation.config
 		config\default\mailSettings.config = config\default\mailSettings.config
+		config\default\registry.config = config\default\registry.config
 		config\default\remoteService.config = config\default\remoteService.config
 		config\default\scheduler.config = config\default\scheduler.config
 		config\default\test.config = config\default\test.config
@@ -121,8 +118,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Web.UI", "..\g
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{31A32854-8930-499D-9DC1-969C3B2CCE36}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.CommandLineParser.Test", "..\graywulf\test\Jhu.Graywulf.CommandLineParser.Test\Jhu.Graywulf.CommandLineParser.Test.csproj", "{780BBE5C-30F4-4E3F-A132-65F77549BAE9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Components.Test", "..\graywulf\test\Jhu.Graywulf.Components.Test\Jhu.Graywulf.Components.Test.csproj", "{CFB7B2D2-C676-4378-8C4D-D3640C40D0A0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.Test", "..\graywulf\test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj", "{EA6164BA-B283-46C2-874B-348D6BAD41AD}"
@@ -152,12 +147,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.Graywulf.SqlParser.UI",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "voservices.net", "voservices.net", "{078A5A50-2832-4A6E-BDB2-866E750E7817}"
 	ProjectSection(SolutionItems) = preProject
-		config\voservices.net\activities.config = config\voservices.net\activities.config
-		config\voservices.net\cluster.config = config\voservices.net\cluster.config
 		config\voservices.net\connectionStrings.config = config\voservices.net\connectionStrings.config
-		config\voservices.net\domain.config = config\voservices.net\domain.config
-		config\voservices.net\federation.config = config\voservices.net\federation.config
 		config\voservices.net\mailSettings.config = config\voservices.net\mailSettings.config
+		config\voservices.net\registry.config = config\voservices.net\registry.config
 		config\voservices.net\remoteService.config = config\voservices.net\remoteService.config
 		config\voservices.net\scheduler.config = config\voservices.net\scheduler.config
 		config\voservices.net\test.config = config\voservices.net\test.config
@@ -194,12 +186,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.Test", "test\J
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev.voservices.net", "dev.voservices.net", "{4349441F-9512-4D9D-A045-120E8CFEE430}"
 	ProjectSection(SolutionItems) = preProject
-		config\dev.voservices.net\activities.config = config\dev.voservices.net\activities.config
-		config\dev.voservices.net\cluster.config = config\dev.voservices.net\cluster.config
 		config\dev.voservices.net\connectionStrings.config = config\dev.voservices.net\connectionStrings.config
-		config\dev.voservices.net\domain.config = config\dev.voservices.net\domain.config
-		config\dev.voservices.net\federation.config = config\dev.voservices.net\federation.config
 		config\dev.voservices.net\mailSettings.config = config\dev.voservices.net\mailSettings.config
+		config\dev.voservices.net\registry.config = config\dev.voservices.net\registry.config
 		config\dev.voservices.net\remoteService.config = config\dev.voservices.net\remoteService.config
 		config\dev.voservices.net\scheduler.config = config\dev.voservices.net\scheduler.config
 		config\dev.voservices.net\test.config = config\dev.voservices.net\test.config
@@ -215,12 +204,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "command-line", "command-line", "{96CABD47-1762-479B-860D-1821319B9A9E}"
 	ProjectSection(SolutionItems) = preProject
-		config\command-line\activities.config = config\command-line\activities.config
-		config\command-line\cluster.config = config\command-line\cluster.config
 		config\command-line\connectionStrings.config = config\command-line\connectionStrings.config
-		config\command-line\domain.config = config\command-line\domain.config
-		config\command-line\federation.config = config\command-line\federation.config
 		config\command-line\mailSettings.config = config\command-line\mailSettings.config
+		config\command-line\registry.config = config\command-line\registry.config
 		config\command-line\remoteService.config = config\command-line\remoteService.config
 		config\command-line\scheduler.config = config\command-line\scheduler.config
 		config\command-line\test.config = config\command-line\test.config
@@ -403,14 +389,6 @@ Global
 		{C2F9863F-3D23-4185-BDBC-2DDE39ACBDEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2F9863F-3D23-4185-BDBC-2DDE39ACBDEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C2F9863F-3D23-4185-BDBC-2DDE39ACBDEA}.Release|x86.ActiveCfg = Release|Any CPU
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Debug|x86.ActiveCfg = Debug|x86
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Debug|x86.Build.0 = Debug|x86
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Release|x86.ActiveCfg = Release|x86
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9}.Release|x86.Build.0 = Release|x86
 		{CFB7B2D2-C676-4378-8C4D-D3640C40D0A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFB7B2D2-C676-4378-8C4D-D3640C40D0A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFB7B2D2-C676-4378-8C4D-D3640C40D0A0}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -598,7 +576,6 @@ Global
 		{C5F3DDC5-E942-4DC8-B6EE-9CD4D8B5C79E} = {08B75CEE-73A4-4EB5-8C79-2EB3A1DF628C}
 		{7CB2799F-5B60-4CE9-A71F-1B3C8C868EDC} = {08B75CEE-73A4-4EB5-8C79-2EB3A1DF628C}
 		{C2F9863F-3D23-4185-BDBC-2DDE39ACBDEA} = {08B75CEE-73A4-4EB5-8C79-2EB3A1DF628C}
-		{780BBE5C-30F4-4E3F-A132-65F77549BAE9} = {31A32854-8930-499D-9DC1-969C3B2CCE36}
 		{CFB7B2D2-C676-4378-8C4D-D3640C40D0A0} = {31A32854-8930-499D-9DC1-969C3B2CCE36}
 		{EA6164BA-B283-46C2-874B-348D6BAD41AD} = {31A32854-8930-499D-9DC1-969C3B2CCE36}
 		{672333CE-F524-4D0C-B1A7-401170C9F212} = {31A32854-8930-499D-9DC1-969C3B2CCE36}

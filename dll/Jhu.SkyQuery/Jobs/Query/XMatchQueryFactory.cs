@@ -82,7 +82,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var ef = new EntityFactory(Context);
 
                 var job = CreateJobInstance(
-                    String.Format("{0}.{1}", Federation.AppSettings.FederationName, typeof(XMatchQueryJob).Name),
+                    String.Format("{0}.{1}", Jhu.Graywulf.Registry.AppSettings.FederationName, typeof(XMatchQueryJob).Name),
                     queueName,
                     comments);
 

@@ -54,7 +54,7 @@ namespace Jhu.SkyQuery.Install
                 Name = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob).Name,
                 System = true,
                 WorkflowTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob).AssemblyQualifiedName,
-                Settings = new JobDefinition.JobDefinitionSettings()
+                Settings = new SqlQueryJobSettings()
                 {
                     HotDatabaseVersionName = Constants.HotDatabaseVersionName,
                     StatDatabaseVersionName = Constants.StatDatabaseVersionName,
