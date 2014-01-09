@@ -54,17 +54,14 @@ namespace Jhu.SkyQuery.Install
                 Name = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob).Name,
                 System = true,
                 WorkflowTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob).AssemblyQualifiedName,
-                Settings = Util.SaveSettings(new Dictionary<SqlQueryFactory.Settings, string>()
+                Settings = new JobDefinition.JobDefinitionSettings()
                 {
-                    // TODO: update these in the query factory
-                    {SqlQueryFactory.Settings.HotDatabaseVersionName, Constants.HotDatabaseVersionName},
-                    {SqlQueryFactory.Settings.StatDatabaseVersionName, Constants.StatDatabaseVersionName},
-                    {SqlQueryFactory.Settings.DefaultSchemaName, Constants.DefaultSchemaName},
-                    {SqlQueryFactory.Settings.DefaultDatasetName, Constants.MyDbName},
-                    {SqlQueryFactory.Settings.DefaultTableName, "outputtable"},
-                    {SqlQueryFactory.Settings.TemporarySchemaName, Constants.DefaultSchemaName},
-                    {SqlQueryFactory.Settings.LongQueryTimeout, "7200"},
-                }),
+                    HotDatabaseVersionName = Constants.HotDatabaseVersionName,
+                    StatDatabaseVersionName = Constants.StatDatabaseVersionName,
+                    DefaultDatasetName = Constants.MyDbName,
+                    DefaultSchemaName = Constants.DefaultSchemaName,
+                    QueryTimeout = 7200,
+                },
             };
 
             jd.Save();
