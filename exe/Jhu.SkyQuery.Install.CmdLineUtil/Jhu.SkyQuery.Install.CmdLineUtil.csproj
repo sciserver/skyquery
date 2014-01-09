@@ -80,9 +80,9 @@
     <Compile Include="Verb.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.CommandLineParser\Jhu.Graywulf.CommandLineParser.csproj">
-      <Project>{48DED106-FDAF-4310-AC05-37DB1A315711}</Project>
-      <Name>Jhu.Graywulf.CommandLineParser</Name>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Install\Jhu.Graywulf.Install.csproj">
       <Project>{AC357A2C-5388-4D7F-B1AF-C78D9BF8326C}</Project>
