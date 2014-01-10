@@ -221,6 +221,28 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.IO", "dll\Jhu.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jhu.SkyQuery.IO.Test", "test\Jhu.SkyQuery.IO.Test\Jhu.SkyQuery.IO.Test.csproj", "{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{25C43733-9CD8-4979-B507-F8C7D2AC514B}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "pages", "docs\pages\", "{95572CA7-FA01-4B77-AE0C-740B100CE261}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/pages"
+		Debug.AspNetCompiler.PhysicalPath = "docs\pages\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\pages\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/pages"
+		Release.AspNetCompiler.PhysicalPath = "docs\pages\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\pages\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "58050"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = SkyQuery.vsmdi
@@ -540,6 +562,12 @@ Global
 		{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}.Release|x86.ActiveCfg = Release|Any CPU
+		{95572CA7-FA01-4B77-AE0C-740B100CE261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95572CA7-FA01-4B77-AE0C-740B100CE261}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95572CA7-FA01-4B77-AE0C-740B100CE261}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{95572CA7-FA01-4B77-AE0C-740B100CE261}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{95572CA7-FA01-4B77-AE0C-740B100CE261}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{95572CA7-FA01-4B77-AE0C-740B100CE261}.Release|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -595,6 +623,7 @@ Global
 		{562D8297-CE76-4791-B697-761CC8AF2622} = {D3BA5B7E-66A6-4881-8BE5-50909394F85D}
 		{A345CE3F-DDE3-40E4-9F53-9ACF32490191} = {D3BA5B7E-66A6-4881-8BE5-50909394F85D}
 		{4692BF22-9181-4F47-993B-94E5F4EC604B} = {D3BA5B7E-66A6-4881-8BE5-50909394F85D}
+		{25C43733-9CD8-4979-B507-F8C7D2AC514B} = {D3BA5B7E-66A6-4881-8BE5-50909394F85D}
 		{2887F181-7F61-4DF5-BD89-2800503D5F84} = {66A6B425-4D46-4BF6-A6A2-E71D7E5B0502}
 		{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5} = {66A6B425-4D46-4BF6-A6A2-E71D7E5B0502}
 		{10036FFB-1ADE-4B0D-9249-0A5971F1F983} = {66A6B425-4D46-4BF6-A6A2-E71D7E5B0502}
@@ -607,5 +636,6 @@ Global
 		{4F27F7FE-7C79-4584-867E-EF17B017F4DB} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
 		{26EAD0E5-8D2F-4AC6-96BB-B3FD57F8FAA8} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
 		{95AEABCA-55A3-4A34-BFCD-1469A646D5DB} = {4692BF22-9181-4F47-993B-94E5F4EC604B}
+		{95572CA7-FA01-4B77-AE0C-740B100CE261} = {25C43733-9CD8-4979-B507-F8C7D2AC514B}
 	EndGlobalSection
 EndGlobal
