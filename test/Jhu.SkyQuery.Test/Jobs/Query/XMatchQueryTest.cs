@@ -29,7 +29,7 @@ WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
         [TestMethod]
         public void XMatchQuerySerializableTest()
         {
-            var t = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQuery);
+            var t = typeof(Jhu.SkyQuery.Jobs.Query.BayesFactorXMatchQuery);
 
             var sc = new Jhu.Graywulf.Activities.SerializableChecker();
             Assert.IsTrue(sc.Execute(t));
