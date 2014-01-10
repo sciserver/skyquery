@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("Jhu.SkyQuery.Parser.Generator")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration(Jhu.SkyQuery.Copyright.InfoConfiguration)]
-[assembly: AssemblyCompany(Jhu.SkyQuery.Copyright.InfoCompany)]
-[assembly: AssemblyProduct(Jhu.SkyQuery.Copyright.InfoProduct)]
-[assembly: AssemblyCopyright(Jhu.SkyQuery.Copyright.InfoCopyright)]
-[assembly: AssemblyTrademark(Jhu.SkyQuery.Copyright.InfoTrademark)]
-[assembly: AssemblyCulture(Jhu.SkyQuery.Copyright.InfoCulture)]
+[assembly: AssemblyConfiguration(Jhu.Graywulf.Copyright.InfoConfiguration)]
+[assembly: AssemblyCompany(Jhu.Graywulf.Copyright.InfoCompany)]
+[assembly: AssemblyProduct(Jhu.Graywulf.Copyright.InfoProduct)]
+[assembly: AssemblyCopyright(Jhu.Graywulf.Copyright.InfoCopyright)]
+[assembly: AssemblyTrademark(Jhu.Graywulf.Copyright.InfoTrademark)]
+[assembly: AssemblyCulture(Jhu.Graywulf.Copyright.InfoCulture)]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

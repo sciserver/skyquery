@@ -39,7 +39,7 @@ namespace Jhu.SkyQuery.Parser.Generator
         private static void PrintHeader()
         {
             Console.WriteLine("Graywulf SQL Parser Generator");
-            Console.WriteLine(Copyright.InfoCopyright);
+            Console.WriteLine(Jhu.Graywulf.Copyright.InfoCopyright);
         }
     }
 }

@@ -93,10 +93,6 @@
       <Project>{77BE21A2-3AF7-478A-8279-3C741BF3BD59}</Project>
       <Name>Jhu.Graywulf.SqlParser.Generator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
-      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
-      <Name>Jhu.SkyQuery</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
