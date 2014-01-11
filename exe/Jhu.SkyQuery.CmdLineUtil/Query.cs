@@ -118,15 +118,15 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var query = System.IO.File.ReadAllText(input);
 
             // MyDB
-            var mydbds = CreateDataset("MYDB");     //*** TODO
+            var mydbds = CreateDataset(Jhu.Graywulf.Registry.Constants.MyDbName);
             mydbds.IsMutable = true;
 
             // TempDB
-            var tempds = CreateDataset("TEMP");     //*** TODO
+            var tempds = CreateDataset(Jhu.Graywulf.Registry.Constants.TempDbName);
             tempds.IsMutable = true;
 
             // CodeDB
-            var codeds = CreateDataset("CODE");     //*** TODO
+            var codeds = CreateDataset(Jhu.Graywulf.Registry.Constants.CodeDbName);
 
             // Create query and verify
             var f = new XMatchQueryFactory();
