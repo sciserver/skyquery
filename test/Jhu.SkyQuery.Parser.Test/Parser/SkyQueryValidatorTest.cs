@@ -60,7 +60,7 @@ HAVING LIMIT 1e3
                 Validate(ss);
                 Assert.Fail();
             }
-            catch (ValidatorException ex)
+            catch (ValidatorException)
             {
             }
         }

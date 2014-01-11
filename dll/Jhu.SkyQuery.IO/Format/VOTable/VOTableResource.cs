@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.VOTable
