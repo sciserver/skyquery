@@ -46,6 +46,11 @@
       <merge file="registry.config" />
       <merge file="test.config" />
     </project>
+    <project name="Jhu.Graywulf.Registry.Test" path="..\Graywulf\Test\Jhu.Graywulf.Registry.Test" type="console">
+      <merge file="binaries.config" />
+      <merge file="connectionStrings.config" />
+      <merge file="test.config" />
+    </project>
     <project name="Jhu.Graywulf.RemoteService.Test" path="..\Graywulf\Test\Jhu.Graywulf.RemoteService.Test" type="console">
       <merge file="binaries.config" />
       <merge file="remoteService.config" />
