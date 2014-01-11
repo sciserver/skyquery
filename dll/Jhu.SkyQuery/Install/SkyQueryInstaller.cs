@@ -34,11 +34,15 @@ namespace Jhu.SkyQuery.Install
 
             var federation = new Federation(domain)
             {
+                QueryFactory = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName,
+                FileFormatFactory = typeof(Jhu.SkyQuery.Format.SkyQueryFileFormatFactory).AssemblyQualifiedName,
+                StreamFactory = typeof(Jhu.SkyQuery.IO.SkyQueryStreamFactory).AssemblyQualifiedName,
                 Name = "SkyQuery",
                 System = true,
                 ShortTitle = "SkyQuery",
                 LongTitle = "SkyQuery Astronomical Cross-Match Engine",
                 Email = "admin@skyquery.net",
+                Copyright = Copyright.InfoCopyright,
                 TempDatabaseVersion = tempDatabaseVersion,
                 ControllerMachine = controllerMachine,
                 SchemaSourceServerInstance = schemaSourceServerInstance,

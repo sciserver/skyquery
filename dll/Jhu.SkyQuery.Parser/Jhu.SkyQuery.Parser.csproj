@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Copyright.cs" />
     <Compile Include="Parser\AdqlPoint.cs" />
     <Compile Include="Parser\BayesianXMatchClause.cs" />
     <Compile Include="Parser\BayesianXMatchQuerySpecification.cs" />
