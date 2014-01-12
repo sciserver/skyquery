@@ -67,7 +67,7 @@ namespace Jhu.SkyQuery.Install
                     QueryTimeout = 7200,
                 },
             };
-
+            jd.DiscoverWorkflowParameters();
             jd.Save();
 
             var codedd = new DatabaseDefinition(federation)

@@ -86,7 +86,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     queueName,
                     comments);
 
-                job.Parameters["Query"].SetValue(query);
+                job.Parameters["Query"].Value = query;
 
                 return job;
             }
