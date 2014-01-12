@@ -12,7 +12,6 @@
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg3:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <jga:Checkpoint CheckpointName="INIT" DisplayName="Checkpoint INIT" sap:VirtualizedContainerService.HintSize="367,244">
       <Sequence sap:VirtualizedContainerService.HintSize="222,208">
         <sap:WorkflowViewStateService.ViewState>
           <scg3:Dictionary x:TypeArguments="x:String, x:Object">
@@ -22,8 +21,6 @@
         <jgjq:CheckDestinationTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
         <jgjq:InitializeQuery EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
       </Sequence>
-    </jga:Checkpoint>
-    <jga:Checkpoint CheckpointName="STAT" DisplayName="Checkpoint STAT" sap:VirtualizedContainerService.HintSize="367,447">
       <Sequence sap:VirtualizedContainerService.HintSize="304,411">
         <sap:WorkflowViewStateService.ViewState>
           <scg3:Dictionary x:TypeArguments="x:String, x:Object">
@@ -42,8 +39,6 @@
         </ParallelForEach>
         <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="282,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
       </Sequence>
-    </jga:Checkpoint>
-    <jga:Checkpoint CheckpointName="EXEC" DisplayName="Checkpoint EXEC" sap:VirtualizedContainerService.HintSize="367,1485">
       <ParallelForEach x:TypeArguments="jgjq:QueryPartitionBase" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="353,1449" Values="[Query.Partitions]">
         <ActivityAction x:TypeArguments="jgjq:QueryPartitionBase">
           <ActivityAction.Argument>
@@ -99,6 +94,5 @@
           </jga:Retry>
         </ActivityAction>
       </ParallelForEach>
-    </jga:Checkpoint>
   </Sequence>
 </Activity>
