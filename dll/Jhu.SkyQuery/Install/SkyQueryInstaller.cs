@@ -50,7 +50,7 @@ namespace Jhu.SkyQuery.Install
             federation.Save();
 
             var fi = new FederationInstaller(federation);
-            fi.GenerateDefaultChildren(myDBServerVersion);
+            fi.GenerateDefaultChildren(myDBServerVersion, codeDatabaseServerVersion);
 
             // XMatch job
             var jd = new JobDefinition(federation)
