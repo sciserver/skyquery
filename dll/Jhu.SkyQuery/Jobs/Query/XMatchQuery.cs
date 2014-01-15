@@ -30,11 +30,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         [NonSerialized]
         protected List<XMatchTableSpecification> xmatchTables;
 
-        [NonSerialized]
-        protected string partitioningTable;
-        [NonSerialized]
-        protected string partitioningKey;
-
         [IgnoreDataMember]
         public override bool IsPartitioned
         {
@@ -113,11 +108,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Find xmatch tables
             xmatchTables = new List<XMatchTableSpecification>(SelectStatement.EnumerateQuerySpecifications().First<Jhu.Graywulf.SqlParser.QuerySpecification>().FindDescendant<XMatchClause>().EnumerateXMatchTableSpecifications());
-
-            // Partitioning table - pick the first one
-            // But this might be updated later based on statistics
-            this.partitioningTable = xmatchTables[0].TableReference.FullyQualifiedName;
-            this.partitioningKey = "Dec";        // ****** TODO use metadata
 
             base.FinishInterpret(forceReinitialize);
         }

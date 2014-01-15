@@ -76,7 +76,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var s = new BayesFactorXMatchQueryStep(this, Context);
 
                 s.StepNumber = i;
-                s.PreviousXMatchTable = (i == 0) ? null : tables[i - 1].TableReference.FullyQualifiedName;
                 s.XMatchTable = tables[i].TableReference.UniqueName;
 
                 steps.Add(s);

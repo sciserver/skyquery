@@ -98,8 +98,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                             }
                         }
 
-                        // Update partitioning table to be the first
-                        partitioningTable = tables[0].TableReference.FullyQualifiedName;
                         var stat = TableStatistics[0].Statistics;
 
                         GeneratePartitions(partitionCount, stat, tables);

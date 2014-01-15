@@ -13,15 +13,11 @@ namespace Jhu.SkyQuery.Jobs.Query
     [Serializable]
     public abstract class XMatchQueryStep
     {
-        protected QueryPartitionBase queryPartition;
+        private QueryPartitionBase queryPartition;
 
-        protected int stepNumber;
-
-        protected string previousXMatchTable;
-
-        protected string xMatchTable;
-        
-        protected double searchRadius;
+        private int stepNumber;
+        private string xMatchTable;
+        private double searchRadius;
 
         public QueryPartitionBase QueryPartition
         {
@@ -32,12 +28,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             get { return stepNumber; }
             set { stepNumber = value; }
-        }
-
-        public string PreviousXMatchTable
-        {
-            get { return previousXMatchTable; }
-            set { previousXMatchTable = value; }
         }
 
         public string XMatchTable
@@ -71,7 +61,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.queryPartition = null;
 
             this.stepNumber = 0;
-            this.previousXMatchTable = null;
             this.xMatchTable = null;
         }
     }

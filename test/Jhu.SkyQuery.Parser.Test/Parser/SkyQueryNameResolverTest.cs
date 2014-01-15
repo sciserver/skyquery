@@ -76,10 +76,10 @@ HAVING LIMIT 1e3";
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual(3, ts.Length);
-            Assert.AreEqual("[SkyNode_Test].[dbo].[CatalogA]", ts[0].GetFullyResolvedName());
-            Assert.AreEqual("[SkyNode_Test].[dbo].[CatalogB]", ts[1].GetFullyResolvedName());
-            Assert.AreEqual("[SkyNode_Test].[dbo].[CatalogA]", xts[0].TableReference.GetFullyResolvedName());
-            Assert.AreEqual("[SkyNode_Test].[dbo].[CatalogB]", xts[1].TableReference.GetFullyResolvedName());
+            Assert.AreEqual("[a]", ts[0].ToString());
+            Assert.AreEqual("[b]", ts[1].ToString());
+            Assert.AreEqual("[a]", xts[0].TableReference.ToString());
+            Assert.AreEqual("[b]", xts[1].TableReference.ToString());
             Assert.IsTrue(ts[2].IsComputed);
         }
 

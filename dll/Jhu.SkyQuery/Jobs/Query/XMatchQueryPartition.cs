@@ -818,7 +818,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 XMatchTableSpecification sxt = xmatchTables[step.XMatchTable];
 
                 sql.Replace("[$newtablename]", newtablename);
-                sql.Replace("[$tablename]", sxt.TableReference.GetFullyResolvedName());
+                sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableName(sxt.TableReference));
                 sql.Replace("[$tablealias]", sxt.TableReference.Alias);
 
                 sql.Replace("[$insertcolumnlist]", GetPropagatedColumnList(sxt, ColumnListType.ForInsert, include, ColumnListNullType.Nothing, null));
