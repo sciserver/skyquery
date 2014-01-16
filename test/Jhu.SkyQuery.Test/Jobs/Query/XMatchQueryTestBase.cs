@@ -14,7 +14,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     {
         protected Guid ScheduleQueryJob(string query, QueueType queueType)
         {
-            var queue = String.Format("Graywulf.Controller.Controller.{0}", queueType.ToString());  // *** TODO
+            var queue = String.Format("QueueInstance:Graywulf.Controller.Controller.{0}", queueType.ToString());  // *** TODO
 
             using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
             {
