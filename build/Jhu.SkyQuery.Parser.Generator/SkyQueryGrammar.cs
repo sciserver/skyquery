@@ -32,8 +32,8 @@ namespace Jhu.SkyQuery.Parser.Generator
             Must
             (
                 FunctionTableSource,
-                SimpleTableSource,
                 XMatchTableSource,
+                SimpleTableSource,
                 VariableTableSource,
                 SubqueryTableSource
             );
@@ -43,7 +43,7 @@ namespace Jhu.SkyQuery.Parser.Generator
             (
                 TableOrViewName,
                 May(Sequence(CommentOrWhitespace, May(Sequence(Keyword("AS"), CommentOrWhitespace)), TableAlias)),   // Optional
-                May(Sequence(CommentOrWhitespace, XMatchHintClause))
+                Sequence(CommentOrWhitespace, XMatchHintClause)     // Required
             );
 
         public static Expression<Rule> XMatchHintClause = () =>

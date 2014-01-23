@@ -97,9 +97,44 @@ INNER JOIN SDSSDR7:PhotoObj p
 
             var qs = Parse(sql);
 
-            var ts = qs.EnumerateSourceTables(false).Cast<Jhu.Graywulf.SqlParser.FunctionTableSource>().ToArray();
+            var ts = qs.EnumerateSourceTables(false).ToArray();
 
             Assert.AreEqual(2, ts.Length);
+        }
+
+        [TestMethod]
+        public void CrossJoinXMatchTestTest()
+        {
+            var sql = @"
+SELECT m.ra, m.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
+CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
+XMATCH BAYESFACTOR x
+MUST EXIST s
+MUST EXIST m
+HAVING LIMIT 1e3
+WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
+
+            var qs = Parse(sql);
+
+            var ts = qs.EnumerateSourceTables(false).ToArray();
+            Assert.AreEqual(2, ts.Length);
+        }
+
+        [TestMethod]
+        public void PartitionedQueryTest()
+        {
+            var sql =
+        @"SELECT TOP 100 a.objid, a.ra, a.dec
+INTO PartitionedSqlQueryTest_SimpleQueryTest
+FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
+";
+
+            var qs = Parse(sql);
+
+            var ts = qs.EnumerateSourceTables(false).ToArray();
+            Assert.AreEqual(1, ts.Length);
         }
     }
 }
