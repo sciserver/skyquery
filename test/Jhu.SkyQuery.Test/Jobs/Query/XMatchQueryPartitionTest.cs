@@ -71,10 +71,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             Assert.AreEqual("FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]", ReplaceXMatchTableSourcesTestHelper(sql));
@@ -88,11 +89,13 @@ HAVING LIMIT 1e3";
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b CROSS JOIN CatalogC c
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     CatalogB b WITH(POINT(b.cx, b.cy, b.cz)) CROSS JOIN
+     CatalogC c WITH(POINT(c.cx, c.cy, c.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
-MUST EXIST c on POINT(c.cx, c.cy, c.cz)
+MUST EXIST a
+MUST EXIST b
+MUST EXIST c
 HAVING LIMIT 1e3";
 
             Assert.AreEqual("FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]", ReplaceXMatchTableSourcesTestHelper(sql));
@@ -106,10 +109,12 @@ HAVING LIMIT 1e3";
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b CROSS JOIN CatalogC c
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+CROSS JOIN CatalogC c
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             Assert.AreEqual("FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]", ReplaceXMatchTableSourcesTestHelper(sql));

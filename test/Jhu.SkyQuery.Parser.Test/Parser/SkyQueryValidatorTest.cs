@@ -46,10 +46,11 @@ namespace Jhu.SkyQuery.Parser.Test
         {
             var sql =
 @"SELECT *
-FROM CatalogA a, (SELECT * FROM CatalogB) b
+FROM CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
+(SELECT * FROM CatalogB) b --WITH(POINT(b.ra, b.dec), ERROR(0.2))
 XMATCH BAYESFACTOR x
-MUST EXIST a ON POINT(a.ra, a.dec), 0.1
-MUST EXIST b ON POINT(b.ra, b.dec), 0.2
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3
 ";
 
@@ -75,10 +76,11 @@ HAVING LIMIT 1e3
 SELECT * FROM
 (
     SELECT a.ra, a.dec
-    FROM CatalogA a, (SELECT * FROM CatalogB) b
+    FROM CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
+        (SELECT * FROM CatalogB) b --WITH (POINT(b.ra, b.dec), ERROR(0.2))
     XMATCH BAYESFACTOR x
-    MUST EXIST a ON POINT(a.ra, a.dec), 0.1
-    MUST EXIST b ON POINT(b.ra, b.dec), 0.2
+    MUST EXIST a
+    MUST EXIST b
     HAVING LIMIT 1e3
 ) sq
 ";

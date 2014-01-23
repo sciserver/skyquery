@@ -237,7 +237,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
                 {
                     RemoteServiceTester.Instance.EnsureRunning();
 
-                    var sql = "SELECT * INTO SqlQueryTest_TableValuedFunctionTest FROM dbo.fHtmCoverCircleEq(0, 0, 10) htm";
+                    var sql = "SELECT * INTO SqlQueryTest_TableValuedFunctionTest FROM dbo.fHtmCoverCircleEq(0, 0, 10) AS htm";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 

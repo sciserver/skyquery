@@ -30,7 +30,14 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         [TestMethod]
         public void TestXMatchQuery()
         {
-            var q = CreateQuery("SELECT * FROM CatalogA a, CatalogB b XMATCH BAYESFACTOR AS x MUST EXIST a ON POINT(a.Ra, a.Dec) MUST EXIST b ON POINT(b.Ra, b.Dec) HAVING LIMIT 1e3");
+            var q = CreateQuery(@"
+SELECT * FROM
+CatalogA a WITH(POINT(a.Ra, a.Dec)),
+CatalogB b WITH(POINT(b.Ra, b.Dec))
+XMATCH BAYESFACTOR AS x
+MUST EXIST a
+MUST EXIST b
+HAVING LIMIT 1e3");
 
             Assert.IsTrue(q is SqlQuery);
             Assert.IsTrue(q is XMatchQuery);

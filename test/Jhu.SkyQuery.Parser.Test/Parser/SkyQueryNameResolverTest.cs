@@ -64,10 +64,11 @@ namespace Jhu.SkyQuery.Parser.Test
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var qs = Parse(sql);
@@ -88,12 +89,15 @@ HAVING LIMIT 1e3";
         {
             var sql =
 @"SELECT x.*
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
+CatalogD d WITH(POINT(d.cx, d.cy, d.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-EXIST b on POINT(b.cx, b.cy, b.cz)
-MAY EXIST c on POINT(c.cx, c.cy, c.cz)
-NOT EXIST d on POINT(d.cx, d.cy, d.cz)
+MUST EXIST a
+EXIST b
+MAY EXIST c
+NOT EXIST d
 HAVING LIMIT 1e3";
 
             var qs = Parse(sql);
@@ -114,10 +118,11 @@ HAVING LIMIT 1e3";
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.*
-FROM CatalogA a, CatalogB b
+FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
 XMATCH BAYESFACTOR x
-MUST EXIST a on POINT(a.cx, a.cy, a.cz)
-MUST EXIST b on POINT(b.cx, b.cy, b.cz)
+MUST EXIST a
+MUST EXIST b
 HAVING LIMIT 1e3";
 
             var qs = Parse(sql);
@@ -128,11 +133,13 @@ HAVING LIMIT 1e3";
 @"SELECT [a].[objId] AS [a_objId], [a].[ra] AS [a_ra], [a].[dec] AS [a_dec],
          [b].[objId] AS [b_objId], [b].[ra] AS [b_ra], [b].[dec] AS [b_dec],
          [x].[LogBF] AS [x_LogBF], [x].[RA] AS [x_RA], [x].[Dec] AS [x_Dec], [x].[Q] AS [x_Q], [x].[L] AS [x_L], [x].[A] AS [x_A], [x].[Cx] AS [x_Cx], [x].[Cy] AS [x_Cy], [x].[Cz] AS [x_Cz]
-FROM [SkyNode_Test].[dbo].[CatalogA] [a], [SkyNode_Test].[dbo].[CatalogB] [b]
+FROM [SkyNode_Test].[dbo].[CatalogA] [a] WITH(POINT([a].[cx], [a].[cy], [a].[cz])),
+[SkyNode_Test].[dbo].[CatalogB] [b] WITH(POINT([b].[cx], [b].[cy], [b].[cz]))
 XMATCH BAYESFACTOR [x]
-MUST EXIST [SkyNode_Test].[dbo].[CatalogA] on POINT([a].[cx], [a].[cy], [a].[cz])
-MUST EXIST [SkyNode_Test].[dbo].[CatalogB] on POINT([b].[cx], [b].[cy], [b].[cz])
+MUST EXIST [SkyNode_Test].[dbo].[CatalogA]
+MUST EXIST [SkyNode_Test].[dbo].[CatalogB]
 HAVING LIMIT 1e3", res);
+
         }
     }
 }

@@ -21,6 +21,15 @@ namespace Jhu.SkyQuery.Parser.Test
         }
 
         [TestMethod]
+        public void XMatchTableHintTest()
+        {
+            var sql = "WITH(POINT(ra,dec), ERROR(1.0))";
+
+            var p = new SkyQueryParser();
+            var h = p.Execute(new XMatchHintClause(), sql);
+        }
+
+        [TestMethod]
         public void SimpleQueryTest()
         {
             var sql =
@@ -31,19 +40,21 @@ namespace Jhu.SkyQuery.Parser.Test
         }
 
         [TestMethod]
-        public void XMatchTableSpecificationArgumentListTest()
+        public void XMatchTableHintsTest()
         {
             var sql =
 @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
-FROM d1:c1, d2:c2
+FROM d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
+     d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))
 XMATCH BAYESFACTOR AS x
-MUST EXIST c1 ON POINT(c1.ra, c1.dec), 0.1
-MUST EXIST c2 ON POINT(c2.ra, c2.dec), c2.err, 0.1, 0.5
+MUST EXIST c1
+MUST EXIST c2
 HAVING LIMIT 1e3
 ";
 
             var qs = Parse(sql);
-            var ts = qs.FindDescendant<XMatchClause>().EnumerateXMatchTableSpecifications().ToArray();
+
+            var ts = qs.EnumerateSourceTables(false).Cast<XMatchTableSource>().ToArray();
 
             Assert.AreEqual(2, ts.Length);
 
@@ -59,23 +70,36 @@ HAVING LIMIT 1e3
         }
 
         [TestMethod]
-        public void x()
+        public void TableValuedFunctionTest()
         {
             var sql = @"
-SELECT p.objId, s.BestObjID, p.ra, p.dec, s.specObjId, s.ra, s.dec
-FROM 
-    SDSSDR7:PhotoObjAll AS p
-    CROSS JOIN SDSSDR7:SpecObjAll AS s
-XMATCH BAYESFACTOR AS x
-    MUST EXIST p ON Point(p.ra, p.dec), 0.1, 0.1, 0.1
-    MUST EXIST s ON Point(s.ra, s.dec), 0.1, 0.1, 0.1
-    HAVING LIMIT 1e3
-WHERE --p.RA > -9999 AND p.Dec > -9999 AND s.RA > -9999 AND s.Dec > -9999
-    p.RA BETWEEN 0 AND 5 AND p.Dec > -9999 AND s.RA > -9999 AND s.Dec > -9999";
+SELECT htm.htmidstart, htm.htmidend
+INTO SqlQueryTest_TableValuedFunctionJoinTest
+FROM dbo.fHtmCoverCircleEq(100) AS htm
+";
 
             var qs = Parse(sql);
-            var ts = qs.FindDescendant<XMatchClause>().EnumerateXMatchTableSpecifications().ToArray();
+
+            var ts = qs.EnumerateSourceTables(false).Cast<Jhu.Graywulf.SqlParser.FunctionTableSource>().ToArray();
+
+            Assert.AreEqual(1, ts.Length);
         }
 
+        [TestMethod]
+        public void JoinedTableValuedFunctionTest()
+        {
+            var sql = @"
+SELECT TOP 100 objid, ra, dec
+INTO SqlQueryTest_TableValuedFunctionJoinTest
+FROM dbo.fHtmCoverCircleEq (0, 0, 10) AS htm
+INNER JOIN SDSSDR7:PhotoObj p
+    ON p.htmid BETWEEN htm.htmidstart AND htm.htmidend";
+
+            var qs = Parse(sql);
+
+            var ts = qs.EnumerateSourceTables(false).Cast<Jhu.Graywulf.SqlParser.FunctionTableSource>().ToArray();
+
+            Assert.AreEqual(2, ts.Length);
+        }
     }
 }

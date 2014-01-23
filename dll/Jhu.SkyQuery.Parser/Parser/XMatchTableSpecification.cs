@@ -52,58 +52,6 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public AdqlPoint Position
-        {
-            get
-            {
-                return this.FindDescendant<XMatchArgumentList>().FindDescendant<AdqlPoint>();
-            }
-        }
-
-        public bool IsConstantError
-        {
-            get
-            {
-                XMatchArgumentList xal = this.FindDescendant<XMatchArgumentList>();
-                ArgumentList al = xal.FindDescendant<ArgumentList>();
-                var ars = al.EnumerateDescendants<Argument>().ToArray();
-                return ars.Length == 1 && ars[0].FindDescendant<Expression>().IsConstantNumber;
-            }
-        }
-
-        public Expression ErrorExpression
-        {
-            get
-            {
-                var xal = this.FindDescendant<XMatchArgumentList>();
-                var al = xal.FindDescendant<ArgumentList>();
-                var ar = al.FindDescendant<Argument>(0);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
-        }
-
-        public Expression MinErrorExpression
-        {
-            get
-            {
-                var xal = this.FindDescendant<XMatchArgumentList>();
-                var al = xal.FindDescendant<ArgumentList>();
-                var ar = al.FindDescendant<Argument>(1);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
-        }
-
-        public Expression MaxErrorExpression
-        {
-            get
-            {
-                var xal = this.FindDescendant<XMatchArgumentList>();
-                var al = xal.FindDescendant<ArgumentList>();
-                var ar = al.FindDescendant<Argument>(2);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
-        }
-
         public XMatchTableSpecification()
             : base()
         {
