@@ -8,6 +8,7 @@ namespace Jhu.SkyQuery.Format.VOTable
     class Constants
     {
         public const string FileExtensionVOTable = ".votable";
+        public const string MimeTypeVOTable = "application/x-votable+xml";
 
         public const string VOTableVersion = "1.2";
 
