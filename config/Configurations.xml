@@ -88,12 +88,6 @@
       <merge file="registry.config" />
       <merge file="web.config" />
     </project>
-    <project name="Jhu.Graywulf.Web.WS" path="..\Graywulf\Web\Jhu.Graywulf.Web.WS" type="web">
-      <merge file="connectionStrings.config" />
-      <merge file="mailSettings.config" />
-      <merge file="registry.config" />
-      <merge file="web.config" />
-    </project>
     <!-- SKYQUERY -->
     <project name="Jhu.SkyQuery.Parser.Test" path="..\SkyQuery\Test\Jhu.SkyQuery.Parser.Test" type="console">
       <merge file="test.config" />
