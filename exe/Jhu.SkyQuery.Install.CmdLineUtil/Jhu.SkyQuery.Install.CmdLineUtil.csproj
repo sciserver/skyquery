@@ -11,7 +11,8 @@
     <RootNamespace>Jhu.SkyQuery.Registry.CmdLineUtil</RootNamespace>
     <AssemblyName>sqregutil</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -100,6 +101,10 @@
       <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Web\Jhu.Graywulf.Web.csproj">
+      <Project>{E9D182CF-746E-4E40-B01C-74A32FB70749}</Project>
+      <Name>Jhu.Graywulf.Web</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>
@@ -110,6 +115,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="App.original.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
