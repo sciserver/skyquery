@@ -9,7 +9,7 @@
     <ProjectGuid>{95AEABCA-55A3-4A34-BFCD-1469A646D5DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jhu.SkyQuery.Format.Test</RootNamespace>
+    <RootNamespace>Jhu.SkyQuery</RootNamespace>
     <AssemblyName>Jhu.SkyQuery.Format.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -52,43 +52,21 @@
     <Compile Include="Format\Fits\FitsTest.cs" />
     <Compile Include="Format\Fits\HduBaseTest.cs" />
     <Compile Include="Format\Fits\ImageHduTest.cs" />
+    <Compile Include="Format\Fits\StraightBitConverterTest.cs" />
+    <Compile Include="Format\Fits\SwapBitConverterTest.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
-      <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
-      <Name>Jhu.Graywulf.Components</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
-      <Project>{6797ED88-1D8C-491B-A036-4C42C4BF2EAF}</Project>
-      <Name>Jhu.Graywulf.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
-      <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
-      <Name>Jhu.Graywulf.Schema</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
-      <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
-      <Name>Jhu.Graywulf.Test</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
-      <Project>{8F2875D9-C190-4A01-B756-FE39B9D171B7}</Project>
-      <Name>Jhu.SkyQuery.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
-      <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
-      <Name>Jhu.SkyQuery.Parser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
-      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
-      <Name>Jhu.SkyQuery</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="App.original.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Format\Jhu.SkyQuery.Format.csproj">
+      <Project>{12977295-1363-4BFA-BBEE-42FFE8048252}</Project>
+      <Name>Jhu.SkyQuery.Format</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

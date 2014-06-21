@@ -44,7 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Format\FileFormatNames.Designer.cs">
+      <DependentUpon>FileFormatNames.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Install\SkyQueryInstaller.cs" />
+    <Compile Include="IO\SkyQueryStreamFactory.cs" />
     <Compile Include="Jobs\Query\AppSettings.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
@@ -160,6 +167,10 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateZoneTable.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Format\FileFormatNames.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileFormatNames.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\BayesFactorXMatchScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
