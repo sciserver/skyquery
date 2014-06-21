@@ -21,9 +21,9 @@ namespace Jhu.SkyQuery.Format.Fits
         private int totalStrides;
         private int strideCounter;
 
-        internal Fits Fits
+        internal FitsFile Fits
         {
-            get { return (Fits)file; }
+            get { return (FitsFile)file; }
             set { file = value; }
         }
 
@@ -135,7 +135,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         #endregion
 
-        internal HduBase(Fits fits)
+        internal HduBase(FitsFile fits)
             : base(fits)
         {
             InitializeMembers();

@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Format.Fits
         [NonSerialized]
         private ByteReaderDelegate[] columnByteReaders;
 
-        internal BinaryTableHdu(Fits fits)
+        internal BinaryTableHdu(FitsFile fits)
             : base(fits)
         {
             InitializeMembers();
@@ -195,7 +195,7 @@ namespace Jhu.SkyQuery.Format.Fits
             var repeatstr = m.Groups[1].Value;
             if (!String.IsNullOrEmpty(repeatstr))
             {
-                repeat = int.Parse(repeatstr, Fits.Culture);
+                repeat = int.Parse(repeatstr, FitsFile.Culture);
             }
             else
             {

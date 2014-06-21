@@ -7,7 +7,7 @@ using System.IO.Compression;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class Fits : IDisposable, ICloneable
+    public class FitsFile : IDisposable, ICloneable
     {
         public static readonly StringComparison Comparision = StringComparison.InvariantCultureIgnoreCase;
         public static readonly StringComparer Comparer = StringComparer.InvariantCultureIgnoreCase;
@@ -85,17 +85,17 @@ namespace Jhu.SkyQuery.Format.Fits
         #endregion
         #region Constructors and initializers
 
-        public Fits()
+        public FitsFile()
         {
             InitializeMembers();
         }
 
-        public Fits(Fits old)
+        public FitsFile(FitsFile old)
         {
             CopyMembers(old);
         }
 
-        public Fits(Uri uri, DataFileMode fileMode, Endianness endianness)
+        public FitsFile(Uri uri, DataFileMode fileMode, Endianness endianness)
             : base(uri, fileMode)
         {
             InitializeMembers();
@@ -105,13 +105,13 @@ namespace Jhu.SkyQuery.Format.Fits
             Open();
         }
 
-        public Fits(Uri uri, DataFileMode fileMode)
+        public FitsFile(Uri uri, DataFileMode fileMode)
             : this(uri, fileMode, Endianness.LittleEndian)
         {
             // Overload
         }
 
-        public Fits(Stream stream, DataFileMode fileMode, Endianness endianness)
+        public FitsFile(Stream stream, DataFileMode fileMode, Endianness endianness)
             : base(stream, fileMode)
         {
             InitializeMembers();
@@ -121,7 +121,7 @@ namespace Jhu.SkyQuery.Format.Fits
             Open();
         }
 
-        public Fits(Stream stream, DataFileMode fileMode)
+        public FitsFile(Stream stream, DataFileMode fileMode)
             : this(stream, fileMode, Endianness.LittleEndian)
         {
             // Overload
@@ -135,7 +135,7 @@ namespace Jhu.SkyQuery.Format.Fits
             this.endianness = Endianness.LittleEndian;
         }
 
-        private void CopyMembers(Fits old)
+        private void CopyMembers(FitsFile old)
         {
             this.forwardStream = null;
             this.bitConverter = old.bitConverter;
@@ -145,7 +145,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         public override object Clone()
         {
-            return new Fits(this);
+            return new FitsFile(this);
         }
 
         #endregion

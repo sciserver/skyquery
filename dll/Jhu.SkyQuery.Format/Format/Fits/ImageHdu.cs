@@ -7,7 +7,7 @@ namespace Jhu.SkyQuery.Format.Fits
 {
     public class ImageHdu : HduBase, ICloneable
     {
-        internal ImageHdu(Fits fits)
+        internal ImageHdu(FitsFile fits)
             : base(fits)
         {
             InitializeMembers();
