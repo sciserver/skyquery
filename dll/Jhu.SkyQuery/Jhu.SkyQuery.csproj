@@ -49,7 +49,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Format\Fits\FitsFileWrapper.cs" />
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Format\VOTable\Constants.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
@@ -197,6 +196,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Jobs\Query\XMatchResources\PopulateZoneDefTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Format\Fits\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

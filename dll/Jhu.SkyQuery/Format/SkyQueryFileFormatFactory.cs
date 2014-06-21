@@ -20,7 +20,7 @@ namespace Jhu.SkyQuery.Format
             base.OnCreateFileFormatDescriptions(fileTypes);
 
             fileTypes.Add(typeof(VOTable.VOTable));
-            fileTypes.Add(typeof(Fits.Fits));
+            // TODO: add fileTypes.Add(typeof(Fits.Fits));
         }
     }
 }

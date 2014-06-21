@@ -48,14 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Format\Fits\CardCollectionTest.cs" />
-    <Compile Include="Format\Fits\FitsReaderTest.cs" />
-    <Compile Include="Format\Fits\FitsTest.cs" />
     <Compile Include="Format\Fits\HduBaseTest.cs" />
     <Compile Include="Format\Fits\ImageHduTest.cs" />
     <Compile Include="Format\Fits\StraightBitConverterTest.cs" />
     <Compile Include="Format\Fits\SwapBitConverterTest.cs" />
-    <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
-    <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,7 +66,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)..\..\..\Graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj Jhu.SkyQuery.IO.Test</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

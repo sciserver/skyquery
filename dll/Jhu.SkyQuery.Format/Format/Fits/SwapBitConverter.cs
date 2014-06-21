@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    unsafe class SwapBitConverter : BitConverterBase
+    public unsafe class SwapBitConverter : BitConverterBase
     {
         public override bool IsLittleEndian
         {

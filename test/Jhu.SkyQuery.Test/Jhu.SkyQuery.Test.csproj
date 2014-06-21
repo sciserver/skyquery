@@ -48,6 +48,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
+    <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartitionTest.cs" />
     <Compile Include="Jobs\Query\MyDBSqlQueryTest.cs" />
     <Compile Include="Jobs\Query\PartitionedSqlQueryTest.cs" />
