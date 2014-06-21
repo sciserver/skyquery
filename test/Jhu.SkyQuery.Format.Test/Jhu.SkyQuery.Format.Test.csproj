@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Format\Fits\CardCollectionTest.cs" />
+    <Compile Include="Format\Fits\FitsTest.cs" />
     <Compile Include="Format\Fits\HduBaseTest.cs" />
     <Compile Include="Format\Fits\ImageHduTest.cs" />
     <Compile Include="Format\Fits\StraightBitConverterTest.cs" />

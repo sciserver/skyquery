@@ -168,9 +168,11 @@ namespace Jhu.SkyQuery.Format.Fits
         #endregion
         #region Constructors and initializers
 
-        internal HduBase(FitsFile fits)
+        internal HduBase(FitsFile file)
         {
             InitializeMembers(new StreamingContext());
+
+            this.file = file;
         }
 
         internal HduBase(HduBase old)

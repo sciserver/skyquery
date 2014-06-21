@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.SkyQuery.Format.Fits;
 
@@ -10,13 +11,12 @@ namespace Jhu.SkyQuery.Format.Fits.Test
     [TestClass]
     public class FitsTest
     {
-        private FitsFile OpenFits(string path)
+        private FitsFile OpenFits(string filename)
         {
             var f = new FitsFile(
-                UriConverter.FromFilePath(String.Format("../../../test/files/{0}", path)),
+                String.Format(@"..\..\..\test\files\{0}", filename),
                 FitsFileMode.Read,
-                Graywulf.Schema.Endianness.BigEndian
-                );
+                Endianness.BigEndian);
 
             return f;
         }
@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         {
             var f = OpenFits("sdssdr7_fpC.fit.gz");
 
-            var img = (ImageHdu)f.ReadNextBlock();
+            var img = (ImageHdu)f.ReadNextHdu();
 
             Assert.AreEqual(2, img.AxisCount);
             Assert.AreEqual(2048, img.GetAxisLength(0));
@@ -47,7 +47,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
 
             int q = 0;
             HduBase hdu;
-            while ((hdu = (HduBase)f.ReadNextBlock()) != null)
+            while ((hdu = (HduBase)f.ReadNextHdu()) != null)
             {
                 q++;
             }
@@ -62,7 +62,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         {
             var f = OpenFits("sdssdr7_spSpec.fit");
 
-            var img = (ImageHdu)f.ReadNextBlock();
+            var img = (ImageHdu)f.ReadNextHdu();
 
             Assert.AreEqual(2, img.AxisCount);
             Assert.AreEqual(3857, img.GetAxisLength(0));
@@ -73,27 +73,27 @@ namespace Jhu.SkyQuery.Format.Fits.Test
                 var row = img.ReadStrideSingle();
             }
 
-            var tab = (BinaryTableHdu)f.ReadNextBlock();
+            var tab = (BinaryTableHdu)f.ReadNextHdu();
 
             var values = new object[tab.Columns.Count];
 
             while (tab.HasMoreStrides)
             {
-                tab.ReadRowValues(values);
+                tab.ReadNextRow(values);
             }
 
-            tab = (BinaryTableHdu)f.ReadNextBlock();
+            tab = (BinaryTableHdu)f.ReadNextHdu();
 
             values = new object[tab.Columns.Count];
 
             while (tab.HasMoreStrides)
             {
-                tab.ReadRowValues(values);
+                tab.ReadNextRow(values);
             }
 
             //
             HduBase hdu;
-            while ((hdu = (HduBase)f.ReadNextBlock()) != null)
+            while ((hdu = (HduBase)f.ReadNextHdu()) != null)
             {
             }
 
@@ -106,7 +106,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             var f = OpenFits("sdssdr7_spSpec.fit");
 
             HduBase hdu;
-            while ((hdu = (HduBase)f.ReadNextBlock()) != null)
+            while ((hdu = (HduBase)f.ReadNextHdu()) != null)
             {
             }
 

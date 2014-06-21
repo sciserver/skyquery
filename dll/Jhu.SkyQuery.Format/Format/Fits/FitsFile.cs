@@ -70,7 +70,7 @@ namespace Jhu.SkyQuery.Format.Fits
         private List<HduBase> hdus;
 
         /// <summary>
-        /// Points to the current block in the blocks collection
+        /// Points to the current hdu in the hdus collection
         /// </summary>
         /// <remarks>
         /// This can be different from hdus.Count as blocks can be
@@ -229,6 +229,7 @@ namespace Jhu.SkyQuery.Format.Fits
             this.bitConverter = null;
 
             this.hdus = new List<HduBase>();
+            this.hduCounter = -1;
         }
 
         private void CopyMembers(FitsFile old)
@@ -249,6 +250,7 @@ namespace Jhu.SkyQuery.Format.Fits
             {
                 this.hdus.Add((HduBase)hdu.Clone());
             }
+            this.hduCounter = old.hduCounter;
         }
 
         public void Dispose()
