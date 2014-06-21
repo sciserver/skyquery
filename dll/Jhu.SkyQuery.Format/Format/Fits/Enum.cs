@@ -5,6 +5,13 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
+    public enum FitsFileMode
+    {
+        Unknown,
+        Read,
+        Write
+    }
+
     public enum Endianness
     {
         LittleEndian,

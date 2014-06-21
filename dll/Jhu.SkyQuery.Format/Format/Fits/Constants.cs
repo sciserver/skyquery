@@ -18,9 +18,10 @@ namespace Jhu.SkyQuery.Format.Fits
         public const string FitsKeywordBitPix = "BITPIX";
         public const string FitsKeywordNAxis = "NAXIS";
 
+        public const string FitsKeywordTFields = "TFIELDS";
         public const string FitsKeywordGCount = "GCOUNT";
         public const string FitsKeywordPCount = "PCOUNT";
-        public const string FitsKeywordTFields = "TFIELDS";
+        public const string FitsKeywordTHeap = "THEAP";
 
         public const string FitsKeywordTForm = "TFORM";
         public const string FitsKeywordTType = "TTYPE";
@@ -29,5 +30,17 @@ namespace Jhu.SkyQuery.Format.Fits
         public const string FitsKeywordTScal = "TSCAL";
         public const string FitsKeywordTZero = "TZERO";
         public const string FitsKeywordTDisp = "TDISP";
+
+        public const string FitsTypeNameLogical = "Logical";
+        public const string FitsTypeNameBit = "Bit";
+        public const string FitsTypeNameByte = "Byte";
+        public const string FitsTypeNameInt16 = "Integer16";
+        public const string FitsTypeNameInt32 = "Integer32";
+        public const string FitsTypeNameChar = "Character";
+        public const string FitsTypeNameSingle = "Single";
+        public const string FitsTypeNameDouble = "Double";
+        public const string FitsTypeNameSingleComplex = "SingleComplex";
+        public const string FitsTypeNameDoubleComplex = "DoubleComplex";
+        public const string FitsTypeNameArray = "Array";
     }
 }

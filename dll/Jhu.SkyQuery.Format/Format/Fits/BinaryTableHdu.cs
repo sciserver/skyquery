@@ -3,21 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.IO;
-using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
     public class BinaryTableHdu : HduBase, ICloneable
     {
-        private static readonly Regex FormatRegex = new Regex(@"([0-9]*)([LXBIJAEDCMP]+)");
-
         private delegate int ByteReaderDelegate(BitConverterBase converter, byte[] buffer, int startIndex, int count, out object value);
+
+        #region Private member variables
 
         [NonSerialized]
         private ByteReaderDelegate[] columnByteReaders;
+
+        /// <summary>
+        /// Collection of table columns
+        /// </summary>
+        [NonSerialized]
+        private List<FitsTableColumn> columns;
+
+        #endregion
+        #region Properties
+
+        /// <summary>
+        /// Gets the collection containing columns of the data file
+        /// </summary>
+        [IgnoreDataMember]
+        public List<FitsTableColumn> Columns
+        {
+            get { return columns; }
+        }
+
+        #endregion
+        #region Keyword accessor properties
+
+        public int ColumnCount
+        {
+            get { return Cards[Constants.FitsKeywordTFields].GetInt32(); }
+        }
+
+        public int HeapOffset
+        {
+            get { return Cards[Constants.FitsKeywordTHeap].GetInt32(); }
+        }
+
+        public int GroupCount
+        {
+            get { return Cards[Constants.FitsKeywordGCount].GetInt32(); }
+        }
+
+        public int ParameterCount
+        {
+            get { return Cards[Constants.FitsKeywordPCount].GetInt32(); }
+        }
+
+        #endregion
+        #region Constructors and initializers
 
         internal BinaryTableHdu(FitsFile fits)
             : base(fits)
@@ -41,43 +83,49 @@ namespace Jhu.SkyQuery.Format.Fits
 
         private void InitializeMembers()
         {
+            this.columnByteReaders = null;
+            this.columns = new List<FitsTableColumn>();
         }
 
         private void CopyMembers(BinaryTableHdu old)
         {
+            this.columnByteReaders = null;
+            this.columns = new List<FitsTableColumn>();
+            foreach (var columns in old.columns)
+            {
+                this.columns.Add((FitsTableColumn)columns.Clone());
+            }
         }
 
-        public override object Clone()
+        public object Clone()
         {
             return new BinaryTableHdu(this);
         }
 
-        protected int GroupCount
-        {
-            get { return Cards[Constants.FitsKeywordGCount].GetInt32(); }
-        }
-
-        protected int ParameterCount
-        {
-            get { return Cards[Constants.FitsKeywordPCount].GetInt32(); }
-        }
-
-        protected int FieldCount
-        {
-            get { return Cards[Constants.FitsKeywordTFields].GetInt32(); }
-        }
-
+        #endregion
         #region Column functions
 
-        protected override void OnColumnsCreated()
+        private void DetectColumns()
         {
-            if ((file.FileMode & DataFileMode.Read) != 0)
+            columns.Clear();
+
+            // Loop though header cards and 
+            for (int i = 0; i < ColumnCount; i++)
             {
-                InitializeColumnByteReader();
+                // FITS column indexes are 1-based!
+                columns.Add(FitsTableColumn.CreateFromHeader(this, i + 1));
+            }
+
+            InitializeColumnByteReaders();
+
+            // Verify size
+            if (GetAxisLength(0) != GetStrideLength())
+            {
+                throw new Exception();  // *** TODO
             }
         }
 
-        private void InitializeColumnByteReader()
+        private void InitializeColumnByteReaders()
         {
             columnByteReaders = new ByteReaderDelegate[Columns.Count];
 
@@ -91,193 +139,17 @@ namespace Jhu.SkyQuery.Format.Fits
         {
             int res = 0;
 
-            for (int i = 0; i < Columns.Count; i++)
+            for (int i = 0; i < columns.Count; i++)
             {
-                res += GetColumnBinarySize(Columns[i]);
+                res += columns[i].DataType.TotalBytes;
             }
 
             return res;
         }
 
-        private void DetectColumns()
-        {
-            // Loop though header cards and 
-            Card card;
-            var cols = new Column[FieldCount];
-
-            for (int i = 0; i < cols.Length; i++)
-            {
-                // Get data type
-                if (!TryGetCard(Constants.FitsKeywordTForm, i, out card))
-                {
-                    throw new FileFormatException();    // *** TODO
-                }
-                var tform = card.GetString();
-
-                char type;
-                int repeat;
-                GetFitsDataTypeDetails(tform, out type, out repeat);
-                var dt = GetFitsDataType(type, repeat);
-
-                // Create column
-                cols[i] = new Column(String.Format("Col_{0}", i + 1), dt);
-                cols[i].ID = i;
-
-                // Set optional parameters
-
-                // - Column name
-                if (TryGetCard(Constants.FitsKeywordTType, i, out card))
-                {
-                    cols[i].Name = card.GetString();
-                }
-                
-                // Unit
-                if (TryGetCard(Constants.FitsKeywordTUnit, i, out card))
-                {
-                    cols[i].Metadata.Unit = card.GetString();
-                }
-
-                // Null value equivalent
-                if (TryGetCard(Constants.FitsKeywordTNull, i, out card))
-                {
-                    // *** TODO
-                    //cols[i].Metadata.Null = card.GetDouble();
-                }
-
-                // Scale
-                if (TryGetCard(Constants.FitsKeywordTScal, i, out card))
-                {
-                    // *** TODO
-                    //cols[i].Metadata.Scale = card.GetDouble();
-                }
-
-                // Zero offset
-                if (TryGetCard(Constants.FitsKeywordTZero, i, out card))
-                {
-                    // *** TODO
-                    //cols[i].Metadata.Zero = card.GetDouble();
-                }
-
-                // Format
-                if (TryGetCard(Constants.FitsKeywordTDisp, i, out card))
-                {
-                    // TODO: convert to .Net style
-                    cols[i].Metadata.Format = card.GetString();
-                }
-            }
-
-            // -
-
-            // TODO: move to on columns created
-            // getValueConverter = CreateGetValueConverterDelegate();
-
-            CreateColumns(cols);
-
-            // Verify size
-            if (GetAxisLength(0) != GetStrideLength())
-            {
-                throw new Exception();  // *** TODO
-            }
-        }
-
-        private void GetFitsDataTypeDetails(string tform, out char type, out int repeat)
-        {
-            var m = FormatRegex.Match(tform);
-
-            if (!m.Success)
-            {
-                throw new Exception();      // *** TODO
-            }
-
-            type = m.Groups[2].Value.ToUpper()[0];
-
-            // Item repeated a number of times
-            var repeatstr = m.Groups[1].Value;
-            if (!String.IsNullOrEmpty(repeatstr))
-            {
-                repeat = int.Parse(repeatstr, FitsFile.Culture);
-            }
-            else
-            {
-                repeat = 1;
-            }
-        }
-
-        private DataType GetFitsDataType(char type, int repeat)
-        {
-            DataType dt;
-            switch (type)
-            {
-                case 'L':
-                    dt = DataType.Boolean;
-                    break;
-                case 'X':
-                    dt = DataType.Boolean;           // *** This is union bit!
-                    break;
-                case 'B':
-                    if (repeat == 1)
-                    {
-                        dt = DataType.Byte;
-                    }
-                    else
-                    {
-                        dt = DataType.SqlVarBinary;
-                        dt.Length = repeat;
-                    }
-                    break;
-                case 'I':
-                    dt = DataType.Int16;
-                    break;
-                case 'J':
-                    dt = DataType.Int32;
-                    break;
-                case 'A':
-                    if (repeat == 1)
-                    {
-                        dt = DataType.SqlChar;
-                    }
-                    else
-                    {
-                        dt = DataType.SqlChar;
-                        dt.Length = repeat;
-                    }
-                    break;
-                case 'E':
-                    dt = DataType.Single;
-                    break;
-                case 'D':
-                    dt = DataType.Double;
-                    break;
-                case 'C':
-                    dt = DataType.SingleComplex;
-                    break;
-                case 'M':
-                    dt = DataType.DoubleComplex;
-                    break;
-                case 'P':
-                    // Array, not implemented
-                default:
-                    throw new NotImplementedException();
-            }
-
-            if (!dt.HasLength && repeat > 1)
-            {
-                // Array, not implemented
-                throw new NotImplementedException();
-            }
-
-            return dt;
-        }
-
-        private bool TryGetCard(string key, int id, out Card card)
-        {
-            key += (id + 1).ToString();
-            return Cards.TryGetValue(key, out card);
-        }
-
         #endregion
 
-        protected override bool OnReadNextRow(object[] values)
+        public bool ReadNextRow(object[] values)
         {
             if (HasMoreStrides)
             {
@@ -290,7 +162,7 @@ namespace Jhu.SkyQuery.Format.Fits
                                 Fits.BitConverter,
                                 StrideBuffer,
                                 startIndex,
-                                Columns[i].DataType.Length,
+                                columns[i].DataType.TotalBytes,
                                 out values[i]);
 
                     startIndex += res;
@@ -304,46 +176,13 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        public bool ReadRowValues(object[] values)
-        {
-            return OnReadNextRow(values);
-        }
-
-        public object[] ReadRowValues()
-        {
-            var values = new object[Columns.Count];
-            if (OnReadNextRow(values))
-            {
-                return values;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public int GetColumnBinarySize(Column column)
-        {
-            if (column.DataType.IsMaxLength)
-            {
-                // varchar(max), varbinary(max) - no known size
-                return -1;
-            }
-            else if (column.DataType.HasLength)
-            {
-                return column.DataType.Length * column.DataType.ByteSize;
-            }
-            else if (column.DataType.IsSqlArray)
-            {
-                return column.DataType.ArrayLength * column.DataType.ByteSize;
-            }
-            else
-            {
-                return column.DataType.ByteSize;
-            }
-        }
-
-        private ByteReaderDelegate GetByteReaderDelegate(Column column)
+        /// <summary>
+        /// Returns a delegate to read the specific column into a boxed 
+        /// strongly typed variable
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        private ByteReaderDelegate GetByteReaderDelegate(FitsTableColumn column)
         {
             // Complex types firts, then scalar and arrays
             if (column.DataType.Type == typeof(String))
@@ -354,7 +193,7 @@ namespace Jhu.SkyQuery.Format.Fits
                     return count;
                 };
             }
-            else if (!column.DataType.HasLength && !column.DataType.IsSqlArray)
+            else if (column.DataType.Repeat == 1)
             {
                 // Scalars
                 if (column.DataType.Type == typeof(Boolean))
@@ -501,8 +340,6 @@ namespace Jhu.SkyQuery.Format.Fits
                 {
                     throw new NotImplementedException();
                 }
-
-                // TODO: date time etc.
             }
             else
             {
@@ -651,8 +488,6 @@ namespace Jhu.SkyQuery.Format.Fits
                 {
                     throw new NotImplementedException();
                 }
-
-                // TODO: implement, maybe, string
             }
         }
     }

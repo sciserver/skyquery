@@ -38,35 +38,6 @@ namespace Jhu.SkyQuery.Format.Fits
             return new ImageHdu(this);
         }
 
-        #region Column functions
-
-        protected override void OnColumnsCreated()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-        #region Read functions
-
-        protected override bool OnReadNextRow(object[] values)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-        #region Write functions
-
-        protected override void OnWriteHeader()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnWriteNextRow(object[] values)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
         #region Stride functions
 
         public Int16[] ReadStrideInt16()

@@ -12,11 +12,11 @@ namespace Jhu.SkyQuery.Format.Fits.Test
     [TestClass]
     public class FitsReaderTest
     {
-        private Fits OpenFits(string path)
+        private FitsFile OpenFits(string path)
         {
-            var f = new Fits(
+            var f = new FitsFile(
                 new Uri(String.Format("../../../test/files/{0}", path), UriKind.Relative),
-                DataFileMode.Read,
+                FitsFileMode.Read,
                 Graywulf.Schema.Endianness.BigEndian
                 );
 

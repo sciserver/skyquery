@@ -4,56 +4,89 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Globalization;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Format;
+using System.Runtime.Serialization;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class HduBase : DataFileBlockBase, ICloneable
+    public class HduBase : ICloneable
     {
+        #region Private member variables
+
+        /// <summary>
+        /// Holds a reference to the underlying file
+        /// </summary>
+        /// <remarks>
+        /// This value is set by the constructor when a new data file block
+        /// is created based on a data file.
+        /// </remarks>
+        [NonSerialized]
+        protected FitsFile file;
+
+        [NonSerialized]
         private bool headerRead;
+
+        [NonSerialized]
         private long headerPosition;
+
+        [NonSerialized]
         private long dataPosition;
 
+        [NonSerialized]
         private CardCollection cards;
 
+        [NonSerialized]
         private byte[] strideBuffer;
+
+        [NonSerialized]
         private int totalStrides;
+
+        [NonSerialized]
         private int strideCounter;
 
+        #endregion
+        #region Properties
+
+        [IgnoreDataMember]
         internal FitsFile Fits
         {
-            get { return (FitsFile)file; }
+            get { return file; }
             set { file = value; }
         }
 
+        [IgnoreDataMember]
         public long HeaderPosition
         {
             get { return headerPosition; }
         }
 
+        [IgnoreDataMember]
         public long DataPosition
         {
             get { return dataPosition; }
         }
 
+        [IgnoreDataMember]
         public CardCollection Cards
         {
             get { return cards; }
         }
 
+        [IgnoreDataMember]
         protected byte[] StrideBuffer
         {
             get { return strideBuffer; }
         }
 
+        [IgnoreDataMember]
         public int TotalStrides
         {
             get { return totalStrides; }
         }
 
-        #region Keyword accessors
+        #endregion
+        #region Keyword accessor properties
 
+        [IgnoreDataMember]
         public bool IsSimple
         {
             get
@@ -76,6 +109,7 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <remarks>
         /// This is typically used in the primary header only.
         /// </remarks>
+        [IgnoreDataMember]
         public bool HasExtension
         {
             get
@@ -96,6 +130,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
+        [IgnoreDataMember]
         public string Extension
         {
             get
@@ -112,6 +147,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
+        [IgnoreDataMember]
         public int BitsPerPixel
         {
             get
@@ -120,6 +156,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
+        [IgnoreDataMember]
         public int AxisCount
         {
             get
@@ -128,32 +165,30 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        public int GetAxisLength(int i)
-        {
-            return cards[Constants.FitsKeywordNAxis + (i + 1).ToString(CultureInfo.InvariantCulture)].GetInt32();
-        }
-
         #endregion
+        #region Constructors and initializers
 
         internal HduBase(FitsFile fits)
-            : base(fits)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
         }
 
         internal HduBase(HduBase old)
-            : base(old)
         {
             CopyMembers(old);
         }
 
-        private void InitializeMembers()
+        [OnDeserializing]
+        private void InitializeMembers(StreamingContext context)
         {
+            this.file = null;
+
             this.headerRead = false;
             this.headerPosition = -1;
             this.dataPosition = -1;
 
             this.cards = new CardCollection();
+            //this.columns = 
 
             this.strideBuffer = null;
             this.totalStrides = 0;
@@ -162,38 +197,35 @@ namespace Jhu.SkyQuery.Format.Fits
 
         private void CopyMembers(HduBase old)
         {
+            this.file = old.file;
+
             this.headerRead = old.headerRead;
             this.headerPosition = old.headerPosition;
             this.dataPosition = old.dataPosition;
 
             this.cards = new CardCollection(old.cards);
+            //this.columns = 
 
             this.strideBuffer = null;
             this.totalStrides = 0;
             this.strideCounter = 0;
         }
 
-        public override object Clone()
+        public virtual object Clone()
         {
             return new HduBase(this);
         }
 
-        #region Column functions
+#endregion
 
-        protected override void OnColumnsCreated()
+        public int GetAxisLength(int i)
         {
-            // Nothing to do with the columns
+            return cards[Constants.FitsKeywordNAxis + (i + 1).ToString(CultureInfo.InvariantCulture)].GetInt32();
         }
 
-        #endregion
         #region Read functions
 
         public void ReadHeader()
-        {
-            OnReadHeader();
-        }
-
-        protected override void OnReadHeader()
         {
             // Make sure header is read only once
             if (!headerRead)
@@ -232,12 +264,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        protected override bool OnReadNextRow(object[] values)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnReadToFinish()
+        internal void ReadToFinish()
         {
             var sl = GetStrideLength();
             var sc = GetTotalStrides();
@@ -246,29 +273,6 @@ namespace Jhu.SkyQuery.Format.Fits
             Fits.ForwardStream.Seek(offset, SeekOrigin.Current);
 
             Fits.SkipBlock();
-        }
-
-        protected override void OnReadFooter()
-        {
-            // No HDU footer, skip is done in OnReadToFinish
-        }
-
-        #endregion
-        #region Write functions
-
-        protected override void OnWriteHeader()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnWriteNextRow(object[] values)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnWriteFooter()
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
@@ -326,7 +330,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
             if (strideBuffer.Length != Fits.ForwardStream.Read(strideBuffer, 0, strideBuffer.Length))
             {
-                throw new FileFormatException("Unexpected end of stream.");  // *** TODO
+                throw new FitsException("Unexpected end of stream.");  // *** TODO
             }
 
             strideCounter++;

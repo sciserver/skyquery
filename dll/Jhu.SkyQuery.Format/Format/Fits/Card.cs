@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Globalization;
-using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
@@ -151,7 +150,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
             else if (res < buffer.Length)
             {
-                throw new FileFormatException("Unexpected end of stream.");  // *** TODO
+                throw new FitsException("Unexpected end of stream.");  // *** TODO
             }
 
             string line = Encoding.ASCII.GetString(buffer);

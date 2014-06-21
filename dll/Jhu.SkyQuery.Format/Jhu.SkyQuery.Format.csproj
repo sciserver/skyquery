@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -41,21 +42,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Format\Fits\FitsTableColumn.cs" />
     <Compile Include="Format\Fits\BinaryTableHdu.cs" />
     <Compile Include="Format\Fits\BitConverterBase.cs" />
     <Compile Include="Format\Fits\Card.cs" />
     <Compile Include="Format\Fits\CardCollection.cs" />
     <Compile Include="Format\Fits\Constants.cs" />
+    <Compile Include="Format\Fits\DetachedStream.cs" />
+    <Compile Include="Format\Fits\DoubleComplex.cs" />
     <Compile Include="Format\Fits\Enum.cs" />
+    <Compile Include="Format\Fits\FitsDataType.cs" />
+    <Compile Include="Format\Fits\FitsDataTypes.cs" />
+    <Compile Include="Format\Fits\FitsException.cs" />
     <Compile Include="Format\Fits\FitsFile.cs" />
     <Compile Include="Format\Fits\HduBase.cs" />
     <Compile Include="Format\Fits\ImageHdu.cs" />
     <Compile Include="Format\Fits\SeekForwardStream.cs" />
+    <Compile Include="Format\Fits\SingleComplex.cs" />
     <Compile Include="Format\Fits\StraightBitConverter.cs" />
     <Compile Include="Format\Fits\SwapBitConverter.cs" />
-    <Compile Include="Format\VOTable\Constants.cs" />
-    <Compile Include="Format\VOTable\VOTable.cs" />
-    <Compile Include="Format\VOTable\VOTableResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
