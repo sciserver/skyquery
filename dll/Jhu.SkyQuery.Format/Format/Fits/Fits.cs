@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.IO.Compression;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.IO;
-using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
-    public class Fits : DataFileBase, IDisposable, ICloneable
+    public class Fits : IDisposable, ICloneable
     {
         public static readonly StringComparison Comparision = StringComparison.InvariantCultureIgnoreCase;
         public static readonly StringComparer Comparer = StringComparer.InvariantCultureIgnoreCase;

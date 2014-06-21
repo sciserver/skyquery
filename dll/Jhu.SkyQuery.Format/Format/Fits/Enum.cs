@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.IO;
 
-namespace Jhu.SkyQuery.IO
+namespace Jhu.SkyQuery.Format.Fits
 {
-    public class SkyQueryStreamFactory : StreamFactory
+    public enum Endianness
     {
-
+        LittleEndian,
+        BigEndian,
     }
 }
