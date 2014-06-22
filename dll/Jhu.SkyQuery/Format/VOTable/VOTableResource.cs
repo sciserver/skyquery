@@ -23,6 +23,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             get { return (VOTable)file; }
         }
 
+        #region Constructors and initializers
+
         /// <summary>
         /// Initializes a VOTable resource block object.
         /// </summary>
@@ -52,6 +54,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             return new VOTableResource(this);
         }
 
+        #endregion
         #region Column functions
 
         /// <summary>
