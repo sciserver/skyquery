@@ -49,6 +49,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="Format\Fits\Constants.cs" />
+    <Compile Include="Format\Fits\FitsFileWrapper.cs" />
+    <Compile Include="Format\Fits\FitsHduWrapper.cs" />
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Format\VOTable\Constants.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
@@ -127,9 +130,9 @@
       <Project>{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}</Project>
       <Name>Jhu.Graywulf.SqlParser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Jhu.SkyQuery.Format\Jhu.SkyQuery.Format.csproj">
-      <Project>{12977295-1363-4BFA-BBEE-42FFE8048252}</Project>
-      <Name>Jhu.SkyQuery.Format</Name>
+    <ProjectReference Include="..\..\..\sharpfitsio\src\Jhu.SharpFitsIO\Jhu.SharpFitsIO.csproj">
+      <Project>{D9E54B0E-9E09-4E53-95FD-4161F9D61914}</Project>
+      <Name>Jhu.SharpFitsIO</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
@@ -197,9 +200,7 @@
   <ItemGroup>
     <None Include="Jobs\Query\XMatchResources\PopulateZoneDefTable.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Format\Fits\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)
