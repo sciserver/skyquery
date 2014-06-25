@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings.cs" />
+    <Compile Include="Format\Fits\FitsWriterTest.cs" />
     <Compile Include="Format\Fits\FitsReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />

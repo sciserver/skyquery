@@ -228,12 +228,15 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OnWriteHeader()
         {
-            // FITS files don't have separate headers
+            // We write the first HDU now, because bintables are all just extensions
+
+            var hdu = HduBase.Create(fits, true, true, true);
+            
         }
 
         protected override DataFileBlockBase OnWriteNextBlock(DataFileBlockBase block, System.Data.IDataReader dr)
         {
-            throw new NotImplementedException();
+            return block ?? new FitsHduWrapper(this, BinaryTableHdu.Create(fits, true));
         }
 
         protected override void OnWriteFooter()
