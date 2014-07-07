@@ -206,7 +206,7 @@ namespace Jhu.SkyQuery.Format.Fits
         protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
         {
             // Read until the next binary table extension is found
-            HduBase hdu;
+            SimpleHdu hdu;
             while ((hdu = Fits.ReadNextHdu()) != null && !(hdu is BinaryTableHdu))
             {
             }
@@ -217,7 +217,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
             else
             {
-                return block ?? new FitsHduWrapper(this, (BinaryTableHdu)hdu);
+                return block ?? new FitsBinaryTableWrapper(this, (BinaryTableHdu)hdu);
             }
         }
 
@@ -230,13 +230,13 @@ namespace Jhu.SkyQuery.Format.Fits
         {
             // We write the first HDU now, because bintables are all just extensions
 
-            var hdu = HduBase.Create(fits, true, true, true);
+            var hdu = SimpleHdu.Create(fits, true, true, true);
             
         }
 
         protected override DataFileBlockBase OnWriteNextBlock(DataFileBlockBase block, System.Data.IDataReader dr)
         {
-            return block ?? new FitsHduWrapper(this, BinaryTableHdu.Create(fits, true));
+            return block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(fits, true));
         }
 
         protected override void OnWriteFooter()

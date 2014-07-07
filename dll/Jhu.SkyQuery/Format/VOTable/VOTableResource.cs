@@ -122,73 +122,73 @@ namespace Jhu.SkyQuery.Format.VOTable
             switch (datatype.ToLowerInvariant())
             {
                 case Constants.VOTableTypeBoolean:
-                    dt = DataType.Boolean;
+                    dt = DataTypes.Boolean;
                     break;
                 case Constants.VOTableTypeBit:
-                    dt = DataType.Boolean;    // This is union bit
+                    dt = DataTypes.Boolean;    // This is union bit
                     break;
                 case Constants.VOTableTypeByte:
                     if (arraySize == -1)
                     {
-                        dt = DataType.SqlVarBinaryMax;
+                        dt = DataTypes.SqlVarBinaryMax;
                     }
                     else if (arrayVariable)
                     {
-                        dt = DataType.SqlVarBinary;
+                        dt = DataTypes.SqlVarBinary;
                         dt.Length = arraySize;
                     }
                     else
                     {
-                        dt = DataType.SqlBinary;
+                        dt = DataTypes.SqlBinary;
                         dt.Length = arraySize;
                     }
                     break;
                 case Constants.VOTableTypeShort:
-                    dt = DataType.SqlSmallInt;
+                    dt = DataTypes.SqlSmallInt;
                     break;
                 case Constants.VOTableTypeInt:
-                    dt = DataType.SqlInt;
+                    dt = DataTypes.SqlInt;
                     break;
                 case Constants.VOTableTypeLong:
-                    dt = DataType.SqlBigInt;
+                    dt = DataTypes.SqlBigInt;
                     break;
                 case Constants.VOTableTypeChar:
                     if (arraySize == -1)
                     {
-                        dt = DataType.SqlVarCharMax;
+                        dt = DataTypes.SqlVarCharMax;
                     }
                     else if (arrayVariable)
                     {
-                        dt = DataType.SqlVarChar;
+                        dt = DataTypes.SqlVarChar;
                         dt.Length = arraySize;
                     }
                     else
                     {
-                        dt = DataType.SqlChar;
+                        dt = DataTypes.SqlChar;
                         dt.Length = arraySize;
                     }
                     break;
                 case Constants.VOTableTypeUnicodeChar:
                     if (arraySize == -1)
                     {
-                        dt = DataType.SqlNVarCharMax;
+                        dt = DataTypes.SqlNVarCharMax;
                     }
                     else if (arrayVariable)
                     {
-                        dt = DataType.SqlNVarChar;
+                        dt = DataTypes.SqlNVarChar;
                         dt.Length = arraySize;
                     }
                     else
                     {
-                        dt = DataType.SqlNChar;
+                        dt = DataTypes.SqlNChar;
                         dt.Length = arraySize;
                     }
                     break;
                 case Constants.VOTableTypeFloat:
-                    dt = DataType.SqlReal;
+                    dt = DataTypes.SqlReal;
                     break;
                 case Constants.VOTableTypeDouble:
-                    dt = DataType.SqlFloat;
+                    dt = DataTypes.SqlFloat;
                     break;
                 case Constants.VOTableTypeFloatComplex:
                 case Constants.VOTableTypeDoubleComplex:

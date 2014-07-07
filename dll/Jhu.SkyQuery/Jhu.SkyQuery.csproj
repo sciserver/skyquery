@@ -50,8 +50,8 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Format\Fits\Constants.cs" />
+    <Compile Include="Format\Fits\FitsBinaryTableWrapper.cs" />
     <Compile Include="Format\Fits\FitsFileWrapper.cs" />
-    <Compile Include="Format\Fits\FitsHduWrapper.cs" />
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Format\VOTable\Constants.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />

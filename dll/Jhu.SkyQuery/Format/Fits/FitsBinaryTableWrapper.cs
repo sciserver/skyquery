@@ -8,16 +8,30 @@ using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
+    /// <summary>
+    /// This class wraps a FITS file binary table into an interface compatible with
+    /// the Graywulf IO and Format libraries.
+    /// </summary>
+    /// <remarks>
+    /// FITS files do not support complete streaming during write because the
+    /// binary table header must contain the number of rows.
+    /// </remarks>
     [Serializable]
-    public class FitsHduWrapper : DataFileBlockBase, ICloneable
+    public class FitsBinaryTableWrapper : DataFileBlockBase, ICloneable
     {
         private BinaryTableHdu hdu;
 
+        /// <summary>
+        /// Gets a reference to the underlying FITS file wrapper.
+        /// </summary>
         private FitsFileWrapper File
         {
             get { return (FitsFileWrapper)file; }
         }
 
+        /// <summary>
+        /// Gets a reference to the underlying FITS file object.
+        /// </summary>
         private FitsFile Fits
         {
             get { return ((FitsFileWrapper)file).Fits; }
@@ -25,7 +39,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         #region Constructors and initializers
 
-        public FitsHduWrapper(FitsFileWrapper file, BinaryTableHdu hdu)
+        public FitsBinaryTableWrapper(FitsFileWrapper file, BinaryTableHdu hdu)
             : base(file)
         {
             InitializeMembers();
@@ -33,7 +47,7 @@ namespace Jhu.SkyQuery.Format.Fits
             this.hdu = hdu;
         }
 
-        public FitsHduWrapper(FitsHduWrapper old)
+        public FitsBinaryTableWrapper(FitsBinaryTableWrapper old)
             : base(old)
         {
             CopyMembers(old);
@@ -44,14 +58,14 @@ namespace Jhu.SkyQuery.Format.Fits
             this.hdu = null;
         }
 
-        private void CopyMembers(FitsHduWrapper old)
+        private void CopyMembers(FitsBinaryTableWrapper old)
         {
             this.hdu = (BinaryTableHdu)old.hdu.Clone();
         }
 
         public override object Clone()
         {
-            return new FitsHduWrapper(this);
+            return new FitsBinaryTableWrapper(this);
         }
 
         #endregion
@@ -112,10 +126,14 @@ namespace Jhu.SkyQuery.Format.Fits
         /// </summary>
         private void ConvertColumnsToFits()
         {
+            var columns = new FitsTableColumn[this.Columns.Count];
+
             for (int i = 0; i < this.Columns.Count; i++)
             {
-                hdu.Columns.Add(ConvertColumnToFits(Columns[i]));
+                columns[i] = ConvertColumnToFits(Columns[i]);
             }
+
+            hdu.CreateColumns(columns);
         }
 
         /// <summary>
@@ -125,19 +143,23 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <returns></returns>
         private FitsTableColumn ConvertColumnToFits(Column column)
         {
-            var c = new FitsTableColumn();
+            var c = FitsTableColumn.Create(column.Name, ConvertDataTypeToFits(column));
 
             c.Name = column.Name;
             c.Unit = column.Metadata.Unit;
             //c.Format          // TODO: convert formats
 
-            c.DataType = ConvertDataTypeToFits(column);
-
             return c;
         }
 
+        /// <summary>
+        /// Converts data
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
         private FitsDataType ConvertDataTypeToFits(Column column)
         {
+            /*
             FitsDataType dt;
 
             if (column.DataType.Type == typeof(Boolean))
@@ -228,7 +250,10 @@ namespace Jhu.SkyQuery.Format.Fits
             dt.NullValue = null;    // TODO
             //dt.Dimensions = // TODO
 
-            return dt;
+            return dt;*/
+
+            // TODO: fix this to work with any data type
+            return FitsDataType.Create(column.DataType.Type, column.DataType.Length);
         }
 
         #endregion
@@ -236,8 +261,6 @@ namespace Jhu.SkyQuery.Format.Fits
         protected override void OnColumnsCreated()
         {
             // Nothing to do here in read mode
-            // TODO: create columns in write mode
-
             switch (File.FileMode)
             {
                 case Graywulf.IO.DataFileMode.Read:
@@ -265,16 +288,13 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OnReadToFinish()
         {
-            // HDUs can skip to the end
+            // HDUs skip to the end automatically
         }
 
         protected override void OnWriteHeader()
         {
-            hdu.SetAxisLength(1, hdu.GetStrideLength());
-
-            hdu.SetColumnCards();
-
-            hdu.WriteHeader();
+            // As binary tables do not support streaming (need to know the
+            // number of rows beforehand, we skip this now.
         }
 
         protected override void OnWriteNextRow(object[] values)
@@ -284,7 +304,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OnWriteFooter()
         {
-            Fits.SkipBlock();
+            hdu.WriteHeader();
         }
     }
 }
