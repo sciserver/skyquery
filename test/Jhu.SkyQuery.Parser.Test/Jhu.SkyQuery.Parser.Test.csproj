@@ -59,13 +59,9 @@
       <Project>{4039B7D0-F8E5-49D8-A770-133DBED2EA75}</Project>
       <Name>Jhu.Graywulf.ParserLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
-      <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
-      <Name>Jhu.Graywulf.Schema</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.SqlParser\Jhu.Graywulf.SqlParser.csproj">
-      <Project>{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}</Project>
-      <Name>Jhu.Graywulf.SqlParser</Name>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
+      <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
+      <Name>Jhu.Graywulf.Sql</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\GrayWulf\Test\Jhu.Graywulf.SqlParser.Test\Jhu.Graywulf.SqlParser.Test.csproj">
       <Project>{54517A77-C93A-424E-A6B3-C74973632995}</Project>

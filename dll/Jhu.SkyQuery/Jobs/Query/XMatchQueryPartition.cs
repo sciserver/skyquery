@@ -12,7 +12,7 @@ using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.SqlParser;
-using Jhu.Graywulf.SqlParser.SqlCodeGen;
+using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query

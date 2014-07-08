@@ -37,7 +37,7 @@ namespace Jhu.SkyQuery.Parser.Test
 
         private string GenerateCode(QuerySpecification qs)
         {
-            var cg = new Jhu.Graywulf.SqlParser.SqlCodeGen.SqlServerCodeGenerator();
+            var cg = new Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator();
             cg.ResolveNames = true;
 
             var sw = new StringWriter();

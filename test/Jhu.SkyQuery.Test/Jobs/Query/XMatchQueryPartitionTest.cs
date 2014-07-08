@@ -61,7 +61,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
             m.Invoke(xmqp, new object[] { fc, xmtstr });
 
-            return Jhu.Graywulf.SqlParser.SqlCodeGen.SqlServerCodeGenerator.GetCode(fc, true);
+            return Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator.GetCode(fc, true);
         }
 
         [TestMethod]

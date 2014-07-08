@@ -120,13 +120,9 @@
       <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
-      <Project>{60920E0C-F7A1-47CE-85F6-7E6E3085FCF1}</Project>
-      <Name>Jhu.Graywulf.Schema</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.SqlParser\Jhu.Graywulf.SqlParser.csproj">
-      <Project>{4DFC8F4C-C2FB-4AFB-B838-45A56F19FEAF}</Project>
-      <Name>Jhu.Graywulf.SqlParser</Name>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
+      <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
+      <Name>Jhu.Graywulf.Sql</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
