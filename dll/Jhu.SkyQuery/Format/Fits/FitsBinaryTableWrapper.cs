@@ -159,7 +159,7 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <returns></returns>
         private FitsDataType ConvertDataTypeToFits(Column column)
         {
-            /*
+            /* TODO: delete if works
             FitsDataType dt;
 
             if (column.DataType.Type == typeof(Boolean))
@@ -274,6 +274,10 @@ namespace Jhu.SkyQuery.Format.Fits
         protected override void OnReadHeader()
         {
             ConvertColumnsToDatabase();
+
+            Name = hdu.ExtensionName;
+            // TODO: Metadata = ...
+            RecordCount = hdu.GetAxisLength(2);
         }
 
         protected override bool OnReadNextRow(object[] values)
@@ -304,7 +308,6 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OnWriteFooter()
         {
-            hdu.WriteHeader();
         }
     }
 }

@@ -231,9 +231,8 @@ namespace Jhu.SkyQuery.Format.Fits
         protected override void OnWriteHeader()
         {
             // We write the first HDU now, because bintables are all just extensions
-
             var hdu = SimpleHdu.Create(fits, true, true, true);
-            
+            hdu.WriteHeader();
         }
 
         protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
