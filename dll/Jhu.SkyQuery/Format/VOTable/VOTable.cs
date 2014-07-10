@@ -66,7 +66,9 @@ namespace Jhu.SkyQuery.Format.VOTable
                     CanDetectColumnNames = false,
                     CanHoldMultipleDatasets = true,
                     RequiresArchive = false,
-                    IsCompressed = false
+                    IsCompressed = false,
+                    KnowsRecordCount = false,
+                    RequiresRecordCount = false,
                 };
             }
         }
