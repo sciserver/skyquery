@@ -236,7 +236,7 @@ namespace Jhu.SkyQuery.Format.Fits
             
         }
 
-        protected override DataFileBlockBase OnWriteNextBlock(DataFileBlockBase block, System.Data.IDataReader dr)
+        protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
         {
             return block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(fits, true));
         }

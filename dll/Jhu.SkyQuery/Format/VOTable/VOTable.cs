@@ -446,7 +446,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="block"></param>
         /// <param name="dr"></param>
         /// <returns></returns>
-        protected override DataFileBlockBase OnWriteNextBlock(DataFileBlockBase block, IDataReader dr)
+        protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
         {
             return block ?? new VOTableResource(this);
         }
