@@ -64,7 +64,7 @@
       <merge file="registry.config" />
       <merge file="test.config" />
     </project>
-    <project name="Jhu.Graywulf.Schema.Test" path="..\Graywulf\Test\Jhu.Graywulf.Schema.Test" type="console">
+    <project name="Jhu.Graywulf.Sql.Test" path="..\Graywulf\Test\Jhu.Graywulf.Sql.Test" type="console">
       <merge file="test.config" />
     </project>
     <project name="Jhu.Graywulf.SqlParser.Test" path="..\Graywulf\Test\Jhu.Graywulf.SqlParser.Test" type="console">
