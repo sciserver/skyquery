@@ -101,7 +101,12 @@ namespace Jhu.SkyQuery.Format.Fits
         private DataType ConvertDataTypeToDatabase(FitsTableColumn column)
         {
             // TODO: needs testing
-            return DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            // TODO: what to do with varchar(max) etc?
+            var dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+
+            dt.IsNullable = column.DataType.IsNullable;
+
+            return dt;
         }
 
         /// <summary>
@@ -159,99 +164,6 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <returns></returns>
         private FitsDataType ConvertDataTypeToFits(Column column)
         {
-            /* TODO: delete if works
-            FitsDataType dt;
-
-            if (column.DataType.Type == typeof(Boolean))
-            {
-                dt = FitsDataTypes.Logical;
-            }
-            else if (column.DataType.Type == typeof(SByte))
-            {
-                dt = FitsDataTypes.Byte;
-                dt.Zero = SByte.MaxValue;
-            }
-            else if (column.DataType.Type == typeof(Byte))
-            {
-                dt = FitsDataTypes.Byte;
-            }
-            else if (column.DataType.Type == typeof(Int16))
-            {
-                dt = FitsDataTypes.Int16;
-                dt.Zero = Int16.MaxValue;
-            }
-            else if (column.DataType.Type == typeof(UInt16))
-            {
-                dt = FitsDataTypes.Int16;
-            }
-            else if (column.DataType.Type == typeof(Int32))
-            {
-                dt = FitsDataTypes.Int32;
-                dt.Zero = Int32.MaxValue;
-            }
-            else if (column.DataType.Type == typeof(UInt32))
-            {
-                dt = FitsDataTypes.Int32;
-            }
-            else if (column.DataType.Type == typeof(Int64))
-            {
-                dt = FitsDataTypes.Int64;
-                dt.Zero = Int64.MaxValue;
-            }
-            else if (column.DataType.Type == typeof(UInt64))
-            {
-                dt = FitsDataTypes.Int64;
-            }
-            else if (column.DataType.Type == typeof(Single))
-            {
-                dt = FitsDataTypes.Single;
-            }
-            else if (column.DataType.Type == typeof(Double))
-            {
-                dt = FitsDataTypes.Double;
-            }
-            else if (column.DataType.Type == typeof(Decimal))
-            {
-                dt = FitsDataTypes.Double;
-            }
-            else if (column.DataType.Type == typeof(DateTime))
-            {
-                dt = FitsDataTypes.Int64;
-            }
-            else if (column.DataType.Type == typeof(Guid))
-            {
-                dt = FitsDataTypes.Byte;
-                dt.Repeat = 16;
-            }
-            else if (column.DataType.Type == typeof(char))
-            {
-                dt = FitsDataTypes.Char;
-            }
-            else if (column.DataType.Type == typeof(char[]))
-            {
-                dt = FitsDataTypes.Char;
-                dt.Repeat = column.DataType.Length;
-            }
-            else if (column.DataType.Type == typeof(string))
-            {
-                dt = FitsDataTypes.Char;
-                dt.Repeat = column.DataType.Length;
-            }
-            else if (column.DataType.Type == typeof(byte[]))
-            {
-                dt = FitsDataTypes.Byte;
-                dt.Repeat = column.DataType.Length;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-
-            dt.NullValue = null;    // TODO
-            //dt.Dimensions = // TODO
-
-            return dt;*/
-
             // TODO: fix this to work with any data type
 
             Type type;
