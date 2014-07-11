@@ -16,8 +16,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
     [TestClass]
     public class FitsWriterTest : Jhu.Graywulf.Test.TestClassBase
     {
-        [TestMethod]
-        public void SimpleWriterTest()
+        private void WriteTestHelper(string table)
         {
             var uri = GetTestFilename(".fits");
 
@@ -25,7 +24,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
-                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM SampleData_NumericTypes", cn))
+                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM " + table, cn))
                     {
                         using (var dr = cmd.ExecuteReader())
                         {
@@ -34,6 +33,30 @@ namespace Jhu.SkyQuery.Format.Fits.Test
                     }
                 }
             }
+        }
+
+        [TestMethod]
+        public void WriteNumericTypes()
+        {
+            WriteTestHelper("SampleData_NumericTypes");
+        }
+
+        [TestMethod]
+        public void WriteNumericTypesNull()
+        {
+            WriteTestHelper("SampleData_NumericTypes_Null");
+        }
+
+        [TestMethod]
+        public void WriteAllTypes()
+        {
+            WriteTestHelper("SampleData_AllTypes");
+        }
+
+        [TestMethod]
+        public void WriteAllTypesNull()
+        {
+            WriteTestHelper("SampleData_AllTypes_Nullable");
         }
     }
 }

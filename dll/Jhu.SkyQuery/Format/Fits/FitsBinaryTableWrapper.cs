@@ -253,7 +253,24 @@ namespace Jhu.SkyQuery.Format.Fits
             return dt;*/
 
             // TODO: fix this to work with any data type
-            return FitsDataType.Create(column.DataType.Type, column.DataType.Length);
+
+            Type type;
+            int repeat;
+
+            // Match data types based on .Net equivalent
+            type = column.DataType.Type;
+
+            // TODO: this logic needs to be extended if arrays are supported
+            if (column.DataType.HasLength)
+            {
+                repeat = column.DataType.Length;
+            }
+            else
+            {
+                repeat = 1;
+            }
+
+            return FitsDataType.Create(type, repeat, column.DataType.IsNullable);
         }
 
         #endregion
@@ -293,21 +310,40 @@ namespace Jhu.SkyQuery.Format.Fits
         protected override void OnReadToFinish()
         {
             // HDUs skip to the end automatically
+            // TODO: this needs to be tested by partially reading the file!
         }
 
         protected override void OnWriteHeader()
         {
-            // As binary tables do not support streaming (need to know the
-            // number of rows beforehand, we skip this now.
+            if (RecordCount > int.MaxValue)
+            {
+                throw new FitsException("Too big file");    //**** TODO
+            }
+
+            hdu.SetAxisLength(2, (int)RecordCount);
+
+            // TODO: what else to be set here before writing the header?
+
+            hdu.WriteHeader();
         }
 
         protected override void OnWriteNextRow(object[] values)
         {
-            //
+            // Replace DBNulls with object nulls, as required by the FITS library
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] == DBNull.Value)
+                {
+                    values[i] = null;
+                }
+            }
+
+            hdu.WriteNextRow(values);
         }
 
         protected override void OnWriteFooter()
         {
+            // FITS HDUs have no footers
         }
     }
 }

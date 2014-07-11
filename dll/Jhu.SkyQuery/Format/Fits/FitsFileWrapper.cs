@@ -92,7 +92,7 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         public FitsFileWrapper(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, Endianness.LittleEndian)
+            : this(uri, fileMode, Endianness.BigEndian)
         {
             // Overload
         }
@@ -115,7 +115,7 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         public FitsFileWrapper(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, Endianness.LittleEndian)
+            : this(stream, fileMode, Endianness.BigEndian)
         {
             // Overload
         }
@@ -123,7 +123,7 @@ namespace Jhu.SkyQuery.Format.Fits
         private void InitializeMembers()
         {
             this.fits = null;
-            this.endianness = SharpFitsIO.Endianness.LittleEndian;
+            this.endianness = SharpFitsIO.Endianness.BigEndian;
         }
 
         private void CopyMembers(FitsFileWrapper old)
@@ -195,16 +195,6 @@ namespace Jhu.SkyQuery.Format.Fits
         #endregion
         #region HDU read and write functions
 
-        protected override void OnBlockAppended(DataFileBlockBase block)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void OnReadHeader()
-        {
-            // FITS files don't have a separate header, they start with the first HDU
-        }
-
         protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
         {
             // Read until the next binary table extension is found
@@ -223,6 +213,21 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
+        protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
+        {
+            return block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(fits, true));
+        }
+
+        protected override void OnBlockAppended(DataFileBlockBase block)
+        {
+            // Nothing to do here
+        }
+
+        protected override void OnReadHeader()
+        {
+            // FITS files don't have a separate header, they start with the first HDU
+        }
+
         protected override void OnReadFooter()
         {
             // FITS files don't have footers
@@ -230,14 +235,11 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override void OnWriteHeader()
         {
-            // We write the first HDU now, because bintables are all just extensions
+            // As a header, we write the first HDU now,
+            // because bintables are all just extensions
+
             var hdu = SimpleHdu.Create(fits, true, true, true);
             hdu.WriteHeader();
-        }
-
-        protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
-        {
-            return block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(fits, true));
         }
 
         protected override void OnWriteFooter()
