@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Jhu.SharpFitsIO;
 using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
 
 namespace Jhu.SkyQuery.Format.Fits
@@ -69,8 +70,8 @@ namespace Jhu.SkyQuery.Format.Fits
         }
 
         #endregion
-        #region Column functions
-        
+        #region Column conversion from FITS to database
+
         /// <summary>
         /// Converts FITS bintable columns into database columns
         /// </summary>
@@ -126,16 +127,120 @@ namespace Jhu.SkyQuery.Format.Fits
             return metadata;
         }
 
+        #endregion
+        #region Column conversion from database to FITS
+
+        /// <summary>
+        /// Returns a type mapping from .Net types to FITS types
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        private TypeMapping CreateTypeMappingToFits(Column column)
+        {
+            if (column.DataType.Type == typeof(Decimal))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(Decimal),
+                    To = typeof(Double),
+                    Mapping = delegate(object value)
+                    {
+                        return (Double)(Decimal)value;
+                    }
+                };
+            }
+            else if (column.DataType.Type == typeof(DateTime))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(DateTime),
+                    To = typeof(Int64),
+                    Mapping = delegate(object value)
+                    {
+                        return ((DateTime)value).ToFileTime();
+                    }
+                };
+            }
+            else if (column.DataType.Type == typeof(DateTimeOffset))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(Decimal),
+                    To = typeof(Int64),
+                    Mapping = delegate(object value)
+                    {
+                        return ((DateTimeOffset)value).ToFileTime();
+                    }
+                };
+            }
+            else if (column.DataType.Type == typeof(TimeSpan))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(TimeSpan),
+                    To = typeof(Double),
+                    Mapping = delegate(object value)
+                    {
+                        return ((TimeSpan)value).TotalMilliseconds;
+                    }
+                };
+            }
+            else if (column.DataType.Type == typeof(Guid))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(Guid),
+                    To = typeof(Byte[]),
+                    Mapping = delegate(object value)
+                    {
+                        return ((Guid)value).ToByteArray();
+                    }
+                };
+            }
+            else if (column.DataType.Type == typeof(Jhu.Graywulf.Schema.SingleComplex))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(Jhu.Graywulf.Schema.SingleComplex),
+                    To = typeof(Jhu.SharpFitsIO.SingleComplex),
+                    Mapping = delegate(object value)
+                    {
+                        var s = (Jhu.Graywulf.Schema.SingleComplex)value;
+                        return new Jhu.SharpFitsIO.SingleComplex(s.A, s.B);
+                    }
+                };
+            }
+            else if (column.DataType.Type == typeof(Jhu.Graywulf.Schema.DoubleComplex))
+            {
+                return new TypeMapping()
+                {
+                    From = typeof(Jhu.Graywulf.Schema.DoubleComplex),
+                    To = typeof(Jhu.SharpFitsIO.DoubleComplex),
+                    Mapping = delegate(object value)
+                    {
+                        var s = (Jhu.Graywulf.Schema.DoubleComplex)value;
+                        return new Jhu.SharpFitsIO.DoubleComplex(s.A, s.B);
+                    }
+                };
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         /// <summary>
         /// Converts database columns to FITS columns
         /// </summary>
         private void ConvertColumnsToFits()
         {
+            TypeMapping mapping;
             var columns = new FitsTableColumn[this.Columns.Count];
 
             for (int i = 0; i < this.Columns.Count; i++)
             {
-                columns[i] = ConvertColumnToFits(Columns[i]);
+                ConvertColumnToFits(this.Columns[i], out columns[i], out mapping);
+                this.ColumnTypeMappings[i] = mapping;
             }
 
             hdu.CreateColumns(columns);
@@ -144,45 +249,61 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <summary>
         /// Converts a database column type to FITS data type
         /// </summary>
-        /// <param name="column"></param>
+        /// <param name="databaseColumn"></param>
         /// <returns></returns>
-        private FitsTableColumn ConvertColumnToFits(Column column)
+        private void ConvertColumnToFits(Column databaseColumn, out FitsTableColumn fitsColumn, out TypeMapping typeMapping)
         {
-            var c = FitsTableColumn.Create(column.Name, ConvertDataTypeToFits(column));
+            FitsDataType fitstype;
 
-            c.Name = column.Name;
-            c.Unit = column.Metadata.Unit;
-            //c.Format          // TODO: convert formats
+            ConvertDataTypeToFits(databaseColumn, out fitstype, out typeMapping);
 
-            return c;
+            fitsColumn = FitsTableColumn.Create(databaseColumn.Name, fitstype);
+
+            fitsColumn.Name = databaseColumn.Name;
+            fitsColumn.Unit = databaseColumn.Metadata.Unit;
+            //fitsColumn.Format          // TODO: convert formats
         }
 
         /// <summary>
-        /// Converts data
+        /// Converts database columns to fits columns
         /// </summary>
-        /// <param name="column"></param>
+        /// <param name="databaseColumn"></param>
         /// <returns></returns>
-        private FitsDataType ConvertDataTypeToFits(Column column)
+        private void ConvertDataTypeToFits(Column databaseColumn, out FitsDataType fitsType, out TypeMapping typeMapping)
         {
-            // TODO: fix this to work with any data type
+            // Fits get type mapping
+            typeMapping = CreateTypeMappingToFits(databaseColumn);
 
             Type type;
-            int repeat;
+            int repeat = 1;
 
-            // Match data types based on .Net equivalent
-            type = column.DataType.Type;
-
-            // TODO: this logic needs to be extended if arrays are supported
-            if (column.DataType.HasLength)
+            if (typeMapping == null)
             {
-                repeat = column.DataType.Length;
+                type = databaseColumn.DataType.Type;
             }
             else
             {
-                repeat = 1;
+                type = typeMapping.To;
             }
 
-            return FitsDataType.Create(type, repeat, column.DataType.IsNullable);
+            if (type.IsArray)
+            {
+                type = type.GetElementType();
+                repeat = databaseColumn.DataType.ByteSize;    
+            }
+
+            // TODO: this logic needs to be extended if arrays are supported
+            if (databaseColumn.DataType.IsMaxLength)
+            {
+                // This cannot be exported, so limit to a few characters or bytes
+                repeat = 128;   // *** TODO
+            }
+            else if (databaseColumn.DataType.HasLength)
+            {
+                repeat = databaseColumn.DataType.Length;
+            }
+
+            fitsType = FitsDataType.Create(type, repeat, databaseColumn.DataType.IsNullable);
         }
 
         #endregion
@@ -197,6 +318,8 @@ namespace Jhu.SkyQuery.Format.Fits
                 case Graywulf.IO.DataFileMode.Write:
                     ConvertColumnsToFits();
                     break;
+                default:
+                    throw new NotImplementedException();
             }
         }
 
