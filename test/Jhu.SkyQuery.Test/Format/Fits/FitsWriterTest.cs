@@ -58,5 +58,11 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         {
             WriteTestHelper("SampleData_AllTypes_Nullable");
         }
+
+        [TestMethod]
+        public void WriteAllPrecision()
+        {
+            WriteTestHelper("SampleData_AllPrecision");
+        }
     }
 }
