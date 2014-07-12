@@ -202,6 +202,8 @@
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)
 copy $(TargetDir)$(TargetName).pdb $(SolutionDir)$(OutDir)
 
+copy $(TargetDir)Jhu.SharpFitsIO.* $(SolutionDir)$(OutDir)
+
 copy $(TargetDir)$(TargetName).dll $(SolutionDir)..\graywulf\web\Jhu.Graywulf.Web.UI\bin
 copy $(TargetDir)$(TargetName).pdb $(SolutionDir)..\graywulf\web\Jhu.Graywulf.Web.UI\bin
 

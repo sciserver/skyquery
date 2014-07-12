@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Xml;
 using System.Collections;
 using System.Data;
+using System.Runtime.Serialization;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
@@ -97,7 +98,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public VOTable()
             : base()
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
         }
 
         public VOTable(VOTable old)
@@ -117,7 +118,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public VOTable(Uri uri, DataFileMode fileMode, Encoding encoding)
             : base(uri, fileMode, encoding, CultureInfo.InvariantCulture)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
 
             Open();
         }
@@ -138,7 +139,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public VOTable(Stream stream, DataFileMode fileMode, Encoding encoding)
             : base(stream, fileMode, encoding, CultureInfo.InvariantCulture)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
 
             Open();
         }
@@ -157,7 +158,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public VOTable(XmlReader inputReader, Encoding encoding)
             : base((Stream)null, DataFileMode.Read, encoding, CultureInfo.InvariantCulture)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
 
             this.inputReader = inputReader;
         }
@@ -176,7 +177,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public VOTable(XmlWriter outputWriter, Encoding encoding)
             : base((Stream)null, DataFileMode.Write, encoding, CultureInfo.InvariantCulture)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
 
             this.outputWriter = outputWriter;
         }
@@ -187,7 +188,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Overload
         }
 
-        private void InitializeMembers()
+        [OnDeserializing]
+        private void InitializeMembers(StreamingContext context)
         {
             this.inputReader = null;
             this.ownsInputReader = false;
@@ -198,7 +200,11 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void CopyMembers(VOTable old)
         {
-            InitializeMembers();
+            this.inputReader = null;
+            this.ownsInputReader = false;
+
+            this.outputWriter = null;
+            this.ownsOutputWriter = false;
         }
 
         public override void Dispose()

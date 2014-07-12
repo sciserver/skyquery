@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization;
 using Jhu.SharpFitsIO;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
@@ -64,7 +65,7 @@ namespace Jhu.SkyQuery.Format.Fits
         public FitsFileWrapper()
             :base()
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
         }
 
         public FitsFileWrapper(FitsFileWrapper old)
@@ -84,7 +85,7 @@ namespace Jhu.SkyQuery.Format.Fits
         public FitsFileWrapper(Uri uri, DataFileMode fileMode, Endianness endianness)
             : base(uri, fileMode)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
 
             this.endianness = endianness;
 
@@ -107,7 +108,7 @@ namespace Jhu.SkyQuery.Format.Fits
         public FitsFileWrapper(Stream stream, DataFileMode fileMode, Endianness endianness)
             : base(stream, fileMode)
         {
-            InitializeMembers();
+            InitializeMembers(new StreamingContext());
 
             this.endianness = endianness;
 
@@ -120,7 +121,8 @@ namespace Jhu.SkyQuery.Format.Fits
             // Overload
         }
 
-        private void InitializeMembers()
+        [OnDeserializing]
+        private void InitializeMembers(StreamingContext context)
         {
             this.fits = null;
             this.endianness = SharpFitsIO.Endianness.BigEndian;
