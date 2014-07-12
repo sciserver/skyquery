@@ -36,7 +36,7 @@ namespace Jhu.SkyQuery.Format.Fits
                     MimeType = Constants.MimeTypeFits,
                     DefaultExtension = Constants.FileExtensionFits,
                     CanRead = true,
-                    CanWrite = false,
+                    CanWrite = true,
                     CanDetectColumnNames = false,
                     CanHoldMultipleDatasets = true,
                     RequiresArchive = false,
