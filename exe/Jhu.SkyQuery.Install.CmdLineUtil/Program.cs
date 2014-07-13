@@ -10,7 +10,10 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
     {
         static void Main(string[] args)
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;            
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+            // Initialize logger
+            Jhu.Graywulf.Logging.Logger.Instance.Writers.Add(new Jhu.Graywulf.Logging.SqlLogWriter());
 
             List<Type> verbs = new List<Type>() { typeof(Install) };
 

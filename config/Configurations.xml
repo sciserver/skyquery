@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<config root="Config\dev.voservices.net">
+<config root="Config\default">
   <projects>
     <!-- Graywulf EXE projects -->
     <project name="Jhu.Graywulf.Install.CmdLineUtil" path="..\Graywulf\Exe\Jhu.Graywulf.Install.CmdLineUtil" type="console">
