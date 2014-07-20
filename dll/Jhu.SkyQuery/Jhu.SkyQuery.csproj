@@ -142,7 +142,6 @@
     </XamlAppdef>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="Jobs\Query\BayesFactorXMatchResources\BuildMatchTableIndex.sql" />
   </ItemGroup>
   <ItemGroup>
