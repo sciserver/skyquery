@@ -164,8 +164,8 @@ sqpgen.exe generate -o ..\..\..\..\dll\Jhu.SkyQuery.Parser\Parser\SkyQueryParser
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)
 copy $(TargetDir)$(TargetName).pdb $(SolutionDir)$(OutDir)
 
-copy $(TargetDir)$(TargetName).dll $(SolutionDir)..\graywulf\web\Jhu.Graywulf.Web.UI\bin
-copy $(TargetDir)$(TargetName).pdb $(SolutionDir)..\graywulf\web\Jhu.Graywulf.Web.UI\bin</PostBuildEvent>
+copy $(TargetDir)$(TargetName).dll $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\bin
+copy $(TargetDir)$(TargetName).pdb $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\bin</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
