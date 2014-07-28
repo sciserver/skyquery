@@ -60,7 +60,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                 return new FileFormatDescription()
                 {
                     DisplayName = FileFormatNames.VOTable,
-                    MimeType = Constants.MimeTypeVOTable,
+                    DefaultMimeType = Constants.MimeTypeVOTable,
                     DefaultExtension = Constants.FileExtensionVOTable,
                     CanRead = true,
                     CanWrite = true,

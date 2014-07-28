@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Format.Fits
                 return new FileFormatDescription()
                 {
                     DisplayName = FileFormatNames.Fits,
-                    MimeType = Constants.MimeTypeFits,
+                    DefaultMimeType = Constants.MimeTypeFits,
                     DefaultExtension = Constants.FileExtensionFits,
                     CanRead = true,
                     CanWrite = true,
