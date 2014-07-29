@@ -17,39 +17,8 @@ namespace Jhu.SkyQuery.Format.VOTable
     /// Implements functionality to read and write VOTables.
     /// </summary>
     [Serializable]
-    public class VOTable : FormattedDataFileBase, IDisposable, ICloneable
+    public class VOTable : XmlDataFile, IDisposable, ICloneable
     {
-        /// <summary>
-        /// Used to compare VOTABLE tags and attribute names. Must be case-sensitive.
-        /// </summary>
-        public static readonly StringComparer Comparer = StringComparer.InvariantCulture;
-
-        /// <summary>
-        /// XmlReader that wraps the stream and used to retreive xml elements.
-        /// </summary>
-        [NonSerialized]
-        private XmlReader inputReader;
-
-        /// <summary>
-        /// If true, the input reader is opened by the class and will need to be closed
-        /// and disposed when the VOTable object is disposed.
-        /// </summary>
-        [NonSerialized]
-        private bool ownsInputReader;
-
-        /// <summary>
-        /// XmlWriter that wraps the output stream and used to write xml elements.
-        /// </summary>
-        [NonSerialized]
-        private XmlWriter outputWriter;
-
-        /// <summary>
-        /// If true, the output reader is opened by the class and will need to be closed
-        /// on disposed when the VOTable object is disposed.
-        /// </summary>
-        [NonSerialized]
-        private bool ownsOutputWriter;
-
         /// <summary>
         /// Returns the description of the file format
         /// </summary>
@@ -73,23 +42,6 @@ namespace Jhu.SkyQuery.Format.VOTable
                 };
             }
         }
-
-        /// <summary>
-        /// Gets the xml readed opened for this VOTable.
-        /// </summary>
-        protected internal XmlReader XmlReader
-        {
-            get { return inputReader; }
-        }
-
-        /// <summary>
-        /// Gets the xml writer opened for this VOTable.
-        /// </summary>
-        protected internal XmlWriter XmlWriter
-        {
-            get { return outputWriter; }
-        }
-
         #region Constructors and initializers
 
         /// <summary>
@@ -116,7 +68,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="compression"></param>
         /// <param name="encoding"></param>
         public VOTable(Uri uri, DataFileMode fileMode, Encoding encoding)
-            : base(uri, fileMode, encoding, CultureInfo.InvariantCulture)
+            : base(uri, fileMode, encoding)
         {
             InitializeMembers(new StreamingContext());
 
@@ -137,7 +89,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="compression"></param>
         /// <param name="encoding"></param>
         public VOTable(Stream stream, DataFileMode fileMode, Encoding encoding)
-            : base(stream, fileMode, encoding, CultureInfo.InvariantCulture)
+            : base(stream, fileMode, encoding)
         {
             InitializeMembers(new StreamingContext());
 
@@ -156,11 +108,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="inputReader"></param>
         /// <param name="encoding"></param>
         public VOTable(XmlReader inputReader, Encoding encoding)
-            : base((Stream)null, DataFileMode.Read, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Read, encoding)
         {
             InitializeMembers(new StreamingContext());
-
-            this.inputReader = inputReader;
         }
 
         public VOTable(XmlReader inputReader)
@@ -175,11 +125,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="outputWriter"></param>
         /// <param name="encoding"></param>
         public VOTable(XmlWriter outputWriter, Encoding encoding)
-            : base((Stream)null, DataFileMode.Write, encoding, CultureInfo.InvariantCulture)
+            : base((Stream)null, DataFileMode.Write, encoding)
         {
             InitializeMembers(new StreamingContext());
-
-            this.outputWriter = outputWriter;
         }
 
         public VOTable(XmlWriter outputWriter)
@@ -191,20 +139,10 @@ namespace Jhu.SkyQuery.Format.VOTable
         [OnDeserializing]
         private void InitializeMembers(StreamingContext context)
         {
-            this.inputReader = null;
-            this.ownsInputReader = false;
-
-            this.outputWriter = null;
-            this.ownsOutputWriter = false;
         }
 
         private void CopyMembers(VOTable old)
         {
-            this.inputReader = null;
-            this.ownsInputReader = false;
-
-            this.outputWriter = null;
-            this.ownsOutputWriter = false;
         }
 
         public override void Dispose()
@@ -219,143 +157,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         #endregion
-        #region Stream open and close
-
-        /// <summary>
-        /// Starts reading a VOTable from an already open xml reader.
-        /// </summary>
-        /// <param name="inputReader"></param>
-        public virtual void Open(XmlReader inputReader)
-        {
-            base.Open((Stream)null, DataFileMode.Read);
-
-            this.inputReader = inputReader;
-
-            Open();
-        }
-
-        /// <summary>
-        /// Starts writing a VOTable into an already open xml writer.
-        /// </summary>
-        /// <param name="outputWriter"></param>
-        public virtual void Open(XmlWriter outputWriter)
-        {
-            base.Open((Stream)null, DataFileMode.Write);
-
-            this.outputWriter = outputWriter;
-
-            Open();
-        }
-
-        /// <summary>
-        /// Makes sure that no stream is opened yet.
-        /// </summary>
-        protected override void EnsureNotOpen()
-        {
-            if (ownsInputReader && inputReader != null ||
-                ownsOutputWriter && outputWriter != null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            // TODO: check if base method has to be called or not
-        }
-
-        //
-
-        /// <summary>
-        /// If necessary, opens an XmlReader and wraps the underlying stream in it.
-        /// </summary>
-        /// <remarks>
-        /// This function is called by the infrastructure when starting to read
-        /// the file by the FileDataReader
-        /// </remarks>
-        protected override void OpenForRead()
-        {
-            if (inputReader == null)
-            {
-                base.OpenForRead();
-
-                var settings = new XmlReaderSettings()
-                {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true,
-                };
-
-                inputReader = XmlReader.Create(new DetachedStream(BaseStream), settings);
-                ownsInputReader = true;
-            }
-        }
-
-        /// <summary>
-        /// If necessary, opens an XmlWriter and wraps the underlying stream in it.
-        /// </summary>
-        protected override void OpenForWrite()
-        {
-            if (outputWriter == null)
-            {
-                base.OpenForWrite();
-
-                var settings = new XmlWriterSettings()
-                {
-                    Indent = true,
-                    NamespaceHandling = NamespaceHandling.OmitDuplicates,
-                };
-
-                if (Encoding != null)
-                {
-                    settings.Encoding = Encoding;
-                }
-
-                outputWriter = XmlWriter.Create(new DetachedStream(BaseStream), settings);
-                ownsOutputWriter = true;
-            }
-        }
-
-        /// <summary>
-        /// Closes the streams, if they were opened by the object itself.
-        /// </summary>
-        public override void Close()
-        {
-            if (ownsInputReader && inputReader != null)
-            {
-                inputReader.Close();
-                inputReader = null;
-                ownsInputReader = false;
-            }
-
-            if (ownsOutputWriter && outputWriter != null)
-            {
-                outputWriter.Flush();
-                outputWriter.Close();
-                outputWriter = null;
-                ownsOutputWriter = false;
-            }
-
-            base.Close();
-        }
-
-        /// <summary>
-        /// Gets the state of the underlying data stream.
-        /// </summary>
-        public override bool IsClosed
-        {
-            get
-            {
-                switch (FileMode)
-                {
-                    case DataFileMode.Read:
-                        return inputReader == null;
-                    case DataFileMode.Write:
-                        return outputWriter == null;
-                    default:
-                        throw new NotImplementedException();
-                }
-            }
-        }
-
-        #endregion
-
+       
         /// <summary>
         /// 
         /// </summary>

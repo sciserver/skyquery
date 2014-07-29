@@ -13,7 +13,7 @@ namespace Jhu.SkyQuery.Format.VOTable
     /// resource block within a VOTable.
     /// </summary>
     [Serializable]
-    public class VOTableResource : FormattedDataFileBlockBase, ICloneable
+    public class VOTableResource : XmlDataFileBlock, ICloneable
     {
         /// <summary>
         /// Gets the objects wrapping the whole VOTABLE file.
