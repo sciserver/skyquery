@@ -15,26 +15,15 @@ namespace Jhu.SkyQuery.Format
         {
         }
 
-        protected override IEnumerable<FileFormatMapping> OnFileFormatsLoading()
+        protected override IEnumerable<DataFileBase> OnFilesLoading()
         {
-            foreach (var format in base.OnFileFormatsLoading())
+            foreach (var file in base.OnFilesLoading())
             {
-                yield return format;
+                yield return file;
             }
 
-            yield return new FileFormatMapping
-            {
-                Extension = VOTable.Constants.FileExtensionVOTable,
-                MimeType = VOTable.Constants.MimeTypeVOTable,
-                Type = typeof(VOTable.VOTable)
-            };
-
-            yield return new FileFormatMapping
-            {
-                Extension = Fits.Constants.FileExtensionFits,
-                MimeType = Fits.Constants.MimeTypeFits,
-                Type = typeof(Fits.FitsFileWrapper)
-            };
+            yield return new VOTable.VOTable();
+            yield return new Fits.FitsFileWrapper();
         }
     }
 }

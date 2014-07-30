@@ -19,29 +19,6 @@ namespace Jhu.SkyQuery.Format.VOTable
     [Serializable]
     public class VOTable : XmlDataFile, IDisposable, ICloneable
     {
-        /// <summary>
-        /// Returns the description of the file format
-        /// </summary>
-        public override FileFormatDescription Description
-        {
-            get
-            {
-                return new FileFormatDescription()
-                {
-                    DisplayName = FileFormatNames.VOTable,
-                    DefaultMimeType = Constants.MimeTypeVOTable,
-                    DefaultExtension = Constants.FileExtensionVOTable,
-                    CanRead = true,
-                    CanWrite = true,
-                    CanDetectColumnNames = false,
-                    CanHoldMultipleDatasets = true,
-                    RequiresArchive = false,
-                    IsCompressed = false,
-                    KnowsRecordCount = false,
-                    RequiresRecordCount = false,
-                };
-            }
-        }
         #region Constructors and initializers
 
         /// <summary>
@@ -139,6 +116,20 @@ namespace Jhu.SkyQuery.Format.VOTable
         [OnDeserializing]
         private void InitializeMembers(StreamingContext context)
         {
+            Description = new FileFormatDescription()
+            {
+                DisplayName = FileFormatNames.VOTable,
+                MimeType = Constants.MimeTypeVOTable,
+                Extension = Constants.FileExtensionVOTable,
+                CanRead = true,
+                CanWrite = true,
+                CanDetectColumnNames = false,
+                CanHoldMultipleDatasets = true,
+                RequiresArchive = false,
+                IsCompressed = false,
+                KnowsRecordCount = false,
+                RequiresRecordCount = false,
+            };
         }
 
         private void CopyMembers(VOTable old)

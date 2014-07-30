@@ -27,27 +27,6 @@ namespace Jhu.SkyQuery.Format.Fits
         #endregion
         #region Properties
 
-        public override FileFormatDescription Description
-        {
-            get
-            {
-                return new FileFormatDescription()
-                {
-                    DisplayName = FileFormatNames.Fits,
-                    DefaultMimeType = Constants.MimeTypeFits,
-                    DefaultExtension = Constants.FileExtensionFits,
-                    CanRead = true,
-                    CanWrite = true,
-                    CanDetectColumnNames = false,
-                    CanHoldMultipleDatasets = true,
-                    RequiresArchive = false,
-                    IsCompressed = false,
-                    KnowsRecordCount = true,
-                    RequiresRecordCount = true,
-                };
-            }
-        }
-
         internal FitsFile Fits
         {
             get { return fits; }
@@ -124,6 +103,21 @@ namespace Jhu.SkyQuery.Format.Fits
         [OnDeserializing]
         private void InitializeMembers(StreamingContext context)
         {
+            Description = new FileFormatDescription()
+            {
+                DisplayName = FileFormatNames.Fits,
+                MimeType = Constants.MimeTypeFits,
+                Extension = Constants.FileExtensionFits,
+                CanRead = true,
+                CanWrite = true,
+                CanDetectColumnNames = false,
+                CanHoldMultipleDatasets = true,
+                RequiresArchive = false,
+                IsCompressed = false,
+                KnowsRecordCount = true,
+                RequiresRecordCount = true,
+            };
+
             this.fits = null;
             this.endianness = SharpFitsIO.Endianness.BigEndian;
         }
