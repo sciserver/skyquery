@@ -71,22 +71,23 @@ namespace Jhu.SkyQuery.Jobs.Query
             return new SkyQueryNameResolver();
         }
 
-        public override JobInstance ScheduleAsJob(QueryBase query, string queueName, string comments)
+        public override JobInstance ScheduleAsJob(string jobName, QueryBase query, string queueName, string comments)
         {
             if (!(query is XMatchQuery))
             {
-                return base.ScheduleAsJob(query, queueName, comments);
+                return base.ScheduleAsJob(jobName, query, queueName, comments);
             }
             else
             {
                 var ef = new EntityFactory(Context);
 
                 var job = CreateJobInstance(
+                    jobName,
                     EntityFactory.CombineName(EntityType.JobDefinition, Jhu.Graywulf.Registry.AppSettings.FederationName, typeof(XMatchQueryJob).Name),
                     queueName,
                     comments);
 
-                job.Parameters["Query"].Value = query;
+                job.Parameters[Jhu.Graywulf.Jobs.Constants.JobParameterQuery].Value = query;
 
                 return job;
             }

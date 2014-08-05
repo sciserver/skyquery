@@ -23,7 +23,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 var f = new XMatchQueryFactory(context);
 
                 var q = f.CreateQuery(query);
-                var ji = f.ScheduleAsJob(q, queue, "testjob");
+                var ji = f.ScheduleAsJob(null, q, queue, "testjob");
 
                 ji.Save();
 
