@@ -327,9 +327,15 @@ namespace Jhu.SkyQuery.Format.Fits
         {
             ConvertColumnsToDatabase();
 
+            RecordCount = hdu.GetAxisLength(2);
+        }
+
+        protected override void OnSetMetadata(int blockCounter)
+        {
+            base.OnSetMetadata(blockCounter);
+
             Name = hdu.ExtensionName;
             // TODO: Metadata = ...
-            RecordCount = hdu.GetAxisLength(2);
         }
 
         protected override bool OnReadNextRow(object[] values)

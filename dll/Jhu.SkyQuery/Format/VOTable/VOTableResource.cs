@@ -271,6 +271,13 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Reader is positioned on the first TR tag now
         }
 
+        protected override void OnSetMetadata(int blockCounter)
+        {
+            base.OnSetMetadata(blockCounter);
+
+            // TODO
+        }
+
         /// <summary>
         /// Returns an array of strings containing data from the next data row.
         /// </summary>
