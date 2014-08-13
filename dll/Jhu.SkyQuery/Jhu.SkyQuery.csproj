@@ -44,20 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Format\FileFormatNames.Designer.cs">
-      <DependentUpon>FileFormatNames.resx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
+    <Compile Include="Install\SkyQueryInstaller.cs">
+      <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Format\Fits\Constants.cs" />
-    <Compile Include="Format\Fits\FitsBinaryTableWrapper.cs" />
-    <Compile Include="Format\Fits\FitsFileWrapper.cs" />
-    <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
-    <Compile Include="Format\VOTable\Constants.cs" />
-    <Compile Include="Format\VOTable\VOTable.cs" />
-    <Compile Include="Format\VOTable\VOTableResource.cs" />
-    <Compile Include="Install\SkyQueryInstaller.cs" />
-    <Compile Include="IO\SkyQueryStreamFactory.cs" />
     <Compile Include="Jobs\Query\AppSettings.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
@@ -130,6 +119,10 @@
       <Project>{D9E54B0E-9E09-4E53-95FD-4161F9D61914}</Project>
       <Name>Jhu.SharpFitsIO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
+      <Project>{E7744E98-575F-4183-B3B9-9B491C053C18}</Project>
+      <Name>Jhu.SkyQuery.IO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>
@@ -169,10 +162,6 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateZoneTable.sql" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Format\FileFormatNames.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>FileFormatNames.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\BayesFactorXMatchScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
