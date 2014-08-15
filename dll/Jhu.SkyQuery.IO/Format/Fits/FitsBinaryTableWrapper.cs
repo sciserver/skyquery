@@ -385,6 +385,7 @@ namespace Jhu.SkyQuery.Format.Fits
         protected override void OnWriteFooter()
         {
             // FITS HDUs have no footers
+            hdu.MarkEnd();
         }
     }
 }
