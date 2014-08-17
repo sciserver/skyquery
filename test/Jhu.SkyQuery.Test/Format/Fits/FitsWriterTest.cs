@@ -8,6 +8,7 @@ using System.IO;
 using System.Xml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.IO;
+using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.Fits;
 
@@ -24,8 +25,10 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
-                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM " + table, cn))
+                    using (var cmd = new SmartCommand(IOTestDataset, cn.CreateCommand()))
                     {
+                        cmd.CommandText = "SELECT * FROM " + table;
+                        
                         using (var dr = cmd.ExecuteReader())
                         {
                             fits.WriteFromDataReader(dr);

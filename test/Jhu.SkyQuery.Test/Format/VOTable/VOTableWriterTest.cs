@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Xml;
 using Jhu.Graywulf.IO;
+using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.VOTable;
 
@@ -25,8 +26,10 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
-                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM SampleData_NumericTypes", cn))
+                    using (var cmd = new SmartCommand(IOTestDataset, cn.CreateCommand()))
                     {
+                        cmd.CommandText = "SELECT * FROM SampleData_NumericTypes";
+
                         using (var dr = cmd.ExecuteReader())
                         {
                             nat.WriteFromDataReader(dr);
@@ -45,8 +48,10 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
-                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM SampleData_NumericTypes_Null", cn))
+                    using (var cmd = new SmartCommand(IOTestDataset, cn.CreateCommand()))
                     {
+                        cmd.CommandText = "SELECT * FROM SampleData_NumericTypes_Null";
+
                         using (var dr = cmd.ExecuteReader())
                         {
                             nat.WriteFromDataReader(dr);
@@ -65,8 +70,10 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
-                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM SampleData_AllTypes", cn))
+                    using (var cmd = new SmartCommand(IOTestDataset, cn.CreateCommand()))
                     {
+                        cmd.CommandText = "SELECT * FROM SampleData_AllTypes";
+
                         using (var dr = cmd.ExecuteReader())
                         {
                             nat.WriteFromDataReader(dr);
@@ -85,8 +92,10 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
-                    using (var cmd = IOTestDataset.CreateCommand("SELECT * FROM SampleData_AllTypes_Nullable", cn))
+                    using (var cmd = new SmartCommand(IOTestDataset, cn.CreateCommand()))
                     {
+                        cmd.CommandText = "SELECT * FROM SampleData_AllTypes_Nullable";
+
                         using (var dr = cmd.ExecuteReader())
                         {
                             nat.WriteFromDataReader(dr);
