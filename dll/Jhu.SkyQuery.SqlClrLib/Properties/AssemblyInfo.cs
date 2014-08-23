@@ -8,26 +8,7 @@ using System.Data.Sql;
 // associated with an assembly.
 [assembly: AssemblyTitle("SkyQueryCLR")]
 [assembly: AssemblyDescription("")]
-/*
-[assembly: AssemblyConfiguration(Jhu.SkyQuery.Constants.InfoConfiguration)]
-[assembly: AssemblyCompany(Jhu.SkyQuery.Constants.InfoCompany)]
-[assembly: AssemblyProduct(Jhu.SkyQuery.Constants.InfoProduct)]
-[assembly: AssemblyCopyright(Jhu.SkyQuery.Constants.InfoCopyright)]
-[assembly: AssemblyTrademark(Jhu.SkyQuery.Constants.InfoTrademark)]
-[assembly: AssemblyCulture(Jhu.SkyQuery.Constants.InfoCulture)]
- * */
 
-[assembly: ComVisible(false)]
-
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers
-// by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.*")]
 
+[assembly: ComVisible(false)]

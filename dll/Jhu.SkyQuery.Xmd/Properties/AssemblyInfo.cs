@@ -14,19 +14,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark(Jhu.SkyQuery.Copyright.InfoTrademark)]
 [assembly: AssemblyCulture(Jhu.SkyQuery.Copyright.InfoCulture)]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using '*'.
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion(Jhu.SkyQuery.Copyright.AssemblyVersion)]
+
 [assembly: ComVisible(false)]
-
-
-//NOTE: When updating the namespaces in the project please add new or update existing the XmlnsDefinitionAttribute
-//You can add additional attributes in order to map any additional namespaces you have in the project
-//[assembly: System.Workflow.ComponentModel.Serialization.XmlnsDefinition("http://schemas.com/Jhu.SkyQuery.Xmd", "Jhu.SkyQuery.Xmd")]
