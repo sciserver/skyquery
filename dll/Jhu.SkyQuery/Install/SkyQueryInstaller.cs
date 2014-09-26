@@ -8,7 +8,7 @@ using Jhu.Graywulf.Install;
 
 namespace Jhu.SkyQuery.Install
 {
-    public class SkyQueryInstaller : ContextObject
+    public class SkyQueryInstaller : InstallerBase
     {
         public SkyQueryInstaller(Context context)
             : base(context)
@@ -34,9 +34,9 @@ namespace Jhu.SkyQuery.Install
 
             var federation = new Federation(domain)
             {
-                QueryFactory = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory).AssemblyQualifiedName,
-                FileFormatFactory = typeof(Jhu.SkyQuery.Format.SkyQueryFileFormatFactory).AssemblyQualifiedName,
-                StreamFactory = typeof(Jhu.SkyQuery.IO.SkyQueryStreamFactory).AssemblyQualifiedName,
+                QueryFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory)),
+                FileFormatFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Format.SkyQueryFileFormatFactory)),
+                StreamFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.IO.SkyQueryStreamFactory)),
                 Name = "SkyQuery",
                 System = true,
                 ShortTitle = "SkyQuery",
@@ -57,7 +57,7 @@ namespace Jhu.SkyQuery.Install
             {
                 Name = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob).Name,
                 System = true,
-                WorkflowTypeName = typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob).AssemblyQualifiedName,
+                WorkflowTypeName = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryJob)),
                 Settings = new SqlQueryJobSettings()
                 {
                     HotDatabaseVersionName = Constants.HotDatabaseVersionName,
