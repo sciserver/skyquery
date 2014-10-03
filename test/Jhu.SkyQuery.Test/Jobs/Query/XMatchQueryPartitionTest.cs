@@ -38,7 +38,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
             var xmq = new BayesFactorXMatchQuery(null);
             xmq.QueryString = query;
-            xmq.QueryFactoryTypeName = Util.TypeNameFormatter.ToUnversionedAssemblyQualifiedName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
+            xmq.QueryFactoryTypeName = Jhu.Graywulf.Util.TypeNameFormatter.ToUnversionedAssemblyQualifiedName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
             xmq.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
             xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
             xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
