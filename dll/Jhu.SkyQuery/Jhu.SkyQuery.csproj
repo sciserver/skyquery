@@ -47,6 +47,7 @@
     <Compile Include="Install\SkyQueryInstaller.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Install\XMatchQueryJobInstaller.cs" />
     <Compile Include="Jobs\Query\AppSettings.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
@@ -75,6 +76,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Plugins\Jhu.Graywulf.Plugins.csproj">
+      <Project>{644dcdc2-729e-4f84-84d0-ad9c2f49a8c8}</Project>
+      <Name>Jhu.Graywulf.Plugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Activities\Jhu.Graywulf.Activities.csproj">
       <Project>{57392DA3-E280-48EE-80C8-64E09FD8AFB5}</Project>
       <Name>Jhu.Graywulf.Activities</Name>

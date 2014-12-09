@@ -118,7 +118,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var query = System.IO.File.ReadAllText(input);
 
             // MyDB
-            var mydbds = CreateDataset(Jhu.Graywulf.Registry.Constants.MyDbName);
+            var mydbds = CreateDataset(Jhu.Graywulf.Registry.Constants.UserDbName);
             mydbds.IsMutable = true;
 
             // TempDB

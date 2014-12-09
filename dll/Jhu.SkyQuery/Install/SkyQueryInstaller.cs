@@ -8,15 +8,44 @@ using Jhu.Graywulf.Install;
 
 namespace Jhu.SkyQuery.Install
 {
-    public class SkyQueryInstaller : InstallerBase
+    public class SkyQueryInstaller : FederationInstaller
     {
-        public SkyQueryInstaller(Context context)
-            : base(context)
+        public SkyQueryInstaller(Domain domain)
+            : base(domain)
         {
         }
 
-        public void Install(Domain domain, ServerVersion myDBServerVersion, ServerVersion codeDatabaseServerVersion)
+        public Federation Install()
         {
+            return base.Install("SkyQuery");
+        }
+
+        public override void GenerateDefaultSettings()
+        {
+            Federation.System = true;
+
+            Federation.SchemaManager = GetUnversionedTypeName(typeof(Jhu.Graywulf.Schema.GraywulfSchemaManager));
+            Federation.UserDatabaseFactory = GetUnversionedTypeName(typeof(Jhu.Graywulf.CasJobs.CasJobsUserDatabaseFactory));
+            Federation.QueryFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
+            Federation.FileFormatFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Format.SkyQueryFileFormatFactory));
+            Federation.StreamFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.IO.SkyQueryStreamFactory));
+
+            Federation.ShortTitle = "SkyQuery";
+            Federation.LongTitle = "SkyQuery Astronomical Cross-Match Engine";
+            Federation.Copyright = Copyright.InfoCopyright;
+            Federation.Disclaimer = Domain.Disclaimer;
+            Federation.Email = Domain.Email;
+        }
+
+        protected override void GenerateQueryJobs()
+        {
+            var jdi = new XMatchQueryJobInstaller(Federation);
+            jdi.Install();
+        }
+
+#if false   // TODO: old code, delete
+
+            // ---
             var ef = new EntityFactory(Context);
 
             var clusterName = domain.Cluster.Name;
@@ -46,6 +75,11 @@ namespace Jhu.SkyQuery.Install
                 TempDatabaseVersion = tempDatabaseVersion,
                 ControllerMachine = controllerMachine,
                 SchemaSourceServerInstance = schemaSourceServerInstance,
+
+                //CodeDatabaseVersion
+                //Disclaimer
+                //MyDBDatabaseVersion
+                
             };
             federation.Save();
 
@@ -62,7 +96,7 @@ namespace Jhu.SkyQuery.Install
                 {
                     HotDatabaseVersionName = Constants.HotDatabaseVersionName,
                     StatDatabaseVersionName = Constants.StatDatabaseVersionName,
-                    DefaultDatasetName = Constants.MyDbName,
+                    DefaultDatasetName = Constants.UserDbName,
                     DefaultSchemaName = Constants.DefaultSchemaName,
                     QueryTimeout = 7200,
                 },
@@ -88,5 +122,7 @@ namespace Jhu.SkyQuery.Install
 
             federation.Save();
         }
+
+#endif
     }
 }

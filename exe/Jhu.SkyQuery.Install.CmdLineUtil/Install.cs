@@ -22,20 +22,6 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
             set { domainName = value; }
         }
 
-        [Parameter(Name = "MyDB", Description = "Server version to store MyDBs", Required = false)]
-        public string MyDBServerVersionName
-        {
-            get { return myDBServerVersionName; }
-            set { myDBServerVersionName = value; }
-        }
-
-        [Parameter(Name = "CodeDB", Description = "Server version to store code DBs", Required = false)]
-        public string CodeDatabaseServerVersionName
-        {
-            get { return codeDatabaseServerVersionName; }
-            set { codeDatabaseServerVersionName = value; }
-        }
-
         public Install()
         {
             InitializeMembers();
@@ -53,31 +39,10 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
             using (Context context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.ManualCommit))
             {
                 var ef = new EntityFactory(context);
-                var d = ef.LoadEntity<Domain>(domainName);
+                var domain = ef.LoadEntity<Domain>(domainName);
 
-                // Load or figure out server versions
-                ServerVersion mydbsv;
-                if (myDBServerVersionName != null)
-                {
-                    mydbsv = ef.LoadEntity<ServerVersion>(myDBServerVersionName);
-                }
-                else
-                {
-                    mydbsv = ef.LoadEntity<ServerVersion>(d.Cluster.Name, Constants.NodeMachineRoleName, Constants.ServerVersionName);
-                }
-
-                ServerVersion codedbsv;
-                if (codeDatabaseServerVersionName != null)
-                {
-                    codedbsv = ef.LoadEntity<ServerVersion>(codeDatabaseServerVersionName);
-                }
-                else
-                {
-                    codedbsv = ef.LoadEntity<ServerVersion>(d.Cluster.Name, Constants.NodeMachineRoleName, Constants.ServerVersionName);
-                }
-                
-                var i = new Jhu.SkyQuery.Install.SkyQueryInstaller(context);
-                i.Install(d, mydbsv, codedbsv);
+                var i = new Jhu.SkyQuery.Install.SkyQueryInstaller(domain);
+                i.Install();
 
                 context.CommitTransaction();
             }
