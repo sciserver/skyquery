@@ -129,8 +129,14 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var codeds = CreateDataset(Jhu.Graywulf.Registry.Constants.CodeDbName);
 
             // Create query and verify
-            var f = new XMatchQueryFactory();
-            var q = f.CreateQuery(query, ExecutionMode.SingleServer, null, mydbds, tempds, codeds);
+            var f = new SingleServerXMatchQueryFactory()
+            {
+                UserDatabaseDataSet = mydbds,
+                TempDatabaseDataset = tempds,
+                CodeDatabaseDataset = codeds,
+            };
+
+            var q = f.CreateQuery(query);
             q.Verify();
 
             // Create a workflow

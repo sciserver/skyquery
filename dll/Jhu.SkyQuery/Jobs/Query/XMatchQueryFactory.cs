@@ -34,7 +34,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override Type[] LoadQueryTypes()
         {
-            return new Type[] { typeof(SqlQuery), typeof(BayesFactorXMatchQuery) };
+            return new Type[] { 
+                typeof(SqlQuery), 
+                typeof(BayesFactorXMatchQuery) 
+            };
         }
 
         protected override QueryBase CreateQueryBase(Node root)
@@ -90,18 +93,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                 job.Parameters[Jhu.Graywulf.Jobs.Constants.JobParameterQuery].Value = query;
 
                 return job;
-            }
-        }
-
-        public override System.Activities.Activity GetAsWorkflow(QueryBase query)
-        {
-            if (!(query is XMatchQuery))
-            {
-                return base.GetAsWorkflow(query);
-            }
-            else
-            {
-                return new XMatchQueryJob();
             }
         }
     }

@@ -13,8 +13,8 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     {
         private QueryBase CreateQuery(string query)
         {
-            var f = new XMatchQueryFactory();
-            return f.CreateQuery(query, ExecutionMode.SingleServer);
+            var f = new SingleServerXMatchQueryFactory();
+            return f.CreateQuery(query);
         }
 
         [TestMethod]

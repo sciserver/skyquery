@@ -63,6 +63,7 @@
     <Compile Include="Jobs\Query\CreateZoneDefTable.cs" />
     <Compile Include="Jobs\Query\CreateZoneTable.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
+    <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
     <Compile Include="Jobs\Query\XMatchQueryFactory.cs" />

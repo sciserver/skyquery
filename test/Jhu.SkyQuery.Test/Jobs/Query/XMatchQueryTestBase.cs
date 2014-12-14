@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
+using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Jobs.Query;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
