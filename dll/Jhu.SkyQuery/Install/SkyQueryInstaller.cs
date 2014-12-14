@@ -39,6 +39,12 @@ namespace Jhu.SkyQuery.Install
 
         protected override void GenerateQueryJobs()
         {
+            // SkyQuery extends query framework with the ability to run
+            // XMatch queries, but non-xmatch queries still use the
+            // generic query workflow.
+
+            base.GenerateQueryJobs();
+
             var jdi = new XMatchQueryJobInstaller(Federation);
             jdi.Install();
         }
