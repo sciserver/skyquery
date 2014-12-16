@@ -22,7 +22,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "MyDBSqlQueryTest_MyDBTableQueryTest");
+                DropUserDatabaseTable("dbo", "MyDBSqlQueryTest_MyDBTableQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -49,7 +49,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "MyDBSqlQueryTest_MyDBTableJoinedQueryTest1");
+                DropUserDatabaseTable("dbo", "MyDBSqlQueryTest_MyDBTableJoinedQueryTest1");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -80,7 +80,7 @@ INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.ID";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "MyDBSqlQueryTest_MyDBTableJoinedQueryTest2");
+                DropUserDatabaseTable("dbo", "MyDBSqlQueryTest_MyDBTableJoinedQueryTest2");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -111,7 +111,7 @@ INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.ObjID";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "MyDBSqlQueryTest_SelfJoinQueryTest");
+                DropUserDatabaseTable("dbo", "MyDBSqlQueryTest_SelfJoinQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -144,7 +144,7 @@ CROSS JOIN MyCatalog b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "MyDBSqlQueryTest_SelfJoinQueryTest2");
+                DropUserDatabaseTable("dbo", "MyDBSqlQueryTest_SelfJoinQueryTest2");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())

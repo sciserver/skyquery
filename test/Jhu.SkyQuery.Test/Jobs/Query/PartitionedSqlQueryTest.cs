@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "PartitionedSqlQueryTest_SimpleQueryTest");
+                DropUserDatabaseTable("dbo", "PartitionedSqlQueryTest_SimpleQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -47,7 +47,7 @@ FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "PartitionedSqlQueryTest_MyDBJoinQueryTest");
+                DropUserDatabaseTable("dbo", "PartitionedSqlQueryTest_MyDBJoinQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())

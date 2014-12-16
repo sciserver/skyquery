@@ -29,7 +29,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_SimpleQueryTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_SimpleQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -58,7 +58,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_JoinQueryTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_JoinQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -91,7 +91,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_JoinQueryTest2");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_JoinQueryTest2");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -123,7 +123,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_JoinQueryTest3");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_JoinQueryTest3");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -154,7 +154,7 @@ CROSS JOIN Galex:PhotoObjAll g";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_SelfJoinQueryTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_SelfJoinQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -182,7 +182,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_SimpleSelectStarQueryTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_SimpleSelectStarQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -206,7 +206,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_AliasSelectStarQueryTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_AliasSelectStarQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -230,7 +230,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_TableValuedFunctionTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_TableValuedFunctionTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -254,7 +254,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_TableValuedFunctionTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_TableValuedFunctionTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -283,7 +283,7 @@ INNER JOIN SDSSDR7:PhotoObj p
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_TableValuedFunctionCrossApplyTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_TableValuedFunctionCrossApplyTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -311,7 +311,7 @@ CROSS APPLY dbo.fHtmCoverCircleEq(p.ra, p.dec, 10) htm";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_ScalarFunctionTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_ScalarFunctionTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -337,7 +337,7 @@ INTO SqlQueryTest_ScalarFunctionTest";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_ScalarFunctionOnTableTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_ScalarFunctionOnTableTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -364,7 +364,7 @@ FROM SDSSDR7:PhotoObj p";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropMyDBTable("dbo", "SqlQueryTest_ScalarFunctionInWhereTest");
+                DropUserDatabaseTable("dbo", "SqlQueryTest_ScalarFunctionInWhereTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
