@@ -7,6 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
 using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Web.Api.V1;
 using Jhu.SkyQuery.Jobs.Query;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
@@ -19,12 +21,25 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
             using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
             {
-                SignInTestUser(context);
+                var user = SignInTestUser(context);
 
-                var f = new XMatchQueryFactory(context);
+                var udf = UserDatabaseFactory.Create(context.Federation);
+                var mydb = udf.GetUserDatabase(user);
 
-                var q = f.CreateQuery(query);
-                var ji = f.ScheduleAsJob(null, q, queue, "testjob");
+                var qf = QueryFactory.Create(context.Federation);
+
+                var q = qf.CreateQuery(query);
+
+                q.Destination = new Jhu.Graywulf.IO.Tasks.DestinationTable()
+                {
+                    Dataset = mydb,
+                    DatabaseName = mydb.DatabaseName,
+                    SchemaName = mydb.DefaultSchemaName,
+                    TableNamePattern = "testtable",     // will be overwritten by INTO queries
+                    Options = TableInitializationOptions.Create | TableInitializationOptions.Drop
+                };
+
+                var ji = qf.ScheduleAsJob(null, q, queue, "testjob");
 
                 ji.Save();
 
