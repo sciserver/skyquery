@@ -39,6 +39,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             set { codeds = value; }
         }
 
+        public SingleServerXMatchQueryFactory()
+        {
+        }
+
         /// <summary>
         /// Initializes a query object for execution outside the Graywulf framework.
         /// </summary>
