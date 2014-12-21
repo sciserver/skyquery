@@ -437,8 +437,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
         }
 
         [TestMethod]
-        public void MyDBMatchQueryTest()
+        public void MyDBXMatchQueryTest()
         {
+            // This test requires a table 'MyCatalog' in mydb
+
             using (SchedulerTester.Instance.GetExclusiveToken())
             {
                 SchedulerTester.Instance.EnsureRunning();

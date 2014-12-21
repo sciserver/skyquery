@@ -64,6 +64,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Plugins\Jhu.Graywulf.Plugins.csproj">
+      <Project>{644dcdc2-729e-4f84-84d0-ad9c2f49a8c8}</Project>
+      <Name>Jhu.Graywulf.Plugins</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
@@ -99,6 +103,14 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Web.Api\Jhu.Graywulf.Web.Api.csproj">
+      <Project>{975ee996-a41b-4c73-8562-e2b2035e8899}</Project>
+      <Name>Jhu.Graywulf.Web.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Jobs.Test\Jhu.Graywulf.Jobs.Test.csproj">
+      <Project>{ecc46a31-4d61-4c1e-b9f6-6f1b97809fb1}</Project>
+      <Name>Jhu.Graywulf.Jobs.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\GrayWulf\Test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>

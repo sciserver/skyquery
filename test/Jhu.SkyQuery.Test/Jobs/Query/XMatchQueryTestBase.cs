@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             return UserDatabaseFactory.Create(
                 typeof(Jhu.Graywulf.CasJobs.CasJobsUserDatabaseFactory).AssemblyQualifiedName,
-                context);
+                context.Federation);
         }
 
         protected override QueryFactory CreateQueryFactory(Context context)

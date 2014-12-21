@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         FileDataReader OpenSimpleReader(string path)
         {
             var f = new VOTable(
-                new Uri(String.Format("../../../skyquery/test/files/{0}", path), UriKind.Relative),
+                new Uri(String.Format("../../../../../skyquery/test/files/{0}", path), UriKind.Relative),
                 DataFileMode.Read
                 );
 
