@@ -15,7 +15,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         private FitsFileWrapper OpenFits(string path)
         {
             var f = new FitsFileWrapper(
-                new Uri(String.Format("../../../skyquery/test/files/{0}", path), UriKind.Relative),
+                new Uri(String.Format("../../../../../skyquery/test/files/{0}", path), UriKind.Relative),
                 DataFileMode.Read
                 );
 
