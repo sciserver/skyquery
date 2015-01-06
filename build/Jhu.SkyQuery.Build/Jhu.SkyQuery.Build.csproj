@@ -47,14 +47,14 @@
   <PropertyGroup>
     <PostBuildEvent>REM Copy auth site
 
-mkdir $(SolutionDir)\www\auth
-xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.Auth $(SolutionDir)www\auth /E
+if not exist "$(SolutionDir)\www\auth" mkdir $(SolutionDir)\www\auth
+xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.Auth $(SolutionDir)www\auth /E /y
 
 REM Copy SkyQuery user interface
 
-mkdir $(SolutionDir)\www\skyquery
-xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI $(SolutionDir)www\skyquery /E
-xcopy $(SolutionDir)skyquery\docs\pages $(SolutionDir)www\skyquery\docs\pages /E</PostBuildEvent>
+if not exist "$(SolutionDir)\www\skyquery" mkdir $(SolutionDir)\www\skyquery
+xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI $(SolutionDir)www\skyquery /E /y
+xcopy $(SolutionDir)skyquery\docs\pages $(SolutionDir)www\skyquery\docs\pages /E /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
