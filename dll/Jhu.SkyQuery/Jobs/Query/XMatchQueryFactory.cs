@@ -86,7 +86,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 var job = CreateJobInstance(
                     jobName,
-                    EntityFactory.CombineName(EntityType.JobDefinition, Jhu.Graywulf.Registry.AppSettings.FederationName, typeof(XMatchQueryJob).Name),
+                    EntityFactory.CombineName(EntityType.JobDefinition, Jhu.Graywulf.Registry.ContextManager.Configuration.FederationName, typeof(XMatchQueryJob).Name),
                     queueName,
                     comments);
 
