@@ -48,6 +48,28 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
+        [TestMethod]
+        public void SimpleQueryWithoutIntoTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = "SELECT TOP 10 objid, ra, dec FROM SDSSDR7:PhotoObj";
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
+
+                    var ji = LoadJob(guid);
+                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                }
+            }
+        }
+
         /// <summary>
         /// Joins two tables of the same dataset.
         /// This one won't create a primary key on the target table because there's no
