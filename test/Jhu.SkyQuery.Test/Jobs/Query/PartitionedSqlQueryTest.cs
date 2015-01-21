@@ -14,7 +14,31 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     [TestClass]
     public class PartitionedSqlQueryTest : XMatchQueryTestBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                PurgeTestJobs();
+            }
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                if (SchedulerTester.Instance.IsRunning)
+                {
+                    SchedulerTester.Instance.DrainStop();
+                }
+
+                PurgeTestJobs();
+            }
+        }
+
         [TestMethod]
+        [TestCategory("Query")]
         public void SimpleQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -34,15 +58,13 @@ FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid, new TimeSpan(0, 5, 0));
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void MyDBJoinQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -63,10 +85,7 @@ CROSS JOIN MyCatalog b
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }

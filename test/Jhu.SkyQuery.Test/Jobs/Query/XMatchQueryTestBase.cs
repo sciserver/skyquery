@@ -27,5 +27,24 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 typeof(XMatchQueryFactory).AssemblyQualifiedName,
                 context);
         }
+
+        protected void FinishQueryJob(Guid guid)
+        {
+            FinishQueryJob(guid, new TimeSpan(0, 2, 0));
+        }
+
+        protected void FinishQueryJob(Guid guid, TimeSpan timeout)
+        {
+            WaitJobComplete(guid, TimeSpan.FromSeconds(10), timeout);
+
+            var ji = LoadJob(guid);
+
+            if (ji.JobExecutionStatus == JobExecutionState.Failed)
+            {
+                throw new Exception(ji.ExceptionMessage);
+            }
+
+            Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+        }
     }
 }

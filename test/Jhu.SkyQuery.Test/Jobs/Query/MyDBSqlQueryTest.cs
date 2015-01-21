@@ -14,10 +14,34 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     [TestClass]
     public class MyDBSqlQueryTest : XMatchQueryTestBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                PurgeTestJobs();
+            }
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                if (SchedulerTester.Instance.IsRunning)
+                {
+                    SchedulerTester.Instance.DrainStop();
+                }
+
+                PurgeTestJobs();
+            }
+        }
+
         /// <summary>
         /// Executes a simple query on a single MyDB table
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void MyDBTableQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -33,10 +57,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -45,6 +66,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         /// Joins two MyDB tables
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void MyDBTableJoinedQueryTest1()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -60,14 +82,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         @"SELECT a.objid
 INTO MyDBSqlQueryTest_MyDBTableJoinedQueryTest1
 FROM MYDB:MyCatalog a
-INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.ID";
+INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.objID";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -76,6 +95,7 @@ INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.ID";
         /// Joins a MyDB table with a mirrored catalog table
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void MyDBTableJoinedQueryTest2()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -95,10 +115,7 @@ INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.ObjID";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -107,6 +124,7 @@ INNER JOIN MYDB:MySDSSSample b ON a.ObjID = b.ObjID";
         /// Executes a self-join on a MyDB table
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void SelfJoinQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -126,10 +144,7 @@ CROSS JOIN MyCatalog b";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -140,6 +155,7 @@ CROSS JOIN MyCatalog b";
         /// collision issues of cached remote tables.
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void SelfJoinQueryTest2()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -160,10 +176,7 @@ CROSS JOIN MyCatalog b";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }

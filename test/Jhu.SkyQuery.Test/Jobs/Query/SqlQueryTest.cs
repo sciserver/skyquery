@@ -15,6 +15,29 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     public class SqlQueryTest : XMatchQueryTestBase
     {
 
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                PurgeTestJobs();
+            }
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                if (SchedulerTester.Instance.IsRunning)
+                {
+                    SchedulerTester.Instance.DrainStop();
+                }
+
+                PurgeTestJobs();
+            }
+        }
+
         [TestMethod]
         public void SqlQuerySerializableTest()
         {
@@ -25,6 +48,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void SimpleQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -40,15 +64,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void SimpleQueryWithoutIntoTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -62,10 +84,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -76,6 +95,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         /// unique combination of columns.
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void JoinQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -96,10 +116,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -109,6 +126,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
         /// This one does create a primary key on the target table.
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void JoinQueryTest2()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -129,10 +147,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -141,6 +156,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
         /// Joins two table from different mirrored datasets.
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void JoinQueryTest3()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -160,10 +176,7 @@ CROSS JOIN Galex:PhotoObjAll g";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
@@ -172,6 +185,7 @@ CROSS JOIN Galex:PhotoObjAll g";
         /// Executes a self-join
         /// </summary>
         [TestMethod]
+        [TestCategory("Query")]
         public void SelfJoinQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -191,15 +205,13 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void SimpleSelectStarQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -215,15 +227,13 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void AliasSelectStarQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -239,15 +249,13 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void TableValuedFunctionTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -263,15 +271,13 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void TableValuedFunctionJoinTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -292,15 +298,13 @@ INNER JOIN SDSSDR7:PhotoObj p
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void TableValuedFunctionCrossApplyTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -320,15 +324,13 @@ CROSS APPLY dbo.fHtmCoverCircleEq(p.ra, p.dec, 10) htm";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void ScalarFunctionTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -346,15 +348,13 @@ INTO SqlQueryTest_ScalarFunctionTest";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void ScalarFunctionOnTableTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -373,15 +373,13 @@ FROM SDSSDR7:PhotoObj p";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
 
         [TestMethod]
+        [TestCategory("Query")]
         public void ScalarFunctionInWhereTest()
         {
             using (SchedulerTester.Instance.GetToken())
@@ -401,10 +399,7 @@ WHERE dbo.fDistanceEq(0, 0, p.ra, p.dec) > 1000";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    WaitJobComplete(guid, TimeSpan.FromSeconds(10));
-
-                    var ji = LoadJob(guid);
-                    Assert.AreEqual(JobExecutionState.Completed, ji.JobExecutionStatus);
+                    FinishQueryJob(guid);
                 }
             }
         }
