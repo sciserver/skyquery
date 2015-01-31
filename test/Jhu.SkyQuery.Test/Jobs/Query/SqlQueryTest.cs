@@ -71,6 +71,35 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         [TestMethod]
         [TestCategory("Query")]
+        public void MultipleQueriesTest()
+        {
+            // This is to test round-robin scheduling over a set of servers
+
+            for (int i = 0; i < 5; i++)
+            {
+
+                using (SchedulerTester.Instance.GetToken())
+                {
+                    DropUserDatabaseTable("dbo", "SqlQueryTest_SimpleQueryTest");
+
+                    SchedulerTester.Instance.EnsureRunning();
+                    using (RemoteServiceTester.Instance.GetToken())
+                    {
+                        RemoteServiceTester.Instance.EnsureRunning();
+
+                        var sql = "SELECT TOP 10 objid, ra, dec INTO SqlQueryTest_SimpleQueryTest FROM SDSSDR7:PhotoObj";
+
+                        var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                        FinishQueryJob(guid, new TimeSpan(0, 10, 0));
+                    }
+                }
+
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void SimpleQueryWithoutIntoTest()
         {
             using (SchedulerTester.Instance.GetToken())
