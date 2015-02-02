@@ -1,4 +1,4 @@
-USE [SkyQuery_MYDB_test]
+﻿USE [SkyQuery_MYDB_test]
 
 
 
@@ -282,3 +282,38 @@ CREATE TABLE [dbo].[MySDSSSample](
 GO
 
 -- Use a query to populate MySDSSSample from PhotoObjAll
+
+
+
+CREATE TABLE [dbo].[SampleData](
+	[float] [real] NULL,
+	[double] [float] NULL,
+	[decimal] [money] NULL,
+	[nvarchar(50)] [nvarchar](50) NULL,
+	[bigint] [bigint] NULL,
+	[int] [int] NOT NULL,
+	[tinyint] [tinyint] NULL,
+	[smallint] [smallint] NULL,
+	[bit] [bit] NULL,
+	[ntext] [nvarchar](max) NULL,
+	[char] [char](1) NULL,
+	[datetime] [datetime] NULL,
+	[guid] [uniqueidentifier] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+
+
+INSERT [dbo].[SampleData]
+VALUES (1.234568,
+		1.23456789,
+		1.2346,
+		'this is text',
+		123456789,
+		123456,
+		123,
+		12345,
+		1,
+		N'this is unicode text ő',
+		'A',
+		'2012-08-17 00:00:00.000',
+		'68652251-C9E4-4630-80BE-88B96D3258CE')
