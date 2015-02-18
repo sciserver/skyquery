@@ -2,73 +2,143 @@ USE SkyNode_TwoMASS
 
 CREATE TABLE [dbo].[PhotoObj](
 --/ <summary>Point source survey objects</summary>
---/ <remarks>   This is the Point Source Catalog.</remarks>
-	[objID] [bigint] NOT NULL, --/ <column>unique identification number for the PSC source</column>
+--/ <remarks>This is the Point Source Catalog.</remarks>
+	
+	[objID] [bigint] NOT NULL, 
+	--/ <column>
+	--/ unique identification number for the PSC source
+	--/ </column>
+	
 	[ra] [float] NOT NULL, --/ <column unit="deg">right ascension</column>
+	
 	[dec] [float] NOT NULL, --/ <column unit="deg">declination</column>
-  [cx] [float] NULL, --/ <column>Cartesian coordinate x</column>
+    
+	[cx] [float] NULL, --/ <column>Cartesian coordinate x</column>
+	
 	[cy] [float] NULL, --/ <column>Cartesian coordinate y</column>
+	
 	[cz] [float] NULL, --/ <column>Cartesian coordinate z</column>
+	
 	[htmid] [bigint] NULL, --/ <column>Unique HTM ID</column>
+	
 	[err_maj] [real] NOT NULL, --/ <column unit="arcsec">major axis of position error ellipse</column>
+	
 	[err_min] [real] NOT NULL, --/ <column unit="arcsec">minor axis of position error ellipse</column>
+	
 	[err_ang] [smallint] NOT NULL, --/ <column unit="deg">position angle of error ellipse major axis</column>
+	
 	[designation] [varchar](17) NOT NULL, --/ <column>source designation formed from sexigesimal coordinates</column>
+	
 	[j_m] [real] NOT NULL, --/ <column unit="mag">J default magnitude</column>
+	
 	[j_cmsig] [real] NOT NULL, --/ <column unit="mag">J corrected magnitude uncertainty</column>
+	
 	[j_msigcom] [real] NOT NULL, --/ <column unit="mag">J total mag uncertainty</column>
+	
 	[j_snr] [real] NOT NULL, --/ <column unit="mag">J band scan signal-to-noise ratio</column>
+	
 	[h_m] [real] NOT NULL, --/ <column unit="mag">H default magnitude</column>
+	
 	[h_cmsig] [real] NOT NULL, --/ <column unit="mag">H corrected magnitude uncertainty</column>
+	
 	[h_msigcom] [real] NOT NULL, --/ <column unit="mag">H total mag uncertainty</column>
+	
 	[h_snr] [real] NOT NULL, --/ <column unit="mag">H band scan signal-to-noise ratio</column>
+	
 	[k_m] [real] NOT NULL, --/ <column unit="mag">K default magnitude</column>
+	
 	[k_cmsig] [real] NOT NULL, --/ <column unit="mag">K corrected magnitude uncertainty</column>
+	
 	[k_msigcom] [real] NOT NULL, --/ <column unit="mag">K total mag uncertainty</column>
+	
 	[k_snr] [real] NOT NULL, --/ <column unit="mag">K band scan signal-to-noise ratio</column>
+	
 	[ph_qual] [varchar](32) NOT NULL, --/ <column>photometric quality flag</column>
+	
 	[rd_flg] [varchar](32) NOT NULL, --/ <column>source of JHK default mags (read flag)</column>
+	
 	[bl_flg] [varchar](32) NOT NULL, --/ <column>indicates no of JHK components fit to source (each digit 0|1|2)</column>
+	
 	[cc_flg] [varchar](32) NOT NULL, --/ <column>indicates artifact contamination and/or confusion</column>
+	
 	[ndet] [varchar](32) NOT NULL, --/ <column>frame detection statistics</column>
+	
 	[prox] [real] NOT NULL, --/ <column unit="arcsec">distance between this source and its nearest neighbor in the PSC</column>
+	
 	[pxpa] [smallint] NOT NULL, --/ <column unit="deg">position angle on the sky of the vector from the source to the nearest neighbor in the PSC</column>
+	
 	[pxcntr] [int] NOT NULL, --/ <column>pts_key value of the nearest source in the PSC</column>
+	
 	[gal_contam] [smallint] NOT NULL, --/ <column>indicates src associated with or contaminated by an ext. src</column>
+	
 	[mp_flg] [smallint] NOT NULL, --/ <column>source is positionally associated with an asteroid or comet</column>
+	
 	[hemis] [varchar](32) NOT NULL, --/ <column>hemisphere (N/S) of observation</column>
+	
 	[date] [varchar](32) NOT NULL, --/ <column>observation date</column>
+	
 	[scan] [smallint] NOT NULL, --/ <column>scan number (unique within date)</column>
+	
 	[glon] [real] NOT NULL, --/ <column unit="deg">galactic longitude, rounded to 0.001 deg</column>
+	
 	[glat] [real] NOT NULL, --/ <column unit="deg">galactic latitude, rounded to 0.001 deg</column>
+	
 	[x_scan] [real] NOT NULL, --/ <column unit="arcsec">mean cross-scan focal plane position of the source in the U-scan coordinate system</column>
+	
 	[jdate] [float] NOT NULL, --/ <column unit="day">Julian Date of the source measurement accurate to +-30 seconds</column>
+	
 	[j_psfchi] [real] NOT NULL, --/ <column>J band reduced chi-squared value of fit</column>
+	
 	[h_psfchi] [real] NOT NULL, --/ <column>H band reduced chi-squared value of fit</column>
+	
 	[k_psfchi] [real] NOT NULL, --/ <column>K band reduced chi-squared value of fit</column>
+	
 	[j_m_stdap] [real] NOT NULL, --/ <column unit="mag">J standard aperture magnitude or BF aperture-photometry mag</column>
+	
 	[j_msig_stdap] [real] NOT NULL, --/ <column unit="mag">J standard ap. mag/BF ap.-photometry mag uncertainty</column>
+	
 	[h_m_stdap] [real] NOT NULL, --/ <column unit="mag">H standard aperture magnitude or BF aperture-photometry mag</column>
+	
 	[h_msig_stdap] [real] NOT NULL, --/ <column unit="mag">H standard ap. mag/BF ap.-photometry mag uncertainty</column>
+	
 	[k_m_stdap] [real] NOT NULL, --/ <column unit="mag">K standard aperture magnitude or BF aperture-photometry mag</column>
+	
 	[k_msig_stdap] [real] NOT NULL, --/ <column unit="mag">K standard ap. mag/BF ap.-photometry mag uncertainty</column>
+	
 	[dist_edge_ns] [int] NOT NULL, --/ <column unit="arcsec">distance from the source to the nearest North or South scan edge</column>
+	
 	[dist_edge_ew] [int] NOT NULL, --/ <column unit="arcsec">distance from the source to the nearest East or West scan edge</column>
+	
 	[dist_edge_flg] [varchar](32) NOT NULL, --/ <column>two character flag that specifies to which scan edges a source lies closest</column>
+	
 	[dup_src] [smallint] NOT NULL, --/ <column>duplicate source flag</column>
+	
 	[use_src] [smallint] NOT NULL, --/ <column>use source flag</column>
+	
 	[a] [char](1) NOT NULL, --/ <column>catalog identifier of an optical source from either the Tycho 2 or USNO-A2.0 catalog</column>
+	
 	[dist_opt] [real] NOT NULL, --/ <column unit="arcsec">distance in arcsec relative to associated optical source</column>
+	
 	[phi_opt] [smallint] NOT NULL, --/ <column unit="deg">position angle relative to assocaited optical source</column>
+	
 	[b_m_opt] [real] NOT NULL, --/ <column unit="mag">catalog blue mag of associated optical source</column>
+	
 	[vr_m_opt] [real] NOT NULL, --/ <column unit="mag">catalog red magnitude of the associated optical source</column>
+	
 	[nopt_mchs] [smallint] NOT NULL, --/ <column>number of optical sources within 5 arcsec of 2MASS src</column>
+	
 	[ext_key] [int] NOT NULL, --/ <column>unique identification number of the record in the XSC that corresponds to this point source</column>
+	
 	[scan_key] [int] NOT NULL, --/ <column>unique identification number of the record in the Scan Information Table</column>
+	
 	[coadd_key] [int] NOT NULL, --/ <column>unique identification number of the record in the Atlas Image Data Table</column>
+	
 	[coadd] [smallint] NOT NULL, --/ <column>sequence number of the Atlas Image in which the position of this source falls</column>
+	
 	[j_h] [real] NOT NULL, --/ <column unit="mag">default J-H mag color</column>
+	
 	[h_k] [real] NOT NULL, --/ <column unit="mag">default H-K mag color</column>
+	
 	[j_k] [real] NOT NULL --/ <column unit="mag">default J-K mag color</column>
 ) ON [PRIMARY]
 

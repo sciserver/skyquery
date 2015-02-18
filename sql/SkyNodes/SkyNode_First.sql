@@ -13,13 +13,13 @@ CREATE TABLE [dbo].[PhotoObj](
 	--/ <summary>J2000 right ascension</summary>
 	--/ <quantity>pos.eq.ra</quantity>
 	--/ <unit>deg</unit>
-	--/ <class>point.ra</class>
+	--/ <class>point.eq.ra</class>
 	[ra] [float] NOT NULL, 
 
 	--/ <summary>J2000 declination</summary>
 	--/ <quantity>pos.eq.dec</quantity>
 	--/ <unit>deg</unit>
-	--/ <class>point.dec</class>
+	--/ <class>point.eq.dec</class>
 	[dec] [float] NOT NULL, 
 
 	--/ <summary>W warning flag</summary>
@@ -76,22 +76,22 @@ CREATE TABLE [dbo].[PhotoObj](
 
 	--/ <summary>htmid for spatial searches</summary>
 	--/ <quantity>pos, meta.id</quantity>
-	--/ <class>point.htmid</class>
+	--/ <class>point.eq.htmid</class>
     [htmid] [bigint] NOT NULL, 
 
 	--/ <summary>cartesian x coordinate</summary>
 	--/ <quantity>pos.cartesian.x</quantity>
-	--/ <class>point.x</class>
+	--/ <class>point.eq.x</class>
     [cx] [float] NOT NULL, 
 
 	--/ <summary>cartesian x coordinate</summary>
 	--/ <quantity>pos.cartesian.y</quantity>
-	--/ <class>point.y</class>
+	--/ <class>point.eq.y</class>
 	[cy] [float] NOT NULL, 
 
 	--/ <summary>cartesian x coordinate</summary>
 	--/ <quantity>pos.cartesian.z</quantity>
-	--/ <class>point.z</class>
+	--/ <class>point.eq.z</class>
 	[cz] [float] NOT NULL, 
 ) ON [PRIMARY]
 
