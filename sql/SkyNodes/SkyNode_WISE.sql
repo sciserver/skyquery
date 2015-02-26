@@ -1028,8 +1028,189 @@ CREATE TABLE [dbo].[PhotoObj]
 	(
 		[cntr] ASC
 	)
-	WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, DATA_COMPRESSION = PAGE)
+	WITH (DATA_COMPRESSION = PAGE)
 	ON [PHOTO]
 
 ) ON [PHOTO]
 
+GO
+
+-- Index to support on the fly zone table creation
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_Zone] ON [dbo].[PhotoObj] 
+(
+	[dec] ASC,
+	[ra] ASC,
+	[cx] ASC,
+	[cy] ASC,
+	[cz] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_blend_ext_flags] ON [dbo].[PhotoObj]
+(
+	[blend_ext_flags] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+----
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_glat_glon] ON [dbo].[PhotoObj]
+(
+	[glat] ASC,
+	[glon] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_h_m_2mass] ON [dbo].[PhotoObj]
+(
+	[h_m_2mass] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_j_m_2mass] ON [dbo].[PhotoObj]
+(
+	[j_m_2mass] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_k_m_2mass] ON [dbo].[PhotoObj]
+(
+	[k_m_2mass] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_n_2mass] ON [dbo].[PhotoObj]
+(
+	[n_2mass] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_ra_dec] ON [dbo].[PhotoObj]
+(
+	[ra] ASC,
+	[dec] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_rjce] ON [dbo].[PhotoObj]
+(
+	[rjce] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_tmass_key] ON [dbo].[PhotoObj]
+(
+	[tmass_key] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w1cc_map] ON [dbo].[PhotoObj]
+(
+	[w1cc_map] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w1mpro] ON [dbo].[PhotoObj]
+(
+	[w1mpro] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w1rsemi] ON [dbo].[PhotoObj]
+(
+	[w1rsemi] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w2cc_map] ON [dbo].[PhotoObj]
+(
+	[w2cc_map] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w2mpro] ON [dbo].[PhotoObj]
+(
+	[w2mpro] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w3cc_map] ON [dbo].[PhotoObj]
+(
+	[w3cc_map] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w3mpro] ON [dbo].[PhotoObj]
+(
+	[w3mpro] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w4cc_map] ON [dbo].[PhotoObj]
+(
+	[w4cc_map] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_w4mpro] ON [dbo].[PhotoObj]
+(
+	[w4mpro] ASC
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
+GO
