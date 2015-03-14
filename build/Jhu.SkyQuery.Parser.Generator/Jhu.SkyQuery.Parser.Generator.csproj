@@ -11,7 +11,8 @@
     <RootNamespace>Jhu.SkyQuery.Parser.Generator</RootNamespace>
     <AssemblyName>sqpgen</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -93,6 +94,9 @@
       <Project>{77BE21A2-3AF7-478A-8279-3C741BF3BD59}</Project>
       <Name>Jhu.Graywulf.SqlParser.Generator</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
