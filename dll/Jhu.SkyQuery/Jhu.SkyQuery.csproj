@@ -126,11 +126,11 @@
       <Name>Jhu.Graywulf.Sql</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\sharpfitsio\src\Jhu.SharpFitsIO\Jhu.SharpFitsIO.csproj">
-      <Project>{D9E54B0E-9E09-4E53-95FD-4161F9D61914}</Project>
+      <Project>{d9e54b0e-9e09-4e53-95fd-4161f9d61914}</Project>
       <Name>Jhu.SharpFitsIO</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
-      <Project>{E7744E98-575F-4183-B3B9-9B491C053C18}</Project>
+      <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>
       <Name>Jhu.SkyQuery.IO</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
