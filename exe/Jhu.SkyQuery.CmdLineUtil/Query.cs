@@ -105,7 +105,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
 
             var ds = new SqlServerDataset();
             ds.Name = name;
-            ds.DefaultSchemaName = "dbo";
+            ds.DefaultSchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName;
             ds.ConnectionString = GetConnectionString();
             ds.DatabaseName = dscsb.InitialCatalog;
 
