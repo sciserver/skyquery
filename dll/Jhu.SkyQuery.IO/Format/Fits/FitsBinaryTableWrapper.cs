@@ -340,7 +340,7 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override bool OnReadNextRow(object[] values)
         {
-            return this.hdu.ReadNextRow(values);
+            return this.hdu.ReadNextRow(values, File.GenerateIdentityColumn ? 1 : 0);
         }
 
         protected override void OnReadFooter()
