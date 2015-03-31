@@ -594,13 +594,15 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$cx]", xts.Position.Cx);
             sql.Replace("[$cy]", xts.Position.Cy);
             sql.Replace("[$cz]", xts.Position.Cz);
+
             sql.Replace("[$zonetablename]", String.Format("[{0}].[{1}]", zonetable.SchemaName, zonetable.TableName));
             sql.Replace("[$zonedeftable]", String.Format("[{0}].[{1}]", zonedeftable.SchemaName, zonedeftable.TableName));
             sql.Replace("[$tablename]", tablename);
             sql.Replace("[$tablealias]", table.TableReference.Alias);
             sql.Replace("[$columnlist]", GetPropagatedColumnList(table, ColumnListType.ForSelectWithOriginalName, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
             sql.Replace("[$columnlist2]", GetPropagatedColumnList(table, ColumnListType.ForInsert, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
-            sql.Replace("[$where]", GetPartitioningKeyWhereClause(table, GetBufferZoneSize(step)));
+
+            sql.Replace("[$where]", GetPartitioningKeyWhereClause(step, 2 * ((XMatchQuery)Query).ZoneHeight));
 
             using (var cmd = new SqlCommand(sql.ToString()))
             {
@@ -845,7 +847,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$cy]", xts.Position.Cy);
                 sql.Replace("[$cz]", xts.Position.Cz);
 
-                sql.Replace("[$where]", GetPartitioningKeyWhereClause(sxt, 0));
+                // No buffering when initial partitioning is done
+                sql.Replace("[$where]", GetPartitioningKeyWhereClause(step, 0));
 
                 cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
 
@@ -1152,23 +1155,45 @@ namespace Jhu.SkyQuery.Jobs.Query
             return 2 * step.SearchRadius;
         }
 
-        protected string GetPartitioningKeyWhereClause(XMatchTableSpecification table, double bufferZone)
+        protected string GetPartitioningKeyWhereClause(XMatchQueryStep step, double bufferZone)
         {
+            var xts = xmatchTableSources[step.XMatchTable];
+            var sxt = xmatchTableSpecifications[step.XMatchTable];
+
             // --- Find predicates only referencing this table
 
-            // *** TODO: new code, test
             var cn = new SearchConditionNormalizer();
             cn.Execute(SelectStatement);     // TODO: what if more than one QS?
-            var where = cn.GenerateWhereClauseSpecificToTable(table.TableReference);
+            var where = cn.GenerateWhereClauseSpecificToTable(xts.TableReference);
 
-            var wherestring = new StringWriter();
-            if (where != null)
+            // --- Append partitioning key
+
+            var sc = GetPartitioningConditions(xts.Position.Dec, bufferZone);
+
+            if (sc != null)
             {
-                var cg = new SqlServerCodeGenerator();
-                cg.Execute(wherestring, where);
+                if (where == null)
+                {
+                    where = Jhu.SkyQuery.Parser.WhereClause.Create(sc);
+                }
+                else
+                {
+                    where.AppendCondition(sc, "AND");
+                }
             }
 
-            return wherestring.ToString();
+            if (where != null)
+            {
+                var wherestring = new StringWriter();
+                var cg = new SqlServerCodeGenerator();
+                cg.Execute(wherestring, where);
+
+                return wherestring.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
         }
     }
 }
