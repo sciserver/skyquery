@@ -354,7 +354,7 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
 
         [TestMethod]
         [TestCategory("Query")]
-        public void MyDBXMatchQueryTest()
+        public void MyDBXMatchSmallLimitsQueryTest()
         {
             // This test requires a table 'MyCatalog' in mydb
 
@@ -379,7 +379,77 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5
 ";
 
                     var guid = ScheduleQueryJob(
-                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBMatchQueryTest"),
+                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBXMatchSmallLimitsQueryTest"),
+                        QueueType.Long);
+
+                    FinishQueryJob(guid);
+                }
+            }
+        }
+
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void MyDBXMatchLargeLimitsQueryTest()
+        {
+            // This test requires a table 'MyCatalog' in mydb
+
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql =
+    @"SELECT m.ra, m.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
+CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
+XMATCH BAYESFACTOR x
+MUST EXIST s
+MUST EXIST m
+HAVING LIMIT 1e3
+WHERE s.ra BETWEEN 1 AND 3 AND s.dec BETWEEN 12 AND 14
+";
+
+                    var guid = ScheduleQueryJob(
+                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBXMatchLargeLimitsQueryTest"),
+                        QueueType.Long);
+
+                    FinishQueryJob(guid);
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void MyDBXMatchNoLimitsQueryTest()
+        {
+            // This test requires a table 'MyCatalog' in mydb
+
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql =
+    @"SELECT m.ra, m.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
+CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
+XMATCH BAYESFACTOR x
+MUST EXIST s
+MUST EXIST m
+HAVING LIMIT 1e3
+";
+
+                    var guid = ScheduleQueryJob(
+                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBXMatchNoLimitsQueryTest"),
                         QueueType.Long);
 
                     FinishQueryJob(guid);
