@@ -76,6 +76,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                         // *** this must be changed for MAY and DROP!
                         // Order of xmatch execution: MUST, MAY, DROP (inclusion method)
                         //    first sort by InclusionMethod, then by count, smallest table first
+
                         for (int i = 0; i < tables.Length; i++)
                         {
                             for (int j = tables.Length - 1; j > i; j--)
@@ -98,7 +99,17 @@ namespace Jhu.SkyQuery.Jobs.Query
                             }
                         }
 
-                        var stat = TableStatistics[0].Statistics;
+                        // --- find stat histogram with most bins, that will be used to generate partitions
+                        int statmax = -1;
+                        for (int i = 0; i < tables.Length; i++)
+                        {
+                            if (statmax == -1 || TableStatistics[i].Statistics.KeyValue.Count > TableStatistics[statmax].Statistics.KeyValue.Count)
+                            {
+                                statmax = i;
+                            }
+                        }
+
+                        var stat = TableStatistics[statmax].Statistics;
 
                         GeneratePartitions(partitionCount, stat, tables);
                         AlignPartitionLimitsWithZone(Partitions);
