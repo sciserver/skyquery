@@ -248,6 +248,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             double lmin = 0;
             double amax = 0;
 
+            // TODO: this fails here if only a single constant error is given instead of constant and limits
             for (int i = step.StepNumber + 1; i < steps.Count; i++)
             {
                 // Swap max/min because w = 1 / s^2
