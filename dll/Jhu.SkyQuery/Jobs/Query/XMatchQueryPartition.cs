@@ -949,6 +949,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$tablejoinconditions]", join.ToString());
 
                 cmd.CommandText = sql.ToString();
+
+                cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
+
                 ExecuteSqlCommandOnTemporaryDatabase(cmd);
             }
         }

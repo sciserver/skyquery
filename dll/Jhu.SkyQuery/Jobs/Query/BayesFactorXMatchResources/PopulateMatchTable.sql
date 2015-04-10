@@ -1,7 +1,7 @@
 -- *** BayesFactorXMatchResources/PopulateMatchTable.sql *** ---
 
 INSERT [$newtablename] WITH (TABLOCKX)
-	([RA], [Dec], [Cx], [Cy], [Cz], [a], [l], [q], [logBF], [$insertcolumnlist])
+	([RA], [Dec], [Cx], [Cy], [Cz], [a], [l], [q], [logBF], [ZoneID], [$insertcolumnlist])
 SELECT
 	t.calc.Ra, t.calc.Dec,
 	t.calc.Cx, t.calc.Cy, t.calc.Cz,
@@ -9,6 +9,7 @@ SELECT
 	t.calc.L,
 	q + t.calc.dQ,
 	t.calc.LogBF,
+	CONVERT(INT,FLOOR((t.calc.Dec + 90.0) / @H)) as [ZoneID],
 	[$selectcolumnlist2]
 FROM
 (
