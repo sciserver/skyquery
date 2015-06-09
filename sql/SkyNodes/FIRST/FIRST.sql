@@ -3,7 +3,8 @@ GO
 
 -- CREATE PhotoObjRAW TABLE
 
-CREATE TABLE dbo.PhotoObjRAW(
+CREATE TABLE dbo.PhotoObjRAW
+(
 	[objID] bigint NOT NULL,
 	[ra] float NOT NULL,
 	[dec] float NOT NULL,
@@ -56,6 +57,7 @@ GO
 
 CREATE TABLE dbo.PhotoObj 
 (
+	--/ <summary>FIRST primary key.</summary>
 	[objID] bigint NOT NULL,
 
 	--/ <summary> RA (right ascension, J2000). The accuracy of the position depends on the brightness and size of 
@@ -101,18 +103,18 @@ CREATE TABLE dbo.PhotoObj
 
 	--/ <summary> Ps indicates the probability that the source is spurious (most commonly because it is a sidelobe 
 	--/ of a nearby bright source.) Low values mean the source is unlikely to be spurious. Here is the distribution  
-	--/ of P(S) values in the catalog: 
+	--/ of Ps values in the catalog: 
 	--/ Probability Range	Fraction of sources 
-	--/ 0.00 &lt PS &lt 0.05	76.3% 
-	--/ 0.05 &lt PS &lt 0.15	7.0% 
-	--/ 0.15 &lt PS &lt 0.25	4.4% 
-	--/ 0.25 &lt PS &lt 0.35	3.5% 
-	--/ 0.35 &lt PS &lt 0.45	2.1% 
-	--/ 0.45 &lt PS &lt 0.55	1.7% 
-	--/ 0.55 &lt PS &lt 0.65	1.6% 
-	--/ 0.65 &lt PS &lt 0.75	1.5% 
-	--/ 0.75 &lt PS &lt 0.85	1.1% 
-	--/ 0.85 &lt PS &lt 0.90	0.8%  
+	--/ 0.00 &lt; PS &lt; 0.05	76.3% 
+	--/ 0.05 &lt; PS &lt; 0.15	7.0% 
+	--/ 0.15 &lt; PS &lt; 0.25	4.4% 
+	--/ 0.25 &lt; PS &lt; 0.35	3.5% 
+	--/ 0.35 &lt; PS &lt; 0.45	2.1% 
+	--/ 0.45 &lt; PS &lt; 0.55	1.7% 
+	--/ 0.55 &lt; PS &lt; 0.65	1.6% 
+	--/ 0.65 &lt; PS &lt; 0.75	1.5% 
+	--/ 0.75 &lt; PS &lt; 0.85	1.1% 
+	--/ 0.85 &lt; PS &lt; 0.90	0.8%  
 	--/ Sidelobe probabilities for this version of the catalog have been computed using an improved algorithm based  
 	--/ on multiple voting oblique decision tree classifiers. The classifiers were trained using deep VLA fields  
 	--/ that give reliable assessments of the reality of FIRST sources. The algorithm will be described in detail  
@@ -156,7 +158,7 @@ CREATE TABLE dbo.PhotoObj
 	--/ Noise can cause the fitted values of the major and minor axes (before deconvolution) to be smaller than the beam. 
 	--/ The corresponding deconvolved size is given as zero in that case.
 	--/ The uncertainties in the deconvolved sizes depend on both the brightness and the sizes. Objects at the catalog flux 
-	--/ density limit have uncertainties of about 2 arcsec in their sizes (so faint objects with Maj &lt; 2 arcsec are consistent 
+	--/ density limit have uncertainties of about 2 arcsec in their sizes (so faint objects with Maj &lt;; 2 arcsec are consistent 
 	--/ with point sources.) A simple empirical estimate of the uncertainty is
 	--/ Sigma(Size) = 10 arcsec  (1/SNR + 1/75)
 	--/ where SNR is the signal-to-noise ratio defined above. </summary>
@@ -172,7 +174,7 @@ CREATE TABLE dbo.PhotoObj
 	--/ Noise can cause the fitted values of the major and minor axes (before deconvolution) to be smaller than the beam. 
 	--/ The corresponding deconvolved size is given as zero in that case.
 	--/ The uncertainties in the deconvolved sizes depend on both the brightness and the sizes. Objects at the catalog flux 
-	--/ density limit have uncertainties of about 2 arcsec in their sizes (so faint objects with Maj &lt; 2 arcsec are consistent 
+	--/ density limit have uncertainties of about 2 arcsec in their sizes (so faint objects with Maj &lt;; 2 arcsec are consistent 
 	--/ with point sources.) An simple empirical estimate of the uncertainty is
 	--/ Sigma(Size) = 10 arcsec  (1/SNR + 1/75)
 	--/where SNR is the signal-to-noise ratio defined above. </summary>
@@ -196,7 +198,7 @@ CREATE TABLE dbo.PhotoObj
 
 	--/ <summary> fPA gives the position angle (degrees east of north) derived from the elliptical Gaussian model for the source. 
 	--/ This a  fitted parameter measured directly from the image; the elliptical point-spread function has not been deconvolved. </summary>
-	--/ <unit>egrees east of north</unit>
+	--/ <unit>Degrees east of north</unit>
 	[fPA] real NOT NULL,
 
 	--/ <summary> The Field Name is the name of the coadded image containing the source. Note that the field name encodes the 
@@ -268,14 +270,14 @@ CREATE TABLE dbo.PhotoObj
 	--/ multiple times due to data problems). The largest epoch rms in the survey is 6.8 years.
 	--/ The epoch rms should be used as a guide to identify objects that do not have well-defined epochs. The table below gives an 
 	--/ indication of the frequency of different epoch rms values in the catalog. Epoch rms range	Fraction
-	--/ &lt 5 minutes	5%
-	--/ 5 min — 1 day	29%
-	--/ 1 — 10 days	44%
-	--/ 10 — 100 days	11%
-	--/ 100 days — 1 yr	7%
-	--/ 1 — 2 yrs	1%
-	--/ 2 — 5 yrs	2%
-	--/ &gt 5 yrs	0.3% </summary>
+	--/ &lt; 5 minutes	5%
+	--/ 5 min - 1 day	29%
+	--/ 1 - 10 days	44%
+	--/ 10 - 100 days	11%
+	--/ 100 days - 1 yr	7%
+	--/ 1 - 2 yrs	1%
+	--/ 2 - 5 yrs	2%
+	--/ &gt; 5 yrs	0.3% </summary>
 	[rms_MJD] real NOT NULL,
  CONSTRAINT [PK_PhotoObj] PRIMARY KEY CLUSTERED 
 (
