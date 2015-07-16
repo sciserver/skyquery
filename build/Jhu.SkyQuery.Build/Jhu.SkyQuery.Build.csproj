@@ -52,7 +52,9 @@ xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.Auth $(SolutionDir)www\auth /E
 
 REM Copy SkyQuery user interface
 
-if not exist "$(SolutionDir)\www\skyquery" mkdir $(SolutionDir)\www\skyquery
+if not exist "$(SolutionDir)\www\skyquery" mkdir "$(SolutionDir)\www\skyquery"
+if not exist "$(SolutionDir)\www\skyquery\docs" mkdir "$(SolutionDir)\www\skyquery\docs"
+if not exist "$(SolutionDir)\www\skyquery\docs\pages" mkdir "$(SolutionDir)\www\skyquery\docs\pages"
 xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI $(SolutionDir)www\skyquery /E /y
 xcopy $(SolutionDir)skyquery\docs\pages $(SolutionDir)www\skyquery\docs\pages /E /y</PostBuildEvent>
   </PropertyGroup>
