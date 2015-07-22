@@ -377,16 +377,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             HashSet<string> referencedcolumns = new HashSet<string>(SchemaManager.Comparer);
 
             // Add primary key columns
-            // *** TODO: fails for tables with no PK, which is OK, but this should be checked prior to running workflow
-            // TODO: move this whole function to the code generator
             if ((include & ColumnListInclude.PrimaryKey) != 0)
             {
-                if (!(table.TableReference.DatabaseObject is Table))
-                {
-                    throw new NotImplementedException("Only tables are supported in xmatch queries.");
-                }
-
-                Table t = table.TableReference.DatabaseObject as Table;
+                var t = (TableOrView)table.TableReference.DatabaseObject;
 
                 foreach (Column cd in t.PrimaryKey.Columns.Values)
                 {
@@ -914,16 +907,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // --- Zone table join conditions
             var join = new StringBuilder();
-
-            // *** TODO:
-            // unique keys can be figured out by calling DataReader.GetSchemaTable and
-            // looking for the columns flagged with iskey
-            if (!(xmatchTableSpecifications[step.XMatchTable].TableReference.DatabaseObject is Table))
-            {
-                throw new NotImplementedException("Only tables are supported in xmatch queries.");
-            }
-
-            var t = (Table)xmatchTableSpecifications[step.XMatchTable].TableReference.DatabaseObject;
+            var t = (TableOrView)xmatchTableSpecifications[step.XMatchTable].TableReference.DatabaseObject;
 
             foreach (var c in t.PrimaryKey.Columns.Values)
             {

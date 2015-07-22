@@ -99,6 +99,60 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 
         [TestMethod]
         [TestCategory("Query")]
+        public void XMatchViewTest()
+        {
+            var sql =
+@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:PhotoObj AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1))
+CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
+XMATCH BAYESFACTOR x
+MUST EXIST s
+MUST EXIST g
+HAVING LIMIT 1e3
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+                var guid = ScheduleQueryJob(
+                                    sql.Replace("[$targettable]", "XMatchQueryTest_XMatchViewTest"),
+                                    QueueType.Long);
+
+                FinishQueryJob(guid, new TimeSpan(0, 5, 0));
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchViewOfViewTest()
+        {
+            var sql =
+@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
+INTO [$targettable]
+FROM SDSSDR7:Star AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1))
+CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
+XMATCH BAYESFACTOR x
+MUST EXIST s
+MUST EXIST g
+HAVING LIMIT 1e3
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+
+            using (SchedulerTester.Instance.GetExclusiveToken())
+            {
+                SchedulerTester.Instance.EnsureRunning();
+                var guid = ScheduleQueryJob(
+                                    sql.Replace("[$targettable]", "XMatchQueryTest_XMatchViewOfViewTest"),
+                                    QueueType.Long);
+
+                FinishQueryJob(guid, new TimeSpan(0, 5, 0));
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void ThreeWayJoinTest()
         {
             var sql =
