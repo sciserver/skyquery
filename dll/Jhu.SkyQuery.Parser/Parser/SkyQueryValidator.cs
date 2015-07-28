@@ -25,16 +25,20 @@ namespace Jhu.SkyQuery.Parser
             base.Execute(selectStatement);
 
             // Make sure xmatch table sources don't contain any views.
-            var xmatchTables = new List<XMatchTableSpecification>(selectStatement.EnumerateQuerySpecifications().First<Jhu.Graywulf.SqlParser.QuerySpecification>().FindDescendant<XMatchClause>().EnumerateXMatchTableSpecifications());
-            foreach (var xt in xmatchTables)
+            var xmatch = selectStatement.EnumerateQuerySpecifications().First().FindDescendant<XMatchClause>();
+            if (xmatch != null)
             {
-                if (!(xt.TableReference.DatabaseObject is TableOrView))
+                var xmatchTables = new List<XMatchTableSpecification>(xmatch.EnumerateXMatchTableSpecifications());
+                foreach (var xt in xmatchTables)
                 {
-                    throw new NotImplementedException("Only tables and views are supported in xmatch queries.");
-                }
-                else if (((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
-                {
-                    throw new NotImplementedException("Only tables (or views with an underlying) primary key are supported in xmatch queries.");
+                    if (!(xt.TableReference.DatabaseObject is TableOrView))
+                    {
+                        throw new ValidatorException("Only tables and views are supported in xmatch queries.");
+                    }
+                    else if (((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
+                    {
+                        throw new ValidatorException("Only tables (or views with an underlying) primary key are supported in xmatch queries.");
+                    }
                 }
             }
 

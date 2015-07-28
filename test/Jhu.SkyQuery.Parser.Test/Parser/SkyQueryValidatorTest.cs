@@ -54,10 +54,9 @@ MUST EXIST b
 HAVING LIMIT 1e3
 ";
 
-            var ss = Parse(sql);
-
             try
             {
+                var ss = Parse(sql);
                 Validate(ss);
                 Assert.Fail();
             }
