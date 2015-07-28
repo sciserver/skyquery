@@ -20,7 +20,10 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             var f = new VOTable(
                 new Uri(String.Format("../../../../../skyquery/test/files/{0}", path), UriKind.Relative),
                 DataFileMode.Read
-                );
+                )
+            {
+                GenerateIdentityColumn = false
+            };
 
             var cmd = new FileCommand(f);
 

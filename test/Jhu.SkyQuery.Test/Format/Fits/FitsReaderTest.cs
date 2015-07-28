@@ -17,7 +17,10 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             var f = new FitsFileWrapper(
                 new Uri(String.Format("../../../../../skyquery/test/files/{0}", path), UriKind.Relative),
                 DataFileMode.Read
-                );
+                )
+            {
+                GenerateIdentityColumn = false
+            };
 
             return f;
         }
@@ -43,7 +46,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
 
                 Assert.AreEqual(4, q);
             }
-            
+
             f.Close();
         }
 
