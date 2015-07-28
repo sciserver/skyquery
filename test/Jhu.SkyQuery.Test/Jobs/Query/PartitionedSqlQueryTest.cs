@@ -85,7 +85,7 @@ CROSS JOIN MyCatalog b
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 
-                    FinishQueryJob(guid);
+                    FinishQueryJob(guid, new TimeSpan(0, 5, 0));
                 }
             }
         }
