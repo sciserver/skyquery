@@ -38,32 +38,37 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         private string GetPropagatedColumnListTestHelper(string query, XMatchQueryPartition.ColumnListInclude include)
         {
-            var sm = CreateSchemaManager();
+            using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
+            {
 
-            var xmq = new BayesFactorXMatchQuery(null);
-            xmq.QueryString = query;
-            xmq.QueryFactoryTypeName = Jhu.Graywulf.Util.TypeNameFormatter.ToUnversionedAssemblyQualifiedName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
-            xmq.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
-            xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
-            xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+                var sm = CreateSchemaManager();
 
-            var xmqp = new BayesFactorXMatchQueryPartition(xmq, null);
-            xmqp.ID = 0;
-            xmqp.InitializeQueryObject(null);
+                var xmq = new BayesFactorXMatchQuery(context);
+                xmq.QueryString = query;
+                xmq.QueryFactoryTypeName = Jhu.Graywulf.Util.TypeNameFormatter.ToUnversionedAssemblyQualifiedName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
+                xmq.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+                xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+                xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
 
-            var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
-            var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-            var xmc = qs.FindDescendant<Jhu.SkyQuery.Parser.XMatchClause>();
+                var xmqp = new BayesFactorXMatchQueryPartition(xmq, context);
+                xmqp.ID = 0;
+                xmqp.InitializeQueryObject(context);
 
-            var xmtables = xmc.EnumerateXMatchTableSpecifications().ToArray();
-            xmqp.GenerateSteps(xmtables);
+                var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
+                var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
+                var xmc = qs.FindDescendant<Jhu.SkyQuery.Parser.XMatchClause>();
 
-            var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
+                var xmtables = xmc.EnumerateXMatchTableSpecifications().ToArray();
+                xmqp.GenerateSteps(xmtables);
 
-            var m = xmqp.GetType().GetMethod("GetPropagatedColumnList", BindingFlags.NonPublic | BindingFlags.Instance);
-            Assert.IsNotNull(m);
+                var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
 
-            return (string)m.Invoke(xmqp, new object[] { xmtables[0], XMatchQueryPartition.ColumnListType.ForSelectNoAlias, include, XMatchQueryPartition.ColumnListNullType.Nothing, "tablealias" });
+                var m = xmqp.GetType().GetMethod("GetPropagatedColumnList", BindingFlags.NonPublic | BindingFlags.Instance);
+                Assert.IsNotNull(m);
+
+                return (string)m.Invoke(xmqp, new object[] { xmtables[0], XMatchQueryPartition.ColumnListType.ForSelectNoAlias, include, XMatchQueryPartition.ColumnListNullType.Nothing, "tablealias" });
+
+            }
         }
 
         [TestMethod]
