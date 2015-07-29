@@ -17,6 +17,6 @@ namespace Jhu.SkyQuery
         public const string InfoCopyright = "Copyright (c) 2008-2015 László Dobos, IDIES, The Johns Hopkins University, Eötvös University";
         public const string InfoTrademark = "";
         public const string InfoCulture = "";
-        public const string AssemblyVersion = "1.0.*";
+        public const string AssemblyVersion = "1.1.*";
     }
 }
