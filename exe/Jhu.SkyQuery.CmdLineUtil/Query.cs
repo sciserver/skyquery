@@ -53,7 +53,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             set { password = value; }
         }
 
-        [Parameter(Name = "Input", Description = "Input file containing the query")]
+        [Parameter(Name = "Input", Description = "Input file containing the query", Required = true)]
         public string Input
         {
             get { return input; }
@@ -96,14 +96,12 @@ namespace Jhu.SkyQuery.CmdLineUtil
             return csb.ConnectionString;
         }
 
-        private SqlServerDataset CreateDataset(string name)
+        private SqlServerDataset CreateDataset(string name, string connectionString)
         {
-            var svrcs = GetConnectionString();
-
-            var csname = String.Format("{0}.{1}", SqlServerSchemaManager.ConnectionStringNamePrefix, name);
-            var dscsb = new SqlConnectionStringBuilder(ConfigurationManager.ConnectionStrings[csname].ConnectionString);
-
+            // Take connection string from command-line arguments but replace database name
+            var dscsb = new SqlConnectionStringBuilder(connectionString);
             var ds = new SqlServerDataset();
+
             ds.Name = name;
             ds.DefaultSchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName;
             ds.ConnectionString = GetConnectionString();
@@ -112,30 +110,31 @@ namespace Jhu.SkyQuery.CmdLineUtil
             return ds;
         }
 
+        private Dictionary<string, SqlServerDataset> GetCustomDatasets()
+        {
+            var customds = new Dictionary<string, SqlServerDataset>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (ConnectionStringSettings cstr in ConfigurationManager.ConnectionStrings)
+            {
+                if (cstr.Name.StartsWith(SqlServerSchemaManager.ConnectionStringNamePrefix, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var name = cstr.Name.Substring(SqlServerSchemaManager.ConnectionStringNamePrefix.Length + 1);
+                    customds.Add(name, CreateDataset(name, cstr.ConnectionString));
+                }
+            }
+
+            return customds;
+        }
+
         public override void Run()
         {
             // Load query string from file
             var query = System.IO.File.ReadAllText(input);
 
-            // MyDB
-            var mydbds = CreateDataset(Jhu.Graywulf.Registry.Constants.UserDbName);
-            mydbds.IsMutable = true;
-
-            // TempDB
-            var tempds = CreateDataset(Jhu.Graywulf.Registry.Constants.TempDbName);
-            tempds.IsMutable = true;
-
-            // CodeDB
-            var codeds = CreateDataset(Jhu.Graywulf.Registry.Constants.CodeDbName);
+            // Read connection strings from config
+            var f = new SingleServerXMatchQueryFactory();
+            f.CustomDatasets = GetCustomDatasets();
 
             // Create query and verify
-            var f = new SingleServerXMatchQueryFactory()
-            {
-                UserDatabaseDataSet = mydbds,
-                TempDatabaseDataset = tempds,
-                CodeDatabaseDataset = codeds,
-            };
-
             var q = f.CreateQuery(query);
             q.Verify();
 

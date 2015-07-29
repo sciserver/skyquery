@@ -17,26 +17,12 @@ namespace Jhu.SkyQuery.Jobs.Query
     [Serializable]
     public class SingleServerXMatchQueryFactory : XMatchQueryFactory
     {
-        private SqlServerDataset mydbds;
-        private SqlServerDataset tempds;
-        private SqlServerDataset codeds;
+        private Dictionary<string, SqlServerDataset> customDatasets;
 
-        public SqlServerDataset UserDatabaseDataSet
+        public Dictionary<string, SqlServerDataset> CustomDatasets
         {
-            get { return mydbds; }
-            set { mydbds = value; }
-        }
-
-        public SqlServerDataset TempDatabaseDataset
-        {
-            get { return tempds; }
-            set { tempds = value; }
-        }
-
-        public SqlServerDataset CodeDatabaseDataset
-        {
-            get { return codeds; }
-            set { codeds = value; }
+            get { return customDatasets; }
+            set { customDatasets = value; }
         }
 
         public SingleServerXMatchQueryFactory()
@@ -61,6 +47,17 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             query.QueryTimeout = 7200;
 
+            // MyDB
+            var mydbds = customDatasets[Jhu.Graywulf.Registry.Constants.UserDbName];
+            mydbds.IsMutable = true;
+
+            // TempDB
+            var tempds = customDatasets[Jhu.Graywulf.Registry.Constants.TempDbName];
+            tempds.IsMutable = true;
+
+            // CodeDB
+            var codeds = customDatasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
+
             if (mydbds != null)
             {
                 query.DefaultDataset = mydbds;
@@ -71,6 +68,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Set up temporary and code database
             query.TemporaryDataset = tempds;
             query.CodeDataset = codeds;
+
+            query.Destination = new DestinationTable()
+            {
+                Dataset = mydbds,
+                Options = TableInitializationOptions.Create,
+                SchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName,
+                TableNamePattern = "outputtable"
+            };
         }
 
         /// <summary>
