@@ -22,6 +22,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
         private string userId;
         private string password;
         private string input;
+        private bool dumpSql;
 
         AutoResetEvent workflowCompleted;
 
@@ -58,6 +59,13 @@ namespace Jhu.SkyQuery.CmdLineUtil
         {
             get { return input; }
             set { input = value; }
+        }
+
+        [Option(Name = "DumpSQL", Description = "Dump SQL queries to a file")]
+        public bool DumpSql
+        {
+            get { return dumpSql; }
+            set { dumpSql = value; }
         }
 
         public Query()
@@ -137,6 +145,8 @@ namespace Jhu.SkyQuery.CmdLineUtil
             // Create query and verify
             var q = f.CreateQuery(query);
             q.Verify();
+
+            q.DumpSql = dumpSql;
 
             // Create a workflow
             var wf = f.GetAsWorkflow(q);
