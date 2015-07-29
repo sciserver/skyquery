@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using Jhu.Graywulf.Test;
+using Jhu.Graywulf.Util;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.VOTable;
@@ -13,12 +15,14 @@ using Jhu.SkyQuery.Format.VOTable;
 namespace Jhu.SkyQuery.Format.VOTable.Test
 {
     [TestClass]
-    public class VOTableReaderTest
+    public class VOTableReaderTest : TestClassBase
     {
         FileDataReader OpenSimpleReader(string path)
         {
+            path = Path.Combine(GetTestFilePath(@"skyquery\test\files"), path);
+
             var f = new VOTable(
-                new Uri(String.Format("../../../../../skyquery/test/files/{0}", path), UriKind.Relative),
+                UriConverter.FromFilePath(path),
                 DataFileMode.Read
                 )
             {

@@ -53,7 +53,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_SimpleQueryTest");
+                DropUserDatabaseTable("SqlQueryTest_SimpleQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -80,7 +80,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
                 using (SchedulerTester.Instance.GetToken())
                 {
-                    DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_SimpleQueryTest");
+                    DropUserDatabaseTable("SqlQueryTest_SimpleQueryTest");
 
                     SchedulerTester.Instance.EnsureRunning();
                     using (RemoteServiceTester.Instance.GetToken())
@@ -129,7 +129,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_JoinQueryTest");
+                DropUserDatabaseTable("SqlQueryTest_JoinQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -160,7 +160,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_JoinQueryTest2");
+                DropUserDatabaseTable("SqlQueryTest_JoinQueryTest2");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -190,7 +190,7 @@ INNER JOIN SDSSDR7:SpecObjAll s
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_JoinQueryTest3");
+                DropUserDatabaseTable("SqlQueryTest_JoinQueryTest3");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -219,7 +219,7 @@ CROSS JOIN Galex:PhotoObjAll g";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_SelfJoinQueryTest");
+                DropUserDatabaseTable("SqlQueryTest_SelfJoinQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -245,7 +245,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_SimpleSelectStarQueryTest");
+                DropUserDatabaseTable("SqlQueryTest_SimpleSelectStarQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -267,7 +267,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_AliasSelectStarQueryTest");
+                DropUserDatabaseTable("SqlQueryTest_AliasSelectStarQueryTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -289,7 +289,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_TableValuedFunctionTest");
+                DropUserDatabaseTable("SqlQueryTest_TableValuedFunctionTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -311,7 +311,7 @@ CROSS JOIN SDSSDR7:PhotoObjAll b";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_TableValuedFunctionTest");
+                DropUserDatabaseTable("SqlQueryTest_TableValuedFunctionTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -338,7 +338,7 @@ INNER JOIN SDSSDR7:PhotoObj p
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_TableValuedFunctionCrossApplyTest");
+                DropUserDatabaseTable("SqlQueryTest_TableValuedFunctionCrossApplyTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -364,7 +364,7 @@ CROSS APPLY dbo.fHtmCoverCircleEq(p.ra, p.dec, 10) htm";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_ScalarFunctionTest");
+                DropUserDatabaseTable("SqlQueryTest_ScalarFunctionTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -388,7 +388,7 @@ INTO SqlQueryTest_ScalarFunctionTest";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_ScalarFunctionOnTableTest");
+                DropUserDatabaseTable("SqlQueryTest_ScalarFunctionOnTableTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
@@ -413,7 +413,7 @@ FROM SDSSDR7:PhotoObj p";
         {
             using (SchedulerTester.Instance.GetToken())
             {
-                DropUserDatabaseTable(Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName, "SqlQueryTest_ScalarFunctionInWhereTest");
+                DropUserDatabaseTable("SqlQueryTest_ScalarFunctionInWhereTest");
 
                 SchedulerTester.Instance.EnsureRunning();
                 using (RemoteServiceTester.Instance.GetToken())
