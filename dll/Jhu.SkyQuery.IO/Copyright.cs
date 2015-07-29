@@ -14,9 +14,9 @@ namespace Jhu.SkyQuery
 #endif
         public const string InfoProduct = "SkyQuery";
         public const string InfoCompany = "ELTE/JHU IDIES";
-        public const string InfoCopyright = "Copyright ©  2008-2015 László Dobos, Eötvös University, The Johns Hopkins University";
+        public const string InfoCopyright = "Copyright (c)  2008-2015 László Dobos, Eötvös University, The Johns Hopkins University";
         public const string InfoTrademark = "";
         public const string InfoCulture = "";
-        public const string AssemblyVersion = "1.1.*";
+        public const string AssemblyVersion = "1.0.*";
     }
 }
