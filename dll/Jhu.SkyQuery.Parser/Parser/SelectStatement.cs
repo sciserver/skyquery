@@ -31,12 +31,21 @@ namespace Jhu.SkyQuery.Parser
 
         public override Node Interpret()
         {
-            // Replace for specific type if neccesary
+            // Look for descentant nodes in the parsing tree to determine
+            // query type. An XMatchClause means it's a cross-match query.
+            // If only a RegionClause is present, it's a simpler region query.
+
             if (FindDescendantRecursive<XMatchClause>() != null)
             {
-                XMatchSelectStatement xms = new XMatchSelectStatement(this);
+                var xms = new XMatchSelectStatement(this);
                 xms.InterpretChildren();
                 return xms;
+            }
+            else if (FindDescendantRecursive<RegionClause>() != null)
+            {
+                var rs = new RegionSelectStatement(this);
+                rs.InterpretChildren();
+                return rs;
             }
             else
             {

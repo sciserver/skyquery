@@ -123,6 +123,12 @@
   <data name="FunctionInXMatchNotAllowed" xml:space="preserve">
     <value>Functions are not allowed in XMatch, but found at ({1},{2}).</value>
   </data>
+  <data name="OnlyTablesAllowed" xml:space="preserve">
+    <value>Only tables and views (and not subqueries are function) are allowed in xmatch queries.</value>
+  </data>
+  <data name="PrimaryKeyRequired" xml:space="preserve">
+    <value>Only tables (or views with an underlying) primary key are supported in xmatch queries.</value>
+  </data>
   <data name="StarColumnNotAllowed" xml:space="preserve">
     <value>Stars (*) in column expressions are not allowed but found at ({1},{2}).</value>
   </data>

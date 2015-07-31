@@ -17,6 +17,8 @@ namespace Jhu.SkyQuery.Jobs.Query
     // testing so that config can be safely changed.
     public class XMatchQueryFactory : SqlQueryFactory
     {
+        #region Constructors and initializers
+
         public XMatchQueryFactory()
             : base()
         {
@@ -34,6 +36,8 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
         }
 
+        #endregion
+
         protected override Type[] LoadQueryTypes()
         {
             return new Type[] { 
@@ -48,6 +52,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (root is XMatchSelectStatement)
             {
                 res = new BayesFactorXMatchQuery(Context);
+            }
+            else if (root is RegionSelectStatement)
+            {
+                res = new RegionQuery(Context);
             }
             else if (root is SelectStatement)
             {

@@ -86,6 +86,7 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Parser\QuerySpecification.cs" />
+    <Compile Include="Parser\RegionClause.cs" />
     <Compile Include="Parser\SelectStatement.cs" />
     <Compile Include="Parser\SkyQueryNameResolver.cs" />
     <Compile Include="Parser\SkyQueryParser.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Parser\XMatchPoint.cs" />
     <Compile Include="Parser\XMatchQuerySpecification.cs" />
     <Compile Include="Parser\XMatchSelectStatement.cs" />
+    <Compile Include="Parser\RegionSelectStatement.cs" />
     <Compile Include="Parser\XMatchTableSource.cs" />
     <Compile Include="Parser\XMatchTableSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -138,6 +140,10 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\spherical\src\Jhu.Spherical\Jhu.Spherical.csproj">
+      <Project>{93efa6ad-0c3f-4c7f-b1f7-d697d0ba49f7}</Project>
+      <Name>Jhu.Spherical</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -24,6 +24,37 @@ namespace Jhu.SkyQuery.Parser
         {
             base.Execute(selectStatement);
 
+            if (selectStatement is XMatchSelectStatement)
+            {
+                ValidateXMatchQuery((XMatchSelectStatement)selectStatement);
+            }
+            else if (selectStatement is RegionSelectStatement)
+            {
+                ValidateRegionQuery((RegionSelectStatement)selectStatement);
+            }
+
+            // Make sure subqueries are not xmatch queries
+            CheckSubqueries(selectStatement);
+        }
+
+        private void ValidateRegionQuery(RegionSelectStatement selectStatement)
+        {
+            // Parse region string or try to download from URI if necessary
+            if (selectStatement.RegionClause.IsUri)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                var p = new Jhu.Spherical.Parser.Parser(selectStatement.RegionClause.RegionString);
+                p.Simplify = false;
+                p.Normalize = false;
+                p.ParseRegion();
+            }
+        }
+
+        private void ValidateXMatchQuery(XMatchSelectStatement selectStatement)
+        {
             // Make sure xmatch table sources don't contain any views.
             var xmatch = selectStatement.EnumerateQuerySpecifications().First().FindDescendant<XMatchClause>();
             if (xmatch != null)
@@ -33,17 +64,14 @@ namespace Jhu.SkyQuery.Parser
                 {
                     if (!(xt.TableReference.DatabaseObject is TableOrView))
                     {
-                        throw new ValidatorException("Only tables and views are supported in xmatch queries.");
+                        throw new ValidatorException(ExceptionMessages.OnlyTablesAllowed);
                     }
                     else if (((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
                     {
-                        throw new ValidatorException("Only tables (or views with an underlying) primary key are supported in xmatch queries.");
+                        throw new ValidatorException(ExceptionMessages.PrimaryKeyRequired);
                     }
                 }
             }
-
-            // Make sure subqueries are not xmatch queries
-            CheckSubqueries(selectStatement);
         }
 
         /// <summary>

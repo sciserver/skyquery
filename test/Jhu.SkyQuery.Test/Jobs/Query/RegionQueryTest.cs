@@ -51,7 +51,10 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 {
                     RemoteServiceTester.Instance.EnsureRunning();
 
-                    var sql = "SELECT TOP 10 objid, ra, dec INTO " + table + " FROM SDSSDR7:PhotoObj";
+                    var sql = @"
+SELECT TOP 10 objid, ra, dec INTO " + table + @" 
+FROM SDSSDR7:PhotoObj
+REGION 'CIRCLE J2000 20 30 10'";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
 

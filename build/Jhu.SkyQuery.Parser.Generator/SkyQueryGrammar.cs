@@ -130,7 +130,8 @@ namespace Jhu.SkyQuery.Parser.Generator
             Sequence
             (
                 Keyword("REGION"),
-                FunctionArguments
+                May(CommentOrWhitespace),
+                StringConstant
             );
 
         #endregion

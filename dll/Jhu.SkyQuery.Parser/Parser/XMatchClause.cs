@@ -19,6 +19,8 @@ namespace Jhu.SkyQuery.Parser
             get { return FindDescendant<XMatchAlgorithm>().Value; }
         }
 
+        #region Constructors and initializers
+
         internal XMatchClause()
         {
             InitializeMembers();
@@ -40,8 +42,10 @@ namespace Jhu.SkyQuery.Parser
 
         public virtual object Clone()
         {
-            throw new NotImplementedException();
+            return new XMatchClause(this);
         }
+
+        #endregion
 
         public override Node Interpret()
         {
