@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
     {
         private void WriteTestHelper(string table)
         {
-            var uri = GetTestFilename(".fits");
+            var uri = GetTestUniqueFileUri(".fits");
 
             using (var fits = new FitsFileWrapper(uri, DataFileMode.Write))
             {

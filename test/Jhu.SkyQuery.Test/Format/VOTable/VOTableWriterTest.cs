@@ -20,7 +20,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         [TestMethod]
         public void SimpleWriterTest()
         {
-            var uri = GetTestFilename(".votable");
+            var uri = GetTestUniqueFileUri(".votable");
 
             using (var nat = new VOTable(uri, DataFileMode.Write))
             {
@@ -42,7 +42,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         [TestMethod]
         public void SimpleWriterNullsTest()
         {
-            var uri = GetTestFilename(".votable");
+            var uri = GetTestUniqueFileUri(".votable");
 
             using (var nat = new VOTable(uri, DataFileMode.Write))
             {
@@ -64,7 +64,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         [TestMethod]
         public void SimpleWriterAllTypesTest()
         {
-            var uri = GetTestFilename(".votable");
+            var uri = GetTestUniqueFileUri(".votable");
 
             using (var nat = new VOTable(uri, DataFileMode.Write))
             {
@@ -86,7 +86,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         [TestMethod]
         public void SimpleWriterAllTypesNullableTest()
         {
-            var uri = GetTestFilename(".votable");
+            var uri = GetTestUniqueFileUri(".votable");
 
             using (var nat = new VOTable(uri, DataFileMode.Write))
             {

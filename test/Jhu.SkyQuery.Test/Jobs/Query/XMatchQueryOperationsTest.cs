@@ -105,6 +105,8 @@ WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
         [TestCategory("Query")]
         public void SuspendXMatchQueryTest()
         {
+            // TODO: this test can reproduce the NullException problems in the scheduler.
+
             using (SchedulerTester.Instance.GetExclusiveToken())
             {
                 SchedulerTester.Instance.EnsureRunning();
