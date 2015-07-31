@@ -62,8 +62,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                         // Use this for debugging purposes too
                         BayesFactorXMatchQueryPartition qp = new BayesFactorXMatchQueryPartition(this, null);
                         qp.GenerateSteps(xmatchTables.ToArray());
-                        qp.PartitioningKeyFrom = double.NegativeInfinity;
-                        qp.PartitioningKeyTo = double.PositiveInfinity;
                         AppendPartition(qp);
                     }
                     break;
@@ -129,10 +127,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 qp = new BayesFactorXMatchQueryPartition(this, this.Context);
                 qp.GenerateSteps(tables);
-
-                qp.PartitioningKeyFrom = double.NegativeInfinity;
-                qp.PartitioningKeyTo = double.PositiveInfinity;
-
                 AppendPartition(qp);
             }
             else
@@ -179,7 +173,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
                 else
                 {
-                    qp.PartitioningKeyFrom = Math.Floor((qp.PartitioningKeyFrom + 90.0) / ZoneHeight) * ZoneHeight - 90;
+                    qp.PartitioningKeyFrom = Math.Floor(((double)qp.PartitioningKeyFrom + 90.0) / ZoneHeight) * ZoneHeight - 90;
                 }
 
                 if (i == partitions.Count - 1)
@@ -188,7 +182,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
                 else
                 {
-                    qp.PartitioningKeyTo = Math.Floor((qp.PartitioningKeyTo + 90.0) / ZoneHeight) * ZoneHeight - 90;
+                    qp.PartitioningKeyTo = Math.Floor(((double)qp.PartitioningKeyTo + 90.0) / ZoneHeight) * ZoneHeight - 90;
                 }
             }
         }

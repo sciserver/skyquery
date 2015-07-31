@@ -10,6 +10,7 @@ using Jhu.Graywulf.Scheduler;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
+    [TestClass]
     public class XMatchQueryOperationsTest : XMatchQueryTestBase
     {
 
@@ -41,7 +42,7 @@ SELECT p.objId, s.BestObjID, p.ra, p.dec, s.specObjId, s.ra, s.dec
 INTO [$targettable]
 FROM 
 SDSSDR7:PhotoObjAll AS p WITH(Point(p.ra, p.dec), ERROR(0.1, 0.1, 0.1))
- CROSS JOIN SDSSDR7:SpecObjAll AS s WITH(Point(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
+CROSS JOIN SDSSDR7:SpecObjAll AS s WITH(Point(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
 XMATCH BAYESFACTOR AS x
  MUST EXIST p
  MUST EXIST s

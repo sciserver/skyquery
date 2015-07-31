@@ -53,7 +53,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                     var sql =
         @"SELECT TOP 100 a.objid, a.ra, a.dec
 INTO PartitionedSqlQueryTest_SimpleQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
+FROM SDSSDR7:PhotoObjAll a PARTITION ON a.ra
 ";
 
                     var guid = ScheduleQueryJob(sql, QueueType.Long);
@@ -79,7 +79,7 @@ FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
                     var sql =
         @"SELECT TOP 100 a.objid, a.ra, a.dec, b.ObjID
 INTO PartitionedSqlQueryTest_MyDBJoinQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
+FROM SDSSDR7:PhotoObjAll a PARTITION ON a.ra
 CROSS JOIN MyCatalog b
 ";
 

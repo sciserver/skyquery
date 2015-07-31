@@ -496,8 +496,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 cmd.Parameters.Add("@ZoneHeight", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
                 cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
-                cmd.Parameters.Add("@PartitionMin", SqlDbType.Float).Value = Math.Max(PartitioningKeyFrom, -90);
-                cmd.Parameters.Add("@PartitionMax", SqlDbType.Float).Value = Math.Min(PartitioningKeyTo, 90);
+                cmd.Parameters.Add("@PartitionMin", SqlDbType.Float).Value = Math.Max((double)PartitioningKeyFrom, -90);
+                cmd.Parameters.Add("@PartitionMax", SqlDbType.Float).Value = Math.Min((double)PartitioningKeyTo, 90);
 
                 ExecuteSqlCommandOnTemporaryDatabase(cmd);
             }
@@ -595,13 +595,32 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$columnlist]", GetPropagatedColumnList(table, ColumnListType.ForSelectWithOriginalName, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
             sql.Replace("[$columnlist2]", GetPropagatedColumnList(table, ColumnListType.ForInsert, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
 
-            sql.Replace("[$where]", GetPartitioningKeyWhereClause(step, 2 * ((XMatchQuery)Query).ZoneHeight));
+            sql.Replace("[$where]", GetPartitioningKeyWhereClause(step));
 
             using (var cmd = new SqlCommand(sql.ToString()))
             {
+                AppendPartitioningConditionParameters(cmd, 2 * ((XMatchQuery)Query).ZoneHeight);
                 cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
 
                 ExecuteSqlCommandOnTemporaryDatabase(cmd);
+            }
+        }
+
+        protected override bool IsPartitioningKeyUnbound(object key)
+        {
+            return key == null || Double.IsInfinity((double)key) || Double.IsNaN((double)key);
+        }
+
+        protected void AppendPartitioningConditionParameters(SqlCommand cmd, double buffer)
+        {
+            if (!IsPartitioningKeyUnbound(PartitioningKeyFrom))
+            {
+                cmd.Parameters.Add(keyFromParameterName, SqlDbType.Float).Value = (double)PartitioningKeyFrom - buffer;
+            }
+
+            if (!IsPartitioningKeyUnbound(PartitioningKeyTo))
+            {
+                cmd.Parameters.Add(keyToParameterName, SqlDbType.Float).Value = (double)PartitioningKeyTo + buffer;
             }
         }
 
@@ -841,8 +860,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$cz]", xts.Position.Cz);
 
                 // No buffering when initial partitioning is done
-                sql.Replace("[$where]", GetPartitioningKeyWhereClause(step, 0));
+                sql.Replace("[$where]", GetPartitioningKeyWhereClause(step));
 
+                AppendPartitioningConditionParameters(cmd, 0);
                 cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
 
                 cmd.CommandText = sql.ToString();
@@ -1142,7 +1162,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return 2 * step.SearchRadius;
         }
 
-        protected string GetPartitioningKeyWhereClause(XMatchQueryStep step, double bufferZone)
+        protected string GetPartitioningKeyWhereClause(XMatchQueryStep step)
         {
             var xts = xmatchTableSources[step.XMatchTable];
             var sxt = xmatchTableSpecifications[step.XMatchTable];
@@ -1155,7 +1175,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // --- Append partitioning key
 
-            var sc = GetPartitioningConditions(xts.Position.Dec, bufferZone);
+            var sc = GetPartitioningConditions(xts.Position.Dec);
 
             if (sc != null)
             {
