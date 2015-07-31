@@ -84,55 +84,6 @@ namespace Jhu.SkyQuery.CmdLineUtil
             this.workflowCompleted = new AutoResetEvent(false);
         }
 
-        private string GetConnectionString()
-        {
-            var csb = new SqlConnectionStringBuilder();
-
-            csb.DataSource = this.server;
-
-            if (this.integratedSecurity)
-            {
-                csb.IntegratedSecurity = true;
-            }
-            else
-            {
-                csb.IntegratedSecurity = false;
-                csb.UserID = this.userId;
-                csb.Password = this.password;
-            }
-
-            return csb.ConnectionString;
-        }
-
-        private SqlServerDataset CreateDataset(string name, string connectionString)
-        {
-            // Take connection string from command-line arguments but replace database name
-            var dscsb = new SqlConnectionStringBuilder(connectionString);
-            var ds = new SqlServerDataset();
-
-            ds.Name = name;
-            ds.DefaultSchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName;
-            ds.ConnectionString = GetConnectionString();
-            ds.DatabaseName = dscsb.InitialCatalog;
-
-            return ds;
-        }
-
-        private Dictionary<string, SqlServerDataset> GetCustomDatasets()
-        {
-            var customds = new Dictionary<string, SqlServerDataset>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (ConnectionStringSettings cstr in ConfigurationManager.ConnectionStrings)
-            {
-                if (cstr.Name.StartsWith(SqlServerSchemaManager.ConnectionStringNamePrefix, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var name = cstr.Name.Substring(SqlServerSchemaManager.ConnectionStringNamePrefix.Length + 1);
-                    customds.Add(name, CreateDataset(name, cstr.ConnectionString));
-                }
-            }
-
-            return customds;
-        }
-
         public override void Run()
         {
             // Load query string from file
@@ -140,7 +91,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
 
             // Read connection strings from config
             var f = new SingleServerXMatchQueryFactory();
-            f.CustomDatasets = GetCustomDatasets();
+            f.LoadCustomDatasets(this.server, this.userId, this.password, this.integratedSecurity);
 
             // Create query and verify
             var q = f.CreateQuery(query);

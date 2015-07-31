@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Activities;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.IO.Tasks;
@@ -22,11 +25,63 @@ namespace Jhu.SkyQuery.Jobs.Query
         public Dictionary<string, SqlServerDataset> CustomDatasets
         {
             get { return customDatasets; }
-            set { customDatasets = value; }
         }
 
         public SingleServerXMatchQueryFactory()
         {
+            InitializeMembers();
+        }
+
+        private void InitializeMembers()
+        {
+            this.customDatasets = new Dictionary<string, SqlServerDataset>(StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        private string GetConnectionString(string server, string userId, string password, bool integratedSecurity)
+        {
+            var csb = new SqlConnectionStringBuilder();
+
+            csb.DataSource = server;
+
+            if (integratedSecurity)
+            {
+                csb.IntegratedSecurity = true;
+            }
+            else
+            {
+                csb.IntegratedSecurity = false;
+                csb.UserID = userId;
+                csb.Password = password;
+            }
+
+            return csb.ConnectionString;
+        }
+
+        private SqlServerDataset CreateDataset(string name, string connectionString, string server, string userId, string password, bool integratedSecurity)
+        {
+            // Take connection string from command-line arguments but replace database name
+            var dscsb = new SqlConnectionStringBuilder(connectionString);
+            var ds = new SqlServerDataset();
+
+            ds.Name = name;
+            ds.DefaultSchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName;
+            ds.ConnectionString = GetConnectionString(server, userId, password, integratedSecurity);
+            ds.DatabaseName = dscsb.InitialCatalog;
+
+            return ds;
+        }
+
+        public void LoadCustomDatasets(string server, string userId, string password, bool integratedSecurity)
+        {
+            var customds = new Dictionary<string, SqlServerDataset>(StringComparer.InvariantCultureIgnoreCase);
+            foreach (ConnectionStringSettings cstr in ConfigurationManager.ConnectionStrings)
+            {
+                if (cstr.Name.StartsWith(SqlServerSchemaManager.ConnectionStringNamePrefix, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var name = cstr.Name.Substring(SqlServerSchemaManager.ConnectionStringNamePrefix.Length + 1);
+                    customds.Add(name, CreateDataset(name, cstr.ConnectionString, server, userId, password, integratedSecurity));
+                }
+            }
         }
 
         /// <summary>
@@ -47,16 +102,29 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             query.QueryTimeout = 7200;
 
+            SqlServerDataset mydbds = null;
+            SqlServerDataset tempds = null;
+            SqlServerDataset codeds = null;
+
             // MyDB
-            var mydbds = customDatasets[Jhu.Graywulf.Registry.Constants.UserDbName];
-            mydbds.IsMutable = true;
+            if (customDatasets.ContainsKey(Jhu.Graywulf.Registry.Constants.UserDbName))
+            {
+                mydbds = customDatasets[Jhu.Graywulf.Registry.Constants.UserDbName];
+                mydbds.IsMutable = true;
+            }
 
             // TempDB
-            var tempds = customDatasets[Jhu.Graywulf.Registry.Constants.TempDbName];
-            tempds.IsMutable = true;
+            if (customDatasets.ContainsKey(Jhu.Graywulf.Registry.Constants.TempDbName))
+            {
+                tempds = customDatasets[Jhu.Graywulf.Registry.Constants.TempDbName];
+                tempds.IsMutable = true;
+            }
 
             // CodeDB
-            var codeds = customDatasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
+            if (customDatasets.ContainsKey(Jhu.Graywulf.Registry.Constants.CodeDbName))
+            {
+                codeds = customDatasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
+            }
 
             if (mydbds != null)
             {
