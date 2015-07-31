@@ -36,6 +36,8 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activities" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -63,10 +65,13 @@
     <Compile Include="Jobs\Query\CreateZoneDefTable.cs" />
     <Compile Include="Jobs\Query\CreateZoneTable.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
+    <Compile Include="Jobs\Query\RegionQuery.cs" />
+    <Compile Include="Jobs\Query\RegionQueryJob.cs" />
+    <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
     <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
+    <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
-    <Compile Include="Jobs\Query\XMatchQueryFactory.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
     <Compile Include="Jobs\Query\XMatchScripts.Designer.cs">
@@ -195,7 +200,12 @@
   <ItemGroup>
     <None Include="Jobs\Query\XMatchResources\PopulateZoneDefTable.sql" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <XamlAppdef Include="Jobs\Query\RegionQueryJob.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </XamlAppdef>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)
