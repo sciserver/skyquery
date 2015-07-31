@@ -13,6 +13,8 @@ using Jhu.SkyQuery.Parser;
 namespace Jhu.SkyQuery.Jobs.Query
 {
     [Serializable]
+    // TODO: Rename to SkyQueryQueryFactory once build is stable enough for
+    // testing so that config can be safely changed.
     public class XMatchQueryFactory : SqlQueryFactory
     {
         public XMatchQueryFactory()
