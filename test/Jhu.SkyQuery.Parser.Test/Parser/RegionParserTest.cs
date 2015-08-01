@@ -41,44 +41,44 @@ namespace Jhu.SkyQuery.Parser
         [TestMethod]
         public void CircleTest()
         {
-            Parse("LIMIT REGION TO CIRCLE(10 20, 10)");
-            Parse("LIMIT REGION TO CIRC(10 20, 10)");
+            Parse("LIMIT REGION TO CIRCLE(10, 20, 10)");
+            Parse("LIMIT REGION TO CIRC(10, 20, 10)");
         }
 
         [TestMethod]
         public void RectangleTest()
         {
-            Parse("LIMIT REGION TO RECTANGLE(10 20, 20 30)");
-            Parse("LIMIT REGION TO RECT(10 20, 10 40)");
+            Parse("LIMIT REGION TO RECTANGLE(10, 20, 20, 30)");
+            Parse("LIMIT REGION TO RECT(10, 20, 10, 40)");
         }
 
         [TestMethod]
         public void PolygonTest()
         {
-            Parse("LIMIT REGION TO POLYGON(10 20, 20 30, 30 40)");
-            Parse("LIMIT REGION TO POLY(10 20, 20 30, 30 40)");
+            Parse("LIMIT REGION TO POLYGON(10, 20, 20, 30, 30, 40)");
+            Parse("LIMIT REGION TO POLY(10, 20, 20, 30, 30, 40)");
         }
 
         [TestMethod]
         public void ConvexHullTest()
         {
-            Parse("LIMIT REGION TO CONVEX_HULL(10 20, 20 30, 30 40)");
-            Parse("LIMIT REGION TO CHULL(10 20, 20 30, 30 40)");
+            Parse("LIMIT REGION TO CONVEX_HULL(10, 20, 20, 30, 30, 40)");
+            Parse("LIMIT REGION TO CHULL(10, 20, 20, 30, 30, 40)");
         }
 
         [TestMethod]
         public void BracketsTest()
         {
-            Parse("LIMIT REGION TO (CIRC(10 20, 10))");
-            Parse("LIMIT REGION TO ((CIRC(10 20, 10)))");
+            Parse("LIMIT REGION TO (CIRC(10, 20, 10))");
+            Parse("LIMIT REGION TO ((CIRC(10, 20, 10)))");
         }
 
         [TestMethod]
         public void OperatorsTest()
         {
-            Parse("LIMIT REGION TO (CIRC(10 20, 10) UNION CIRC(10 20, 20))");
-            Parse("LIMIT REGION TO (CIRC(10 20, 10)) INTERSECT (CIRC(10 20, 20))");
-            Parse("LIMIT REGION TO (CIRC(10 20, 10)) UNION (CIRC(10 20, 20)) INTERSECT (RECT(10 20, 30 40))");
+            Parse("LIMIT REGION TO (CIRC(10, 20, 10) UNION CIRC(10, 20, 20))");
+            Parse("LIMIT REGION TO (CIRC(10, 20, 10)) INTERSECT (CIRC(10, 20, 20))");
+            Parse("LIMIT REGION TO (CIRC(10, 20, 10)) UNION (CIRC(10, 20, 20)) INTERSECT (RECT(10, 20, 30, 40))");
         }
     }
 }
