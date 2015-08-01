@@ -7,7 +7,7 @@ using Jhu.Graywulf.ParserLib;
 namespace Jhu.SkyQuery.Parser.Generator
 {
     [Grammar(Namespace = "Jhu.SkyQuery.Parser", ParserName = "SkyQueryParser",
-        Comparer="StringComparer.InvariantCultureIgnoreCase", RootToken = "SelectStatement")]
+        Comparer = "StringComparer.InvariantCultureIgnoreCase", RootToken = "SelectStatement")]
     class SkyQueryGrammar : Jhu.Graywulf.SqlParser.Generator.SqlGrammar
     {
         public static new Expression<Rule> QuerySpecification = () =>
@@ -124,14 +124,113 @@ namespace Jhu.SkyQuery.Parser.Generator
             );
 
         #endregion
-        #region Region clause
+        #region Region grammar
 
         public static Expression<Rule> RegionClause = () =>
             Sequence
             (
+                Keyword("LIMIT"),
+                CommentOrWhitespace,
                 Keyword("REGION"),
+                CommentOrWhitespace,
+                Keyword("TO"),
+                CommentOrWhitespace,
+                Must(StringConstant, RegionExpression)
+            );
+
+        public static Expression<Rule> RegionExpression = () =>
+            Sequence
+            (
+                // May(RegionInvese) -- TODO: add this if inverse is ever implemented
+                // May(CommentOrWhitespace),
+                Must(RegionShape, RegionExpressionBrackets),
+                May(Sequence(May(CommentOrWhitespace), RegionOperator, May(CommentOrWhitespace), RegionExpression))
+            );
+
+        public static Expression<Rule> RegionExpressionBrackets = () =>
+            Sequence
+            (
+                BracketOpen,
                 May(CommentOrWhitespace),
-                StringConstant
+                RegionExpression,
+                May(CommentOrWhitespace),
+                BracketClose
+            );
+
+        public static Expression<Rule> RegionOperator = () =>
+            Must(Keyword("UNION"), Keyword("INTERSECT"), Keyword("DIFFERENCE"));
+
+        public static Expression<Rule> RegionShape = () =>
+            Must
+            (
+                RegionCircle,
+                RegionRectangle,
+                RegionPolygon,
+                RegionConvexHull
+            );
+
+        public static Expression<Rule> RegionCircle = () =>
+            Sequence
+            (
+                Must(Keyword("CIRCLE"), Keyword("CIRC")),
+                BracketOpen,
+                May(CommentOrWhitespace),
+                RegionCoordinates,
+                May(CommentOrWhitespace),
+                Comma,
+                May(CommentOrWhitespace),
+                Number,
+                May(CommentOrWhitespace),
+                BracketClose
+            );
+
+        public static Expression<Rule> RegionRectangle = () =>
+            Sequence
+            (
+                Must(Keyword("RECTANGLE"), Keyword("RECT")),
+                BracketOpen,
+                May(CommentOrWhitespace),
+                RegionCoordinates,
+                May(CommentOrWhitespace),
+                Comma,
+                May(CommentOrWhitespace),
+                RegionCoordinates,
+                May(CommentOrWhitespace),
+                BracketClose
+            );
+
+        public static Expression<Rule> RegionPolygon = () =>
+            Sequence
+            (
+                Must(Keyword("POLYGON"), Keyword("POLY")),
+                BracketOpen,
+                RegionCoordinateList,
+                BracketClose
+            );
+
+        public static Expression<Rule> RegionConvexHull = () =>
+            Sequence
+            (
+                Must(Keyword("CONVEX_HULL"), Keyword("CHULL")),
+                BracketOpen,
+                RegionCoordinateList,
+                BracketClose
+            );
+
+        public static Expression<Rule> RegionCoordinates = () =>
+            Sequence
+            (
+                Number,
+                CommentOrWhitespace,
+                Number
+            );
+
+        public static Expression<Rule> RegionCoordinateList = () =>
+            Sequence
+            (
+                May(CommentOrWhitespace),
+                RegionCoordinates,
+                May(Sequence(May(CommentOrWhitespace), Comma, RegionCoordinateList))
             );
 
         #endregion

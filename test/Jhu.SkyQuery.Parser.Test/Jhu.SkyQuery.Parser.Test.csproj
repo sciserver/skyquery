@@ -45,6 +45,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Parser\RegionParserTest.cs" />
     <Compile Include="Parser\SkyQueryNameResolverTest.cs" />
     <Compile Include="Parser\SkyQueryParserTest.cs" />
     <Compile Include="Parser\SkyQueryValidatorTest.cs" />

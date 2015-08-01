@@ -15,7 +15,16 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return Uri.IsWellFormedUriString(RegionString, UriKind.Absolute);
+                return (FindDescendantRecursive<StringConstant>() != null) &&
+                    Uri.IsWellFormedUriString(RegionString, UriKind.Absolute);
+            }
+        }
+
+        public bool IsString
+        {
+            get
+            {
+                return (FindDescendantRecursive<StringConstant>() != null);
             }
         }
 

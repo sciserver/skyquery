@@ -18,3 +18,5 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 [assembly: Guid("e66f6776-3dc8-46ae-8a4e-7ceaea0ef34e")]
+
+[assembly: InternalsVisibleTo("Jhu.SkyQuery.Parser.Test")]

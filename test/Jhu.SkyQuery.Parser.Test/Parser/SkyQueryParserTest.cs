@@ -144,7 +144,7 @@ FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
         @"SELECT TOP 100 a.objid, a.ra, a.dec
 INTO PartitionedSqlQueryTest_SimpleQueryTest
 FROM SDSSDR7:PhotoObjAll a
-REGION 'CIRCLE J2000 20 30 10'
+LIMIT REGION TO CIRCLE J2000 20 30 10'
 ";
             var qs = Parse(sql);
 
