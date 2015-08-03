@@ -7,81 +7,87 @@ using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Parser
 {
+
     public partial class XMatchTableSource : ITableSource
     {
-        public TableOrViewName TableOrViewName
+        public virtual TableReference TableReference
         {
-            get { return FindDescendant<TableOrViewName>(); }
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
 
-        public TableReference TableReference
+        public bool IsSubquery
         {
-            get { return TableOrViewName.TableReference; }
-            set { TableOrViewName.TableReference = value; }
+            get { return false; }
         }
 
-        private XMatchTableHintList TableHintList
+        public bool IsMultiTable
         {
-            get { return FindDescendant<XMatchHintClause>().FindDescendant<XMatchTableHintList>(); }
+            get { return true; }
         }
 
-        public XMatchPoint Position
+        public string XMatchAlgorithm
         {
-            get
-            {
-                return TableHintList.FindDescendant<XMatchPoint>();
-            }
+            get { return FindDescendantRecursive<XMatchAlgorithm>().Value; }
         }
 
-        private ArgumentList ErrorArgumentList
+        public string Alias
         {
-            get { return TableHintList.FindDescendantRecursive<XMatchError>().FindDescendant<FunctionArguments>().FindDescendant<ArgumentList>(); }
+            get { return FindDescendant<TableAlias>().Value; }
         }
 
-        public Expression ErrorExpression
+        #region Constructors and initialiters
+
+        public XMatchTableSource()
         {
-            get
-            {
-                var ar = ErrorArgumentList.FindDescendant<Argument>(0);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
+            InitializeMembers();
         }
 
-        public bool IsConstantError
+        public XMatchTableSource(XMatchTableSource old)
+            :base(old)
         {
-            get
-            {
-                var ars = ErrorArgumentList.EnumerateDescendants<Argument>().ToArray();
-                return ars.Length == 1 && ars[0].FindDescendant<Expression>().IsConstantNumber;
-            }
+            CopyMembers(old);
         }
 
-        public Expression MinErrorExpression
+        private void InitializeMembers()
         {
-            get
-            {
-                var ar = ErrorArgumentList.FindDescendant<Argument>(1);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
         }
 
-        public Expression MaxErrorExpression
+        private void CopyMembers(XMatchTableSource old)
         {
-            get
-            {
-                var ar = ErrorArgumentList.FindDescendant<Argument>(2);
-                return ar == null ? null : ar.FindDescendant<Expression>();
-            }
         }
+
+        #endregion
 
         public override Node Interpret()
         {
-            var node = (XMatchTableSource)base.Interpret();
+            switch (XMatchAlgorithm.ToUpper())
+            {
+                case Constants.AlgorithmBayesFactor:
+                    var xts = new BayesianXMatchTableSource(this);
+                    xts.InterpretChildren();
+                    return xts;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
 
-            // Look up table alias
-            node.TableReference.InterpretTableSource((Node)this);
+        public IEnumerable<XMatchTableSpecification> EnumerateXMatchTableSpecifications()
+        {
+            return this.FindDescendant<XMatchTableList>().EnumerateDescendants<XMatchTableSpecification>();
+        }
 
-            return node;
+        public IEnumerable<ITableSource> EnumerateSubqueryTableSources(bool recursive)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<ITableSource> EnumerateMultiTableSources()
+        {
+            foreach (var xts in EnumerateDescendantsRecursive<XMatchTableSpecification>())
+            {
+                yield return xts.SpecificTableSource;
+            }
         }
     }
 }

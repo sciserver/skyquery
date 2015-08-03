@@ -8,8 +8,11 @@ using Jhu.Graywulf.SqlCodeGen.SqlServer;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public partial class XMatchPoint
+    public partial class CoordinatePoint
     {
+        // TODO:
+        // replace references to code db and make them a variable
+
         private int eqIndex;
         private int xyzIndex;
 
@@ -17,27 +20,6 @@ namespace Jhu.SkyQuery.Parser
         private bool isXyzSpecified;
 
         private List<Argument> arguments;
-
-        /// <summary>
-        /// Gets the string specifying the coordinate system
-        /// </summary>
-        public string CoordinateSystem
-        {
-            get
-            {
-                // The only string parameter is the coordinate system
-                var sc = this.FindDescendant<StringConstant>();
-
-                if (sc != null)
-                {
-                    return sc.Value;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
 
         /// <summary>
         /// Gets the expression for right ascension
@@ -159,13 +141,15 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public XMatchPoint()
+        #region Constructors and initializers
+
+        public CoordinatePoint()
             : base()
         {
             InitializeMembers();
         }
 
-        public XMatchPoint(XMatchPoint old)
+        public CoordinatePoint(CoordinatePoint old)
             : base(old)
         {
             CopyMembers(old);
@@ -182,10 +166,17 @@ namespace Jhu.SkyQuery.Parser
             this.arguments = new List<Argument>();
         }
 
-        private void CopyMembers(XMatchPoint old)
+        private void CopyMembers(CoordinatePoint old)
         {
             this.arguments = new List<Argument>(old.arguments);
         }
+
+        public object Clone()
+        {
+            return new CoordinatePoint(this);
+        }
+
+        #endregion
 
         public override Node Interpret()
         {
@@ -215,11 +206,6 @@ namespace Jhu.SkyQuery.Parser
             }
 
             return base.Interpret();
-        }
-
-        public object Clone()
-        {
-            return new XMatchPoint(this);
         }
     }
 }

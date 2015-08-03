@@ -123,6 +123,12 @@
   <data name="FunctionInXMatchNotAllowed" xml:space="preserve">
     <value>Functions are not allowed in XMatch, but found at ({1},{2}).</value>
   </data>
+  <data name="OnlySingleQueryAllowed" xml:space="preserve">
+    <value>Only queries with a single SELECT are allowed.</value>
+  </data>
+  <data name="OnlySingleXMatchAllowed" xml:space="preserve">
+    <value>Only a single XMATCH expression is allowed.</value>
+  </data>
   <data name="OnlyTablesAllowed" xml:space="preserve">
     <value>Only tables and views (and not subqueries are function) are allowed in xmatch queries.</value>
   </data>

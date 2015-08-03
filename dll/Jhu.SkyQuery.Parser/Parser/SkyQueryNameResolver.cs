@@ -31,7 +31,9 @@ namespace Jhu.SkyQuery.Parser
         {
             context = base.GetColumnContext(n, context);
 
-            if (n is XMatchClause)
+            // TODO: test
+            //if (n is XMatchClause)
+            if (n is CoordinateHintList)
             {
                 context = ColumnContext.Special;
             }

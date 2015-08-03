@@ -10,6 +10,10 @@ namespace Jhu.SkyQuery.Parser
 {
     public class SkyQueryValidator : SqlValidator
     {
+        #region Constructors and initializers
+
+        // TODO: validate source tables whether they have the neccessary columns
+        // for a region/XMatch query
 
         public SkyQueryValidator()
         {
@@ -20,31 +24,37 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
+        #endregion
+
         public override void Execute(Graywulf.SqlParser.SelectStatement selectStatement)
         {
-            base.Execute(selectStatement);
+            ValidateSelectStatement(selectStatement, 0);
+        }
 
+        private void ValidateSelectStatement(Graywulf.SqlParser.SelectStatement selectStatement, int depth)
+        {
             if (selectStatement is XMatchSelectStatement)
             {
-                ValidateXMatchQuery((XMatchSelectStatement)selectStatement);
+                ValidateXMatchQuery((XMatchSelectStatement)selectStatement, depth);
             }
             else if (selectStatement is RegionSelectStatement)
             {
-                ValidateRegionQuery((RegionSelectStatement)selectStatement);
+                ValidateRegionQuery((RegionSelectStatement)selectStatement, depth);
             }
-
-            // Make sure subqueries are not xmatch queries
-            CheckSubqueries(selectStatement);
+            else
+            {
+                base.Execute(selectStatement);
+            }
         }
 
-        private void ValidateRegionQuery(RegionSelectStatement selectStatement)
+        private void ValidateRegionQuery(RegionSelectStatement selectStatement, int depth)
         {
             // Parse region string or try to download from URI if necessary
             if (selectStatement.RegionClause.IsUri)
             {
                 throw new NotImplementedException();
             }
-            else
+            else if (selectStatement.RegionClause.IsString)
             {
                 var p = new Jhu.Spherical.Parser.Parser(selectStatement.RegionClause.RegionString);
                 p.Simplify = false;
@@ -53,64 +63,64 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private void ValidateXMatchQuery(XMatchSelectStatement selectStatement)
+        private void ValidateXMatchQuery(XMatchSelectStatement selectStatement, int depth)
         {
-            // Make sure xmatch table sources don't contain any views.
-            var xmatch = selectStatement.EnumerateQuerySpecifications().First().FindDescendant<XMatchClause>();
-            if (xmatch != null)
+            int qsi = 0;    // counts query specifications
+            int xmi = 0;    // counts xmatch constructs
+            foreach (var qs in selectStatement.EnumerateQuerySpecifications())
             {
-                var xmatchTables = new List<XMatchTableSpecification>(xmatch.EnumerateXMatchTableSpecifications());
-                foreach (var xt in xmatchTables)
+                if (qsi > 0)
                 {
-                    if (!(xt.TableReference.DatabaseObject is TableOrView))
+                    throw new ValidatorException(ExceptionMessages.OnlySingleQueryAllowed);
+                }
+
+                // See if it's a XMatchQuery
+                foreach (var ts in qs.EnumerateSourceTables(false))
+                {
+                    ValidateSourceTable(ts, ref xmi, depth);
+                }
+
+                qsi++;
+            }
+        }
+
+        private void ValidateSourceTable(ITableSource ts, ref int xmi, int depth)
+        {
+            if (ts is XMatchTableSource)
+            {
+                if (xmi > 0)
+                {
+                    throw new ValidatorException(ExceptionMessages.OnlySingleXMatchAllowed);
+                }
+
+                if (depth > 0)
+                {
+                    // This is unlikely to happen as limited by the grammar
+                    throw CreateException(ExceptionMessages.XMatchSubqueryNotAllowed, (Token)ts);
+                }
+
+                // Make sure xmatch table sources don't contain any subqueries or functions.
+                foreach (var xt in ((XMatchTableSource)ts).EnumerateXMatchTableSpecifications())
+                {
+                    if (!(xt.SpecificTableSource.TableReference.DatabaseObject is TableOrView))
                     {
+                        // This is unlikely to happen as limited by the grammar
                         throw new ValidatorException(ExceptionMessages.OnlyTablesAllowed);
                     }
-                    else if (((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
+                    else if (((TableOrView)xt.SpecificTableSource.TableReference.DatabaseObject).PrimaryKey == null)
                     {
                         throw new ValidatorException(ExceptionMessages.PrimaryKeyRequired);
                     }
                 }
-            }
-        }
 
-        /// <summary>
-        /// Makes sure query does not contain xmatch subqueries
-        /// </summary>
-        /// <param name="selectStatement"></param>
-        protected void CheckXMatchSubqueries(Graywulf.SqlParser.SelectStatement selectStatement)
-        {
-            foreach (var qs in selectStatement.EnumerateQuerySpecifications())
-            {
-                foreach (var sq in qs.EnumerateSubqueries())
-                {
-                    if (sq.FindDescendantRecursive<XMatchClause>() != null)
-                    {
-                        throw CreateException(ExceptionMessages.XMatchSubqueryNotAllowed, sq);
-                    }
-                }
+                xmi++;
             }
-        }
-
-        /// <summary>
-        /// Makes sure query does not reference invalid table sources in the xmatch clause
-        /// </summary>
-        /// <param name="selectStatement"></param>
-        protected void CheckSubqueries(Graywulf.SqlParser.SelectStatement selectStatement)
-        {
-            var xmc = selectStatement.FindDescendantRecursive<XMatchClause>();
-            if (xmc != null)
+            else if (ts.IsSubquery)
             {
-                foreach (var xmts in xmc.EnumerateXMatchTableSpecifications())
+                // Call validator recursively
+                foreach (var tts in ts.EnumerateSubqueryTableSources(false))
                 {
-                    if (xmts.TableReference.IsSubquery)
-                    {
-                        throw CreateException(ExceptionMessages.SubqueryInXMatchNotAllowed, xmts);
-                    }
-                    else if (xmts.TableReference.IsUdf)
-                    {
-                        throw CreateException(ExceptionMessages.FunctionInXMatchNotAllowed, xmts);
-                    }
+                    ValidateSourceTable(tts, ref xmi, depth + 1);
                 }
             }
         }

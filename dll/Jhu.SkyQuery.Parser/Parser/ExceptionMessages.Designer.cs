@@ -79,6 +79,24 @@ namespace Jhu.SkyQuery.Parser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only queries with a single SELECT are allowed..
+        /// </summary>
+        internal static string OnlySingleQueryAllowed {
+            get {
+                return ResourceManager.GetString("OnlySingleQueryAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only a single XMATCH expression is allowed..
+        /// </summary>
+        internal static string OnlySingleXMatchAllowed {
+            get {
+                return ResourceManager.GetString("OnlySingleXMatchAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only tables and views (and not subqueries are function) are allowed in xmatch queries..
         /// </summary>
         internal static string OnlyTablesAllowed {

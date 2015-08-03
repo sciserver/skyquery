@@ -31,29 +31,45 @@ namespace Jhu.SkyQuery.Parser
 
         public override Node Interpret()
         {            
-            // Replace for specific type if neccesary
-            XMatchClause xmc = FindDescendant<XMatchClause>();
-            if (xmc != null)
+            // Look for specific nodes to decide on query type
+            
+            // --- XMatch query
+            var from = FindDescendant<FromClause>();
+            if (from != null)
             {
-                base.Interpret();
+                var xts = from.FindDescendantRecursive<XMatchTableSource>();
+                if (xts != null)
+                {
+                    base.Interpret();
 
-                string algorithm = xmc.XMatchAlgorithm;
-                XMatchQuerySpecification xmqs;
-                if (SkyQueryParser.ComparerInstance.Compare(algorithm, Constants.AlgorithmBayesFactor) == 0)
-                {
-                    xmqs = new BayesianXMatchQuerySpecification(this);
+                    XMatchQuerySpecification xmqs;
+                    var algorithm = xts.XMatchAlgorithm;
+
+                    if (SkyQueryParser.ComparerInstance.Compare(algorithm, Constants.AlgorithmBayesFactor) == 0)
+                    {
+                        xmqs = new BayesianXMatchQuerySpecification(this);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+
+                    xmqs.InterpretChildren();
+                    return xmqs;
                 }
-                else
-                {
-                    throw new NotImplementedException();
-                }
-                xmqs.InterpretChildren();
-                return xmqs;
             }
-            else
+
+            // --- Region query (without an xmatch part)
+
+            var region = FindDescendant<RegionClause>();
+            if (region != null)
             {
-                return base.Interpret();
+                var rqs = new RegionQuerySpecification(this);
+                rqs.InterpretChildren();
+                return rqs;
             }
+
+            return base.Interpret();
         }
     }
 }

@@ -21,12 +21,12 @@ namespace Jhu.SkyQuery.Parser.Test
         }
 
         [TestMethod]
-        public void XMatchTableHintTest()
+        public void CoordinateHintTest()
         {
             var sql = "WITH(POINT(ra,dec), ERROR(1.0))";
 
             var p = new SkyQueryParser();
-            var h = p.Execute(new XMatchHintClause(), sql);
+            var h = p.Execute(new CoordinateHintClause(), sql);
         }
 
         [TestMethod]
@@ -36,25 +36,24 @@ namespace Jhu.SkyQuery.Parser.Test
 @"SELECT ra, dec FROM d:c";
 
             var qs = Parse(sql);
-            Assert.IsNull(qs.FindDescendant<XMatchClause>());
+            Assert.IsNull(qs.FindDescendant<XMatchQuerySpecification>());
         }
 
         [TestMethod]
-        public void XMatchTableHintsTest()
+        public void XMatchCoordinateHintsTest()
         {
             var sql =
 @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
-FROM d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
-     d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))
-XMATCH BAYESFACTOR AS x
-MUST EXIST c1
-MUST EXIST c2
-HAVING LIMIT 1e3
+FROM 
+    XMATCH x AS
+        MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
+        MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))
+        LIMIT BAYESFACTOR TO 1000
 ";
 
             var qs = Parse(sql);
 
-            var ts = qs.EnumerateSourceTables(false).Cast<XMatchTableSource>().ToArray();
+            var ts = qs.EnumerateSourceTables(false).Cast<CoordinateTableSource>().ToArray();
 
             Assert.AreEqual(2, ts.Length);
 

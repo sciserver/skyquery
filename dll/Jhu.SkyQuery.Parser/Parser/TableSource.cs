@@ -7,15 +7,21 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class TableSource
     {
-        public override Graywulf.ParserLib.Node Interpret()
+        protected override Graywulf.SqlParser.ITableSource FindSpecificTableSource()
         {
+            var cts = FindDescendant<CoordinateTableSource>();
+            if (cts != null)
+            {
+                return cts;
+            }
+
             var xts = FindDescendant<XMatchTableSource>();
             if (xts != null)
             {
-                SpecificTableSource = xts;
+                return xts;
             }
 
-            return base.Interpret();
+            return base.FindSpecificTableSource();
         }
     }
 }

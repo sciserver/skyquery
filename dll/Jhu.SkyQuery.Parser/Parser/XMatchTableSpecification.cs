@@ -9,8 +9,7 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class XMatchTableSpecification : ICloneable
     {
-        private const int positionIndex = 0;
-        private const int errorIndex = 1;
+        private ITableSource specificTableSource;
 
         public XMatchInclusionMethod InclusionMethod
         {
@@ -44,13 +43,12 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public TableReference TableReference
+        public ITableSource SpecificTableSource
         {
-            get
-            {
-                return this.FindDescendant<TableOrViewName>().TableReference;
-            }
+            get { return specificTableSource; }
         }
+
+        #region Constructors and initializers
 
         public XMatchTableSpecification()
             : base()
@@ -77,18 +75,35 @@ namespace Jhu.SkyQuery.Parser
             return new XMatchTableSpecification(this);
         }
 
+        #endregion
+
         public override Node Interpret()
         {
-            if (FindAscendant<XMatchClause>() is BayesianXMatchClause)
+            specificTableSource = FindSpecificTableSource();
+
+            if (specificTableSource == null)
             {
-                BayesianXMatchTableSpecification xmt = new BayesianXMatchTableSpecification(this);
-                xmt.InterpretChildren();
-                return xmt;
+                throw new NotImplementedException();
             }
-            else
+
+            return base.Interpret();;
+        }
+
+        private ITableSource FindSpecificTableSource()
+        {
+            var ts = FindDescendant<SimpleTableSource>();
+            if (ts != null)
             {
-                return base.Interpret();
+                return ts;
             }
+
+            var cts = FindDescendant<CoordinateTableSource>();
+            if (cts != null)
+            {
+                return cts;
+            }
+
+            return null;
         }
 
     }

@@ -8,6 +8,9 @@ namespace Jhu.SkyQuery.Parser
 {
     public class BayesianXMatchQuerySpecification : XMatchQuerySpecification
     {
+
+        #region Constructors and initializers
+
         public BayesianXMatchQuerySpecification()
             : base()
         {
@@ -22,16 +25,6 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
-        public override IEnumerable<TableReference> EnumerateSourceTableReferences(bool recursive)
-        {
-            foreach (var tr in base.EnumerateSourceTableReferences(recursive))
-            {
-                yield return tr;
-            }
-
-            var btr = new BayesianXMatchTableReference();
-            btr.Alias = this.FindDescendant<XMatchClause>().Alias;
-            yield return btr;
-        }
+        #endregion
     }
 }

@@ -42,30 +42,44 @@ namespace Jhu.SkyQuery.Parser.Test
         }
 
         [TestMethod]
-        public void SubqueryInXMatchTest()
+        public void ValidXMatchQueryTest()
         {
             var sql =
-@"SELECT *
-FROM CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
-(SELECT * FROM CatalogB) b --WITH(POINT(b.ra, b.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3
+@"SELECT a.ra, a.dec
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
+     MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2))
+     LIMIT BAYESFACTOR TO 1000)
 ";
+
+            var ss = Parse(sql);
+        }
+
+        [TestMethod]
+        public void XMatchUnionQueryTest()
+        {
+            var sql =
+@"SELECT a.ra, a.dec
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
+     MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2))
+     LIMIT BAYESFACTOR TO 1000)
+UNION
+SELECT a.ra, a.dec
+FROM CatalogA a
+";
+
+            var ss = Parse(sql);
 
             try
             {
-                var ss = Parse(sql);
                 Validate(ss);
                 Assert.Fail();
             }
-            catch (ValidatorException)
+            catch (ValidatorException ex)
             {
             }
         }
-
-        // TODO: write test to validate xmatch functions
 
         [TestMethod]
         public void XMatchSubqueryTest()
@@ -75,14 +89,34 @@ HAVING LIMIT 1e3
 SELECT * FROM
 (
     SELECT a.ra, a.dec
-    FROM CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
-        (SELECT * FROM CatalogB) b --WITH (POINT(b.ra, b.dec), ERROR(0.2))
-    XMATCH BAYESFACTOR x
-    MUST EXIST a
-    MUST EXIST b
-    HAVING LIMIT 1e3
+    FROM XMATCH x AS
+        (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
+         MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2))
+         LIMIT BAYESFACTOR TO 1000)
 ) sq
 ";
+
+            var ss = Parse(sql);
+
+            try
+            {
+                Validate(ss);
+                Assert.Fail();
+            }
+            catch (ValidatorException ex)
+            {
+            }
+        }
+
+        [TestMethod]
+        public void CatalogWithNoPrimaryKeyTest()
+        {
+            var sql =
+@"SELECT a.ra, a.dec
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
+     MUST EXIST IN [CatalogWithNoPrimaryKey] b WITH (POINT(b.ra, b.dec), ERROR(0.2))
+     LIMIT BAYESFACTOR TO 1000)";
 
             var ss = Parse(sql);
 

@@ -8,6 +8,8 @@ namespace Jhu.SkyQuery.Parser
 {
     public class RegionSelectStatement : SelectStatement
     {
+        #region Constructors and initializers
+
         public RegionClause RegionClause
         {
             get { return FindDescendantRecursive<RegionClause>(); }
@@ -27,5 +29,7 @@ namespace Jhu.SkyQuery.Parser
             : base(old)
         {
         }
+
+        #endregion
     }
 }

@@ -9,6 +9,8 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class SelectStatement
     {
+        #region Constructors and initializers
+
         public SelectStatement()
             : base()
         {
@@ -29,13 +31,15 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
+        #endregion
+
         public override Node Interpret()
         {
             // Look for descentant nodes in the parsing tree to determine
-            // query type. An XMatchClause means it's a cross-match query.
+            // query type. An XMathTableSource means it's a cross-match query.
             // If only a RegionClause is present, it's a simpler region query.
 
-            if (FindDescendantRecursive<XMatchClause>() != null)
+            if (FindDescendantRecursive<XMatchTableSource>() != null)
             {
                 var xms = new XMatchSelectStatement(this);
                 xms.InterpretChildren();

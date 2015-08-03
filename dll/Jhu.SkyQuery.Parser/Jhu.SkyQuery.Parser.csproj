@@ -74,11 +74,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Copyright.cs" />
-    <Compile Include="Parser\BayesianXMatchClause.cs" />
     <Compile Include="Parser\BayesianXMatchQuerySpecification.cs" />
     <Compile Include="Parser\BayesianXMatchTableReference.cs" />
-    <Compile Include="Parser\BayesianXMatchTableSpecification.cs" />
+    <Compile Include="Parser\BayesianXMatchTableSource.cs" />
     <Compile Include="Parser\Constants.cs" />
+    <Compile Include="Parser\CoordinatePoint.cs" />
+    <Compile Include="Parser\CoordinateTableSource.cs" />
     <Compile Include="Parser\Enum.cs" />
     <Compile Include="Parser\ExceptionMessages.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -87,13 +88,12 @@
     </Compile>
     <Compile Include="Parser\QuerySpecification.cs" />
     <Compile Include="Parser\RegionClause.cs" />
+    <Compile Include="Parser\RegionQuerySpecification.cs" />
     <Compile Include="Parser\SelectStatement.cs" />
     <Compile Include="Parser\SkyQueryNameResolver.cs" />
     <Compile Include="Parser\SkyQueryParser.cs" />
     <Compile Include="Parser\SkyQueryValidator.cs" />
     <Compile Include="Parser\TableSource.cs" />
-    <Compile Include="Parser\XMatchClause.cs" />
-    <Compile Include="Parser\XMatchPoint.cs" />
     <Compile Include="Parser\XMatchQuerySpecification.cs" />
     <Compile Include="Parser\XMatchSelectStatement.cs" />
     <Compile Include="Parser\RegionSelectStatement.cs" />

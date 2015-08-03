@@ -64,45 +64,43 @@ namespace Jhu.SkyQuery.Parser.Test
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+     LIMIT BAYESFACTOR TO 1000)";
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendant<BayesianXMatchClause>();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual(3, ts.Length);
-            Assert.AreEqual("[a]", ts[0].ToString());
-            Assert.AreEqual("[b]", ts[1].ToString());
-            Assert.AreEqual("[a]", xts[0].TableReference.ToString());
-            Assert.AreEqual("[b]", xts[1].TableReference.ToString());
-            Assert.IsTrue(ts[2].IsComputed);
-        }
 
+            Assert.AreEqual("[x]", ts[0].ToString());
+            Assert.IsTrue(ts[0].IsComputed);
+
+            Assert.AreEqual("[a]", ts[1].ToString());
+            Assert.AreEqual("[b]", ts[2].ToString());
+            Assert.AreEqual("[a]", xts[0].SpecificTableSource.TableReference.ToString());
+            Assert.AreEqual("[b]", xts[1].SpecificTableSource.TableReference.ToString());
+        }
+        
         [TestMethod]
         public void InclusionMethodTest()
         {
             var sql =
 @"SELECT x.*
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
-CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
-CatalogD d WITH(POINT(d.cx, d.cy, d.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-EXIST b
-MAY EXIST c
-NOT EXIST d
-HAVING LIMIT 1e3";
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     MAY EXIST IN CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
+     NOT EXIST IN CatalogD d WITH(POINT(d.cx, d.cy, d.cz))
+     LIMIT BAYESFACTOR TO 1e3)
+";
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendant<BayesianXMatchClause>();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual(XMatchInclusionMethod.Must, xts[0].InclusionMethod);
@@ -118,12 +116,10 @@ HAVING LIMIT 1e3";
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.*
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS 
+    (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+     LIMIT BAYESFACTOR TO 1e3)";
 
             var qs = Parse(sql);
 
@@ -133,13 +129,11 @@ HAVING LIMIT 1e3";
 @"SELECT [a].[objId] AS [a_objId], [a].[ra] AS [a_ra], [a].[dec] AS [a_dec],
          [b].[objId] AS [b_objId], [b].[ra] AS [b_ra], [b].[dec] AS [b_dec],
          [x].[LogBF] AS [x_LogBF], [x].[RA] AS [x_RA], [x].[Dec] AS [x_Dec], [x].[Q] AS [x_Q], [x].[L] AS [x_L], [x].[A] AS [x_A], [x].[Cx] AS [x_Cx], [x].[Cy] AS [x_Cy], [x].[Cz] AS [x_Cz]
-FROM [SkyNode_Test].[dbo].[CatalogA] [a] WITH(POINT([a].[cx], [a].[cy], [a].[cz])),
-[SkyNode_Test].[dbo].[CatalogB] [b] WITH(POINT([b].[cx], [b].[cy], [b].[cz]))
-XMATCH BAYESFACTOR [x]
-MUST EXIST [SkyNode_Test].[dbo].[CatalogA]
-MUST EXIST [SkyNode_Test].[dbo].[CatalogB]
-HAVING LIMIT 1e3", res);
-
+FROM XMATCH [x] AS 
+    (MUST EXIST IN [SkyNode_Test].[dbo].[CatalogA] [a] WITH(POINT([a].[cx], [a].[cy], [a].[cz])),
+     MUST EXIST IN [SkyNode_Test].[dbo].[CatalogB] [b] WITH(POINT([b].[cx], [b].[cy], [b].[cz]))
+     LIMIT BAYESFACTOR TO 1e3)", res);
         }
+
     }
 }

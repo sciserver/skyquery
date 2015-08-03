@@ -45,10 +45,14 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parser\RegionParserTest.cs" />
+    <Compile Include="Parser\RegionParserTest.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Parser\SkyQueryNameResolverTest.cs" />
-    <Compile Include="Parser\SkyQueryParserTest.cs" />
     <Compile Include="Parser\SkyQueryValidatorTest.cs" />
+    <Compile Include="Parser\XMatchTableListTest.cs" />
+    <Compile Include="Parser\CoordinateHintTest.cs" />
+    <Compile Include="Parser\SkyQueryParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -80,19 +84,12 @@
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
-      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
-      <Name>Jhu.SkyQuery</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Jhu.SkyQuery.Test\Jhu.SkyQuery.Test.csproj">
-      <Project>{4F27F7FE-7C79-4584-867E-EF17B017F4DB}</Project>
-      <Name>Jhu.SkyQuery.Test</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="App.original.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>$(ProjectDir)..\..\..\Graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj Jhu.SkyQuery.Parser.Test</PreBuildEvent>

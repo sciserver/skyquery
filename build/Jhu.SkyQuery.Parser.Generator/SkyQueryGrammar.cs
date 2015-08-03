@@ -19,109 +19,129 @@ namespace Jhu.SkyQuery.Parser.Generator
                 CommentOrWhitespace, SelectList,
                 May(Sequence(CommentOrWhitespace, IntoClause)),
                 May(Sequence(CommentOrWhitespace, FromClause)),
-                May(Sequence(CommentOrWhitespace, XMatchClause)),
+                May(Sequence(CommentOrWhitespace, RegionClause)),       //
                 May(Sequence(CommentOrWhitespace, WhereClause)),
                 May(Sequence(CommentOrWhitespace, GroupByClause)),
-                May(Sequence(CommentOrWhitespace, HavingClause)),
-                May(Sequence(CommentOrWhitespace, RegionClause))
+                May(Sequence(CommentOrWhitespace, HavingClause))
             );
-
-        #region Table hint extensions to support POINT and ERROR
 
         public static new Expression<Rule> TableSource = () =>
             Must
             (
                 FunctionTableSource,
-                XMatchTableSource,
+                XMatchTableSource,                                      //
+                CoordinateTableSource,                                  //
                 SimpleTableSource,
                 VariableTableSource,
                 SubqueryTableSource
             );
 
-        public static Expression<Rule> XMatchTableSource = () =>
+        #region Table hint extensions to support POINT and ERROR
+
+        public static Expression<Rule> CoordinateTableSource = () =>
             Sequence
             (
                 TableOrViewName,
                 May(Sequence(CommentOrWhitespace, May(Sequence(Keyword("AS"), CommentOrWhitespace)), TableAlias)),   // Optional
-                Sequence(CommentOrWhitespace, XMatchHintClause)     // Required
+                Sequence(CommentOrWhitespace, CoordinateHintClause)     // Required
             );
 
-        public static Expression<Rule> XMatchHintClause = () =>
+        public static Expression<Rule> CoordinateHintClause = () =>
             Sequence
             (
                 Keyword("WITH"),
                 May(CommentOrWhitespace), BracketOpen, May(CommentOrWhitespace),
-                XMatchTableHintList,
+                CoordinateHintList,
                 May(CommentOrWhitespace), BracketClose
             );
 
-        public static new Expression<Rule> XMatchTableHintList = () =>
+        public static new Expression<Rule> CoordinateHintList = () =>
             Sequence
             (
                 Must(
-                    XMatchPoint,
-                    XMatchError
+                    CoordinatePoint,
+                    CoordinateError,
+                    CoordinateHtm
                 ),
-                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), XMatchTableHintList))
+                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), CoordinateHintList))
             );
 
-        public static Expression<Rule> XMatchPoint = () =>
+        public static Expression<Rule> CoordinatePoint = () =>
             Sequence
             (
                 Keyword("POINT"),
                 FunctionArguments
             );
 
-        public static Expression<Rule> XMatchError = () =>
+        public static Expression<Rule> CoordinateError = () =>
             Sequence
             (
                 Keyword("ERROR"),
                 FunctionArguments
             );
 
+        public static Expression<Rule> CoordinateHtm = () =>
+            Sequence
+            (
+                Keyword("HTM"),
+                FunctionArguments
+            );
+
         #endregion
         #region XMatch clause
 
-        public static Expression<Rule> XMatchClause = () =>
+        public static Expression<Rule> XMatchTableSource = () =>
             Sequence
             (
                 Keyword("XMATCH"),
-                CommentOrWhitespace, XMatchAlgorithm,
-                May(Sequence(CommentOrWhitespace, Keyword("AS"))),
                 CommentOrWhitespace, TableAlias,
-                CommentOrWhitespace, XMatchTableList,
-                CommentOrWhitespace, XMatchHavingClause
+                CommentOrWhitespace, Keyword("AS"),
+                May(CommentOrWhitespace), BracketOpen,
+                May(CommentOrWhitespace), XMatchTableList,
+                CommentOrWhitespace, XMatchConstraint,
+                May(CommentOrWhitespace), BracketClose
             );
-
-        public static Expression<Rule> XMatchAlgorithm = () =>
-            Must(Keyword("BAYESFACTOR"), Keyword("DISTANCE"));
 
         public static Expression<Rule> XMatchTableList = () =>
             Sequence
             (
                 XMatchTableSpecification,
-                May(Sequence(CommentOrWhitespace, XMatchTableList))
+                May(Sequence
+                    (
+                        May(CommentOrWhitespace),
+                        Comma,
+                        May(CommentOrWhitespace),
+                        XMatchTableList)
+                    )
             );
 
         public static Expression<Rule> XMatchTableSpecification = () =>
             Sequence
             (
                 XMatchTableInclusion,
-                CommentOrWhitespace, TableOrViewName
+                CommentOrWhitespace, 
+                Must(CoordinateTableSource, SimpleTableSource)
             );
 
         public static Expression<Rule> XMatchTableInclusion = () =>
             Sequence
             (
                 May(Sequence(Must(Keyword("MUST"), Keyword("MAY"), Keyword("NOT")), CommentOrWhitespace)),
-                Keyword("EXIST")
+                Keyword("EXIST"),
+                CommentOrWhitespace, Keyword("IN")
             );
 
-        public static Expression<Rule> XMatchHavingClause = () =>
+        public static Expression<Rule> XMatchConstraint = () =>
             Sequence
             (
-                Keyword("HAVING"), CommentOrWhitespace, Keyword("LIMIT"), CommentOrWhitespace, Number
+                Keyword("LIMIT"),
+                CommentOrWhitespace, XMatchAlgorithm,
+                CommentOrWhitespace, Keyword("TO"),
+                CommentOrWhitespace, Number
             );
+
+        public static Expression<Rule> XMatchAlgorithm = () =>
+            Must(Keyword("BAYESFACTOR"), Keyword("DISTANCE"));
 
         #endregion
         #region Region grammar
@@ -129,11 +149,7 @@ namespace Jhu.SkyQuery.Parser.Generator
         public static Expression<Rule> RegionClause = () =>
             Sequence
             (
-                Keyword("LIMIT"),
-                CommentOrWhitespace,
                 Keyword("REGION"),
-                CommentOrWhitespace,
-                Keyword("TO"),
                 CommentOrWhitespace,
                 Must(StringConstant, RegionExpression)
             );
