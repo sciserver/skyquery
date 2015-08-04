@@ -102,12 +102,12 @@ namespace Jhu.SkyQuery.Parser
                 // Make sure xmatch table sources don't contain any subqueries or functions.
                 foreach (var xt in ((XMatchTableSource)ts).EnumerateXMatchTableSpecifications())
                 {
-                    if (!(xt.SpecificTableSource.TableReference.DatabaseObject is TableOrView))
+                    if (!(xt.TableReference.DatabaseObject is TableOrView))
                     {
                         // This is unlikely to happen as limited by the grammar
                         throw new ValidatorException(ExceptionMessages.OnlyTablesAllowed);
                     }
-                    else if (((TableOrView)xt.SpecificTableSource.TableReference.DatabaseObject).PrimaryKey == null)
+                    else if (((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
                     {
                         throw new ValidatorException(ExceptionMessages.PrimaryKeyRequired);
                     }

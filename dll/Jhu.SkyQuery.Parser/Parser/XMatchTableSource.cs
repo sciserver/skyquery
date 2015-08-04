@@ -31,6 +31,14 @@ namespace Jhu.SkyQuery.Parser
             get { return FindDescendantRecursive<XMatchAlgorithm>().Value; }
         }
 
+        public double XMatchLimit
+        {
+            get
+            {
+                return double.Parse(FindDescendant<XMatchConstraint>().FindDescendant<Number>().Value, System.Globalization.CultureInfo.InvariantCulture);
+            }
+        }
+
         public string Alias
         {
             get { return FindDescendant<TableAlias>().Value; }
@@ -86,7 +94,7 @@ namespace Jhu.SkyQuery.Parser
         {
             foreach (var xts in EnumerateDescendantsRecursive<XMatchTableSpecification>())
             {
-                yield return xts.SpecificTableSource;
+                yield return xts.TableSource;
             }
         }
     }

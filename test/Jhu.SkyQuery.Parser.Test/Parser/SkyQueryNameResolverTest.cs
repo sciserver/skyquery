@@ -81,8 +81,8 @@ FROM XMATCH x AS
 
             Assert.AreEqual("[a]", ts[1].ToString());
             Assert.AreEqual("[b]", ts[2].ToString());
-            Assert.AreEqual("[a]", xts[0].SpecificTableSource.TableReference.ToString());
-            Assert.AreEqual("[b]", xts[1].SpecificTableSource.TableReference.ToString());
+            Assert.AreEqual("[a]", xts[0].TableReference.ToString());
+            Assert.AreEqual("[b]", xts[1].TableReference.ToString());
         }
         
         [TestMethod]

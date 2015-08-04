@@ -48,6 +48,8 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+
+
         private ArgumentList ErrorArgumentList
         {
             get { return TableHintList.FindDescendantRecursive<CoordinateError>().FindDescendant<FunctionArguments>().FindDescendant<ArgumentList>(); }

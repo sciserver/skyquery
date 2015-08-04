@@ -18,6 +18,11 @@ namespace Jhu.SkyQuery.Parser
             }
         }*/
 
+        public XMatchTableSource XMatchTableSource
+        {
+            get { return this.FindDescendantRecursive<XMatchTableSource>(); }
+        }
+
         public XMatchQuerySpecification()
             : base()
         {

@@ -43,7 +43,7 @@ namespace Jhu.SkyQuery.Parser.Generator
             (
                 TableOrViewName,
                 May(Sequence(CommentOrWhitespace, May(Sequence(Keyword("AS"), CommentOrWhitespace)), TableAlias)),   // Optional
-                Sequence(CommentOrWhitespace, CoordinateHintClause)     // Required
+                May(Sequence(CommentOrWhitespace, CoordinateHintClause))
             );
 
         public static Expression<Rule> CoordinateHintClause = () =>
@@ -120,7 +120,7 @@ namespace Jhu.SkyQuery.Parser.Generator
             (
                 XMatchTableInclusion,
                 CommentOrWhitespace, 
-                Must(CoordinateTableSource, SimpleTableSource)
+                CoordinateTableSource
             );
 
         public static Expression<Rule> XMatchTableInclusion = () =>

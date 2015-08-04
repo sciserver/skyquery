@@ -100,14 +100,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.zoneHeight = 4.0 / 3600.0;     //****** TODO: remove hardcoding
 
             // Interpret xmatch parameters
-            XMatchClause xmc = SelectStatement.EnumerateQuerySpecifications().First<Jhu.Graywulf.SqlParser.QuerySpecification>().FindDescendant<XMatchClause>();
-            XMatchHavingClause xmhc = xmc.FindDescendant<XMatchHavingClause>();
-
+            var qs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
+            var xts = qs.XMatchTableSource;
+           
             // Bayes factor or probability limit
-            this.limit = double.Parse(xmhc.FindDescendant<Number>().Value, System.Globalization.CultureInfo.InvariantCulture);    // *** TODO: test this
+            this.limit = xts.XMatchLimit;
 
             // Find xmatch tables
-            xmatchTables = new List<XMatchTableSpecification>(SelectStatement.EnumerateQuerySpecifications().First<Jhu.Graywulf.SqlParser.QuerySpecification>().FindDescendant<XMatchClause>().EnumerateXMatchTableSpecifications());
+            xmatchTables = new List<XMatchTableSpecification>(xts.EnumerateXMatchTableSpecifications());
 
             base.FinishInterpret(forceReinitialize);
         }

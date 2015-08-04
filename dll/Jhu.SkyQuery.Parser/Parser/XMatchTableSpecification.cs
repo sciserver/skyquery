@@ -9,7 +9,7 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class XMatchTableSpecification : ICloneable
     {
-        private ITableSource specificTableSource;
+        private CoordinateTableSource tableSource;
 
         public XMatchInclusionMethod InclusionMethod
         {
@@ -43,9 +43,14 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public ITableSource SpecificTableSource
+        public TableReference TableReference
         {
-            get { return specificTableSource; }
+            get { return tableSource.TableReference; }
+        }
+
+        public CoordinateTableSource TableSource
+        {
+            get { return tableSource; }
         }
 
         #region Constructors and initializers
@@ -79,31 +84,9 @@ namespace Jhu.SkyQuery.Parser
 
         public override Node Interpret()
         {
-            specificTableSource = FindSpecificTableSource();
+            tableSource = FindDescendant<CoordinateTableSource>();
 
-            if (specificTableSource == null)
-            {
-                throw new NotImplementedException();
-            }
-
-            return base.Interpret();;
-        }
-
-        private ITableSource FindSpecificTableSource()
-        {
-            var ts = FindDescendant<SimpleTableSource>();
-            if (ts != null)
-            {
-                return ts;
-            }
-
-            var cts = FindDescendant<CoordinateTableSource>();
-            if (cts != null)
-            {
-                return cts;
-            }
-
-            return null;
+            return base.Interpret();
         }
 
     }

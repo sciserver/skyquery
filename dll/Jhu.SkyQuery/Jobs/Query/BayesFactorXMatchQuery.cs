@@ -42,13 +42,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             foreach (var table in xmatchTables)
             {
-                table.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
+                var tr = table.TableReference;
+
+                tr.Statistics = new Graywulf.SqlParser.TableStatistics()
                 {
-                    Table = table.TableReference,
+                    Table = tr,
                     KeyColumn = "Dec",  // *** TODO: figure this out from query
                 };
 
-                TableStatistics.Add(table.TableReference);
+                TableStatistics.Add(tr);
             }
         }
 
@@ -60,7 +62,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     {
                         // No partitioning for single server
                         // Use this for debugging purposes too
-                        BayesFactorXMatchQueryPartition qp = new BayesFactorXMatchQueryPartition(this, null);
+                        var qp = new BayesFactorXMatchQueryPartition(this, null);
                         qp.GenerateSteps(xmatchTables.ToArray());
                         AppendPartition(qp);
                     }
@@ -68,7 +70,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 case ExecutionMode.Graywulf:
                     {
                         // Create a copy of xmatchTables that will be reordered based on stats
-                        XMatchTableSpecification[] tables = xmatchTables.ToArray();
+                        var tables = xmatchTables.ToArray();
 
                         // --- sort tables by count
                         // *** this must be changed for MAY and DROP!
