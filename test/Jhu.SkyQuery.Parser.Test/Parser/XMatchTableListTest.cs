@@ -32,7 +32,7 @@ namespace Jhu.SkyQuery.Parser.Test
         [TestMethod]
         public void MultipleTablesTest()
         {
-            Parse(@"MUST EXIST IN SDSSDR7:PhotoObjAll a WITH(POINT(ra, dec))
+            Parse(@"MUST EXIST IN SDSSDR7:PhotoObjAll a WITH(POINT(ra, dec)),
                     MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))");
         }
         

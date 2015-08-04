@@ -56,9 +56,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
                 var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
                 var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-                var xmc = qs.FindDescendant<Jhu.SkyQuery.Parser.XMatchClause>();
-
-                var xmtables = xmc.EnumerateXMatchTableSpecifications().ToArray();
+                var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
                 xmqp.GenerateSteps(xmtables);
 
                 var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
@@ -78,12 +76,10 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+     LIMIT BAYESFACTOR TO 1000)";
 
             var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec], [tablealias].[_TEST_dbo_CatalogA_a_cx], [tablealias].[_TEST_dbo_CatalogA_a_cy], [tablealias].[_TEST_dbo_CatalogA_a_cz]", res);
@@ -100,12 +96,10 @@ HAVING LIMIT 1e3";
         {
             var sql =
 @"SELECT a.ra
-FROM CatalogA a WITH(POINT(a.ra, a.dec)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+     LIMIT BAYESFACTOR TO 1e3)";
 
             var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res);
@@ -121,13 +115,11 @@ HAVING LIMIT 1e3";
         public void GetPropagatedColumnListWithAliasesTest()
         {
             var sql =
-@"SELECT a.ra colalias
-FROM CatalogA a WITH(POINT(a.ra, a.dec)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+@"SELECT a.ra
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+     LIMIT BAYESFACTOR TO 1e3)";
 
             var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res);
@@ -158,9 +150,7 @@ HAVING LIMIT 1e3";
 
             var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
             var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-            var xmc = qs.FindDescendant<Jhu.SkyQuery.Parser.XMatchClause>();
-
-            var xmtables = xmc.EnumerateXMatchTableSpecifications().ToArray();
+            var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
             xmqp.GenerateSteps(xmtables);
 
             var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
@@ -178,12 +168,10 @@ HAVING LIMIT 1e3";
 @"SELECT a.objID, a.ra, a.dec,
 b.objID, b.ra, b.dec,
 x.ra, x.dec
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS
+    (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+     LIMIT BAYESFACTOR TO 1e3)";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
@@ -191,8 +179,7 @@ HAVING LIMIT 1e3";
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
 [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
 [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
-", res);
+FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]", res);
 
         }
 
@@ -203,21 +190,17 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-CROSS JOIN CatalogC c WITH(POINT(c.cx, c.cy, c.cz))
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-MUST EXIST c
-HAVING LIMIT 1e3";
+FROM XMATCH x AS 
+     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+      MUST EXIST IN CatalogC c WITH(POINT(c.cx, c.cy, c.cz))
+      LIMIT BAYESFACTOR TO 1e3)";
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
          [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]
-", GetExecuteQueryTextTestHelper(sql));
+FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]", GetExecuteQueryTextTestHelper(sql));
         }
 
         [TestMethod]
@@ -228,21 +211,20 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]
          b.objID, b.ra, b.dec,
          c.objID, c.ra, c.dec,
          x.ra, x.dec
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-CROSS JOIN CatalogC c
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS 
+     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+      LIMIT BAYESFACTOR TO 1e3)
+CROSS JOIN CatalogC c";
 
             Assert.AreEqual(
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
          [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]
-", GetExecuteQueryTextTestHelper(sql));
+FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]", GetExecuteQueryTextTestHelper(sql));
+
         }
 
         [TestMethod]
@@ -253,13 +235,11 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable] CROSS JOIN [S
          b.objID, b.ra, b.dec,
          c.objID, c.ra, c.dec,
          x.ra, x.dec
-FROM CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-INNER JOIN CatalogC c ON c.objId = a.objId
-XMATCH BAYESFACTOR x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3";
+FROM XMATCH x AS 
+     (CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
+      LIMIT BAYESFACTOR TO 1e3)
+INNER JOIN CatalogC c ON c.objId = a.objId";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 

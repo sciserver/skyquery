@@ -9,12 +9,6 @@ namespace Jhu.SkyQuery.Parser
     {
         protected override Graywulf.SqlParser.ITableSource FindSpecificTableSource()
         {
-            var cts = FindDescendant<CoordinateTableSource>();
-            if (cts != null)
-            {
-                return cts;
-            }
-
             var xts = FindDescendant<XMatchTableSource>();
             if (xts != null)
             {

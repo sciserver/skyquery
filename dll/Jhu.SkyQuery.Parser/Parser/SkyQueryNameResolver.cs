@@ -27,19 +27,20 @@ namespace Jhu.SkyQuery.Parser
         }
 
 
+        /* TODO: delete
         protected override ColumnContext GetColumnContext(Node n, ColumnContext context)
         {
             context = base.GetColumnContext(n, context);
 
             // TODO: test
             //if (n is XMatchClause)
-            if (n is CoordinateHintList)
+            if (n is TableHintList)
             {
                 context = ColumnContext.Special;
             }
 
             return context;
-        }
+        }*/
 
         protected override bool IsSystemFunctionName(string name)
         {

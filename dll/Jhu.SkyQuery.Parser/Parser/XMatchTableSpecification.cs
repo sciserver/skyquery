@@ -9,7 +9,7 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class XMatchTableSpecification : ICloneable
     {
-        private CoordinateTableSource tableSource;
+        private SimpleTableSource tableSource;
 
         public XMatchInclusionMethod InclusionMethod
         {
@@ -48,7 +48,7 @@ namespace Jhu.SkyQuery.Parser
             get { return tableSource.TableReference; }
         }
 
-        public CoordinateTableSource TableSource
+        public SimpleTableSource TableSource
         {
             get { return tableSource; }
         }
@@ -84,7 +84,7 @@ namespace Jhu.SkyQuery.Parser
 
         public override Node Interpret()
         {
-            tableSource = FindDescendant<CoordinateTableSource>();
+            tableSource = FindDescendant<SimpleTableSource>();
 
             return base.Interpret();
         }

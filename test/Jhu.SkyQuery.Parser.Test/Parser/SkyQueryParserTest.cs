@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.SqlParser;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Parser.Test
@@ -14,19 +16,22 @@ namespace Jhu.SkyQuery.Parser.Test
     [TestClass]
     public class SkyQueryParserTest
     {
-        protected QuerySpecification Parse(string query)
+        protected SqlServerDataset CodeDataset
         {
-            var p = new SkyQueryParser();
-            return (QuerySpecification)((SelectStatement)p.Execute(query)).EnumerateQuerySpecifications().First();;
+            get
+            {
+                return new SqlServerDataset("CODE", "Initial Catalog=SkyQuery_CODE");
+            }
         }
 
-        [TestMethod]
-        public void CoordinateHintTest()
+        protected SkyQueryParser Parser
         {
-            var sql = "WITH(POINT(ra,dec), ERROR(1.0))";
+            get { return new SkyQueryParser(); }
+        }
 
-            var p = new SkyQueryParser();
-            var h = p.Execute(new CoordinateHintClause(), sql);
+        protected QuerySpecification Parse(string query)
+        {
+            return (QuerySpecification)((SelectStatement)Parser.Execute(query)).EnumerateQuerySpecifications().First(); ;
         }
 
         [TestMethod]
@@ -39,34 +44,7 @@ namespace Jhu.SkyQuery.Parser.Test
             Assert.IsNull(qs.FindDescendant<XMatchQuerySpecification>());
         }
 
-        [TestMethod]
-        public void XMatchCoordinateHintsTest()
-        {
-            var sql =
-@"SELECT c1.ra, c1.dec, c2.ra, c2.dec
-FROM 
-    XMATCH x AS
-        MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
-        MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))
-        LIMIT BAYESFACTOR TO 1000
-";
-
-            var qs = Parse(sql);
-
-            var ts = qs.EnumerateSourceTables(false).Cast<CoordinateTableSource>().ToArray();
-
-            Assert.AreEqual(2, ts.Length);
-
-            Assert.AreEqual("POINT(c1.ra, c1.dec)", ts[0].Position.ToString());
-            Assert.AreEqual("0.1", ts[0].ErrorExpression.ToString());
-            Assert.IsTrue(ts[0].IsConstantError);
-
-            Assert.AreEqual("POINT(c2.ra, c2.dec)", ts[1].Position.ToString());
-            Assert.AreEqual("c2.err", ts[1].ErrorExpression.ToString());
-            Assert.AreEqual("0.1", ts[1].MinErrorExpression.ToString());
-            Assert.AreEqual("0.5", ts[1].MaxErrorExpression.ToString());
-            Assert.IsFalse(ts[1].IsConstantError);
-        }
+        
 
         [TestMethod]
         public void TableValuedFunctionTest()
@@ -87,8 +65,8 @@ FROM dbo.fHtmCoverCircleEq(100) AS htm
         [TestMethod]
         public void JoinedTableValuedFunctionTest()
         {
-            var sql = @"
-SELECT TOP 100 objid, ra, dec
+            var sql =
+@"SELECT TOP 100 objid, ra, dec
 INTO SqlQueryTest_TableValuedFunctionJoinTest
 FROM dbo.fHtmCoverCircleEq (0, 0, 10) AS htm
 INNER JOIN SDSSDR7:PhotoObj p
@@ -107,18 +85,16 @@ INNER JOIN SDSSDR7:PhotoObj p
             var sql = @"
 SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
-CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST m
-HAVING LIMIT 1e3
+FROM XMATCH
+     (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
+      MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
+      LIMIT BAYESFACTOR TO 1e3) x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
 
             var qs = Parse(sql);
 
             var ts = qs.EnumerateSourceTables(false).ToArray();
-            Assert.AreEqual(2, ts.Length);
+            Assert.AreEqual(3, ts.Length);
         }
 
         [TestMethod]
@@ -127,7 +103,7 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
             var sql =
         @"SELECT TOP 100 a.objid, a.ra, a.dec
 INTO PartitionedSqlQueryTest_SimpleQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
+FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid
 ";
 
             var qs = Parse(sql);
@@ -143,7 +119,7 @@ FROM SDSSDR7:PhotoObjAll a PARTITION ON a.objid
         @"SELECT TOP 100 a.objid, a.ra, a.dec
 INTO PartitionedSqlQueryTest_SimpleQueryTest
 FROM SDSSDR7:PhotoObjAll a
-LIMIT REGION TO CIRCLE J2000 20 30 10'
+REGION CIRCLE(20, 30, 10)
 ";
             var qs = Parse(sql);
 

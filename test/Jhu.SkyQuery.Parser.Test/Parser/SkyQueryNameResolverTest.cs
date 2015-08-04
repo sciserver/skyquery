@@ -64,10 +64,10 @@ namespace Jhu.SkyQuery.Parser.Test
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.ra, x.dec
-FROM XMATCH x AS
+FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-     LIMIT BAYESFACTOR TO 1000)";
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
@@ -90,12 +90,12 @@ FROM XMATCH x AS
         {
             var sql =
 @"SELECT x.*
-FROM XMATCH x AS
+FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      MAY EXIST IN CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
-     NOT EXIST IN CatalogD d WITH(POINT(d.cx, d.cy, d.cz))
-     LIMIT BAYESFACTOR TO 1e3)
+     NOT EXIST IN CatalogD d WITH(POINT(d.cx, d.cy, d.cz)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 ";
 
             var qs = Parse(sql);
@@ -116,10 +116,10 @@ FROM XMATCH x AS
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
          x.*
-FROM XMATCH x AS 
+FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz))
-     LIMIT BAYESFACTOR TO 1e3)";
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     LIMIT BAYESFACTOR TO 1e3) AS x";
 
             var qs = Parse(sql);
 
@@ -129,10 +129,10 @@ FROM XMATCH x AS
 @"SELECT [a].[objId] AS [a_objId], [a].[ra] AS [a_ra], [a].[dec] AS [a_dec],
          [b].[objId] AS [b_objId], [b].[ra] AS [b_ra], [b].[dec] AS [b_dec],
          [x].[LogBF] AS [x_LogBF], [x].[RA] AS [x_RA], [x].[Dec] AS [x_Dec], [x].[Q] AS [x_Q], [x].[L] AS [x_L], [x].[A] AS [x_A], [x].[Cx] AS [x_Cx], [x].[Cy] AS [x_Cy], [x].[Cz] AS [x_Cz]
-FROM XMATCH [x] AS 
+FROM XMATCH
     (MUST EXIST IN [SkyNode_Test].[dbo].[CatalogA] [a] WITH(POINT([a].[cx], [a].[cy], [a].[cz])),
-     MUST EXIST IN [SkyNode_Test].[dbo].[CatalogB] [b] WITH(POINT([b].[cx], [b].[cy], [b].[cz]))
-     LIMIT BAYESFACTOR TO 1e3)", res);
+     MUST EXIST IN [SkyNode_Test].[dbo].[CatalogB] [b] WITH(POINT([b].[cx], [b].[cy], [b].[cz])),
+     LIMIT BAYESFACTOR TO 1e3) AS [x]", res);
         }
 
     }

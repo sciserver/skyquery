@@ -79,6 +79,33 @@ namespace Jhu.SkyQuery.Parser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only 1 or 3 error values can be specified corresponding to constant error, or variable error with min and max values..
+        /// </summary>
+        internal static string InvalidErrorFormat {
+            get {
+                return ResourceManager.GetString("InvalidErrorFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only one HTM ID column can be specified..
+        /// </summary>
+        internal static string InvalidHtmFormat {
+            get {
+                return ResourceManager.GetString("InvalidHtmFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only 2, 3 or 5 coordinates can be specified correspoding to spherical, Cartesian or both, respecively..
+        /// </summary>
+        internal static string InvalidPointFormat {
+            get {
+                return ResourceManager.GetString("InvalidPointFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only queries with a single SELECT are allowed..
         /// </summary>
         internal static string OnlySingleQueryAllowed {

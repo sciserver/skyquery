@@ -30,76 +30,25 @@ namespace Jhu.SkyQuery.Parser.Generator
             (
                 FunctionTableSource,
                 XMatchTableSource,                                      //
-                CoordinateTableSource,                                  //
                 SimpleTableSource,
                 VariableTableSource,
                 SubqueryTableSource
             );
 
-        #region Table hint extensions to support POINT and ERROR
-
-        public static Expression<Rule> CoordinateTableSource = () =>
-            Sequence
-            (
-                TableOrViewName,
-                May(Sequence(CommentOrWhitespace, May(Sequence(Keyword("AS"), CommentOrWhitespace)), TableAlias)),   // Optional
-                May(Sequence(CommentOrWhitespace, CoordinateHintClause))
-            );
-
-        public static Expression<Rule> CoordinateHintClause = () =>
-            Sequence
-            (
-                Keyword("WITH"),
-                May(CommentOrWhitespace), BracketOpen, May(CommentOrWhitespace),
-                CoordinateHintList,
-                May(CommentOrWhitespace), BracketClose
-            );
-
-        public static new Expression<Rule> CoordinateHintList = () =>
-            Sequence
-            (
-                Must(
-                    CoordinatePoint,
-                    CoordinateError,
-                    CoordinateHtm
-                ),
-                May(Sequence(May(CommentOrWhitespace), Comma, May(CommentOrWhitespace), CoordinateHintList))
-            );
-
-        public static Expression<Rule> CoordinatePoint = () =>
-            Sequence
-            (
-                Keyword("POINT"),
-                FunctionArguments
-            );
-
-        public static Expression<Rule> CoordinateError = () =>
-            Sequence
-            (
-                Keyword("ERROR"),
-                FunctionArguments
-            );
-
-        public static Expression<Rule> CoordinateHtm = () =>
-            Sequence
-            (
-                Keyword("HTM"),
-                FunctionArguments
-            );
-
-        #endregion
         #region XMatch clause
 
         public static Expression<Rule> XMatchTableSource = () =>
             Sequence
             (
                 Keyword("XMATCH"),
-                CommentOrWhitespace, TableAlias,
-                CommentOrWhitespace, Keyword("AS"),
                 May(CommentOrWhitespace), BracketOpen,
                 May(CommentOrWhitespace), XMatchTableList,
-                CommentOrWhitespace, XMatchConstraint,
-                May(CommentOrWhitespace), BracketClose
+                May(CommentOrWhitespace), Comma,
+                May(CommentOrWhitespace), XMatchConstraint,
+                May(CommentOrWhitespace), BracketClose,
+                May(CommentOrWhitespace),
+                May(Sequence(Keyword("AS"), CommentOrWhitespace)),
+                TableAlias
             );
 
         public static Expression<Rule> XMatchTableList = () =>
@@ -120,7 +69,7 @@ namespace Jhu.SkyQuery.Parser.Generator
             (
                 XMatchTableInclusion,
                 CommentOrWhitespace, 
-                CoordinateTableSource
+                SimpleTableSource
             );
 
         public static Expression<Rule> XMatchTableInclusion = () =>

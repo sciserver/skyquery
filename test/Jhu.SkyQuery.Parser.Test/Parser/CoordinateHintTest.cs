@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.SqlParser;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Parser.Test
@@ -12,38 +13,27 @@ namespace Jhu.SkyQuery.Parser.Test
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class CoordinateHintTest
+    public class CoordinateHintTest : SkyQueryParserTest
     {
-        protected QuerySpecification Parse(string query)
-        {
-            var p = new SkyQueryParser();
-            return (QuerySpecification)((SelectStatement)p.Execute(query)).EnumerateQuerySpecifications().First();;
-        }
-
         [TestMethod]
         public void SimpleCoordinateHintTest()
         {
-            var sql = "WITH(POINT(ra,dec), ERROR(1.0))";
+            var sql = "dummytable WITH(POINT(ra,dec), ERROR(1.0))";
+            var t = (TableSource)Parser.Execute(new TableSource(), sql);
 
-            var p = new SkyQueryParser();
-            var h = p.Execute(new CoordinateHintClause(), sql);
+            var coords = new TableCoordinates((SimpleTableSource)t.SpecificTableSource, CodeDataset);
         }
 
-        // TODO add more coordinate tests
-        
         [TestMethod]
         public void XMatchCoordinateHintsTest()
         {
             var sql =
 @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
 FROM 
-    XMATCH x AS
-    (
-        MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
-        MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5))
-        LIMIT BAYESFACTOR TO 1000
-    )
-";
+    XMATCH
+        (MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
+         MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5)),
+         LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
 
@@ -51,18 +41,22 @@ FROM
 
             Assert.AreEqual(3, ts.Length);
 
-            var cts = (CoordinateTableSource)ts[1];
-            Assert.AreEqual("POINT(c1.ra, c1.dec)", cts.Position.ToString());
-            Assert.AreEqual("0.1", cts.ErrorExpression.ToString());
-            Assert.IsTrue(cts.IsConstantError);
+            var coords = new TableCoordinates((SimpleTableSource)ts[1], CodeDataset);
+            Assert.AreEqual("[c1].[ra]", coords.RA);
+            Assert.AreEqual("[c1].[dec]", coords.Dec);
+            Assert.AreEqual("0.1", coords.Error);
+            Assert.IsTrue(coords.IsConstantError);
 
-            cts = (CoordinateTableSource)ts[2];
-            Assert.AreEqual("POINT(c2.ra, c2.dec)", cts.Position.ToString());
-            Assert.AreEqual("c2.err", cts.ErrorExpression.ToString());
-            Assert.AreEqual("0.1", cts.MinErrorExpression.ToString());
-            Assert.AreEqual("0.5", cts.MaxErrorExpression.ToString());
-            Assert.IsFalse(cts.IsConstantError);
+            coords = new TableCoordinates((SimpleTableSource)ts[2], CodeDataset);
+            Assert.AreEqual("[c2].[ra]", coords.RA);
+            Assert.AreEqual("[c2].[dec]", coords.Dec);
+            Assert.AreEqual("[c2].[err]", coords.Error);
+            Assert.AreEqual("0.1", coords.ErrorMin);
+            Assert.AreEqual("0.5", coords.ErrorMax);
+            Assert.IsFalse(coords.IsConstantError);
         }
+
+        // TODO add more coordinate tests
 
         [TestMethod]
         public void RegionQueryTest()

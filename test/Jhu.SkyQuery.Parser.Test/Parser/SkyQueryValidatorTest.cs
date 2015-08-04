@@ -46,10 +46,10 @@ namespace Jhu.SkyQuery.Parser.Test
         {
             var sql =
 @"SELECT a.ra, a.dec
-FROM XMATCH x AS
+FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
-     MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2))
-     LIMIT BAYESFACTOR TO 1000)
+     MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1000) AS x
 ";
 
             var ss = Parse(sql);
@@ -60,10 +60,10 @@ FROM XMATCH x AS
         {
             var sql =
 @"SELECT a.ra, a.dec
-FROM XMATCH x AS
+FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
-     MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2))
-     LIMIT BAYESFACTOR TO 1000)
+     MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1000) AS x
 UNION
 SELECT a.ra, a.dec
 FROM CatalogA a
@@ -89,10 +89,10 @@ FROM CatalogA a
 SELECT * FROM
 (
     SELECT a.ra, a.dec
-    FROM XMATCH x AS
+    FROM XMATCH
         (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
-         MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2))
-         LIMIT BAYESFACTOR TO 1000)
+         MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2)),
+         LIMIT BAYESFACTOR TO 1000) AS x
 ) sq
 ";
 
@@ -113,10 +113,10 @@ SELECT * FROM
         {
             var sql =
 @"SELECT a.ra, a.dec
-FROM XMATCH x AS
+FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
-     MUST EXIST IN [CatalogWithNoPrimaryKey] b WITH (POINT(b.ra, b.dec), ERROR(0.2))
-     LIMIT BAYESFACTOR TO 1000)";
+     MUST EXIST IN [CatalogWithNoPrimaryKey] b WITH (POINT(b.ra, b.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
 
             var ss = Parse(sql);
 

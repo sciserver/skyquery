@@ -78,14 +78,14 @@
     <Compile Include="Parser\BayesianXMatchTableReference.cs" />
     <Compile Include="Parser\BayesianXMatchTableSource.cs" />
     <Compile Include="Parser\Constants.cs" />
-    <Compile Include="Parser\CoordinatePoint.cs" />
-    <Compile Include="Parser\CoordinateTableSource.cs" />
     <Compile Include="Parser\Enum.cs" />
     <Compile Include="Parser\ExceptionMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Parser\ITableCoordinates.cs" />
+    <Compile Include="Parser\TableCoordinates.cs" />
     <Compile Include="Parser\QuerySpecification.cs" />
     <Compile Include="Parser\RegionClause.cs" />
     <Compile Include="Parser\RegionQuerySpecification.cs" />

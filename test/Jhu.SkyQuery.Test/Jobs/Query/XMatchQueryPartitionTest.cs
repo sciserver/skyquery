@@ -49,9 +49,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
             var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
             var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-            var xmc = qs.FindDescendant<Jhu.SkyQuery.Parser.XMatchClause>();
-
-            var xmtables = xmc.EnumerateXMatchTableSpecifications().ToArray();
+            var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
             xmqp.GenerateSteps(xmtables);
 
             var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
