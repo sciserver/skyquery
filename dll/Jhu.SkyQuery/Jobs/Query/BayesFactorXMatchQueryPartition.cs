@@ -182,19 +182,19 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             for (int i = step.StepNumber; i < steps.Count; i++)
             {
-                var table = xmatchTableSpecifications[steps[i].XMatchTable].TableSource;
+                var coords = xmatchTableSpecifications[steps[i].XMatchTable].Coordinates;
 
                 double min, max;
 
-                if (table.IsConstantError)
+                if (coords.IsConstantError)
                 {
-                    min = max = double.Parse(SqlServerCodeGenerator.GetCode(table.ErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);
+                    min = max = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);
                 }
                 else
                 {
                     // Swap max/min because w = 1 / s^2
-                    min = double.Parse(SqlServerCodeGenerator.GetCode(table.MinErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);
-                    max = double.Parse(SqlServerCodeGenerator.GetCode(table.MaxErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);
+                    min = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorMinExpression, false), System.Globalization.CultureInfo.InvariantCulture);
+                    max = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorMaxExpression, false), System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 if (i == step.StepNumber)
@@ -228,7 +228,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulateInitialMatchTable);
 
-            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTableSpecifications[step.XMatchTable].TableSource.ErrorExpression, false)));
+            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTableSpecifications[step.XMatchTable].Coordinates.ErrorExpression, false)));
             sql.Replace("[$n]", steps.Count.ToString());
 
             return sql.ToString();
@@ -241,7 +241,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // has to change alias to tableB and back to avoid side-effects
             string oldalias = xmatchTableSpecifications[step.XMatchTable].TableReference.Alias;
             xmatchTableSpecifications[step.XMatchTable].TableReference.Alias = "tableB";         // *** TODO
-            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTableSpecifications[step.XMatchTable].TableSource.ErrorExpression, true)));
+            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTableSpecifications[step.XMatchTable].Coordinates.ErrorExpression, true)));
             xmatchTableSpecifications[step.XMatchTable].TableReference.Alias = oldalias;
 
             double lmin = 0;
@@ -251,8 +251,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             for (int i = step.StepNumber + 1; i < steps.Count; i++)
             {
                 // Swap max/min because w = 1 / s^2
-                var minexp = xmatchTableSpecifications[steps[i].XMatchTable].TableSource.MinErrorExpression;
-                var maxexp = xmatchTableSpecifications[steps[i].XMatchTable].TableSource.MaxErrorExpression;
+                var minexp = xmatchTableSpecifications[steps[i].XMatchTable].Coordinates.ErrorMinExpression;
+                var maxexp = xmatchTableSpecifications[steps[i].XMatchTable].Coordinates.ErrorMaxExpression;
 
                 // TODO: add logic to handle case when no min/max specified
 

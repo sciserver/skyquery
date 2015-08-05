@@ -60,7 +60,6 @@
     <Compile Include="Jobs\Query\SqlQueryTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryFactoryTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryOperationsTest.cs" />
-    <Compile Include="Jobs\Query\XMatchQueryPartitionTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

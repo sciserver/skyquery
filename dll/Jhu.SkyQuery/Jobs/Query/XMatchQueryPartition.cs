@@ -437,9 +437,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var xmqs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
             xmatchTableSpecifications = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
-            
+
             foreach (var xt in xmqs.XMatchTableSource.EnumerateXMatchTableSpecifications())
             {
+                xt.SetCodeDataset(CodeDataset);
                 xmatchTableSpecifications.Add(xt.TableReference.UniqueName, xt);
             }
 
@@ -547,6 +548,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected abstract string GetPopulateZoneTableScript(XMatchTableSpecification table);
 
+        protected void SubstituteCoordinates(StringBuilder sql, TableCoordinates coords)
+        {
+            sql.Replace("[$ra]", coords.RA);
+            sql.Replace("[$dec]", coords.Dec);
+            sql.Replace("[$cx]", coords.X);
+            sql.Replace("[$cy]", coords.Y);
+            sql.Replace("[$cz]", coords.Z);
+        }
+
         /// <summary>
         /// Populates a zone table from a source table.
         /// </summary>
@@ -560,6 +570,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void PopulateZoneTable(XMatchQueryStep step)
         {
             var table = xmatchTableSpecifications[step.XMatchTable];
+            var coords = table.Coordinates;
 
             // Check if table is remote and cached locally
             var tablename = SubstituteRemoteTableName(table.TableReference);
@@ -569,11 +580,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             // --- Build SQL query
 
             var sql = new StringBuilder(GetPopulateZoneTableScript(table));
-            sql.Replace("[$ra]", table.TableSource.Position.RA);
-            sql.Replace("[$dec]", table.TableSource.Position.Dec);
-            sql.Replace("[$cx]", table.TableSource.Position.Cx);
-            sql.Replace("[$cy]", table.TableSource.Position.Cy);
-            sql.Replace("[$cz]", table.TableSource.Position.Cz);
+
+            SubstituteCoordinates(sql, coords);
 
             sql.Replace("[$zonetablename]", String.Format("[{0}].[{1}]", zonetable.SchemaName, zonetable.TableName));
             sql.Replace("[$zonedeftable]", String.Format("[{0}].[{1}]", zonedeftable.SchemaName, zonedeftable.TableName));
@@ -819,6 +827,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void PopulateInitialMatchTable(XMatchQueryStep step)
         {
             var table = xmatchTableSpecifications[step.XMatchTable];
+            var coords = table.Coordinates;
 
             var tablename = SubstituteRemoteTableName(table.TableReference);
             var newtablename = QuoteSchemaAndTableName(GetMatchTable(step.StepNumber));
@@ -836,11 +845,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$insertcolumnlist]", GetPropagatedColumnList(table, ColumnListType.ForInsert, include, ColumnListNullType.Nothing, null));
                 sql.Replace("[$selectcolumnlist]", GetPropagatedColumnList(table, ColumnListType.ForSelectWithOriginalName, include, ColumnListNullType.Nothing, table.TableReference.Alias));
 
-                sql.Replace("[$ra]", table.TableSource.Position.RA);
-                sql.Replace("[$dec]", table.TableSource.Position.Dec);
-                sql.Replace("[$cx]", table.TableSource.Position.Cx);
-                sql.Replace("[$cy]", table.TableSource.Position.Cy);
-                sql.Replace("[$cz]", table.TableSource.Position.Cz);
+                SubstituteCoordinates(sql, coords);
 
                 // No buffering when initial partitioning is done
                 sql.Replace("[$where]", GetPartitioningKeyWhereClause(step));
@@ -1137,18 +1142,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                 Jhu.Graywulf.SqlParser.TableSource.Create(nts));
             xm.Parent.Stack.Remove(xm);
 
-
-            /****
-            // Remove table specifications used in xmatch
-            SubstituteXMatchTableSources(qs, xmtstr);
-
-            // Remove XMatch clause
-            xmc.Parent.Stack.Remove(xmc);
-            */
-
-
-
-
             var code = SqlServerCodeGenerator.GetCode(SelectStatement, true);
 
             // Now zero out the selectStatement to force reparsing
@@ -1184,7 +1177,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // --- Append partitioning key
 
-            var sc = GetPartitioningConditions(table.TableSource.Position.Dec);
+            var sc = GetPartitioningConditions(table.Coordinates.Dec);
 
             if (sc != null)
             {

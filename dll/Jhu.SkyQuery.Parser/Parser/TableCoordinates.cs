@@ -20,7 +20,6 @@ namespace Jhu.SkyQuery.Parser
         private const string HtmIdHintIdentifier = "HTMID";
         private const string ErrorHintIdentifier = "ERROR";
 
-        private SqlServerDataset codeDataset;
         private SimpleTableSource table;
 
         private TableHint pointHint;
@@ -155,7 +154,7 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isEqSpecified)
                 {
-                    return String.Format("[{0}].EqToCartesianX(({1}),({2}))",
+                    return String.Format("{0}.EqToCartesianX(({1}),({2}))",
                         codeDatasetFunctionPrefix,
                         RA, Dec);
                 }
@@ -177,7 +176,7 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isEqSpecified)
                 {
-                    return String.Format("[{0}].EqToCartesianY(({1}),({2}))",
+                    return String.Format("{0}.EqToCartesianY(({1}),({2}))",
                         codeDatasetFunctionPrefix,
                         RA, Dec);
                 }
@@ -199,7 +198,7 @@ namespace Jhu.SkyQuery.Parser
                 }
                 else if (isEqSpecified)
                 {
-                    return String.Format("[{0}].EqToCartesianZ(({1}),({2}))",
+                    return String.Format("{0}.EqToCartesianZ(({1}),({2}))",
                         codeDatasetFunctionPrefix,
                         RA, Dec);
                 }
@@ -230,7 +229,7 @@ namespace Jhu.SkyQuery.Parser
             get { return isErrorLimitsSpecified; }
         }
 
-        private Expression ErrorExpression
+        public Expression ErrorExpression
         {
             get
             {
@@ -238,7 +237,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Expression ErrorMinExpression
+        public Expression ErrorMinExpression
         {
             get
             {
@@ -246,7 +245,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Expression ErrorMaxExpression
+        public Expression ErrorMaxExpression
         {
             get
             {
@@ -310,7 +309,6 @@ namespace Jhu.SkyQuery.Parser
             InitializeMembers();
 
             // TODO: move skyquery code to its own schema + add versioning!
-            this.codeDataset = codeDataset;
             this.codeDatasetFunctionPrefix = String.Format("[{0}].[{1}]", codeDataset.DatabaseName, codeDataset.DefaultSchemaName);
 
             this.table = table;
@@ -319,7 +317,6 @@ namespace Jhu.SkyQuery.Parser
 
         private void InitializeMembers()
         {
-            this.codeDataset = null;
             this.table = null;
 
             this.isEqSpecified = false;

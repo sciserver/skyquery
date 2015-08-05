@@ -30,7 +30,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         protected void FinishQueryJob(Guid guid)
         {
-            FinishQueryJob(guid, new TimeSpan(0, 2, 0));
+            FinishQueryJob(guid, new TimeSpan(0, 5, 0));
         }
 
         protected void FinishQueryJob(Guid guid, TimeSpan timeout)

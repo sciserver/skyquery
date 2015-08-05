@@ -59,12 +59,10 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             var q = CreateQuery(@"
 SELECT * FROM
-CatalogA a WITH(POINT(a.Ra, a.Dec)),
-CatalogB b WITH(POINT(b.Ra, b.Dec))
-XMATCH BAYESFACTOR AS x
-MUST EXIST a
-MUST EXIST b
-HAVING LIMIT 1e3");
+    XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(a.Ra, a.Dec)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.Ra, b.Dec)),
+     LIMIT BAYESFACTOR TO 1e3) AS x");
 
             Assert.IsTrue(q is SqlQuery);
             Assert.IsTrue(q is XMatchQuery);

@@ -44,12 +44,10 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN SDSSDR7:PhotoObjAll AS g WITH(POINT(g.cx, g.cy, g.cz), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN SDSSDR7:PhotoObjAll AS g WITH(POINT(g.cx, g.cy, g.cz), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
 
@@ -77,12 +75,10 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
             var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
 
@@ -104,12 +100,10 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
             var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1))
-CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
 
@@ -131,12 +125,10 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
             var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObj AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObj AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
 
@@ -158,12 +150,10 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
             var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:Star AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:Star AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
 
@@ -185,14 +175,11 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
             var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, t.objid, t.ra, t.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-CROSS JOIN TwoMASS:PhotoObj AS t WITH(POINT(t.ra, t.dec), ERROR(0.5, 0.5, 0.5))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-MUST EXIST t
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     MUST EXIST IN TwoMASS:PhotoObj AS t WITH(POINT(t.ra, t.dec), ERROR(0.5, 0.5, 0.5)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5
     AND t.ra BETWEEN 0 AND 5 AND t.dec BETWEEN 0 AND 5";
@@ -219,12 +206,10 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
                 var sql =
 @"SELECT x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -247,12 +232,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -275,12 +258,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.01 AND s.dec BETWEEN 0 AND 0.01 AND g.ra BETWEEN 0 AND 0.01 AND g.dec BETWEEN 0 AND 0.01
 ";
 
@@ -303,12 +284,10 @@ WHERE s.ra BETWEEN 0 AND 0.01 AND s.dec BETWEEN 0 AND 0.01 AND g.ra BETWEEN 0 AN
                 var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.*
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -331,12 +310,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 var sql =
 @"SELECT s.objid, s.ra, s.dec, g.*, x.*
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -359,12 +336,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -387,12 +362,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 var sql =
 @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, x.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -415,13 +388,11 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                 var sql =
 @"SELECT sp.specObjID, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
-INNER JOIN SDSSDR7:SpecObjAll sp ON sp.BestobjID = s.ObjID
-CROSS JOIN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST g
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
+     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+    INNER JOIN SDSSDR7:SpecObjAll sp ON sp.BestobjID = s.ObjID
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
 ";
 
@@ -450,12 +421,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 
                     var sql =
     @"SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
-CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST m
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
+     MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5
 ";
 
@@ -486,12 +455,10 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5
                     var sql =
     @"SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
-CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST m
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
+     MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE s.ra BETWEEN 1 AND 3 AND s.dec BETWEEN 12 AND 14
 ";
 
@@ -521,12 +488,10 @@ WHERE s.ra BETWEEN 1 AND 3 AND s.dec BETWEEN 12 AND 14
                     var sql =
     @"SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
-FROM SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1))
-CROSS JOIN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST m
-HAVING LIMIT 1e3
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
+     MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
 ";
 
                     var guid = ScheduleQueryJob(
@@ -553,13 +518,10 @@ HAVING LIMIT 1e3
                     var sql =
     @"SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
-FROM MyCatalog AS s WITH(POINT(s.ra, s.dec), ERROR(0.3))
-CROSS JOIN MyCatalog2 m WITH(POINT(m.ra, m.dec), ERROR(0.2))
-XMATCH BAYESFACTOR x
-MUST EXIST s
-MUST EXIST m
-HAVING LIMIT 1e3
-";
+FROM XMATCH
+    (MUST EXIST IN MyCatalog AS s WITH(POINT(s.ra, s.dec), ERROR(0.3)),
+     MUST EXIST IN MyCatalog2 m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x";
 
                     var guid = ScheduleQueryJob(
                         sql.Replace("[$targettable]", "XMatchQueryTest_MyDBSelfXMatchQueryTest"),

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.ParserLib;
 using Jhu.Graywulf.SqlParser;
 
@@ -10,6 +11,7 @@ namespace Jhu.SkyQuery.Parser
     public partial class XMatchTableSpecification : ICloneable
     {
         private SimpleTableSource tableSource;
+        private TableCoordinates coordinates;
 
         public XMatchInclusionMethod InclusionMethod
         {
@@ -53,6 +55,11 @@ namespace Jhu.SkyQuery.Parser
             get { return tableSource; }
         }
 
+        public TableCoordinates Coordinates
+        {
+            get { return coordinates; }
+        }
+
         #region Constructors and initializers
 
         public XMatchTableSpecification()
@@ -89,5 +96,9 @@ namespace Jhu.SkyQuery.Parser
             return base.Interpret();
         }
 
+        public void SetCodeDataset(SqlServerDataset codeDataset)
+        {
+            coordinates = new TableCoordinates(this.tableSource, codeDataset);
+        }
     }
 }

@@ -40,13 +40,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         string sampleQuery = @"
 SELECT p.objId, s.BestObjID, p.ra, p.dec, s.specObjId, s.ra, s.dec
 INTO [$targettable]
-FROM 
-SDSSDR7:PhotoObjAll AS p WITH(Point(p.ra, p.dec), ERROR(0.1, 0.1, 0.1))
-CROSS JOIN SDSSDR7:SpecObjAll AS s WITH(Point(s.ra, s.dec), ERROR(0.1, 0.1, 0.1))
-XMATCH BAYESFACTOR AS x
- MUST EXIST p
- MUST EXIST s
- HAVING LIMIT 1e3
+FROM XMATCH
+    (
+        MUST EXIST IN SDSSDR7:PhotoObjAll AS p WITH(Point(p.ra, p.dec), ERROR(0.1, 0.1, 0.1)),
+        MUST EXIST IN SDSSDR7:SpecObjAll AS s WITH(Point(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+        LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
       AND s.RA BETWEEN 0 AND 5 AND s.Dec BETWEEN 0 AND 5 ";
 
