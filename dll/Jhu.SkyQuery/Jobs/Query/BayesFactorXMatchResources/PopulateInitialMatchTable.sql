@@ -13,5 +13,5 @@ SELECT [$ra] AS [RA],
        ([$n] - 1) * LOG(2) AS [logBF],
        CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
        [$selectcolumnlist]
-FROM [$tablename] AS [$tablealias] WITH (NOLOCK)
+FROM [$tablename]
 [$where]

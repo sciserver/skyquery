@@ -8,7 +8,7 @@ SELECT CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
        [$cy] AS [Cy],
        [$cz] AS [Cz],
        [$selectcolumnlist]
-FROM [$tablename] AS [$tablealias] WITH (NOLOCK)
+FROM [$tablename]
 [$where]
 ORDER BY [ZoneID], [RA]
 
