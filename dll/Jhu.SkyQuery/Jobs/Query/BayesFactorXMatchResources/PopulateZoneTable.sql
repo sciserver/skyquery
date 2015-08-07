@@ -7,7 +7,7 @@ SELECT CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
        [$cx] AS [Cx],
        [$cy] AS [Cy],
        [$cz] AS [Cz],
-       [$columnlist]
+       [$selectcolumnlist]
 FROM [$tablename] AS [$tablealias] WITH (NOLOCK)
 [$where]
 ORDER BY [ZoneID], [RA]
@@ -21,7 +21,7 @@ SELECT [t].[ZoneID],
        [t].[Cx],
        [t].[Cy],
        [t].[Cz],
-       [$columnlist2]
+       [$insertcolumnlist]
 FROM [$zonetablename] AS [t]
 INNER JOIN [$zonedeftable] [d] ON [d].[ZoneID] = [t].[ZoneID]
 WHERE [t].[RA] + [d].[Alpha] > 360
@@ -34,7 +34,7 @@ SELECT [t].[ZoneID],
        [t].[Cx],
        [t].[Cy],
        [t].[Cz],
-       [$columnlist2]
+       [$insertcolumnlist]
 FROM [$zonetablename] AS [t]
 INNER JOIN [$zonedeftable] [d] ON [d].[ZoneID] = [t].[ZoneID]
 WHERE [t].[RA] < [d].[Alpha]

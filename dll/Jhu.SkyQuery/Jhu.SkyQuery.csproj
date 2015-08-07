@@ -73,6 +73,7 @@
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateZoneTableRegion.sql" />
     <Compile Include="Jobs\Query\XMatchScripts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -132,6 +133,10 @@
     <ProjectReference Include="..\..\..\sharpfitsio\src\Jhu.SharpFitsIO\Jhu.SharpFitsIO.csproj">
       <Project>{d9e54b0e-9e09-4e53-95fd-4161f9d61914}</Project>
       <Name>Jhu.SharpFitsIO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\spherical\src\Jhu.Spherical\Jhu.Spherical.csproj">
+      <Project>{93efa6ad-0c3f-4c7f-b1f7-d697d0ba49f7}</Project>
+      <Name>Jhu.Spherical</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>
@@ -198,6 +203,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Jobs\Query\XMatchResources\PopulateZoneDefTable.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

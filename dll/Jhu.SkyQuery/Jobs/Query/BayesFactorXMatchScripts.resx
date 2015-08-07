@@ -133,6 +133,9 @@
   <data name="PopulateInitialMatchTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>BayesFactorXMatchResources\PopulateInitialMatchTable.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
+  <data name="PopulateInitialMatchTableRegion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
   <data name="PopulateLinkTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>BayesFactorXMatchResources\PopulateLinkTable.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
@@ -144,5 +147,8 @@
   </data>
   <data name="PopulateZoneTable" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>BayesFactorXMatchResources\PopulateZoneTable.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
+  </data>
+  <data name="PopulateZoneTableRegion" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>BayesFactorXMatchResources\PopulateZoneTableRegion.sql;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;iso-8859-1</value>
   </data>
 </root>

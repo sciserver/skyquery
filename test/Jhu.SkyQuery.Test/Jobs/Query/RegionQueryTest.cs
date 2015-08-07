@@ -62,5 +62,36 @@ REGION 'CIRCLE J2000 20 30 10'";
                 }
             }
         }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchRegionQueryTest()
+        {
+            using (SchedulerTester.Instance.GetToken())
+            {
+                var table = GetTestUniqueName();
+                DropUserDatabaseTable(table);
+
+                SchedulerTester.Instance.EnsureRunning();
+                using (RemoteServiceTester.Instance.GetToken())
+                {
+                    RemoteServiceTester.Instance.EnsureRunning();
+
+                    var sql = @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
+INTO [$targettable]
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec, s.cx, s.cy, s.cz), HTMID(s.htmid), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec, g.cx, g.cy, g.cz), HTMID(g.htmid), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 2.5 2.5 120'";
+
+                    sql = sql.Replace("[$targettable]", table);
+
+                    var guid = ScheduleQueryJob(sql, QueueType.Long);
+
+                    FinishQueryJob(guid);
+                }
+            }
+        }
     }
 }
