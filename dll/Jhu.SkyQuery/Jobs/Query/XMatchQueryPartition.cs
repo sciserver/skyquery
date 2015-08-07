@@ -590,7 +590,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$cx]", coords.X);
             sql.Replace("[$cy]", coords.Y);
             sql.Replace("[$cz]", coords.Z);
-            sql.Replace("[$htmid]", coords.HtmId);
+
+            // HTMID is required for region queries only
+            if (region != null)
+            {
+                sql.Replace("[$htmid]", coords.HtmId);
+            }
         }
 
         /// <summary>
