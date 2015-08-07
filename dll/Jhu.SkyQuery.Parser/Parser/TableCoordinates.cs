@@ -210,6 +210,35 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        public bool IsHtmIdSpecified
+        {
+            get { return isHtmIdSpecified; }
+        }
+
+        private Expression HtmIdExpression
+        {
+            get
+            {
+                return htmIdHintArguments[0].FindDescendant<Expression>();
+            }
+        }
+
+        public string HtmId
+        {
+            get
+            {
+                if (isHtmIdSpecified)
+                {
+                    return SqlServerCodeGenerator.GetCode(HtmIdExpression, true);
+                }
+                else
+                {
+                    // TODO: Figure out from metadata
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
         public bool IsErrorSpecified
         {
             get { return isErrorSpecified; }
@@ -389,6 +418,8 @@ namespace Jhu.SkyQuery.Parser
             {
                 throw CreateException(ExceptionMessages.InvalidHtmFormat);
             }
+
+            isHtmIdSpecified = true;
         }
 
         private void InterpretErrorHint(TableHint hint)
