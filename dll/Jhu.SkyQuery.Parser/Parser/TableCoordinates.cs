@@ -333,6 +333,14 @@ namespace Jhu.SkyQuery.Parser
         #endregion
         #region Constructors and initializers
 
+        public TableCoordinates(SimpleTableSource table)
+        {
+            this.codeDatasetFunctionPrefix = String.Empty;
+
+            this.table = table;
+            InterpretTableHints();
+        }
+
         public TableCoordinates(SimpleTableSource table, SqlServerDataset codeDataset)
         {
             InitializeMembers();

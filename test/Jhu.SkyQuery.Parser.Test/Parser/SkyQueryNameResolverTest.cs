@@ -57,7 +57,7 @@ namespace Jhu.SkyQuery.Parser.Test
             Assert.AreEqual("CatalogA", ts[0].DatabaseObjectName);
         }
 
-        [TestMethod] 
+        [TestMethod]
         public void XMatchQueryTest()
         {
             var sql =
@@ -84,7 +84,50 @@ FROM XMATCH
             Assert.AreEqual("[a]", xts[0].TableReference.ToString());
             Assert.AreEqual("[b]", xts[1].TableReference.ToString());
         }
-        
+
+        [TestMethod]
+        public void XMatchQueryWithValidTableHintsTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var ts = qs.SourceTableReferences.Values.ToArray();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
+
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithInvalidTableHintsTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(b.cx, b.cy, b.cz)),
+     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            try
+            {
+                var qs = Parse(sql);
+                Assert.Fail();
+            }
+            catch (NameResolverException)
+            {
+            }
+        }
+
         [TestMethod]
         public void InclusionMethodTest()
         {

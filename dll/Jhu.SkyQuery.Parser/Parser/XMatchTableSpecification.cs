@@ -92,6 +92,7 @@ namespace Jhu.SkyQuery.Parser
         public override Node Interpret()
         {
             tableSource = FindDescendant<SimpleTableSource>();
+            coordinates = new TableCoordinates(this.tableSource);
 
             return base.Interpret();
         }
