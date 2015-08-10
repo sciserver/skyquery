@@ -16,22 +16,21 @@ namespace Jhu.SkyQuery.Parser
     {
         #region Private member varibles
 
-        private const string PointHintIdentifier = "POINT";
-        private const string HtmIdHintIdentifier = "HTMID";
-        private const string ErrorHintIdentifier = "ERROR";
-
         private SimpleTableSource table;
 
         private TableHint pointHint;
         private Argument[] pointHintArguments;
         private TableHint htmIdHint;
         private Argument[] htmIdHintArguments;
+        private TableHint zoneIdHint;
+        private Argument[] zoneIdHintArguments;
         private TableHint errorHint;
         private Argument[] errorHintArguments;
 
         private bool isEqSpecified;
         private bool isCartesianSpecified;
         private bool isHtmIdSpecified;
+        private bool isZoneIdSpecified;
         private bool isErrorSpecified;
         private bool isErrorLimitsSpecified;
 
@@ -239,6 +238,35 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        public bool IsZoneIdSpecified
+        {
+            get { return isZoneIdSpecified; }
+        }
+
+        private Expression ZoneIdExpression
+        {
+            get
+            {
+                return zoneIdHintArguments[0].FindDescendant<Expression>();
+            }
+        }
+
+        public string ZoneId
+        {
+            get
+            {
+                if (isZoneIdSpecified)
+                {
+                    return SqlServerCodeGenerator.GetCode(ZoneIdExpression, true);
+                }
+                else
+                {
+                    // TODO: Figure out from metadata
+                    throw new NotImplementedException();
+                }
+            }
+        }
+
         public bool IsErrorSpecified
         {
             get { return isErrorSpecified; }
@@ -335,6 +363,8 @@ namespace Jhu.SkyQuery.Parser
 
         public TableCoordinates(SimpleTableSource table)
         {
+            InitializeMembers();
+
             this.codeDatasetFunctionPrefix = String.Empty;
 
             this.table = table;
@@ -356,10 +386,26 @@ namespace Jhu.SkyQuery.Parser
         {
             this.table = null;
 
+            this.pointHint = null;
+            this.pointHintArguments = null;
+            this.htmIdHint = null;
+            this.htmIdHintArguments = null;
+            this.zoneIdHint = null;
+            this.zoneIdHintArguments = null;
+            this.errorHint = null;
+            this.errorHintArguments = null;
+
             this.isEqSpecified = false;
             this.isCartesianSpecified = false;
+            this.isHtmIdSpecified = false;
+            this.isZoneIdSpecified = false;
             this.isErrorSpecified = false;
             this.isErrorLimitsSpecified = false;
+
+            this.eqIndex = -1;
+            this.cartesianIndex = -1;
+
+            this.codeDatasetFunctionPrefix = Constants.DefaultCodeDatasetFunctionPrefix;
         }
 
         #endregion
@@ -373,13 +419,16 @@ namespace Jhu.SkyQuery.Parser
             {
                 switch (hint.Identifier.Value.ToUpperInvariant())
                 {
-                    case PointHintIdentifier:
+                    case Constants.PointHintIdentifier:
                         InterpretPointHint(hint);
                         break;
-                    case HtmIdHintIdentifier:
+                    case Constants.HtmIdHintIdentifier:
                         InterpretHtmIdHint(hint);
                         break;
-                    case ErrorHintIdentifier:
+                    case Constants.ZoneIdHintIdentifier:
+                        InterpretZoneIdHint(hint);
+                        break;
+                    case Constants.ErrorHintIdentifier:
                         InterpretErrorHint(hint);
                         break;
                     default:
@@ -387,7 +436,7 @@ namespace Jhu.SkyQuery.Parser
                 }
             }
         }
-        
+
         private void InterpretPointHint(TableHint hint)
         {
             pointHint = hint;
@@ -424,10 +473,23 @@ namespace Jhu.SkyQuery.Parser
 
             if (htmIdHintArguments.Length != 1)
             {
-                throw CreateException(ExceptionMessages.InvalidHtmFormat);
+                throw CreateException(ExceptionMessages.InvalidHtmIdFormat);
             }
 
             isHtmIdSpecified = true;
+        }
+
+        private void InterpretZoneIdHint(TableHint hint)
+        {
+            zoneIdHint = hint;
+            zoneIdHintArguments = GetHintArguments(hint);
+
+            if (zoneIdHintArguments.Length != 1)
+            {
+                throw CreateException(ExceptionMessages.InvalidZoneIdFormat);
+            }
+
+            isZoneIdSpecified = true;
         }
 
         private void InterpretErrorHint(TableHint hint)
@@ -458,7 +520,7 @@ namespace Jhu.SkyQuery.Parser
                        .EnumerateDescendants<Argument>()
                        .ToArray();
         }
-        
+
         private ValidatorException CreateException(string message)
         {
             return new ValidatorException(message);

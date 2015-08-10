@@ -56,10 +56,62 @@ FROM
             Assert.IsFalse(coords.IsConstantError);
         }
 
-        // TODO add more coordinate tests
+        [TestMethod]
+        public void CoordinatesWithHtmIdTest()
+        {
+
+            var sql =
+    @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
+FROM 
+    XMATCH
+        (MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1), HTMID(c1.htmID)),
+         MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5), HTMID(c2.htmID)),
+         LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+
+            var ts = qs.EnumerateSourceTables(false).ToArray();
+
+            Assert.AreEqual(3, ts.Length);
+
+            var coords = new TableCoordinates((SimpleTableSource)ts[1], CodeDataset);
+            Assert.AreEqual("[c1].[ra]", coords.RA);
+            Assert.AreEqual("[c1].[dec]", coords.Dec);
+            Assert.AreEqual("[c1].[htmID]", coords.HtmId);
+
+            coords = new TableCoordinates((SimpleTableSource)ts[2], CodeDataset);
+            Assert.AreEqual("[c2].[htmID]", coords.HtmId);
+        }
 
         [TestMethod]
-        public void RegionQueryTest()
+        public void CoordinatesWithZoneIdTest()
+        {
+
+            var sql =
+    @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
+FROM 
+    XMATCH
+        (MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1), ZONEID(c1.zoneID)),
+         MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5), ZONEID(c2.zoneID)),
+         LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+
+            var ts = qs.EnumerateSourceTables(false).ToArray();
+
+            Assert.AreEqual(3, ts.Length);
+
+            var coords = new TableCoordinates((SimpleTableSource)ts[1], CodeDataset);
+            Assert.AreEqual("[c1].[ra]", coords.RA);
+            Assert.AreEqual("[c1].[dec]", coords.Dec);
+            Assert.AreEqual("[c1].[zoneID]", coords.ZoneId);
+
+            coords = new TableCoordinates((SimpleTableSource)ts[2], CodeDataset);
+            Assert.AreEqual("[c2].[zoneID]", coords.ZoneId);
+        }
+
+        [TestMethod]
+        public void SimpleRegionQueryTest()
         {
             var sql =
         @"SELECT TOP 100 a.objid, a.ra, a.dec

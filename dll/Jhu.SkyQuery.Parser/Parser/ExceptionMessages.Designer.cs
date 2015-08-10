@@ -90,9 +90,9 @@ namespace Jhu.SkyQuery.Parser {
         /// <summary>
         ///   Looks up a localized string similar to Only one HTM ID column can be specified..
         /// </summary>
-        internal static string InvalidHtmFormat {
+        internal static string InvalidHtmIdFormat {
             get {
-                return ResourceManager.GetString("InvalidHtmFormat", resourceCulture);
+                return ResourceManager.GetString("InvalidHtmIdFormat", resourceCulture);
             }
         }
         
@@ -102,6 +102,15 @@ namespace Jhu.SkyQuery.Parser {
         internal static string InvalidPointFormat {
             get {
                 return ResourceManager.GetString("InvalidPointFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only one Zone ID column can be specified..
+        /// </summary>
+        internal static string InvalidZoneIdFormat {
+            get {
+                return ResourceManager.GetString("InvalidZoneIdFormat", resourceCulture);
             }
         }
         

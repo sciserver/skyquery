@@ -93,8 +93,8 @@ FROM XMATCH
          b.objID, b.ra, b.dec,
          x.ra, x.dec
 FROM XMATCH
-    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz)),
-     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz)),
+    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz), HTMID(htmID)),
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
@@ -104,7 +104,11 @@ FROM XMATCH
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
             Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
+            Assert.AreEqual("[a].[htmID]", xts[0].Coordinates.HtmId);
+            Assert.AreEqual("[b].[htmID]", xts[1].Coordinates.HtmId);
         }
+
+        // TODO: add test for zoneID, but need to modify catalog schema first
 
         [TestMethod]
         public void XMatchQueryWithInvalidTableHintsTest()
