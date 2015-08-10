@@ -104,8 +104,8 @@ FROM XMATCH
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
             Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
-            Assert.AreEqual("[a].[htmID]", xts[0].Coordinates.HtmId);
-            Assert.AreEqual("[b].[htmID]", xts[1].Coordinates.HtmId);
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.HtmId);
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.HtmId);
         }
 
         // TODO: add test for zoneID, but need to modify catalog schema first

@@ -413,26 +413,30 @@ namespace Jhu.SkyQuery.Parser
         private void InterpretTableHints()
         {
             var hints = table.FindDescendant<TableHintClause>();
-            var hintlist = hints.FindDescendant<TableHintList>();
 
-            foreach (var hint in hintlist.EnumerateDescendantsRecursive<TableHint>())
+            if (hints != null)
             {
-                switch (hint.Identifier.Value.ToUpperInvariant())
+                var hintlist = hints.FindDescendant<TableHintList>();
+
+                foreach (var hint in hintlist.EnumerateDescendantsRecursive<TableHint>())
                 {
-                    case Constants.PointHintIdentifier:
-                        InterpretPointHint(hint);
-                        break;
-                    case Constants.HtmIdHintIdentifier:
-                        InterpretHtmIdHint(hint);
-                        break;
-                    case Constants.ZoneIdHintIdentifier:
-                        InterpretZoneIdHint(hint);
-                        break;
-                    case Constants.ErrorHintIdentifier:
-                        InterpretErrorHint(hint);
-                        break;
-                    default:
-                        throw new NotImplementedException();
+                    switch (hint.Identifier.Value.ToUpperInvariant())
+                    {
+                        case Constants.PointHintIdentifier:
+                            InterpretPointHint(hint);
+                            break;
+                        case Constants.HtmIdHintIdentifier:
+                            InterpretHtmIdHint(hint);
+                            break;
+                        case Constants.ZoneIdHintIdentifier:
+                            InterpretZoneIdHint(hint);
+                            break;
+                        case Constants.ErrorHintIdentifier:
+                            InterpretErrorHint(hint);
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
                 }
             }
         }
