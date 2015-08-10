@@ -123,6 +123,9 @@
   <data name="FunctionInXMatchNotAllowed" xml:space="preserve">
     <value>Functions are not allowed in XMatch, but found at ({1},{2}).</value>
   </data>
+  <data name="HtmIdIsNotSingleColumn" xml:space="preserve">
+    <value>HTM ID must be a reference to a single column.</value>
+  </data>
   <data name="InvalidErrorFormat" xml:space="preserve">
     <value>Only 1 or 3 error values can be specified corresponding to constant error, or variable error with min and max values.</value>
   </data>
@@ -147,6 +150,9 @@
   <data name="PrimaryKeyRequired" xml:space="preserve">
     <value>Only tables (or views with an underlying) primary key are supported in xmatch queries.</value>
   </data>
+  <data name="QueryNamesNotResolved" xml:space="preserve">
+    <value>Names in query need to be resolved before calling this function.</value>
+  </data>
   <data name="StarColumnNotAllowed" xml:space="preserve">
     <value>Stars (*) in column expressions are not allowed but found at ({1},{2}).</value>
   </data>
@@ -155,5 +161,8 @@
   </data>
   <data name="XMatchSubqueryNotAllowed" xml:space="preserve">
     <value>XMatch subqueries are not allowed, but found at ({1},{2}).</value>
+  </data>
+  <data name="ZoneIdIsNotSingleColumn" xml:space="preserve">
+    <value>Zone ID must be a reference to a single column.</value>
   </data>
 </root>

@@ -222,6 +222,14 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        private ColumnReference HtmIdColumnReference
+        {
+            get
+            {
+                return htmIdHintArguments[0].FindDescendant<Expression>().FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+            }
+        }
+
         public string HtmId
         {
             get
@@ -248,6 +256,14 @@ namespace Jhu.SkyQuery.Parser
             get
             {
                 return zoneIdHintArguments[0].FindDescendant<Expression>();
+            }
+        }
+
+        private ColumnReference ZoneIdColumnReference
+        {
+            get
+            {
+                return zoneIdHintArguments[0].FindDescendant<Expression>().FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
             }
         }
 
@@ -409,6 +425,7 @@ namespace Jhu.SkyQuery.Parser
         }
 
         #endregion
+        #region Hint interpretation functions
 
         private void InterpretTableHints()
         {
@@ -481,6 +498,11 @@ namespace Jhu.SkyQuery.Parser
             }
 
             isHtmIdSpecified = true;
+
+            if (!HtmIdExpression.IsSingleColumn)
+            {
+                throw CreateException(ExceptionMessages.HtmIdIsNotSingleColumn);
+            }
         }
 
         private void InterpretZoneIdHint(TableHint hint)
@@ -494,6 +516,11 @@ namespace Jhu.SkyQuery.Parser
             }
 
             isZoneIdSpecified = true;
+
+            if (!ZoneIdExpression.IsSingleColumn)
+            {
+                throw CreateException(ExceptionMessages.ZoneIdIsNotSingleColumn);
+            }
         }
 
         private void InterpretErrorHint(TableHint hint)
@@ -524,6 +551,48 @@ namespace Jhu.SkyQuery.Parser
                        .EnumerateDescendants<Argument>()
                        .ToArray();
         }
+
+        #endregion
+        #region IndexSelectorFunctions
+
+        /// <summary>
+        /// Attempt to find an index that has an HTM ID in is as the first key column
+        /// </summary>
+        /// <returns></returns>
+        public Index FindHtmIndex()
+        {
+            return FindIndexWithFirstKey(HtmIdColumnReference.ColumnName);
+        }
+
+        public Index FindZoneIndex()
+        {
+            return FindIndexWithFirstKey(ZoneIdColumnReference.ColumnName);
+        }
+
+        private Index FindIndexWithFirstKey(string columnName)
+        {
+            if (table.TableReference.DatabaseObject == null)
+            {
+                throw new InvalidOperationException(ExceptionMessages.QueryNamesNotResolved);
+            }
+
+            var t = (TableOrView)table.TableReference.DatabaseObject;
+
+            foreach (var idx in t.Indexes.Values)
+            {
+                // TODO: modify this once columns are also stored by ordinal index and not just by name
+                var col = idx.Columns.Values.Where(c => !c.IsIncluded).OrderBy(c => c.KeyOrdinal).FirstOrDefault();
+
+                if (SqlServerSchemaManager.Comparer.Compare(columnName, col.Name) == 0)
+                {
+                    return idx;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
 
         private ValidatorException CreateException(string message)
         {

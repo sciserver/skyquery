@@ -79,6 +79,15 @@ namespace Jhu.SkyQuery.Parser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HTM ID must be a reference to a single column..
+        /// </summary>
+        internal static string HtmIdIsNotSingleColumn {
+            get {
+                return ResourceManager.GetString("HtmIdIsNotSingleColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only 1 or 3 error values can be specified corresponding to constant error, or variable error with min and max values..
         /// </summary>
         internal static string InvalidErrorFormat {
@@ -151,6 +160,15 @@ namespace Jhu.SkyQuery.Parser {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Names in query need to be resolved before calling this function..
+        /// </summary>
+        internal static string QueryNamesNotResolved {
+            get {
+                return ResourceManager.GetString("QueryNamesNotResolved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stars (*) in column expressions are not allowed but found at ({1},{2})..
         /// </summary>
         internal static string StarColumnNotAllowed {
@@ -174,6 +192,15 @@ namespace Jhu.SkyQuery.Parser {
         internal static string XMatchSubqueryNotAllowed {
             get {
                 return ResourceManager.GetString("XMatchSubqueryNotAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zone ID must be a reference to a single column..
+        /// </summary>
+        internal static string ZoneIdIsNotSingleColumn {
+            get {
+                return ResourceManager.GetString("ZoneIdIsNotSingleColumn", resourceCulture);
             }
         }
     }

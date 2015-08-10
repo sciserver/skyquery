@@ -13,7 +13,7 @@ using Jhu.Graywulf.Schema.SqlServer;
 namespace Jhu.SkyQuery.Parser.Test
 {
     [TestClass]
-    public class SkyQueryNameResolverTest
+    public class SkyQueryNameResolverTest : SkyQueryParserTest
     {
         private SchemaManager CreateSchemaManager()
         {
@@ -131,6 +131,132 @@ FROM XMATCH
             {
             }
         }
+
+
+        [TestMethod]
+        public void XMatchQueryWithHtmIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var ts = qs.SourceTableReferences.Values.ToArray();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
+
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.HtmId);
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.HtmId);
+
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            Assert.IsNotNull(coords.FindHtmIndex());
+
+            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);  
+            Assert.IsNotNull(coords.FindHtmIndex());
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithoutHtmIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN [CatalogWithNoPrimaryKey] a WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     MUST EXIST IN [CatalogWithNoPrimaryKey] b WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var ts = qs.SourceTableReferences.Values.ToArray();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
+
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.HtmId);
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.HtmId);
+
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            Assert.IsNull(coords.FindHtmIndex());
+
+            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);
+            Assert.IsNull(coords.FindHtmIndex());
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithZoneIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var ts = qs.SourceTableReferences.Values.ToArray();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
+
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.ZoneId);
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.ZoneId);
+
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            Assert.IsNotNull(coords.FindZoneIndex());
+
+            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);
+            Assert.IsNotNull(coords.FindZoneIndex());
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithoutZoneIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogWithNoPrimaryKey a WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     MUST EXIST IN CatalogWithNoPrimaryKey b WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var ts = qs.SourceTableReferences.Values.ToArray();
+            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
+
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.ZoneId);
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.ZoneId);
+
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            Assert.IsNull(coords.FindZoneIndex());
+
+            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);
+            Assert.IsNull(coords.FindZoneIndex());
+        }
+
 
         [TestMethod]
         public void InclusionMethodTest()
