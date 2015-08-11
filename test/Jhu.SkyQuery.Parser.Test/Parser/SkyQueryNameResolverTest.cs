@@ -214,8 +214,8 @@ FROM XMATCH
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
             Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset, -1));
-            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset, -1));
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset));
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset));
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
@@ -245,8 +245,8 @@ FROM XMATCH
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
             Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset, -1));
-            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset, -1));
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset));
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset));
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 

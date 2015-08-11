@@ -40,14 +40,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             TableStatistics.Clear();
             decimal binsize = (decimal)(5 * ZoneHeight);   // histogram bin size in Dec
 
-            foreach (var table in xmatchTables)
+            foreach (var table in xmatchTables.Values)
             {
                 var tr = table.TableReference;
 
                 // Collect statistics for zoneID
                 tr.Statistics = new Graywulf.SqlParser.TableStatistics(tr);
                 tr.Statistics.KeyColumnDataType = DataTypes.Int32;
-                tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdString(CodeDataset, ZoneHeight);
+                tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdString(CodeDataset);
 
                 TableStatistics.Add(tr);
             }
@@ -62,14 +62,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                         // No partitioning for single server
                         // Use this for debugging purposes too
                         var qp = new BayesFactorXMatchQueryPartition(this, null);
-                        qp.GenerateSteps(xmatchTables.ToArray());
+                        qp.GenerateSteps(xmatchTables.Values.ToArray());
                         AppendPartition(qp);
                     }
                     break;
                 case ExecutionMode.Graywulf:
                     {
                         // Create a copy of xmatchTables that will be reordered based on stats
-                        var tables = xmatchTables.ToArray();
+                        var tables = xmatchTables.Values.ToArray();
 
                         // --- sort tables by count
                         // *** this must be changed for MAY and DROP!

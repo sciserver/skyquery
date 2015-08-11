@@ -557,7 +557,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public string GetZoneIdString(SqlServerDataset codeDataset, double zoneHeight)
+        public string GetZoneIdString(SqlServerDataset codeDataset)
         {
                 if (isZoneIdSpecified)
                 {
@@ -566,9 +566,8 @@ namespace Jhu.SkyQuery.Parser
                 else if (isEqSpecified || isCartesianSpecified)
                 {
                     return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        "CONVERT(INT,FLOOR(({0} + 90.0) / {1}))",
-                        GetDecString(codeDataset),
-                        zoneHeight);
+                        "CONVERT(INT,FLOOR(({0} + 90.0) / @H))",
+                        GetDecString(codeDataset));
                 }
                 else
                 {

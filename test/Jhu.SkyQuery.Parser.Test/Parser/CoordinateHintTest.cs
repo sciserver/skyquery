@@ -104,10 +104,10 @@ FROM
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
             Assert.AreEqual("[c1].[ra]", coords.GetRAString(CodeDataset));
             Assert.AreEqual("[c1].[dec]", coords.GetDecString(CodeDataset));
-            Assert.AreEqual("[c1].[zoneID]", coords.GetZoneIdString(CodeDataset, -1));
+            Assert.AreEqual("[c1].[zoneID]", coords.GetZoneIdString(CodeDataset));
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[zoneID]", coords.GetZoneIdString(CodeDataset, -1));
+            Assert.AreEqual("[c2].[zoneID]", coords.GetZoneIdString(CodeDataset));
         }
 
         [TestMethod]

@@ -149,7 +149,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             for (int i = step.StepNumber; i < steps.Count; i++)
             {
-                var coords = xmatchTableSpecifications[steps[i].XMatchTable].Coordinates;
+                var coords = xmatchTables[steps[i].XMatchTable].Coordinates;
 
                 double min, max;
 
@@ -195,7 +195,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableName(GetLinkTable(step.StepNumber)));        // new table name
                 sql.Replace("[$zonetable1]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                sql.Replace("[$zonetable2]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
+                sql.Replace("[$zonetable2]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTables[step.XMatchTable].TableReference)));
                 sql.Replace("[$zonedeftable]", CodeGenerator.GetResolvedTableName(GetZoneDefTable(step.StepNumber)));
 
                 cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
@@ -219,10 +219,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     sql.Replace("[$pairtable]", CodeGenerator.GetResolvedTableName(GetPairTable(step.StepNumber)));
                     sql.Replace("[$columnlist1]", "[tableA].[MatchID]");
-                    sql.Replace("[$columnlist2]", GetPropagatedColumnList(xmatchTableSpecifications[step.XMatchTable], ColumnListType.ForSelectNoAlias, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
+                    sql.Replace("[$columnlist2]", GetPropagatedColumnList(xmatchTables[step.XMatchTable], ColumnListType.ForSelectNoAlias, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
                     sql.Replace("[$matchzonetable]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
                     sql.Replace("[$linktable]", CodeGenerator.GetResolvedTableName((GetLinkTable(step.StepNumber))));
-                    sql.Replace("[$zonetable]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
+                    sql.Replace("[$zonetable]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTables[step.XMatchTable].TableReference)));
 
                     cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
 
@@ -253,7 +253,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Append(BayesFactorXMatchScripts.PopulateInitialMatchTable);
             }
 
-            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTableSpecifications[step.XMatchTable].Coordinates.ErrorExpression, false)));
+            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTables[step.XMatchTable].Coordinates.ErrorExpression, false)));
             sql.Replace("[$n]", steps.Count.ToString());
 
             return sql.ToString();
@@ -264,10 +264,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulateMatchTable);
 
             // has to change alias to tableB and back to avoid side-effects
-            string oldalias = xmatchTableSpecifications[step.XMatchTable].TableReference.Alias;
-            xmatchTableSpecifications[step.XMatchTable].TableReference.Alias = "tableB";         // *** TODO
-            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTableSpecifications[step.XMatchTable].Coordinates.ErrorExpression, true)));
-            xmatchTableSpecifications[step.XMatchTable].TableReference.Alias = oldalias;
+            string oldalias = xmatchTables[step.XMatchTable].TableReference.Alias;
+            xmatchTables[step.XMatchTable].TableReference.Alias = "tableB";         // *** TODO
+            sql.Replace("[$weight]", GetWeightExpression(SqlServerCodeGenerator.GetCode(xmatchTables[step.XMatchTable].Coordinates.ErrorExpression, true)));
+            xmatchTables[step.XMatchTable].TableReference.Alias = oldalias;
 
             double lmin = 0;
             double amax = 0;
@@ -276,8 +276,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             for (int i = step.StepNumber + 1; i < steps.Count; i++)
             {
                 // Swap max/min because w = 1 / s^2
-                var minexp = xmatchTableSpecifications[steps[i].XMatchTable].Coordinates.ErrorMinExpression;
-                var maxexp = xmatchTableSpecifications[steps[i].XMatchTable].Coordinates.ErrorMaxExpression;
+                var minexp = xmatchTables[steps[i].XMatchTable].Coordinates.ErrorMinExpression;
+                var maxexp = xmatchTables[steps[i].XMatchTable].Coordinates.ErrorMaxExpression;
 
                 // TODO: add logic to handle case when no min/max specified
 

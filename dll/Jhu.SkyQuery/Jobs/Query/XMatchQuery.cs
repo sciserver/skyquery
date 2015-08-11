@@ -18,25 +18,28 @@ namespace Jhu.SkyQuery.Jobs.Query
     [DataContract(Name = "Query", Namespace = "")]
     public abstract class XMatchQuery : SqlQuery
     {
+        #region Private member variables
+
         protected string tableAlias;
 
         // --- cross-match parameters
         protected double zoneHeight;
-        protected bool propagateColumns;
-
         protected double limit;
 
         // --- cache for table specifications
         [NonSerialized]
-        protected List<XMatchTableSpecification> xmatchTables;
+        protected Dictionary<string, XMatchTableSpecification> xmatchTables;
+
+        [NonSerialized]
+        protected Jhu.Spherical.Region region;
+
+        #endregion
+        #region Properties
 
         [IgnoreDataMember]
         public override bool IsPartitioned
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         /// <summary>
@@ -50,18 +53,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         [DataMember]
-        public bool PropagateColumns
-        {
-            get { return propagateColumns; }
-            set { propagateColumns = value; }
-        }
-
-        [DataMember]
         public double Limit
         {
             get { return limit; }
             set { limit = value; }
         }
+
+        #endregion
+        #region Constructors and initializers
 
         public XMatchQuery()
             : base()
@@ -80,9 +79,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.tableAlias = String.Empty;
 
             this.zoneHeight = -1;
-            this.propagateColumns = true;
-
             this.limit = -1;
+
+            this.xmatchTables = null;
+            this.region = null;
         }
 
         private void CopyMembers(XMatchQuery old)
@@ -90,10 +90,13 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.tableAlias = old.tableAlias;
 
             this.zoneHeight = old.zoneHeight;
-            this.propagateColumns = old.propagateColumns;
-
             this.limit = old.limit;
+
+            this.xmatchTables = old.xmatchTables;
+            this.region = old.region;
         }
+
+        #endregion
 
         protected override void FinishInterpret(bool forceReinitialize)
         {
@@ -102,14 +105,77 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Interpret xmatch parameters
             var qs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
             var xts = qs.XMatchTableSource;
-           
+
             // Bayes factor or probability limit
             this.limit = xts.XMatchLimit;
 
-            // Find xmatch tables
-            xmatchTables = new List<XMatchTableSpecification>(xts.EnumerateXMatchTableSpecifications());
+            xmatchTables = InterpretXMatchTables(SelectStatement);
+            region = InterpretRegion(SelectStatement);
 
             base.FinishInterpret(forceReinitialize);
+        }
+
+        internal static Dictionary<string, XMatchTableSpecification> InterpretXMatchTables(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
+        {
+            var xmqs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            var res = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
+
+            foreach (var xt in xmqs.XMatchTableSource.EnumerateXMatchTableSpecifications())
+            {
+                res.Add(xt.TableReference.UniqueName, xt);
+            }
+
+            return res;
+        }
+
+        internal static Spherical.Region InterpretRegion(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
+        {
+            var xmqs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            var rc = xmqs.FindDescendant<RegionClause>();
+
+            if (rc != null)
+            {
+                if (rc.IsUri)
+                {
+                    // TODO: implement region fetch
+                    // need to do it once per query, not per partition?
+                    throw new NotImplementedException();
+                }
+                if (rc.IsString)
+                {
+                    var p = new Jhu.Spherical.Parser.Parser(rc.RegionString);
+                    return p.ParseRegion();
+                }
+                else
+                {
+                    // TODO: implement direct region grammar
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        protected override SqlCommand GetComputeTableStatisticsCommand(TableReference tr)
+        {
+            SqlCommand cmd;
+
+            if (region == null)
+            {
+                cmd = base.GetComputeTableStatisticsCommand(tr);
+                
+            }
+            else
+            {
+                // TODO: implement table statistics with region constraint here
+                throw new NotImplementedException();
+            }
+
+            cmd.Parameters.Add("@H", SqlDbType.Float).Value = zoneHeight;
+
+            return cmd;
         }
     }
 }

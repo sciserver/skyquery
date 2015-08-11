@@ -31,7 +31,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected List<XMatchQueryStep> steps;
 
         [NonSerialized]
-        protected Dictionary<string, XMatchTableSpecification> xmatchTableSpecifications;
+        protected Dictionary<string, XMatchTableSpecification> xmatchTables;
 
         [NonSerialized]
         protected Jhu.Spherical.Region region;
@@ -75,11 +75,15 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void InitializeMembers(StreamingContext context)
         {
             this.steps = new List<XMatchQueryStep>();
+            this.xmatchTables = null;
+            this.region = null;
         }
 
         private void CopyMembers(XMatchQueryPartition old)
         {
             this.steps = new List<XMatchQueryStep>();   // TODO: do deep copy here?
+            this.xmatchTables = old.xmatchTables;
+            this.region = old.region;
         }
 
         /// <summary>
@@ -447,36 +451,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override void FinishInterpret(bool forceReinitialize)
         {
-            // Collect cross match tables
-
-            var xmqs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
-            xmatchTableSpecifications = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
-
-            foreach (var xt in xmqs.XMatchTableSource.EnumerateXMatchTableSpecifications())
-            {
-                xmatchTableSpecifications.Add(xt.TableReference.UniqueName, xt);
-            }
-
-            // Process region clause
-            var rc = xmqs.FindDescendant<RegionClause>();
-            if (rc != null)
-            {
-                if (rc.IsUri)
-                {
-                    // TODO: implement region fetch
-                    // need to do it once per query, not per partition?
-                }
-                if (rc.IsString)
-                {
-                    var p = new Jhu.Spherical.Parser.Parser(rc.RegionString);
-                    region = p.ParseRegion();
-                }
-                else
-                {
-                    // TODO: implement direct region grammar
-                    throw new NotImplementedException();
-                }
-            }
+            xmatchTables = XMatchQuery.InterpretXMatchTables(SelectStatement);
+            region = XMatchQuery.InterpretRegion(SelectStatement);
 
             base.FinishInterpret(forceReinitialize);
         }
@@ -552,7 +528,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Create zone table from match table
             if (step.StepNumber > 0)
             {
-                CreateZoneTable(xmatchTableSpecifications[step.XMatchTable]);
+                CreateZoneTable(xmatchTables[step.XMatchTable]);
                 PopulateZoneTable(step);
             }
         }
@@ -616,7 +592,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         private void PopulateZoneTable(XMatchQueryStep step)
         {
-            var table = xmatchTableSpecifications[step.XMatchTable];
+            var table = xmatchTables[step.XMatchTable];
             var coords = table.Coordinates;
 
             // Check if table is remote and cached locally
@@ -626,6 +602,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // --- Build SQL query
 
             var sql = new StringBuilder(GetPopulateZoneTableScript(table));
+            var where = GetPartitioningKeyWhereClause(step);
 
             sql.Replace("[$zonetablename]", CodeGenerator.GetResolvedTableName(zonetable));
             sql.Replace("[$zonedeftable]", CodeGenerator.GetResolvedTableName(zonedeftable));
@@ -643,12 +620,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$htm_inner]", CodeGenerator.GetResolvedTableName(htminner));
                 sql.Replace("[$htm_partial]", CodeGenerator.GetResolvedTableName(htmpartial));
 
-                sql.Replace("[$where_inner]", GetPartitioningKeyWhereClause(step));
-                sql.Replace("[$where_partial]", GetPartitioningKeyWhereClause(step));
+                sql.Replace("[$where_inner]", where);
+                sql.Replace("[$where_partial]", where);
             }
             else
             {
-                sql.Replace("[$where]", GetPartitioningKeyWhereClause(step));
+                sql.Replace("[$where]", where);
             }
 
             using (var cmd = new SqlCommand(sql.ToString()))
@@ -772,7 +749,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableName(pairtable));
                 sql.Replace("[$createcolumnlist1]", String.Format("PK_Match_{0}_MatchID [bigint] NOT NULL", step.StepNumber - 1));
-                sql.Replace("[$createcolumnlist2]", GetPropagatedColumnList(xmatchTableSpecifications[step.XMatchTable], ColumnListType.ForCreateTable, ColumnListInclude.PrimaryKey, ColumnListNullType.NotNull, null));
+                sql.Replace("[$createcolumnlist2]", GetPropagatedColumnList(xmatchTables[step.XMatchTable], ColumnListType.ForCreateTable, ColumnListInclude.PrimaryKey, ColumnListNullType.NotNull, null));
 
                 ExecuteSqlCommand(sql.ToString(), CommandTarget.Temp);
 
@@ -831,19 +808,19 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Drop table if it exists (unlikely, but might happen during debugging)
             matchtable.Drop();
 
-            ColumnListInclude include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
+            ColumnListInclude include = ColumnListInclude.All;
 
             // Add all propagated columns
             StringBuilder columnlist = new StringBuilder();
             for (int i = 0; i <= step.StepNumber; i++)
             {
-                if (xmatchTableSpecifications[steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
+                if (xmatchTables[steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
                     if (columnlist.Length != 0)
                     {
                         columnlist.Append(", ");
                     }
-                    columnlist.AppendLine(GetPropagatedColumnList(xmatchTableSpecifications[steps[i].XMatchTable], ColumnListType.ForCreateTable, include, ColumnListNullType.NotNull, null));
+                    columnlist.AppendLine(GetPropagatedColumnList(xmatchTables[steps[i].XMatchTable], ColumnListType.ForCreateTable, include, ColumnListNullType.NotNull, null));
                 }
             }
 
@@ -871,7 +848,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 PopulateMatchTable(step);
             }
 
-            BuildInitialMatchTableIndex(xmatchTableSpecifications[step.XMatchTable], step.StepNumber);
+            BuildInitialMatchTableIndex(xmatchTables[step.XMatchTable], step.StepNumber);
         }
 
         protected abstract string GetPopulateMatchTableScript(XMatchQueryStep step, SqlCommand cmd);
@@ -889,14 +866,15 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         private void PopulateInitialMatchTable(XMatchQueryStep step)
         {
-            var table = xmatchTableSpecifications[step.XMatchTable];
+            var table = xmatchTables[step.XMatchTable];
             var coords = table.Coordinates;
 
-            var include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
+            var include = ColumnListInclude.All;
 
             using (SqlCommand cmd = new SqlCommand())
             {
                 var sql = new StringBuilder(GetPopulateInitialMatchTableScript(step, cmd));
+                var where = GetPartitioningKeyWhereClause(step);
 
                 sql.Replace("[$newtablename]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber)));
                 sql.Replace("[$tablename]", SubstituteRemoteTableNameWithAlias(table.TableReference));
@@ -913,13 +891,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     sql.Replace("[$htm_inner]", CodeGenerator.GetResolvedTableName(htminner));
                     sql.Replace("[$htm_partial]", CodeGenerator.GetResolvedTableName(htmpartial));
-
-                    sql.Replace("[$where_inner]", GetPartitioningKeyWhereClause(step));
-                    sql.Replace("[$where_partial]", GetPartitioningKeyWhereClause(step));
+                    sql.Replace("[$where_inner]", where);
+                    sql.Replace("[$where_partial]", where);
                 }
                 else
                 {
-                    sql.Replace("[$where]", GetPartitioningKeyWhereClause(step));
+                    sql.Replace("[$where]", where);
                 }
 
                 AppendPartitioningConditionParameters(cmd, 0);
@@ -955,13 +932,13 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="step">Reference to the XMatch step.</param>
         private void PopulateMatchTable(XMatchQueryStep step)
         {
-            var table = xmatchTableSpecifications[step.XMatchTable];
+            var table = xmatchTables[step.XMatchTable];
 
             var tablename = SubstituteRemoteTableName(table.TableReference);
             var newtablename = GetMatchTable(step.StepNumber);
             var schemaname = Query.TemporaryDataset.DefaultSchemaName;
 
-            var include = ((XMatchQuery)Query).PropagateColumns ? ColumnListInclude.All : ColumnListInclude.PrimaryKey;
+            var include = ColumnListInclude.All;
 
             // --- Propagated columns
             // Gather all columns from previous steps
@@ -969,7 +946,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var selectcolumnlist = new StringBuilder();
             for (int i = 0; i <= step.StepNumber; i++)
             {
-                if (xmatchTableSpecifications[steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
+                if (xmatchTables[steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
                     if (insertcolumnlist.Length != 0)
                     {
@@ -981,19 +958,19 @@ namespace Jhu.SkyQuery.Jobs.Query
                     var listtype = (i < step.StepNumber) ? ColumnListType.ForSelectNoAlias : ColumnListType.ForSelectWithOriginalName;
 
                     // ForSelectNoalias -> ForInsert
-                    insertcolumnlist.Append(GetPropagatedColumnList(xmatchTableSpecifications[steps[i].XMatchTable], ColumnListType.ForSelectNoAlias, include, ColumnListNullType.Nothing, null));
-                    selectcolumnlist.Append(GetPropagatedColumnList(xmatchTableSpecifications[steps[i].XMatchTable], listtype, include, ColumnListNullType.Nothing, tablealias));
+                    insertcolumnlist.Append(GetPropagatedColumnList(xmatchTables[steps[i].XMatchTable], ColumnListType.ForSelectNoAlias, include, ColumnListNullType.Nothing, null));
+                    selectcolumnlist.Append(GetPropagatedColumnList(xmatchTables[steps[i].XMatchTable], listtype, include, ColumnListNullType.Nothing, tablealias));
                 }
             }
 
             // --- Zone table join conditions
             var join = new StringBuilder();
-            var t = (TableOrView)xmatchTableSpecifications[step.XMatchTable].TableReference.DatabaseObject;
+            var t = (TableOrView)xmatchTables[step.XMatchTable].TableReference.DatabaseObject;
 
             foreach (var c in t.PrimaryKey.Columns.Values)
             {
                 join.AppendLine(String.Format("[tableB].[{1}] = [pairtable].[{0}]",
-                                              GetEscapedPropagatedColumnName(xmatchTableSpecifications[step.XMatchTable].TableReference, c.Name),
+                                              GetEscapedPropagatedColumnName(xmatchTables[step.XMatchTable].TableReference, c.Name),
                                               c.Name));
             }
 
@@ -1249,7 +1226,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected string GetPartitioningKeyWhereClause(XMatchQueryStep step)
         {
-            var table = xmatchTableSpecifications[step.XMatchTable];
+            var table = xmatchTables[step.XMatchTable];
 
             // --- Find predicates only referencing this table
 
@@ -1259,7 +1236,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // --- Append partitioning key
 
-            var sc = GetPartitioningConditions(table.Coordinates.GetZoneIdString(CodeDataset, ((XMatchQuery)Query).ZoneHeight));
+            var sc = GetPartitioningConditions(table.Coordinates.GetZoneIdString(CodeDataset));
 
             if (sc != null)
             {
