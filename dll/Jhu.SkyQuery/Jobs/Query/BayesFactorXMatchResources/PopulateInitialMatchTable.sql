@@ -10,7 +10,7 @@ SELECT [$ra] AS [RA],
        [$weight] AS [a],
        LOG([$weight]) AS [l],
        0 AS [q],
-       ([$n] - 1) * LOG(2) AS [logBF],
+       ([$n] - 1) * 0.69314718055994530941723212145818 AS [logBF],		-- LOG(2)
        CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
        [$selectcolumnlist]
 FROM [$tablename]

@@ -102,10 +102,10 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
-            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.HtmId);
-            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.HtmId);
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdString());
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdString());
         }
 
         // TODO: add test for zoneID, but need to modify catalog schema first
@@ -150,17 +150,17 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
-            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.HtmId);
-            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.HtmId);
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdString());
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdString());
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
             Assert.IsNotNull(coords.FindHtmIndex());
 
-            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);  
+            coords = new TableCoordinates((SimpleTableSource)tts[2]);  
             Assert.IsNotNull(coords.FindHtmIndex());
         }
 
@@ -181,17 +181,17 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
-            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.HtmId);
-            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.HtmId);
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdString());
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdString());
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
             Assert.IsNull(coords.FindHtmIndex());
 
-            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);
+            coords = new TableCoordinates((SimpleTableSource)tts[2]);
             Assert.IsNull(coords.FindHtmIndex());
         }
 
@@ -212,17 +212,17 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
-            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.ZoneId);
-            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.ZoneId);
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset, -1));
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset, -1));
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
             Assert.IsNotNull(coords.FindZoneIndex());
 
-            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);
+            coords = new TableCoordinates((SimpleTableSource)tts[2]);
             Assert.IsNotNull(coords.FindZoneIndex());
         }
 
@@ -243,17 +243,17 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.X);
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.X);
-            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.ZoneId);
-            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.ZoneId);
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset, -1));
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset, -1));
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SimpleTableSource)tts[1], CodeDataset);
+            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
             Assert.IsNull(coords.FindZoneIndex());
 
-            coords = new TableCoordinates((SimpleTableSource)tts[2], CodeDataset);
+            coords = new TableCoordinates((SimpleTableSource)tts[2]);
             Assert.IsNull(coords.FindZoneIndex());
         }
 

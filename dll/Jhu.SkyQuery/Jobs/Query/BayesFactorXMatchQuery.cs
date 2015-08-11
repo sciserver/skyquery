@@ -44,11 +44,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var tr = table.TableReference;
 
-                tr.Statistics = new Graywulf.SqlParser.TableStatistics()
-                {
-                    Table = tr,
-                    KeyColumn = "Dec",  // *** TODO: figure this out from query
-                };
+                // Collect statistics for zoneID
+                tr.Statistics = new Graywulf.SqlParser.TableStatistics(tr);
+                tr.Statistics.KeyColumnDataType = DataTypes.Int32;
+                tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdString(CodeDataset, ZoneHeight);
 
                 TableStatistics.Add(tr);
             }
@@ -112,7 +111,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                         var stat = TableStatistics[statmax].Statistics;
 
                         GeneratePartitions(partitionCount, stat, tables);
-                        AlignPartitionLimitsWithZone(Partitions);
                     }
                     break;
                 default:
@@ -142,7 +140,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     qp.PartitioningKeyTo = stat.KeyValue[Math.Min((i + 1) * s, stat.KeyValue.Count - 1)];
                     if (i == 0)
                     {
-                        qp.PartitioningKeyFrom = double.NegativeInfinity;
+                        qp.PartitioningKeyFrom = null;
                     }
                     else
                     {
@@ -152,40 +150,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     AppendPartition(qp);
                 }
 
-                Partitions[Partitions.Count - 1].PartitioningKeyTo = double.PositiveInfinity;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>
-        /// First and last partitions will go to infinity, not to miss anything.
-        /// </remarks>
-        /// <param name="partitions"></param>
-        private void AlignPartitionLimitsWithZone(List<QueryPartitionBase> partitions)
-        {
-            for (int i = 0; i < partitions.Count; i++)
-            {
-                BayesFactorXMatchQueryPartition qp = (BayesFactorXMatchQueryPartition)partitions[i];
-
-                if (i == 0)
-                {
-                    qp.PartitioningKeyFrom = double.NegativeInfinity;
-                }
-                else
-                {
-                    qp.PartitioningKeyFrom = Math.Floor(((double)qp.PartitioningKeyFrom + 90.0) / ZoneHeight) * ZoneHeight - 90;
-                }
-
-                if (i == partitions.Count - 1)
-                {
-                    qp.PartitioningKeyTo = double.PositiveInfinity;
-                }
-                else
-                {
-                    qp.PartitioningKeyTo = Math.Floor(((double)qp.PartitioningKeyTo + 90.0) / ZoneHeight) * ZoneHeight - 90;
-                }
+                Partitions[Partitions.Count - 1].PartitioningKeyTo = null;
             }
         }
     }

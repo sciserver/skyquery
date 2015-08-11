@@ -21,7 +21,7 @@ namespace Jhu.SkyQuery.Parser.Test
             var sql = "dummytable WITH(POINT(ra,dec), ERROR(1.0))";
             var t = (TableSource)Parser.Execute(new TableSource(), sql);
 
-            var coords = new TableCoordinates((SimpleTableSource)t.SpecificTableSource, CodeDataset);
+            var coords = new TableCoordinates((SimpleTableSource)t.SpecificTableSource);
         }
 
         [TestMethod]
@@ -41,15 +41,15 @@ FROM
 
             Assert.AreEqual(3, ts.Length);
 
-            var coords = new TableCoordinates((SimpleTableSource)ts[1], CodeDataset);
-            Assert.AreEqual("[c1].[ra]", coords.RA);
-            Assert.AreEqual("[c1].[dec]", coords.Dec);
+            var coords = new TableCoordinates((SimpleTableSource)ts[1]);
+            Assert.AreEqual("[c1].[ra]", coords.GetRAString(CodeDataset));
+            Assert.AreEqual("[c1].[dec]", coords.GetDecString(CodeDataset));
             Assert.AreEqual("0.1", coords.Error);
             Assert.IsTrue(coords.IsConstantError);
 
-            coords = new TableCoordinates((SimpleTableSource)ts[2], CodeDataset);
-            Assert.AreEqual("[c2].[ra]", coords.RA);
-            Assert.AreEqual("[c2].[dec]", coords.Dec);
+            coords = new TableCoordinates((SimpleTableSource)ts[2]);
+            Assert.AreEqual("[c2].[ra]", coords.GetRAString(CodeDataset));
+            Assert.AreEqual("[c2].[dec]", coords.GetDecString(CodeDataset));
             Assert.AreEqual("[c2].[err]", coords.Error);
             Assert.AreEqual("0.1", coords.ErrorMin);
             Assert.AreEqual("0.5", coords.ErrorMax);
@@ -74,13 +74,13 @@ FROM
 
             Assert.AreEqual(3, ts.Length);
 
-            var coords = new TableCoordinates((SimpleTableSource)ts[1], CodeDataset);
-            Assert.AreEqual("[c1].[ra]", coords.RA);
-            Assert.AreEqual("[c1].[dec]", coords.Dec);
-            Assert.AreEqual("[c1].[htmID]", coords.HtmId);
+            var coords = new TableCoordinates((SimpleTableSource)ts[1]);
+            Assert.AreEqual("[c1].[ra]", coords.GetRAString(CodeDataset));
+            Assert.AreEqual("[c1].[dec]", coords.GetDecString(CodeDataset));
+            Assert.AreEqual("[c1].[htmID]", coords.GetHtmIdString());
 
-            coords = new TableCoordinates((SimpleTableSource)ts[2], CodeDataset);
-            Assert.AreEqual("[c2].[htmID]", coords.HtmId);
+            coords = new TableCoordinates((SimpleTableSource)ts[2]);
+            Assert.AreEqual("[c2].[htmID]", coords.GetHtmIdString());
         }
 
         [TestMethod]
@@ -101,13 +101,13 @@ FROM
 
             Assert.AreEqual(3, ts.Length);
 
-            var coords = new TableCoordinates((SimpleTableSource)ts[1], CodeDataset);
-            Assert.AreEqual("[c1].[ra]", coords.RA);
-            Assert.AreEqual("[c1].[dec]", coords.Dec);
-            Assert.AreEqual("[c1].[zoneID]", coords.ZoneId);
+            var coords = new TableCoordinates((SimpleTableSource)ts[1]);
+            Assert.AreEqual("[c1].[ra]", coords.GetRAString(CodeDataset));
+            Assert.AreEqual("[c1].[dec]", coords.GetDecString(CodeDataset));
+            Assert.AreEqual("[c1].[zoneID]", coords.GetZoneIdString(CodeDataset, -1));
 
-            coords = new TableCoordinates((SimpleTableSource)ts[2], CodeDataset);
-            Assert.AreEqual("[c2].[zoneID]", coords.ZoneId);
+            coords = new TableCoordinates((SimpleTableSource)ts[2]);
+            Assert.AreEqual("[c2].[zoneID]", coords.GetZoneIdString(CodeDataset, -1));
         }
 
         [TestMethod]

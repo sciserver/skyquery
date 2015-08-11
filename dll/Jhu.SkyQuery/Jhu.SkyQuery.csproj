@@ -59,6 +59,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Jobs\Query\ComputeSearchRadius.cs" />
+    <Compile Include="Jobs\Query\Constants.cs" />
     <Compile Include="Jobs\Query\CreateLinkTable.cs" />
     <Compile Include="Jobs\Query\CreateMatchTable.cs" />
     <Compile Include="Jobs\Query\CreatePairTable.cs" />

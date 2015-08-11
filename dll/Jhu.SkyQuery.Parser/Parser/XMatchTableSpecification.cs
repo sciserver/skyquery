@@ -96,10 +96,5 @@ namespace Jhu.SkyQuery.Parser
 
             return base.Interpret();
         }
-
-        public void SetCodeDataset(SqlServerDataset codeDataset)
-        {
-            coordinates = new TableCoordinates(this.tableSource, codeDataset);
-        }
     }
 }

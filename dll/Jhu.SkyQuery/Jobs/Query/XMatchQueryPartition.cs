@@ -454,7 +454,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             foreach (var xt in xmqs.XMatchTableSource.EnumerateXMatchTableSpecifications())
             {
-                xt.SetCodeDataset(CodeDataset);
                 xmatchTableSpecifications.Add(xt.TableReference.UniqueName, xt);
             }
 
@@ -487,7 +486,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public void CreateZoneDefTable(XMatchQueryStep step)
         {
-            if (step.StepNumber != 0)
+            // This is done only for the second catalog and on
+            if (step.StepNumber > 0)
             {
                 var zonedeftable = GetZoneDefTable(step.StepNumber);
 
@@ -509,19 +509,21 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void PopulateZoneDefTable(XMatchQueryStep step)
         {
+            // TODO: fix this, because zone def table should contain buffer zones when the
+            // query is partitioned
+
             var zonedeftablename = GetZoneDefTable(step.StepNumber);
 
             var sql = new StringBuilder(XMatchScripts.PopulateZoneDefTable);
 
             sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableName(zonedeftablename));
-            sql.Replace("[$indexname]", String.Format("[IXC_{0}_{1}]", Query.TemporaryDataset.DefaultSchemaName, zonedeftablename));
 
             using (var cmd = new SqlCommand(sql.ToString()))
             {
                 cmd.Parameters.Add("@ZoneHeight", SqlDbType.Float).Value = ((XMatchQuery)Query).ZoneHeight;
                 cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
-                cmd.Parameters.Add("@PartitionMin", SqlDbType.Float).Value = Math.Max((double)PartitioningKeyFrom, -90);
-                cmd.Parameters.Add("@PartitionMax", SqlDbType.Float).Value = Math.Min((double)PartitioningKeyTo, 90);
+                cmd.Parameters.Add("@PartitionMin", SqlDbType.Int).Value = IsPartitioningKeyUnbound(PartitioningKeyFrom) ? Int32.MinValue : (int)PartitioningKeyFrom;
+                cmd.Parameters.Add("@PartitionMax", SqlDbType.Float).Value = IsPartitioningKeyUnbound(PartitioningKeyTo) ? Int32.MaxValue : (int)PartitioningKeyTo;
 
                 ExecuteSqlCommand(cmd, CommandTarget.Code);
             }
@@ -543,6 +545,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public void CreateZoneTable(XMatchQueryStep step)
         {
+            // TODO: modify this to create a zone table only if the 
+            // source catalog doesn't have a zone index or it has a strong
+            // filter (i.e. small region) defined in the query
+
             // Create zone table from match table
             if (step.StepNumber > 0)
             {
@@ -585,16 +591,16 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void SubstituteCoordinates(StringBuilder sql, TableCoordinates coords)
         {
-            sql.Replace("[$ra]", coords.RA);
-            sql.Replace("[$dec]", coords.Dec);
-            sql.Replace("[$cx]", coords.X);
-            sql.Replace("[$cy]", coords.Y);
-            sql.Replace("[$cz]", coords.Z);
+            sql.Replace("[$ra]", coords.GetRAString(CodeDataset));
+            sql.Replace("[$dec]", coords.GetDecString(CodeDataset));
+            sql.Replace("[$cx]", coords.GetXString(CodeDataset));
+            sql.Replace("[$cy]", coords.GetYString(CodeDataset));
+            sql.Replace("[$cz]", coords.GetZString(CodeDataset));
 
             // HTMID is required for region queries only
             if (region != null)
             {
-                sql.Replace("[$htmid]", coords.HtmId);
+                sql.Replace("[$htmid]", coords.GetHtmIdString());
             }
         }
 
@@ -655,21 +661,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        protected override bool IsPartitioningKeyUnbound(object key)
-        {
-            return key == null || Double.IsInfinity((double)key) || Double.IsNaN((double)key);
-        }
-
         protected void AppendPartitioningConditionParameters(SqlCommand cmd, double buffer)
         {
             if (!IsPartitioningKeyUnbound(PartitioningKeyFrom))
             {
-                cmd.Parameters.Add(keyFromParameterName, SqlDbType.Float).Value = (double)PartitioningKeyFrom - buffer;
+                cmd.Parameters.Add(keyFromParameterName, SqlDbType.Int).Value = (int)PartitioningKeyFrom - buffer;
             }
 
             if (!IsPartitioningKeyUnbound(PartitioningKeyTo))
             {
-                cmd.Parameters.Add(keyToParameterName, SqlDbType.Float).Value = (double)PartitioningKeyTo + buffer;
+                cmd.Parameters.Add(keyToParameterName, SqlDbType.Int).Value = (int)PartitioningKeyTo + buffer;
             }
         }
 
@@ -1258,7 +1259,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // --- Append partitioning key
 
-            var sc = GetPartitioningConditions(table.Coordinates.Dec);
+            var sc = GetPartitioningConditions(table.Coordinates.GetZoneIdString(CodeDataset, ((XMatchQuery)Query).ZoneHeight));
 
             if (sc != null)
             {

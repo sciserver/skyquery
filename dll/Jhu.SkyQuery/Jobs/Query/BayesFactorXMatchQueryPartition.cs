@@ -105,85 +105,42 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Compute search radius
 
+        /// <summary>
+        /// Calculates the search radius by taking the constant error value or error limits of each
+        /// catalog into account.
+        /// </summary>
+        /// <param name="step"></param>
         public void ComputeSearchRadius(XMatchQueryStep step)
         {
+            // This is done only for the second catalog and on, based on the
+            // output match table of the previous step
             if (step.StepNumber > 0)
             {
-                using (SqlCommand cmd = new SqlCommand())
-                {
-                    StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
+                var sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
+                
+                sql.Replace("[$matchtable]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));
+                sql.Replace("[$a]", "a");
+                sql.Replace("[$l]", "l");
+                sql.Replace("[$q]", "q");
 
+                using (SqlCommand cmd = new SqlCommand(sql.ToString()))
+                {
+                    cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
+                    
                     CalculateSums(step, cmd);
 
-                    sql.Replace("[$matchtable]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));
-                    
-                    /* TODO: delete
-                    sql.Replace("[$tablename]", QuoteSchemaAndTableName(GetLinkTable(step.StepNumber)));        // new table name
-                    sql.Replace("[$zonetable1]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                    sql.Replace("[$zonetable2]", QuoteSchemaAndTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
-                     * */
-
-                    cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
-
-                    cmd.CommandText = sql.ToString();
-                    double theta = (double)ExecuteSqlCommandScalar(cmd, CommandTarget.Code);
+                    var theta = (double)ExecuteSqlCommandScalar(cmd, CommandTarget.Code);
                     theta = Math.Sqrt(theta) * 180.0 / Math.PI;
                     ((BayesFactorXMatchQueryStep)step).SearchRadius = theta;
                 }
             }
         }
 
-        #endregion
-        #region Link table functions
-
-        protected override void PopulateLinkTable(XMatchQueryStep step)
-        {
-
-            using (SqlCommand cmd = new SqlCommand())
-            {
-                StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulateLinkTable);
-
-                // TODO: delete sql.Replace("[$matchtable]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));
-                sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableName(GetLinkTable(step.StepNumber)));        // new table name
-                sql.Replace("[$zonetable1]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                sql.Replace("[$zonetable2]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
-                sql.Replace("[$zonedeftable]", CodeGenerator.GetResolvedTableName(GetZoneDefTable(step.StepNumber)));
-
-                cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
-                cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
-
-                cmd.CommandText = sql.ToString();
-                ExecuteSqlCommand(cmd, CommandTarget.Code);
-            }
-        }
-
-        #endregion
-        #region Pair table functions
-
-        protected override void PopulatePairTable(XMatchQueryStep step)
-        {
-            if (step.StepNumber != 0)
-            {
-                using (SqlCommand cmd = new SqlCommand())
-                {
-                    StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulatePairTable);
-
-                    sql.Replace("[$pairtable]", CodeGenerator.GetResolvedTableName(GetPairTable(step.StepNumber)));
-                    sql.Replace("[$columnlist1]", "[tableA].[MatchID]");
-                    sql.Replace("[$columnlist2]", GetPropagatedColumnList(xmatchTableSpecifications[step.XMatchTable], ColumnListType.ForSelectNoAlias, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
-                    // TODO: delete sql.Replace("[$matchtable]", QuoteSchemaAndTableName(GetMatchTable(step.StepNumber - 1)));
-                    sql.Replace("[$matchzonetable]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
-                    sql.Replace("[$linktable]", CodeGenerator.GetResolvedTableName((GetLinkTable(step.StepNumber))));
-                    sql.Replace("[$zonetable]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
-
-                    cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
-
-                    cmd.CommandText = sql.ToString();
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
-                }
-            }
-        }
-
+        /// <summary>
+        /// Calculates parameters necessary to compute search radius
+        /// </summary>
+        /// <param name="step"></param>
+        /// <param name="cmd"></param>
         private void CalculateSums(XMatchQueryStep step, SqlCommand cmd)
         {
             double lmax = 0;
@@ -224,6 +181,55 @@ namespace Jhu.SkyQuery.Jobs.Query
             cmd.Parameters.Add("@lmax", SqlDbType.Float).Value = lmax;
             cmd.Parameters.Add("@amin", SqlDbType.Float).Value = amin;
             cmd.Parameters.Add("@limit", SqlDbType.Float).Value = Math.Log(((BayesFactorXMatchQuery)Query).Limit);
+        }
+
+        #endregion
+        #region Link table functions
+
+        protected override void PopulateLinkTable(XMatchQueryStep step)
+        {
+
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulateLinkTable);
+
+                sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableName(GetLinkTable(step.StepNumber)));        // new table name
+                sql.Replace("[$zonetable1]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
+                sql.Replace("[$zonetable2]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
+                sql.Replace("[$zonedeftable]", CodeGenerator.GetResolvedTableName(GetZoneDefTable(step.StepNumber)));
+
+                cmd.Parameters.Add("@H", SqlDbType.Float).Value = ((BayesFactorXMatchQuery)Query).ZoneHeight;
+                cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
+
+                cmd.CommandText = sql.ToString();
+                ExecuteSqlCommand(cmd, CommandTarget.Code);
+            }
+        }
+
+        #endregion
+        #region Pair table functions
+
+        protected override void PopulatePairTable(XMatchQueryStep step)
+        {
+            if (step.StepNumber != 0)
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulatePairTable);
+
+                    sql.Replace("[$pairtable]", CodeGenerator.GetResolvedTableName(GetPairTable(step.StepNumber)));
+                    sql.Replace("[$columnlist1]", "[tableA].[MatchID]");
+                    sql.Replace("[$columnlist2]", GetPropagatedColumnList(xmatchTableSpecifications[step.XMatchTable], ColumnListType.ForSelectNoAlias, ColumnListInclude.PrimaryKey, ColumnListNullType.Nothing, null));
+                    sql.Replace("[$matchzonetable]", CodeGenerator.GetResolvedTableName(GetMatchTable(step.StepNumber - 1)));  // Match table always has the ZoneID index
+                    sql.Replace("[$linktable]", CodeGenerator.GetResolvedTableName((GetLinkTable(step.StepNumber))));
+                    sql.Replace("[$zonetable]", CodeGenerator.GetResolvedTableName(GetZoneTable(xmatchTableSpecifications[step.XMatchTable].TableReference)));
+
+                    cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = ((BayesFactorXMatchQueryStep)step).SearchRadius;
+
+                    cmd.CommandText = sql.ToString();
+                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                }
+            }
         }
 
         #endregion

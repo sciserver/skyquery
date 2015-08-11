@@ -97,7 +97,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override void FinishInterpret(bool forceReinitialize)
         {
-            this.zoneHeight = 4.0 / 3600.0;     //****** TODO: remove hardcoding
+            this.zoneHeight = Constants.DefaultZoneHeight;
 
             // Interpret xmatch parameters
             var qs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
