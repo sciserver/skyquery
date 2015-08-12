@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public enum XMatchInclusionMethod
+    public enum XMatchInclusionMethod : int
     {
-        Unknown,
-        Must,
-        May,
-        Drop
+        Unknown = -1,
+        Must = 0,
+        May = 1,
+        Drop = 2,
     }
 }

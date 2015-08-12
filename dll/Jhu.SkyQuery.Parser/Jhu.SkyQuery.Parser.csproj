@@ -84,6 +84,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Parser\SimpleTableSource.cs" />
     <Compile Include="Parser\TableCoordinates.cs" />
     <Compile Include="Parser\QuerySpecification.cs" />
     <Compile Include="Parser\RegionClause.cs" />

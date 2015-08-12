@@ -35,6 +35,18 @@ namespace Jhu.SkyQuery.Parser.Generator
                 SubqueryTableSource
             );
 
+        // This doesn't change the original rule but creates an overload in the
+        // SkyQuery parser that further can be extended
+        public static Expression<Rule> SimpleTableSource = () =>
+            Sequence
+            (
+                TableOrViewName,
+                May(Sequence(CommentOrWhitespace, May(Sequence(Keyword("AS"), CommentOrWhitespace)), TableAlias)),   // Optional
+                May(Sequence(CommentOrWhitespace, TableSampleClause)),
+                May(Sequence(CommentOrWhitespace, TableHintClause)),
+                May(Sequence(CommentOrWhitespace, TablePartitionClause))
+            );
+
         #region XMatch clause
 
         public static Expression<Rule> XMatchTableSource = () =>

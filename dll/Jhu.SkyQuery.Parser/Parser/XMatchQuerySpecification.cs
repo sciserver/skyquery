@@ -8,16 +8,6 @@ namespace Jhu.SkyQuery.Parser
     public abstract class XMatchQuerySpecification : QuerySpecification
     {
 
-        // TODO: delete, not used
-        /*
-        public SearchCondition XMatchConditions
-        {
-            get
-            {
-                return this.FindDescendant<XMatchClause>().FindDescendant<XMatchHavingClause>().FindDescendant<SearchCondition>();
-            }
-        }*/
-
         public XMatchTableSource XMatchTableSource
         {
             get { return this.FindDescendantRecursive<XMatchTableSource>(); }
@@ -37,12 +27,5 @@ namespace Jhu.SkyQuery.Parser
             :base(old)
         {
         }
-
-        // TODO: delete if not used
-        /*
-        public IEnumerable<XMatchTableSpecification> EnumerateXMatchTableSpecifications()
-        {
-            return this.FindDescendant<XMatchClause>().FindDescendant<XMatchTableList>().EnumerateDescendants<XMatchTableSpecification>();
-        }*/
     }
 }

@@ -99,14 +99,17 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             this.zoneHeight = Constants.DefaultZoneHeight;
 
-            // Interpret xmatch parameters
-            var qs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
-            var xts = qs.XMatchTableSource;
+            if (xmatchTables == null || forceReinitialize)
+            {
+                // Interpret xmatch parameters
+                var qs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
+                var xts = qs.XMatchTableSource;
 
-            // Bayes factor or probability limit
-            this.limit = xts.XMatchLimit;
+                // Bayes factor or probability limit
+                this.limit = xts.XMatchLimit;
 
-            xmatchTables = InterpretXMatchTables(SelectStatement);
+                xmatchTables = InterpretXMatchTables(SelectStatement);
+            }
 
             base.FinishInterpret(forceReinitialize);
         }
@@ -124,9 +127,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             return res;
         }
 
-        protected override SqlCommand GetTableStatisticsCommand(TableReference tr)
+        protected override SqlCommand GetTableStatisticsCommand(ITableSource tableSource)
         {
-            var cmd = base.GetTableStatisticsCommand(tr);
+            var cmd = base.GetTableStatisticsCommand(tableSource);
 
             cmd.Parameters.Add("@H", SqlDbType.Float).Value = zoneHeight;
 

@@ -97,35 +97,35 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        protected override SqlCommand GetTableStatisticsCommand(TableReference tr)
+        protected override SqlCommand GetTableStatisticsCommand(ITableSource tableSource)
         {
             if (region == null)
             {
-                return base.GetTableStatisticsCommand(tr);
+                return base.GetTableStatisticsCommand(tableSource);
             }
             else
             {
-                return GetTableStatisticsWithRegionCommand(tr);
+                return GetTableStatisticsWithRegionCommand(tableSource);
             }
         }
 
-        private SqlCommand GetTableStatisticsWithRegionCommand(TableReference tr)
+        private SqlCommand GetTableStatisticsWithRegionCommand(ITableSource tableSource)
         {
-            if (tr.Statistics == null)
+            if (tableSource.TableReference.Statistics == null)
             {
                 throw new ArgumentNullException();
             }
 
-            if (!(tr.DatabaseObject is TableOrView))
+            if (!(tableSource.TableReference.DatabaseObject is TableOrView))
             {
                 throw new ArgumentException();
             }
 
-            var table = (TableOrView)tr.DatabaseObject;
-            var keycol = tr.Statistics.KeyColumn;
-            var keytype = tr.Statistics.KeyColumnDataType.NameWithLength;
+            var table = (TableOrView)tableSource.TableReference.DatabaseObject;
+            var keycol = tableSource.TableReference.Statistics.KeyColumn;
+            var keytype = tableSource.TableReference.Statistics.KeyColumnDataType.NameWithLength;
 
-            var tablename = CodeGenerator.GetEscapedUniqueName(tr);
+            var tablename = CodeGenerator.GetEscapedUniqueName(tableSource.TableReference);
             var temptable = GetTemporaryTable("stat_" + tablename);
             var htmtable = GetTemporaryTable("htm_" + tablename);
 
@@ -133,11 +133,11 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             sql.Replace("[$temptable]", CodeGenerator.GetResolvedTableName(temptable));
             sql.Replace("[$htm]", CodeGenerator.GetResolvedTableName(htmtable));
-            sql.Replace("[$htmid]", tr....
+            sql.Replace("[$htmid]", ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates.GetHtmIdString());
             sql.Replace("[$keytype]", keytype);
             sql.Replace("[$keycol]", keycol);
-            sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableNameWithAlias(tr));
-            sql.Replace("[$where]", GetTableStatisticsWhereClause(tr));
+            sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableNameWithAlias(tableSource.TableReference));
+            sql.Replace("[$where]", GetTableStatisticsWhereClause(tableSource.TableReference));
 
             var cmd = new SqlCommand(sql.ToString());
 

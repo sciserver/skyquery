@@ -37,7 +37,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override void CollectTablesForStatistics()
         {
-            TableStatistics.Clear();
+            TableSourceStatistics.Clear();
             decimal binsize = (decimal)(5 * ZoneHeight);   // histogram bin size in Dec
 
             foreach (var table in xmatchTables.Values)
@@ -45,11 +45,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var tr = table.TableReference;
 
                 // Collect statistics for zoneID
-                tr.Statistics = new Graywulf.SqlParser.TableStatistics(tr);
+                tr.Statistics = new Graywulf.SqlParser.TableStatistics();
                 tr.Statistics.KeyColumnDataType = DataTypes.Int32;
                 tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdString(CodeDataset);
 
-                TableStatistics.Add(tr);
+                TableSourceStatistics.Add(table.TableSource);
             }
         }
 
@@ -68,48 +68,27 @@ namespace Jhu.SkyQuery.Jobs.Query
                     break;
                 case ExecutionMode.Graywulf:
                     {
-                        // Create a copy of xmatchTables that will be reordered based on stats
-                        var tables = xmatchTables.Values.ToArray();
-
-                        // --- sort tables by count
-                        // *** this must be changed for MAY and DROP!
-                        // Order of xmatch execution: MUST, MAY, DROP (inclusion method)
-                        //    first sort by InclusionMethod, then by count, smallest table first
-
-                        for (int i = 0; i < tables.Length; i++)
+                        // xmathTables might be reinitialized, so copy statistics
+                        foreach (var st in TableSourceStatistics)
                         {
-                            for (int j = tables.Length - 1; j > i; j--)
-                            {
-                                // swap
-                                if (
-                                    tables[j].InclusionMethod == XMatchInclusionMethod.Must && tables[i].InclusionMethod == XMatchInclusionMethod.Drop ||
-                                    tables[j].InclusionMethod == XMatchInclusionMethod.Must && tables[i].InclusionMethod == XMatchInclusionMethod.May ||
-                                    tables[j].InclusionMethod == XMatchInclusionMethod.Drop && tables[i].InclusionMethod == XMatchInclusionMethod.May ||
-                                    tables[j].InclusionMethod == tables[i].InclusionMethod && TableStatistics[j].Statistics.RowCount < TableStatistics[i].Statistics.RowCount)
-                                {
-                                    var xmts = tables[i];
-                                    tables[i] = tables[j];
-                                    tables[j] = xmts;
-
-                                    var st = TableStatistics[i];
-                                    TableStatistics[i] = TableStatistics[j];
-                                    TableStatistics[j] = st;
-                                }
-                            }
+                            xmatchTables[st.TableReference.UniqueName].TableReference.Statistics = st.TableReference.Statistics;
                         }
 
-                        // --- find stat histogram with most bins, that will be used to generate partitions
+                        // Order tables based on incusion method and statistics
+                        var tables = xmatchTables.Values.OrderBy(i => i).ToArray();
+
+                        // Find stat histogram with most bins, that will be used to generate partitions
                         int statmax = -1;
                         for (int i = 0; i < tables.Length; i++)
                         {
-                            if (statmax == -1 || TableStatistics[i].Statistics.KeyValue.Count > TableStatistics[statmax].Statistics.KeyValue.Count)
+                            if (statmax == -1 ||
+                                tables[i].TableReference.Statistics.RowCount > tables[statmax].TableReference.Statistics.RowCount)
                             {
                                 statmax = i;
                             }
                         }
 
-                        var stat = TableStatistics[statmax].Statistics;
-
+                        var stat = tables[statmax].TableReference.Statistics;
                         GeneratePartitions(partitionCount, stat, tables);
                     }
                     break;
@@ -120,6 +99,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void GeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat, XMatchTableSpecification[] tables)
         {
+            // TODO: verify with repeating keys!
+
             BayesFactorXMatchQueryPartition qp = null;
             int s = stat.KeyValue.Count / partitionCount;
 

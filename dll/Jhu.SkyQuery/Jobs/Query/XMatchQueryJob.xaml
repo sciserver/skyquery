@@ -3,6 +3,8 @@
  xmlns:jga="clr-namespace:Jhu.Graywulf.Activities;assembly=Jhu.Graywulf.Activities"
  xmlns:jga1="clr-namespace:Jhu.Graywulf.Activities;assembly=Jhu.Graywulf.Registry"
  xmlns:jgjq="clr-namespace:Jhu.Graywulf.Jobs.Query;assembly=Jhu.Graywulf.Jobs"
+ xmlns:jgr="clr-namespace:Jhu.Graywulf.Registry;assembly=Jhu.Graywulf.Registry"
+ xmlns:jgr1="clr-namespace:Jhu.Graywulf.Registry;assembly=Jhu.Graywulf.Registry.Enum"
  xmlns:jgs="clr-namespace:Jhu.Graywulf.SqlParser;assembly=Jhu.Graywulf.Sql"
  xmlns:jgt="clr-namespace:Jhu.Graywulf.Tasks;assembly=Jhu.Graywulf.RemoteService"
  xmlns:local="clr-namespace:Jhu.SkyQuery.Jobs.Query"
@@ -31,16 +33,16 @@
     <x:Property Name="UserGuid" Type="InArgument(s:Guid)" />
     <x:Property Name="Query" Type="InOutArgument(jgjq:QueryBase)" />
   </x:Members>
-  <sap:VirtualizedContainerService.HintSize>451,2971</sap:VirtualizedContainerService.HintSize>
+  <sap:VirtualizedContainerService.HintSize>517,3004</sap:VirtualizedContainerService.HintSize>
   <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
-  <CancellationScope sad:XamlDebuggerXmlReader.FileName="C:\Data\dobos\project\skyquery-all\skyquery\dll\Jhu.SkyQuery\Jobs\Query\XMatchQueryJob.xaml" sap:VirtualizedContainerService.HintSize="411,2891">
-    <Sequence sap:VirtualizedContainerService.HintSize="375,2476">
+  <CancellationScope sad:XamlDebuggerXmlReader.FileName="C:\Data\dobos\project\skyquery-all\skyquery\dll\Jhu.SkyQuery\Jobs\Query\XMatchQueryJob.xaml" sap:VirtualizedContainerService.HintSize="477,2924">
+    <Sequence sap:VirtualizedContainerService.HintSize="441,2509">
       <sap:WorkflowViewStateService.ViewState>
         <scg3:Dictionary x:TypeArguments="x:String, x:Object">
           <x:Boolean x:Key="IsExpanded">True</x:Boolean>
         </scg3:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <Sequence sap:VirtualizedContainerService.HintSize="353,208">
+      <Sequence sap:VirtualizedContainerService.HintSize="419,208">
         <sap:WorkflowViewStateService.ViewState>
           <scg3:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -49,25 +51,25 @@
         <jgjq:InitializeQuery EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
         <jgjq:CheckDestinationTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
       </Sequence>
-      <Sequence sap:VirtualizedContainerService.HintSize="353,462">
+      <Sequence sap:VirtualizedContainerService.HintSize="419,495">
         <sap:WorkflowViewStateService.ViewState>
           <scg3:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg3:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
-        <ParallelForEach x:TypeArguments="jgs:TableReference" DisplayName="ParallelForEach&lt;TableReference&gt;" sap:VirtualizedContainerService.HintSize="287,276" Values="[Query.TableStatistics]">
-          <ActivityAction x:TypeArguments="jgs:TableReference">
+        <ParallelForEach x:TypeArguments="jgs:ITableSource" DisplayName="ParallelForEach&lt;ITableSource&gt;" sap:VirtualizedContainerService.HintSize="397,309" Values="[Query.TableSourceStatistics]">
+          <ActivityAction x:TypeArguments="jgs:ITableSource">
             <ActivityAction.Argument>
-              <DelegateInArgument x:TypeArguments="jgs:TableReference" Name="tableReference" />
+              <DelegateInArgument x:TypeArguments="jgs:ITableSource" Name="tableSource" />
             </ActivityAction.Argument>
-            <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="214,128" JobGuid="[JobGuid]" MaxRetries="3" UserGuid="[UserGuid]">
-              <jgjq:ComputeTableStatistics sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" TableReference="[tableReference]" UserGuid="[UserGuid]" />
+            <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="367,161" JobGuid="[JobGuid]" MaxRetries="3" UserGuid="[UserGuid]">
+              <jgjq:ComputeTableStatistics sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" TableSource="[tableSource]" UserGuid="[UserGuid]" />
             </jga:Retry>
           </ActivityAction>
         </ParallelForEach>
-        <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="287,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
+        <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="397,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
       </Sequence>
-      <ParallelForEach x:TypeArguments="jgjq:QueryPartitionBase" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="353,1602" Values="[Query.Partitions]">
+      <ParallelForEach x:TypeArguments="jgjq:QueryPartitionBase" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="419,1602" Values="[Query.Partitions]">
         <ActivityAction x:TypeArguments="jgjq:QueryPartitionBase">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="jgjq:QueryPartitionBase" Name="queryPartition" />

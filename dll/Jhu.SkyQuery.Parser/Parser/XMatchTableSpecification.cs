@@ -8,41 +8,14 @@ using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public partial class XMatchTableSpecification : ICloneable
+    public partial class XMatchTableSpecification : ICloneable, IComparable<XMatchTableSpecification>
     {
+        private XMatchInclusionMethod inclusionMethod;
         private SimpleTableSource tableSource;
-        private TableCoordinates coordinates;
 
         public XMatchInclusionMethod InclusionMethod
         {
-            get
-            {
-                var tokens = this.FindDescendant<XMatchTableInclusion>().Stack.ToArray();
-
-                if (tokens.Length > 2)
-                {
-                    if (SkyQueryParser.ComparerInstance.Compare(tokens[0].Value, Constants.InclusionMethodMay) == 0)
-                    {
-                        return XMatchInclusionMethod.May;
-                    }
-                    else if (SkyQueryParser.ComparerInstance.Compare(tokens[0].Value, Constants.InclusionMethodNot) == 0)
-                    {
-                        return XMatchInclusionMethod.Drop;
-                    }
-                    else if (SkyQueryParser.ComparerInstance.Compare(tokens[0].Value, Constants.InclusionMethodMust) == 0)
-                    {
-                        return XMatchInclusionMethod.Must;
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
-                else
-                {
-                    return XMatchInclusionMethod.Must;
-                }
-            }
+            get { return inclusionMethod; }
         }
 
         public TableReference TableReference
@@ -57,7 +30,7 @@ namespace Jhu.SkyQuery.Parser
 
         public TableCoordinates Coordinates
         {
-            get { return coordinates; }
+            get { return tableSource.Coordinates; }
         }
 
         #region Constructors and initializers
@@ -76,10 +49,14 @@ namespace Jhu.SkyQuery.Parser
 
         private void InitializeMembers()
         {
+            this.inclusionMethod = XMatchInclusionMethod.Unknown;
+            this.tableSource = null;
         }
 
         private void CopyMembers(XMatchTableSpecification old)
         {
+            this.inclusionMethod = old.inclusionMethod;
+            this.tableSource = old.tableSource;
         }
 
         public virtual object Clone()
@@ -91,10 +68,57 @@ namespace Jhu.SkyQuery.Parser
 
         public override Node Interpret()
         {
+            inclusionMethod = InterpretInclusionMethod();
             tableSource = FindDescendant<SimpleTableSource>();
-            coordinates = new TableCoordinates(this.tableSource);
 
             return base.Interpret();
+        }
+
+        private XMatchInclusionMethod InterpretInclusionMethod()
+        {
+            var tokens = this.FindDescendant<XMatchTableInclusion>().Stack.ToArray();
+
+            if (tokens.Length > 2)
+            {
+                if (SkyQueryParser.ComparerInstance.Compare(tokens[0].Value, Constants.InclusionMethodMay) == 0)
+                {
+                    return XMatchInclusionMethod.May;
+                }
+                else if (SkyQueryParser.ComparerInstance.Compare(tokens[0].Value, Constants.InclusionMethodNot) == 0)
+                {
+                    return XMatchInclusionMethod.Drop;
+                }
+                else if (SkyQueryParser.ComparerInstance.Compare(tokens[0].Value, Constants.InclusionMethodMust) == 0)
+                {
+                    return XMatchInclusionMethod.Must;
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
+            else
+            {
+                return XMatchInclusionMethod.Must;
+            }
+        }
+
+        public int CompareTo(object obj)
+        {
+            return CompareTo((XMatchTableSpecification)obj);
+        }
+
+        public int CompareTo(XMatchTableSpecification other)
+        {
+            // Inclusion method ordering always preceeds table statistics
+
+            if (other.InclusionMethod != this.InclusionMethod)
+            {
+                return other.InclusionMethod - this.InclusionMethod;
+            }
+
+            // Order tables by cardinality
+            return Math.Sign(other.TableReference.Statistics.RowCount - this.TableReference.Statistics.RowCount);
         }
     }
 }
