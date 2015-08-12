@@ -219,6 +219,7 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Jobs\Query\RegionResources\TableStatisticsNoHtm.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatistics.sql" />
   </ItemGroup>
   <ItemGroup>

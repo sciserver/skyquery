@@ -45,12 +45,20 @@ namespace Jhu.SkyQuery.Parser
             get { return table; }
         }
 
-        bool IsEqSpecified
+        /// <summary>
+        /// Placeholder for opting out from region constraint
+        /// </summary>
+        public bool IsNoRegion
+        {
+            get { return false; }
+        }
+
+        public bool IsEqSpecified
         {
             get { return isEqSpecified; }
         }
 
-        bool IsCartesianSpecified
+        public bool IsCartesianSpecified
         {
             get { return isEqSpecified; }
         }

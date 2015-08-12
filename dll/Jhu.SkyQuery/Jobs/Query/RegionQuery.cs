@@ -121,29 +121,102 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new ArgumentException();
             }
 
+            // There are three options to generate a region-aware statistics query for a table
+            // 1. the table has an HTM column
+            // 2. the table doesn't have an HTM column but has coordinates
+            // 3. the region constraint doesn't apply to the table
+
             var table = (TableOrView)tableSource.TableReference.DatabaseObject;
+            var coords = ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates;
+            
             var keycol = tableSource.TableReference.Statistics.KeyColumn;
             var keytype = tableSource.TableReference.Statistics.KeyColumnDataType.NameWithLength;
-
             var tablename = CodeGenerator.GetEscapedUniqueName(tableSource.TableReference);
             var temptable = GetTemporaryTable("stat_" + tablename);
-            var htmtable = GetTemporaryTable("htm_" + tablename);
+            
+            
+            StringBuilder sql;
 
-            var sql = new StringBuilder(RegionScripts.TableStatistics);
+            if (coords == null || coords.IsNoRegion)
+            {
+                // The region contraint doesn't apply to the table
+                return base.GetTableStatisticsCommand(tableSource);
+            }
+            else if (coords.IsHtmIdSpecified)
+            {
+                var htmtable = GetTemporaryTable("htm_" + tablename);
+
+                sql = new StringBuilder(RegionScripts.TableStatistics);
+
+                sql.Replace("[$htm]", CodeGenerator.GetResolvedTableName(htmtable));
+                sql.Replace("[$htmid]", ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates.GetHtmIdString());
+            }
+            else
+            {
+                sql = new StringBuilder(RegionScripts.TableStatisticsNoHtm);
+            }
 
             sql.Replace("[$temptable]", CodeGenerator.GetResolvedTableName(temptable));
-            sql.Replace("[$htm]", CodeGenerator.GetResolvedTableName(htmtable));
-            sql.Replace("[$htmid]", ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates.GetHtmIdString());
             sql.Replace("[$keytype]", keytype);
             sql.Replace("[$keycol]", keycol);
             sql.Replace("[$tablename]", CodeGenerator.GetResolvedTableNameWithAlias(tableSource.TableReference));
-            sql.Replace("[$where]", GetTableStatisticsWhereClause(tableSource.TableReference));
+            sql.Replace("[$where]", GetTableStatisticsWhereClause(tableSource));
 
             var cmd = new SqlCommand(sql.ToString());
 
-            cmd.Parameters.Add("@region", SqlDbType.VarBinary).Value = region.ToSqlBytes();
-            
+            var par = cmd.Parameters.Add("@region", SqlDbType.VarBinary).Value = region.ToSqlBytes();
+
             return cmd;
+        }
+
+        protected override string GetTableStatisticsWhereClause(ITableSource tableSource)
+        {
+            var where = base.GetTableStatisticsWhereClause(tableSource);
+
+            if (!(tableSource is SkyQuery.Parser.SimpleTableSource))
+            {
+                return where;
+            }
+
+            var coords = ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates;
+
+            // Append search criterium to filter for containment
+            string htmwhere;
+
+            if (coords == null || coords.IsNoRegion || coords.IsHtmIdSpecified)
+            {
+                // If coords are null we cannot filter the table by regions
+                // If htmID is specified for the table, we use HTM-based filtering                
+                return where;
+            }
+            else if (coords.IsEqSpecified)
+            {
+                htmwhere = String.Format("(@r.ContainsEq({0}, {1}) = 1)",
+                    coords.GetRAString(CodeDataset),
+                    coords.GetDecString(CodeDataset));
+            }
+            else if (coords.IsCartesianSpecified)
+            {
+                htmwhere = String.Format("(@r.ContainsXyz({0}, {1}, {2}) = 1)",
+                    coords.GetXString(CodeDataset),
+                    coords.GetYString(CodeDataset),
+                    coords.GetZString(CodeDataset));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            if (!String.IsNullOrWhiteSpace(where))
+            {
+                where += " AND " + htmwhere;
+            }
+            else
+            {
+                where = "WHERE " + htmwhere;
+            }
+
+            return where;
         }
     }
 }
