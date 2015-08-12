@@ -58,6 +58,7 @@
     <Compile Include="Jobs\Query\PartitionedSqlQueryTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryTest.cs" />
     <Compile Include="Jobs\Query\SqlQueryTest.cs" />
+    <Compile Include="Jobs\Query\TableStatisticsTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryFactoryTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryOperationsTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryTest.cs" />

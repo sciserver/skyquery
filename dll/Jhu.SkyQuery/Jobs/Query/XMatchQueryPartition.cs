@@ -18,10 +18,8 @@ using Jhu.SkyQuery.Parser;
 namespace Jhu.SkyQuery.Jobs.Query
 {
     [Serializable]
-    public abstract class XMatchQueryPartition : QueryPartitionBase
+    public abstract class XMatchQueryPartition : RegionQueryPartition
     {
-        protected const string regionParameterName = "@region";
-
         #region Property storage variables
 
         /// <summary>
@@ -32,9 +30,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         [NonSerialized]
         protected Dictionary<string, XMatchTableSpecification> xmatchTables;
-
-        [NonSerialized]
-        protected Jhu.Spherical.Region region;
 
         #endregion
         #region Properties
@@ -76,14 +71,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             this.steps = new List<XMatchQueryStep>();
             this.xmatchTables = null;
-            this.region = null;
         }
 
         private void CopyMembers(XMatchQueryPartition old)
         {
             this.steps = new List<XMatchQueryStep>();   // TODO: do deep copy here?
             this.xmatchTables = old.xmatchTables;
-            this.region = old.region;
         }
 
         /// <summary>
@@ -452,7 +445,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected override void FinishInterpret(bool forceReinitialize)
         {
             xmatchTables = XMatchQuery.InterpretXMatchTables(SelectStatement);
-            region = XMatchQuery.InterpretRegion(SelectStatement);
 
             base.FinishInterpret(forceReinitialize);
         }
@@ -574,7 +566,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$cz]", coords.GetZString(CodeDataset));
 
             // HTMID is required for region queries only
-            if (region != null)
+            if (Region != null)
             {
                 sql.Replace("[$htmid]", coords.GetHtmIdString());
             }
@@ -612,7 +604,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             SubstituteCoordinates(sql, coords);
 
-            if (region != null)
+            if (Region != null)
             {
                 var htminner = GetHtmTable(step.StepNumber, false);
                 var htmpartial = GetHtmTable(step.StepNumber, true);
@@ -653,9 +645,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void AppendRegionParameter(SqlCommand cmd)
         {
-            if (region != null)
+            if (Region != null)
             {
-                cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = region.ToSqlBytes();
+                cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = Region.ToSqlBytes();
             }
         }
 
@@ -884,7 +876,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 SubstituteCoordinates(sql, coords);
 
                 // No buffering when initial partitioning is done
-                if (region != null)
+                if (Region != null)
                 {
                     var htminner = GetHtmTable(step.StepNumber, false);
                     var htmpartial = GetHtmTable(step.StepNumber, true);

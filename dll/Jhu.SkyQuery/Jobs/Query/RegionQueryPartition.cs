@@ -10,6 +10,22 @@ namespace Jhu.SkyQuery.Jobs.Query
     [Serializable]
     public class RegionQueryPartition : SqlQueryPartition, ICloneable
     {
+        protected const string regionParameterName = "@region";
+
+        #region Private member variables
+
+        [NonSerialized]
+        private Jhu.Spherical.Region region;
+
+        #endregion
+        #region Properties
+
+        public Spherical.Region Region
+        {
+            get { return region; }
+        }
+
+        #endregion
         #region Constructors and initializers
 
         public RegionQueryPartition()
@@ -32,10 +48,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void InitializeMembers()
         {
+            this.region = null;
         }
 
         private void CopyMembers(RegionQueryPartition old)
         {
+            this.region = old.region;
         }
 
         public override object Clone()
@@ -44,5 +62,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+
+        protected override void FinishInterpret(bool forceReinitialize)
+        {
+            region = RegionQuery.InterpretRegion(SelectStatement);
+
+            base.FinishInterpret(forceReinitialize);
+        }
     }
 }

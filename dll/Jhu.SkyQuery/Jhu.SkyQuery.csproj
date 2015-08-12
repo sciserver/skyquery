@@ -68,6 +68,11 @@
     <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
     <Compile Include="Jobs\Query\RegionQuery.cs" />
     <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
+    <Compile Include="Jobs\Query\RegionScripts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RegionScripts.resx</DependentUpon>
+    </Compile>
     <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
@@ -187,6 +192,11 @@
       <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Jobs\Query\RegionScripts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>RegionScripts.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\XMatchScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XMatchScripts.Designer.cs</LastGenOutput>
@@ -207,6 +217,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Jobs\Query\RegionResources\TableStatistics.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

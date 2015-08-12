@@ -13,6 +13,7 @@ using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.SqlParser;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
+using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 
@@ -92,7 +93,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override string GetPopulateZoneTableScript(XMatchTableSpecification table)
         {
-            if (region != null)
+            if (Region != null)
             {
                 return BayesFactorXMatchScripts.PopulateZoneTableRegion;
             }
@@ -244,7 +245,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var sql = new StringBuilder();
 
-            if (region != null)
+            if (Region != null)
             {
                 sql.Append(BayesFactorXMatchScripts.PopulateInitialMatchTableRegion);
             }

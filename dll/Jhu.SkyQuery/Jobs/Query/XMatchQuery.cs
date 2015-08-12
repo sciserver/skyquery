@@ -16,7 +16,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 {
     [Serializable]
     [DataContract(Name = "Query", Namespace = "")]
-    public abstract class XMatchQuery : SqlQuery
+    public abstract class XMatchQuery : RegionQuery
     {
         #region Private member variables
 
@@ -29,9 +29,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         // --- cache for table specifications
         [NonSerialized]
         protected Dictionary<string, XMatchTableSpecification> xmatchTables;
-
-        [NonSerialized]
-        protected Jhu.Spherical.Region region;
 
         #endregion
         #region Properties
@@ -110,7 +107,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.limit = xts.XMatchLimit;
 
             xmatchTables = InterpretXMatchTables(SelectStatement);
-            region = InterpretRegion(SelectStatement);
 
             base.FinishInterpret(forceReinitialize);
         }
@@ -128,50 +124,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             return res;
         }
 
-        internal static Spherical.Region InterpretRegion(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
+        protected override SqlCommand GetTableStatisticsCommand(TableReference tr)
         {
-            var xmqs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
-            var rc = xmqs.FindDescendant<RegionClause>();
-
-            if (rc != null)
-            {
-                if (rc.IsUri)
-                {
-                    // TODO: implement region fetch
-                    // need to do it once per query, not per partition?
-                    throw new NotImplementedException();
-                }
-                if (rc.IsString)
-                {
-                    var p = new Jhu.Spherical.Parser.Parser(rc.RegionString);
-                    return p.ParseRegion();
-                }
-                else
-                {
-                    // TODO: implement direct region grammar
-                    throw new NotImplementedException();
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        protected override SqlCommand GetComputeTableStatisticsCommand(TableReference tr)
-        {
-            SqlCommand cmd;
-
-            if (region == null)
-            {
-                cmd = base.GetComputeTableStatisticsCommand(tr);
-                
-            }
-            else
-            {
-                // TODO: implement table statistics with region constraint here
-                throw new NotImplementedException();
-            }
+            var cmd = base.GetTableStatisticsCommand(tr);
 
             cmd.Parameters.Add("@H", SqlDbType.Float).Value = zoneHeight;
 
