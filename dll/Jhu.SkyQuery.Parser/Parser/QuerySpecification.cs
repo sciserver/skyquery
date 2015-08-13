@@ -9,26 +9,6 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class QuerySpecification
     {
-        public QuerySpecification()
-            : base()
-        {
-            InitializeMembers();
-        }
-
-        public QuerySpecification(QuerySpecification old)
-            : base(old)
-        {
-            CopyMembers(old);
-        }
-
-        private void InitializeMembers()
-        {
-        }
-
-        private void CopyMembers(QuerySpecification old)
-        {
-        }
-
         public override Node Interpret()
         {            
             // Look for specific nodes to decide on query type

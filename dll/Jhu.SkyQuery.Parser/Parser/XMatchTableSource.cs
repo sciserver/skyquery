@@ -44,29 +44,6 @@ namespace Jhu.SkyQuery.Parser
             get { return FindDescendant<TableAlias>().Value; }
         }
 
-        #region Constructors and initialiters
-
-        public XMatchTableSource()
-        {
-            InitializeMembers();
-        }
-
-        public XMatchTableSource(XMatchTableSource old)
-            :base(old)
-        {
-            CopyMembers(old);
-        }
-
-        private void InitializeMembers()
-        {
-        }
-
-        private void CopyMembers(XMatchTableSource old)
-        {
-        }
-
-        #endregion
-
         public override Node Interpret()
         {
             switch (XMatchAlgorithm.ToUpper())

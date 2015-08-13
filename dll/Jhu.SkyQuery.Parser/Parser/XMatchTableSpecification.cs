@@ -11,7 +11,6 @@ namespace Jhu.SkyQuery.Parser
     public partial class XMatchTableSpecification : ICloneable, IComparable<XMatchTableSpecification>
     {
         private XMatchInclusionMethod inclusionMethod;
-        private SimpleTableSource tableSource;
 
         public XMatchInclusionMethod InclusionMethod
         {
@@ -20,48 +19,35 @@ namespace Jhu.SkyQuery.Parser
 
         public TableReference TableReference
         {
-            get { return tableSource.TableReference; }
+            get { return TableSource.TableReference; }
         }
 
         public SimpleTableSource TableSource
         {
-            get { return tableSource; }
+            get { return FindDescendant<SimpleTableSource>(); }
         }
 
         public TableCoordinates Coordinates
         {
-            get { return tableSource.Coordinates; }
+            get { return TableSource.Coordinates; }
         }
 
         #region Constructors and initializers
 
-        public XMatchTableSpecification()
-            : base()
+        protected override void InitializeMembers()
         {
-            InitializeMembers();
-        }
+            base.InitializeMembers();
 
-        public XMatchTableSpecification(XMatchTableSpecification old)
-            : base(old)
-        {
-            CopyMembers(old);
-        }
-
-        private void InitializeMembers()
-        {
             this.inclusionMethod = XMatchInclusionMethod.Unknown;
-            this.tableSource = null;
         }
 
-        private void CopyMembers(XMatchTableSpecification old)
+        protected override void CopyMembers(object other)
         {
+            base.CopyMembers(other);
+
+            var old = (XMatchTableSpecification)other;
+
             this.inclusionMethod = old.inclusionMethod;
-            this.tableSource = old.tableSource;
-        }
-
-        public virtual object Clone()
-        {
-            return new XMatchTableSpecification(this);
         }
 
         #endregion
@@ -69,7 +55,6 @@ namespace Jhu.SkyQuery.Parser
         public override Node Interpret()
         {
             inclusionMethod = InterpretInclusionMethod();
-            tableSource = FindDescendant<SimpleTableSource>();
 
             return base.Interpret();
         }

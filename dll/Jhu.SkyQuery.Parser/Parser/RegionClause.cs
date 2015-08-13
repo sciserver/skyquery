@@ -49,32 +49,5 @@ namespace Jhu.SkyQuery.Parser
         }
 
         #endregion
-        #region Constructors and initializers
-
-        internal RegionClause()
-        {
-            InitializeMembers();
-        }
-
-        internal RegionClause(RegionClause old)
-            : base(old)
-        {
-            CopyMembers(old);
-        }
-
-        private void InitializeMembers()
-        {
-        }
-
-        private void CopyMembers(RegionClause old)
-        {
-        }
-
-        public virtual object Clone()
-        {
-            return new RegionClause(this);
-        }
-
-        #endregion
     }
 }

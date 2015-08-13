@@ -24,32 +24,22 @@ namespace Jhu.SkyQuery.Parser
 
         #region Constructors and initializers
 
-        public SimpleTableSource()
-            : base()
+        protected override void InitializeMembers()
         {
-            InitializeMembers();
-        }
+            base.InitializeMembers();
 
-        public SimpleTableSource(SimpleTableSource old)
-        {
-            CopyMembers(old);
-        }
-
-        private void InitializeMembers()
-        {
             this.coordinates = null;
         }
 
-        private void CopyMembers(SimpleTableSource old)
+        protected override void CopyMembers(object other)
         {
+            base.CopyMembers(other);
+
+            var old = (SimpleTableSource)other;
+
             this.coordinates = new TableCoordinates(this);
         }
-
-        public virtual object Clone()
-        {
-            return new SimpleTableSource(this);
-        }
-
+        
         #endregion
 
         public override Jhu.Graywulf.ParserLib.Node Interpret()

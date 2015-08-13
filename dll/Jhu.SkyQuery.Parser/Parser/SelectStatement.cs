@@ -9,30 +9,6 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class SelectStatement
     {
-        #region Constructors and initializers
-
-        public SelectStatement()
-            : base()
-        {
-            InitializeMembers();
-        }
-
-        public SelectStatement(SelectStatement old)
-            : base(old)
-        {
-            CopyMembers(old);
-        }
-
-        private void InitializeMembers()
-        {
-        }
-
-        private void CopyMembers(SelectStatement old)
-        {
-        }
-
-        #endregion
-
         public override Node Interpret()
         {
             // Look for descentant nodes in the parsing tree to determine
