@@ -67,6 +67,7 @@
     <Compile Include="Jobs\Query\CreateZoneTable.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
     <Compile Include="Jobs\Query\RegionQuery.cs" />
+    <Compile Include="Jobs\Query\RegionQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
     <Compile Include="Jobs\Query\RegionScripts.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -219,6 +220,7 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Jobs\Query\RegionResources\ExecuteQuery.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatisticsNoHtm.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatistics.sql" />
   </ItemGroup>

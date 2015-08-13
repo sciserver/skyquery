@@ -58,7 +58,68 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         [TestMethod]
         [TestCategory("Query")]
-        public void TableWithoutZoneIDTest()
+        public void SingleTableNoRegionQueryTest()
+        {
+            var sql =
+@"SELECT s.objid
+INTO [$targettable]
+FROM TEST:SDSSDR7PhotoObjAll_NoZone AS s
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void JoinedTableNoRegionQueryTest()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM TEST:SDSSDR7PhotoObjAll_NoZone AS s
+INNER JOIN TEST:SDSSDR7PhotoObjAll_NoZone AS g
+    ON s.objID = g.objID
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+    AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void SingleTableWithRegionQueryTest()
+        {
+            var sql =
+@"SELECT s.objid
+INTO [$targettable]
+FROM TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1))
+REGION 'CIRCLE J2000 0 0 60'
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void JoinedTableWithRegionQueryTest()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1))
+INNER JOIN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2))
+    ON s.objID = g.objID
+REGION 'CIRCLE J2000 0 0 60'
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+    AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithoutZoneIDTest()
         {
             var sql =
 @"SELECT s.objid, g.objid
@@ -75,7 +136,7 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
 
         [TestMethod]
         [TestCategory("Query")]
-        public void RegionQueryWithHtm()
+        public void XMatchRegionQueryWithHtm()
         {
             var sql =
 @"SELECT s.objid, g.objid
@@ -91,7 +152,7 @@ REGION 'CIRCLE J2000 0 0 60'";
 
         [TestMethod]
         [TestCategory("Query")]
-        public void RegionQueryWithHtmNoZone()
+        public void XMatchRegionQueryWithHtmNoZone()
         {
             var sql =
 @"SELECT s.objid, g.objid
@@ -107,7 +168,7 @@ REGION 'CIRCLE J2000 0 0 60'";
 
         [TestMethod]
         [TestCategory("Query")]
-        public void RegionQueryWithNoHtm()
+        public void XMatchRegionQueryWithNoHtm()
         {
             var sql =
 @"SELECT s.objid, g.objid
@@ -123,7 +184,7 @@ REGION 'CIRCLE J2000 0 0 60'";
 
         [TestMethod]
         [TestCategory("Query")]
-        public void RegionQueryWithNoHtmWithWhere()
+        public void XMatchRegionQueryWithNoHtmWithWhere()
         {
             var sql =
 @"SELECT s.objid, g.objid

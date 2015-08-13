@@ -10,6 +10,7 @@ using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -22,6 +23,21 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         [NonSerialized]
         protected Jhu.Spherical.Region region;
+
+        #endregion
+        #region Properties
+
+        [IgnoreDataMember]
+        protected new RegionQueryCodeGenerator CodeGenerator
+        {
+            get
+            {
+                return new RegionQueryCodeGenerator()
+                {
+                    ResolveNames = true
+                };
+            }
+        }
 
         #endregion
         #region Constructors and initializer
@@ -69,8 +85,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         internal static Spherical.Region InterpretRegion(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
         {
-            var xmqs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
-            var rc = xmqs.FindDescendant<RegionClause>();
+            var qs = (RegionQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            var rc = qs.FindDescendant<RegionClause>();
 
             if (rc != null)
             {
@@ -173,7 +189,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var where = base.GetTableStatisticsWhereClause(tableSource);
 
-            if (!(tableSource is SkyQuery.Parser.SimpleTableSource))
+            if (region == null || !(tableSource is SkyQuery.Parser.SimpleTableSource))
             {
                 return where;
             }
@@ -189,22 +205,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // If htmID is specified for the table, we use HTM-based filtering                
                 return where;
             }
-            else if (coords.IsEqSpecified)
-            {
-                htmwhere = String.Format("(@r.ContainsEq({0}, {1}) = 1)",
-                    coords.GetRAString(CodeDataset),
-                    coords.GetDecString(CodeDataset));
-            }
-            else if (coords.IsCartesianSpecified)
-            {
-                htmwhere = String.Format("(@r.ContainsXyz({0}, {1}, {2}) = 1)",
-                    coords.GetXString(CodeDataset),
-                    coords.GetYString(CodeDataset),
-                    coords.GetZString(CodeDataset));
-            }
             else
             {
-                throw new NotImplementedException();
+                htmwhere = CodeGenerator.GetRegionConditionText((SkyQuery.Parser.SimpleTableSource)tableSource, CodeDataset);
             }
 
             if (!String.IsNullOrWhiteSpace(where))

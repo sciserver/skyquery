@@ -113,14 +113,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                                                        table.Alias));
         }
 
-        protected Table GetHtmTable(int stepNumber, bool partial)
-        {
-            return GetTemporaryTable(String.Format(
-                "Htm_{0}_{1}", 
-                partial ? "Partial" : "Inner",
-                stepNumber));
-        }
-
         /// <summary>
         /// Generates the name of a temporary zone table built
         /// from a match table.
