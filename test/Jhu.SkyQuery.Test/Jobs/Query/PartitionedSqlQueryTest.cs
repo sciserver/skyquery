@@ -37,57 +37,6 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        [TestMethod]
-        [TestCategory("Query")]
-        public void SimpleQueryTest()
-        {
-            using (SchedulerTester.Instance.GetToken())
-            {
-                DropUserDatabaseTable("PartitionedSqlQueryTest_SimpleQueryTest");
-
-                SchedulerTester.Instance.EnsureRunning();
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var sql =
-        @"SELECT TOP 100 a.objid, a.ra, a.dec
-INTO PartitionedSqlQueryTest_SimpleQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION BY a.ra
-";
-
-                    var guid = ScheduleQueryJob(sql, QueueType.Long);
-
-                    FinishQueryJob(guid, new TimeSpan(0, 5, 0));
-                }
-            }
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void MyDBJoinQueryTest()
-        {
-            using (SchedulerTester.Instance.GetToken())
-            {
-                DropUserDatabaseTable("PartitionedSqlQueryTest_MyDBJoinQueryTest");
-
-                SchedulerTester.Instance.EnsureRunning();
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var sql =
-        @"SELECT TOP 100 a.objid, a.ra, a.dec, b.ObjID
-INTO PartitionedSqlQueryTest_MyDBJoinQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION BY a.ra
-CROSS JOIN MyCatalog b
-";
-
-                    var guid = ScheduleQueryJob(sql, QueueType.Long);
-
-                    FinishQueryJob(guid, new TimeSpan(0, 5, 0));
-                }
-            }
-        }
+        
     }
 }

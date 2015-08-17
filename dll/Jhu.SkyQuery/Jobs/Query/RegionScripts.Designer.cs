@@ -61,6 +61,82 @@ namespace Jhu.SkyQuery.Jobs.Query {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- *** RegionResources/CreateHtmTables.sql *** ---
+        ///
+        ///DECLARE [$regionudtname] dbo.Region = [$regionparname]
+        ///
+        ///-- Generate HTM ranges
+        ///
+        ///CREATE TABLE [$htm_inner]
+        ///(
+        ///	htmIDStart bigint NOT NULL,
+        ///	htmIDEnd bigint NOT NULL
+        ///);
+        ///
+        ///INSERT [$htm_inner] WITH(TABLOCKX)
+        ///SELECT htmIDStart, htmIDEnd
+        ///FROM htm.Cover([$regionudtname]) AS htm
+        ///WHERE partial = 0;
+        ///
+        ///CREATE TABLE [$htm_partial]
+        ///(
+        ///	htmIDStart bigint NOT NULL,
+        ///	htmIDEnd bigint NOT NULL
+        ///);
+        ///
+        ///INSERT [$htm_partial] WITH(TABLOCKX)
+        ///SELECT htmIDStart, h [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string CreateHtmTables {
+            get {
+                return ResourceManager.GetString("CreateHtmTables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string DropHtmTables {
+            get {
+                return ResourceManager.GetString("DropHtmTables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- *** RegionResources/ExecuteQuery.sql *** ---
+        ///
+        ///DECLARE @r dbo.Region = @region;
+        ///
+        ///-- Generate HTM ranges
+        ///
+        ///CREATE TABLE [$htm_inner]
+        ///(
+        ///	htmIDStart bigint NOT NULL,
+        ///	htmIDEnd bigint NOT NULL
+        ///);
+        ///
+        ///INSERT [$htm_inner] WITH(TABLOCKX)
+        ///SELECT htmIDStart, htmIDEnd
+        ///FROM htm.Cover(@region) AS htm
+        ///WHERE partial = 0;
+        ///
+        ///CREATE TABLE [$htm_partial]
+        ///(
+        ///	htmIDStart bigint NOT NULL,
+        ///	htmIDEnd bigint NOT NULL
+        ///);
+        ///
+        ///INSERT [$htm_partial] WITH(TABLOCKX)
+        ///SELECT htmIDStart, htmIDEnd
+        ///FROM htm.Cover(@region) A [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ExecuteQuery {
+            get {
+                return ResourceManager.GetString("ExecuteQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -- *** RegionResources/TableStatistics.sql *** ---
         ///
         ///-- Generate HTM ranges

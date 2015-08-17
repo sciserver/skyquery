@@ -102,10 +102,10 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdString());
-            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdString());
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdExpression().ToString());
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdExpression().ToString());
         }
 
         // TODO: add test for zoneID, but need to modify catalog schema first
@@ -150,10 +150,10 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdString());
-            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdString());
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdExpression().ToString());
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdExpression().ToString());
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
@@ -181,10 +181,10 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdString());
-            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdString());
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[a].[htmId]", xts[0].Coordinates.GetHtmIdExpression().ToString());
+            Assert.AreEqual("[b].[htmId]", xts[1].Coordinates.GetHtmIdExpression().ToString());
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
@@ -212,10 +212,10 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset));
-            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset));
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdExpression(CodeDataset).ToString());
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
@@ -243,10 +243,10 @@ FROM XMATCH
             var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXString(CodeDataset));
-            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdString(CodeDataset));
-            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdString(CodeDataset));
+            Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[cx]", xts[1].Coordinates.GetXExpression(CodeDataset).ToString());
+            Assert.AreEqual("[a].[zoneId]", xts[0].Coordinates.GetZoneIdExpression(CodeDataset).ToString());
+            Assert.AreEqual("[b].[zoneId]", xts[1].Coordinates.GetZoneIdExpression(CodeDataset).ToString());
 
             var tts = qs.EnumerateSourceTables(false).ToArray();
 

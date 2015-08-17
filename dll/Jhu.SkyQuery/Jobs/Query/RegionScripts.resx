@@ -118,10 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CreateHtmTables" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>RegionResources\CreateHtmTables.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="DropHtmTables" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>RegionResources\DropHtmTables.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="TableStatistics" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>RegionResources\TableStatistics.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="TableStatisticsNoHtm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>RegionResources\TableStatisticsNohtm.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>RegionResources\TableStatisticsNoHtm.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="ExecuteQuery" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>RegionResources\ExecuteQuery.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>

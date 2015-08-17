@@ -36,7 +36,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         // --- GetPropagatedColumnList
 
-        private string GetPropagatedColumnListTestHelper(string query, XMatchQueryPartition.ColumnListInclude include)
+        private string GetPropagatedColumnListTestHelper(string query, ColumnListInclude include)
         {
             using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
             {
@@ -50,11 +50,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
                 xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
 
-                var xmqp = new BayesFactorXMatchQueryPartition(xmq, context);
+                var xmqp = new BayesFactorXMatchQueryPartition(xmq);
                 xmqp.ID = 0;
                 xmqp.InitializeQueryObject(context);
 
-                var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
+                var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
                 var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
                 var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
                 xmqp.GenerateSteps(xmtables);
@@ -64,7 +64,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 var m = xmqp.GetType().GetMethod("GetPropagatedColumnList", BindingFlags.NonPublic | BindingFlags.Instance);
                 Assert.IsNotNull(m);
 
-                return (string)m.Invoke(xmqp, new object[] { xmtables[0], XMatchQueryPartition.ColumnListType.ForSelectNoAlias, include, XMatchQueryPartition.ColumnListNullType.Nothing, "tablealias" });
+                return (string)m.Invoke(xmqp, new object[] { xmtables[0], ColumnListType.ForSelectNoAlias, include, ColumnListNullType.Nothing, "tablealias" });
 
             }
         }
@@ -81,13 +81,13 @@ FROM XMATCH
      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1000) AS x";
 
-            var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
+            var res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.Referenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec], [tablealias].[_TEST_dbo_CatalogA_a_cx], [tablealias].[_TEST_dbo_CatalogA_a_cy], [tablealias].[_TEST_dbo_CatalogA_a_cz]", res);
 
-            res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.PrimaryKey);
+            res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.PrimaryKey);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId]", res);
 
-            res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.All);
+            res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.All);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec], [tablealias].[_TEST_dbo_CatalogA_a_cx], [tablealias].[_TEST_dbo_CatalogA_a_cy], [tablealias].[_TEST_dbo_CatalogA_a_cz]", res);
         }
 
@@ -101,13 +101,13 @@ FROM XMATCH
      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
+            var res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.Referenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res);
 
-            res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.PrimaryKey);
+            res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.PrimaryKey);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId]", res);
 
-            res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.All);
+            res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.All);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res);
         }
 
@@ -121,13 +121,13 @@ FROM XMATCH
      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            var res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.Referenced);
+            var res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.Referenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res);
 
-            res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.PrimaryKey);
+            res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.PrimaryKey);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId]", res);
 
-            res = GetPropagatedColumnListTestHelper(sql, XMatchQueryPartition.ColumnListInclude.All);
+            res = GetPropagatedColumnListTestHelper(sql, ColumnListInclude.All);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res);
         }
 
@@ -144,11 +144,11 @@ FROM XMATCH
             xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
             xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
 
-            var xmqp = new BayesFactorXMatchQueryPartition(xmq, null);
+            var xmqp = new BayesFactorXMatchQueryPartition(xmq);
             xmqp.ID = 0;
             xmqp.InitializeQueryObject(null);
 
-            var qs = xmqp.SelectStatement.EnumerateQuerySpecifications().First();
+            var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
             var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
             var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
             xmqp.GenerateSteps(xmtables);

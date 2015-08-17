@@ -18,6 +18,11 @@ namespace Jhu.SkyQuery.Jobs.Query
     [DataContract(Name = "Query", Namespace = "")]
     public class BayesFactorXMatchQuery : XMatchQuery
     {
+        private BayesFactorXMatchQueryCodeGenerator CodeGenerator
+        {
+            get { return (BayesFactorXMatchQueryCodeGenerator)CreateCodeGenerator(); }
+        }
+
         protected BayesFactorXMatchQuery()
             : base()
         {
@@ -37,6 +42,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override void CollectTablesForStatistics()
         {
+            /*
             TableSourceStatistics.Clear();
             decimal binsize = (decimal)(5 * ZoneHeight);   // histogram bin size in Dec
 
@@ -51,10 +57,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 TableSourceStatistics.Add(table.TableSource);
             }
+             * */
         }
 
         public override void GeneratePartitions(int partitionCount)
         {
+            /*
             switch (ExecutionMode)
             {
                 case ExecutionMode.SingleServer:
@@ -95,10 +103,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                 default:
                     throw new NotImplementedException();
             }
+             * */
         }
 
         private void GeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat, XMatchTableSpecification[] tables)
         {
+            /*
             // TODO: verify with repeating keys!
 
             BayesFactorXMatchQueryPartition qp = null;
@@ -133,6 +143,17 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 Partitions[Partitions.Count - 1].PartitioningKeyTo = null;
             }
+             * */
+        }
+
+        protected override SqlQueryCodeGenerator CreateCodeGenerator()
+        {
+            return new BayesFactorXMatchQueryCodeGenerator(this);
+        }
+
+        protected override SqlQueryPartition CreatePartition()
+        {
+            return new BayesFactorXMatchQueryPartition(this);
         }
     }
 }

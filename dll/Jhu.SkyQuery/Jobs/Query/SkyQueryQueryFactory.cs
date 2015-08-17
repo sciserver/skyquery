@@ -46,9 +46,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             };
         }
 
-        protected override QueryBase CreateQueryBase(Node root)
+        protected override SqlQuery CreateQueryBase(Node root)
         {
-            QueryBase res;
+            SqlQuery res;
             if (root is XMatchSelectStatement)
             {
                 res = new BayesFactorXMatchQuery(Context);
@@ -84,7 +84,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return new SkyQueryNameResolver();
         }
 
-        public override JobInstance ScheduleAsJob(string jobName, QueryBase query, string queueName, string comments)
+        public override JobInstance ScheduleAsJob(string jobName, SqlQuery query, string queueName, string comments)
         {
             if (!(query is XMatchQuery))
             {

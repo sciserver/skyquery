@@ -13,13 +13,13 @@ namespace Jhu.SkyQuery.Jobs.Query
     [Serializable]
     public abstract class XMatchQueryStep
     {
-        private QueryPartitionBase queryPartition;
+        private SqlQueryPartition queryPartition;
 
         private int stepNumber;
         private string xMatchTable;
         private double searchRadius;
 
-        public QueryPartitionBase QueryPartition
+        public SqlQueryPartition QueryPartition
         {
             get { return queryPartition; }
         }

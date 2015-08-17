@@ -9,6 +9,11 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class SelectStatement
     {
+        public XMatchQuerySpecification XMatchQuerySpecification
+        {
+            get { return (XMatchQuerySpecification)QueryExpression.FindDescendant<QuerySpecification>(); }
+        }
+
         public override Node Interpret()
         {
             // Look for descentant nodes in the parsing tree to determine

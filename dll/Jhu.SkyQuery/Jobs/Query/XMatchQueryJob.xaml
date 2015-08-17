@@ -31,7 +31,7 @@
   <x:Members>
     <x:Property Name="JobGuid" Type="InArgument(s:Guid)" />
     <x:Property Name="UserGuid" Type="InArgument(s:Guid)" />
-    <x:Property Name="Query" Type="InOutArgument(jgjq:QueryBase)" />
+    <x:Property Name="Query" Type="InOutArgument(jgjq:SqlQuery)" />
   </x:Members>
   <sap:VirtualizedContainerService.HintSize>517,3004</sap:VirtualizedContainerService.HintSize>
   <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
@@ -69,10 +69,10 @@
         </ParallelForEach>
         <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="397,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
       </Sequence>
-      <ParallelForEach x:TypeArguments="jgjq:QueryPartitionBase" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="419,1602" Values="[Query.Partitions]">
-        <ActivityAction x:TypeArguments="jgjq:QueryPartitionBase">
+      <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap:VirtualizedContainerService.HintSize="419,1602" Values="[Query.Partitions]">
+        <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgjq:QueryPartitionBase" Name="queryPartition" />
+            <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
           <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="323,1454" JobGuid="[JobGuid]" MaxRetries="3" UserGuid="[UserGuid]">
             <Sequence sap:VirtualizedContainerService.HintSize="309,1348">
@@ -124,10 +124,10 @@
       </ParallelForEach>
     </Sequence>
     <CancellationScope.CancellationHandler>
-      <ParallelForEach x:TypeArguments="jgjq:QueryPartitionBase" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="287,208" Values="[Query.Partitions]">
-        <ActivityAction x:TypeArguments="jgjq:QueryPartitionBase">
+      <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="287,208" Values="[Query.Partitions]">
+        <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgjq:QueryPartitionBase" Name="queryPartition" />
+            <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
           <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" SuppressErrors="True" UserGuid="[UserGuid]" />
         </ActivityAction>

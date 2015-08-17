@@ -1,6 +1,6 @@
--- *** RegionResources/ExecuteQuery.sql *** ---
+﻿-- *** RegionResources/CreateHtmTables.sql *** ---
 
-DECLARE @r dbo.Region = @region;
+DECLARE [$regionudtname] dbo.Region = [$regionparname]
 
 -- Generate HTM ranges
 
@@ -12,7 +12,7 @@ CREATE TABLE [$htm_inner]
 
 INSERT [$htm_inner] WITH(TABLOCKX)
 SELECT htmIDStart, htmIDEnd
-FROM htm.Cover(@region) AS htm
+FROM htm.Cover([$regionudtname]) AS htm
 WHERE partial = 0;
 
 CREATE TABLE [$htm_partial]
@@ -23,20 +23,5 @@ CREATE TABLE [$htm_partial]
 
 INSERT [$htm_partial] WITH(TABLOCKX)
 SELECT htmIDStart, htmIDEnd
-FROM htm.Cover(@region) AS htm
+FROM htm.Cover([$regionudtname]) AS htm
 WHERE partial = 1;
-
--- Execute search
-
-
-[$select_inner]
-
-UNION ALL
-
-[$select_partial]
-
-
--- Clean up
-
-DROP TABLE [$htm_inner];
-DROP TABLE [$htm_partial];

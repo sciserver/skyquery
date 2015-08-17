@@ -19,13 +19,13 @@ namespace Jhu.SkyQuery.Parser
         private SimpleTableSource table;
 
         private TableHint pointHint;
-        private Argument[] pointHintArguments;
+        private Expression[] pointHintArguments;
         private TableHint htmIdHint;
-        private Argument[] htmIdHintArguments;
+        private Expression[] htmIdHintArguments;
         private TableHint zoneIdHint;
-        private Argument[] zoneIdHintArguments;
+        private Expression[] zoneIdHintArguments;
         private TableHint errorHint;
-        private Argument[] errorHintArguments;
+        private Expression[] errorHintArguments;
 
         private bool isEqSpecified;
         private bool isCartesianSpecified;
@@ -60,14 +60,14 @@ namespace Jhu.SkyQuery.Parser
 
         public bool IsCartesianSpecified
         {
-            get { return isEqSpecified; }
+            get { return isCartesianSpecified; }
         }
 
         private Expression RAExpression
         {
             get
             {
-                return pointHintArguments[eqIndex].FindDescendant<Expression>();
+                return pointHintArguments[eqIndex];
             }
         }
 
@@ -75,7 +75,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return pointHintArguments[eqIndex + 1].FindDescendant<Expression>();
+                return pointHintArguments[eqIndex + 1];
             }
         }
 
@@ -83,7 +83,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return pointHintArguments[cartesianIndex].FindDescendant<Expression>();
+                return pointHintArguments[cartesianIndex];
             }
         }
 
@@ -91,7 +91,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return pointHintArguments[cartesianIndex + 1].FindDescendant<Expression>();
+                return pointHintArguments[cartesianIndex + 1];
             }
         }
 
@@ -99,7 +99,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return pointHintArguments[cartesianIndex + 2].FindDescendant<Expression>();
+                return pointHintArguments[cartesianIndex + 2];
             }
         }
 
@@ -112,7 +112,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return htmIdHintArguments[0].FindDescendant<Expression>();
+                return htmIdHintArguments[0];
             }
         }
 
@@ -120,7 +120,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return htmIdHintArguments[0].FindDescendant<Expression>().FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                return HtmIdExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
             }
         }
 
@@ -299,7 +299,8 @@ namespace Jhu.SkyQuery.Parser
                             InterpretErrorHint(hint);
                             break;
                         default:
-                            throw new NotImplementedException();
+                            // Nothing to do with unknown hints
+                            break;
                     }
                 }
             }
@@ -347,7 +348,7 @@ namespace Jhu.SkyQuery.Parser
 
             isHtmIdSpecified = true;
 
-            if (!HtmIdExpression.IsSingleColumn)
+            if (!htmIdHintArguments[0].IsSingleColumn)
             {
                 throw CreateException(ExceptionMessages.HtmIdIsNotSingleColumn);
             }
@@ -392,11 +393,12 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Argument[] GetHintArguments(TableHint hint)
+        private Expression[] GetHintArguments(TableHint hint)
         {
             return hint.FindDescendant<FunctionArguments>()
                        .FindDescendant<ArgumentList>()
                        .EnumerateDescendants<Argument>()
+                       .Select(a => a.Expression)
                        .ToArray();
         }
 
@@ -443,12 +445,182 @@ namespace Jhu.SkyQuery.Parser
         #endregion
         #region Coordinate string accessor functions
 
-        private string GetCodeDatasetPrefix(SqlServerDataset codeDataset)
+        public Expression GetRAExpression(SqlServerDataset codeDataset)
         {
-            return String.Format("[{0}].[{1}]", codeDataset.DatabaseName, codeDataset.DefaultSchemaName);
+            if (isEqSpecified)
+            {
+                return RAExpression;
+            }
+            else if (isCartesianSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = codeDataset.DatabaseName,
+                    SchemaName = codeDataset.DefaultSchemaName,
+                    DatabaseObjectName = "CartesianToEqRa"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, XExpression, YExpression, ZExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
         }
 
-        public string GetRAString(SqlServerDataset codeDataset)
+        public Expression GetDecExpression(SqlServerDataset codeDataset)
+        {
+            if (isEqSpecified)
+            {
+                return DecExpression;
+            }
+            else if (isCartesianSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = codeDataset.DatabaseName,
+                    SchemaName = codeDataset.DefaultSchemaName,
+                    DatabaseObjectName = "CartesianToEqDec"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, XExpression, YExpression, ZExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression[] GetEqExpressions(SqlServerDataset codeDataset)
+        {
+            return new Expression[]
+            {
+                GetRAExpression(codeDataset),
+                GetDecExpression(codeDataset)
+            };
+        }
+
+        public Expression GetXExpression(SqlServerDataset codeDataset)
+        {
+            if (isCartesianSpecified)
+            {
+                return XExpression;
+            }
+            else if (isEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = codeDataset.DatabaseName,
+                    SchemaName = codeDataset.DefaultSchemaName,
+                    DatabaseObjectName = "EqToCartesianX"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, RAExpression, DecExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetYExpression(SqlServerDataset codeDataset)
+        {
+            if (isCartesianSpecified)
+            {
+                return YExpression;
+            }
+            else if (isEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = codeDataset.DatabaseName,
+                    SchemaName = codeDataset.DefaultSchemaName,
+                    DatabaseObjectName = "EqToCartesianY"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, RAExpression, DecExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetZExpression(SqlServerDataset codeDataset)
+        {
+            if (isCartesianSpecified)
+            {
+                return ZExpression;
+            }
+            else if (isEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = codeDataset.DatabaseName,
+                    SchemaName = codeDataset.DefaultSchemaName,
+                    DatabaseObjectName = "EqToCartesianZ"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, RAExpression, DecExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression[] GetXyzExpressions(SqlServerDataset codeDataset)
+        {
+            return new Expression[]
+            {
+                GetXExpression(codeDataset),
+                GetYExpression(codeDataset),
+                GetZExpression(codeDataset)
+            };
+        }
+
+        public Expression GetHtmIdExpression()
+        {
+            if (isHtmIdSpecified)
+            {
+                return HtmIdExpression;
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetZoneIdExpression(SqlServerDataset codeDataset)
+        {
+            if (isZoneIdSpecified)
+            {
+                return ZoneIdExpression;
+            }
+            else if (isEqSpecified || isCartesianSpecified)
+            {
+                throw new NotImplementedException();
+
+                // TODO: make it into a precise CLR function
+                /*return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    "CONVERT(INT,FLOOR(({0} + 90.0) / @H))",
+                    GetDecString(codeDataset));*/
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        /* TODO: delete
+         * public string GetRAString(SqlServerDataset codeDataset)
         {
             if (isEqSpecified)
             {
@@ -583,6 +755,7 @@ namespace Jhu.SkyQuery.Parser
                     throw new NotImplementedException();
                 }
         }
+         * */
 
         #endregion
 

@@ -51,6 +51,7 @@
     </Compile>
     <Compile Include="Install\XMatchQueryJobInstaller.cs" />
     <Compile Include="Jobs\Query\AppSettings.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchScripts.Designer.cs">
@@ -66,9 +67,11 @@
     <Compile Include="Jobs\Query\CreateZoneDefTable.cs" />
     <Compile Include="Jobs\Query\CreateZoneTable.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
+    <Compile Include="Jobs\Query\Enum.cs" />
     <Compile Include="Jobs\Query\RegionQuery.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
+    <Content Include="Jobs\Query\RegionResources\CreateHtmTables.sql" />
     <Compile Include="Jobs\Query\RegionScripts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -76,6 +79,7 @@
     </Compile>
     <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
@@ -220,6 +224,7 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Jobs\Query\RegionResources\DropHtmTables.sql" />
     <Content Include="Jobs\Query\RegionResources\ExecuteQuery.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatisticsNoHtm.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatistics.sql" />

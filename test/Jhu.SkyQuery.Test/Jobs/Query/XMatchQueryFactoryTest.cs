@@ -38,7 +38,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        private QueryBase CreateQuery(string query)
+        private SqlQuery CreateQuery(string query)
         {
             var f = new SingleServerXMatchQueryFactory();
             return f.CreateQuery(query);

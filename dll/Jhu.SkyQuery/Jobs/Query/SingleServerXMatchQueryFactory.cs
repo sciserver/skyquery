@@ -93,7 +93,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="mydbds"></param>
         /// <param name="tempds"></param>
         /// <param name="codeds"></param>
-        protected override void InitializeQuery(QueryBase query, string queryString)
+        protected override void InitializeQuery(SqlQuery query, string queryString)
         {
             // TODO: factor it out to a new class
 
@@ -151,7 +151,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public System.Activities.Activity GetAsWorkflow(QueryBase query)
+        public System.Activities.Activity GetAsWorkflow(SqlQuery query)
         {
             if (!(query is XMatchQuery))
             {
@@ -171,7 +171,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <remarks>
         /// This function is used by the single-server mode command-line utility only.
         /// </remarks>
-        public Dictionary<string, object> GetWorkflowParameters(QueryBase query)
+        public Dictionary<string, object> GetWorkflowParameters(SqlQuery query)
         {
             return new Dictionary<string, object>()
             {

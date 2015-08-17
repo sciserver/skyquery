@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public abstract class XMatchQuerySpecification : QuerySpecification
+    public abstract class XMatchQuerySpecification : RegionQuerySpecification
     {
 
         public XMatchTableSource XMatchTableSource

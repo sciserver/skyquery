@@ -20,8 +20,6 @@ namespace Jhu.SkyQuery.Jobs.Query
     {
         #region Private member variables
 
-        protected string tableAlias;
-
         // --- cross-match parameters
         protected double zoneHeight;
         protected double limit;
@@ -56,6 +54,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             set { limit = value; }
         }
 
+        public Dictionary<string, XMatchTableSpecification> XMatchTables
+        {
+            get { return xmatchTables; }
+        }
+
         #endregion
         #region Constructors and initializers
 
@@ -73,67 +76,53 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void InitializeMembers(StreamingContext context)
         {
-            this.tableAlias = String.Empty;
-
-            this.zoneHeight = -1;
+            this.zoneHeight = Constants.DefaultZoneHeight;
             this.limit = -1;
 
             this.xmatchTables = null;
-            this.region = null;
         }
 
         private void CopyMembers(XMatchQuery old)
         {
-            this.tableAlias = old.tableAlias;
-
             this.zoneHeight = old.zoneHeight;
             this.limit = old.limit;
 
             this.xmatchTables = old.xmatchTables;
-            this.region = old.region;
         }
-
+        
         #endregion
 
         protected override void FinishInterpret(bool forceReinitialize)
         {
-            this.zoneHeight = Constants.DefaultZoneHeight;
-
             if (xmatchTables == null || forceReinitialize)
             {
-                // Interpret xmatch parameters
-                var qs = (XMatchQuerySpecification)SelectStatement.EnumerateQuerySpecifications().First();
-                var xts = qs.XMatchTableSource;
-
-                // Bayes factor or probability limit
-                this.limit = xts.XMatchLimit;
-
-                xmatchTables = InterpretXMatchTables(SelectStatement);
+                InterpretXMatchQuery((Jhu.SkyQuery.Parser.SelectStatement)SelectStatement);
             }
 
             base.FinishInterpret(forceReinitialize);
         }
 
-        internal static Dictionary<string, XMatchTableSpecification> InterpretXMatchTables(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
+        private void InterpretXMatchQuery(Jhu.SkyQuery.Parser.SelectStatement selectStatement)
         {
-            var xmqs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            // Interpret xmatch parameters
+            // Bayes factor or probability limit
+            var qs = selectStatement.XMatchQuerySpecification;
+            var xts = qs.XMatchTableSource;
+
+            limit = xts.XMatchLimit;
+            xmatchTables = InterpretXMatchTables(qs);
+        }
+
+        internal static Dictionary<string, XMatchTableSpecification> InterpretXMatchTables(XMatchQuerySpecification qs)
+        {
             var res = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
 
-            foreach (var xt in xmqs.XMatchTableSource.EnumerateXMatchTableSpecifications())
+            foreach (var xt in qs.XMatchTableSource.EnumerateXMatchTableSpecifications())
             {
                 res.Add(xt.TableReference.UniqueName, xt);
             }
 
             return res;
-        }
-
-        protected override SqlCommand GetTableStatisticsCommand(ITableSource tableSource)
-        {
-            var cmd = base.GetTableStatisticsCommand(tableSource);
-
-            cmd.Parameters.Add("@H", SqlDbType.Float).Value = zoneHeight;
-
-            return cmd;
         }
     }
 }
