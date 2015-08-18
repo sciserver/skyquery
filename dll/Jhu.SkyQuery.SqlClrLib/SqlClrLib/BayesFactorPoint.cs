@@ -7,7 +7,7 @@ using Microsoft.SqlServer.Server;
 namespace Jhu.SkyQuery.SqlClrLib
 {
     [Serializable]
-    [Microsoft.SqlServer.Server.SqlUserDefinedType(Format.Native)]
+    [Microsoft.SqlServer.Server.SqlUserDefinedType(Format.Native, Name = "skyquery.BayesFactorPoint")]
     public struct BayesFactorPoint : INullable
     {
         public override string ToString()

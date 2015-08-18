@@ -10,7 +10,7 @@ namespace Jhu.SkyQuery.SqlClrLib
     {
         // This is not optimized, should use TVFs instead!
 
-        [Microsoft.SqlServer.Server.SqlFunction]
+        [SqlFunction(Name = "skyquery.EqToCartesianX", IsDeterministic = true, IsPrecise = false)]
         public static SqlDouble EqToCartesianX(SqlDouble ra, SqlDouble dec)
         {
             double cx, cy, cz;
@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.SqlClrLib
             return new SqlDouble(cx);
         }
 
-        [Microsoft.SqlServer.Server.SqlFunction]
+        [SqlFunction(Name = "skyquery.EqToCartesianY", IsDeterministic = true, IsPrecise = false)]
         public static SqlDouble EqToCartesianY(SqlDouble ra, SqlDouble dec)
         {
             double cx, cy, cz;
@@ -28,7 +28,7 @@ namespace Jhu.SkyQuery.SqlClrLib
             return new SqlDouble(cy);
         }
 
-        [Microsoft.SqlServer.Server.SqlFunction]
+        [SqlFunction(Name = "skyquery.EqToCartesianZ", IsDeterministic = true, IsPrecise = false)]
         public static SqlDouble EqToCartesianZ(SqlDouble ra, SqlDouble dec)
         {
             double cx, cy, cz;
@@ -37,7 +37,7 @@ namespace Jhu.SkyQuery.SqlClrLib
             return new SqlDouble(cz);
         }
 
-        [Microsoft.SqlServer.Server.SqlFunction]
+        [SqlFunction(Name = "skyquery.CartesianToEqRa", IsDeterministic = true, IsPrecise = false)]
         public static SqlDouble CartesianToEqRa(SqlDouble cx, SqlDouble cy, SqlDouble cz)
         {
             double ra, dec;
@@ -46,7 +46,7 @@ namespace Jhu.SkyQuery.SqlClrLib
             return new SqlDouble(ra);
         }
 
-        [Microsoft.SqlServer.Server.SqlFunction]
+        [SqlFunction(Name = "skyquery.CartesianToEqDec", IsDeterministic = true, IsPrecise = false)]
         public static SqlDouble CartesianToEqDec(SqlDouble cx, SqlDouble cy, SqlDouble cz)
         {
             double ra, dec;

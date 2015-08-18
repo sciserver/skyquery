@@ -9,6 +9,7 @@ namespace Jhu.SkyQuery.SqlClrLib
     public partial class UserDefinedFunctions
     {
         [Microsoft.SqlServer.Server.SqlFunction(
+            Name = "skyquery.BayesFactorCalcPosition",
             DataAccess = DataAccessKind.None,
             IsDeterministic = true,
             IsPrecise = false,
@@ -32,6 +33,8 @@ namespace Jhu.SkyQuery.SqlClrLib
             ry /= r;
             rz /= r;
 
+            // TODO: use this from cartesian
+            // Even better: add dependency on spherical
             if (rz >= 1)
             {
                 dec = Constants.HalfPI;
