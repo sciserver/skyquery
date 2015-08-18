@@ -68,7 +68,6 @@
     <Compile Include="SqlClrLib\CoordinateConverters.cs" />
     <Compile Include="SqlClrLib\ZoneFunctions.cs" />
     <Compile Include="SqlClrLib\BayesFactorXMatch.cs" />
-    <Compile Include="SqlClrLib\Cartesian.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data" />
@@ -80,6 +79,15 @@
   </ItemGroup>
   <ItemGroup>
     <Build Include="Sql\SkyQuery.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\spherical\src\Jhu.Spherical\Jhu.Spherical.csproj">
+      <Name>Jhu.Spherical</Name>
+      <Project>{93efa6ad-0c3f-4c7f-b1f7-d697d0ba49f7}</Project>
+      <Private>True</Private>
+      <IsModelAware>True</IsModelAware>
+      <GenerateSqlClrDdl>True</GenerateSqlClrDdl>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>$(SolutionDir)graywulf\build\Jhu.Graywulf.SqlClrUtil\$(OutputPath)gwsqlclrutil.exe $(TargetPath)

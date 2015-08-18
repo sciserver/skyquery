@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.SqlClrLib
         }
 
         [SqlFunction(
-            Name="skyquery.ZoneID",
+            Name = "skyquery.ZoneID",
             IsDeterministic = true, IsPrecise = true)]
         public static SqlInt32 ZoneID(SqlDouble dec, SqlDouble zoneHeight)
         {
@@ -26,7 +26,7 @@ namespace Jhu.SkyQuery.SqlClrLib
         }
 
         [SqlFunction(
-            Name="skyquery.GetZones",
+            Name = "skyquery.GetZones",
             DataAccess = DataAccessKind.None, IsDeterministic = true, IsPrecise = false,
             SystemDataAccess = SystemDataAccessKind.None,
             FillRowMethodName = "CalculateZones_Fill",
@@ -95,11 +95,9 @@ namespace Jhu.SkyQuery.SqlClrLib
             else
             {
                 var a = Math.Sin(Constants.Radians * theta);
-                var b = Math.Abs(
-                        Math.Cos(Constants.Radians * (dec - theta)) *
-                        Math.Cos(Constants.Radians * (dec + theta)));
+                var b = Math.Abs(Math.Cos(Constants.Radians * (dec - theta)) * Math.Cos(Constants.Radians * (dec + theta)));
 
-                return Constants.Degrees * Math.Abs(Math.Atan2(a, Math.Sqrt(b)));
+                return Constants.Degrees * Math.Abs(Math.Atan(a / Math.Sqrt(b)));
             }
         }
     }
