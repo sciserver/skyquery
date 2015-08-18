@@ -238,7 +238,7 @@ WHERE @r.ContainsEq(ra, dec) = 1
             var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial };
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
 
             Assert.AreEqual(gt, CodeGenerator.Execute(ss));
         }
@@ -262,7 +262,7 @@ WHERE @r.ContainsEq(ra, dec) = 1
             var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial };
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
 
             Assert.AreEqual(gt, CodeGenerator.Execute(ss));
         }
@@ -311,7 +311,7 @@ WHERE @r.ContainsEq(ra, dec) = 1
             var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial, HtmPartial };
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
 
             Assert.AreEqual(gt, CodeGenerator.Execute(ss));
         }

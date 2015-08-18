@@ -38,7 +38,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Basic query rewrite functions
 
-        public override SourceTableQuery GetExecuteQuery(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
+        public override SourceTableQuery GetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
         {
             /*
             // **** TODO: this disrupts the select statement

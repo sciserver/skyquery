@@ -52,11 +52,11 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="selectStatement"></param>
         /// <returns></returns>
-        public override SourceTableQuery GetExecuteQuery(Jhu.Graywulf.SqlParser.SelectStatement selectStatement)
+        public override SourceTableQuery GetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
         {
             if (!(selectStatement is RegionSelectStatement))
             {
-                return base.GetExecuteQuery(selectStatement);
+                return base.GetExecuteQuery(selectStatement, method, destination);
             }
 
             var htminner = new List<TableReference>();
@@ -73,11 +73,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Rewrite query
             var ss = new RegionSelectStatement(selectStatement);
             AppendRegionJoinsAndConditions(ss, htminner, htmpartial);
+            RemoveNonStandardTokens(ss, method);
+
+            SubstituteDatabaseNames(ss, queryObject.AssignedServerInstance, Partition.Query.SourceDatabaseVersionName);
+            SubstituteRemoteTableNames(ss, queryObject.TemporaryDataset, queryObject.TemporaryDataset.DefaultSchemaName);
 
             // Compose final script
             var sql = new StringBuilder();
             sql.AppendLine(create.ToString());
-            sql.AppendLine(Execute(ss));
+
+            AppendQuery(sql, ss, method, destination);
+            
             sql.AppendLine(drop.ToString());
 
             // Return a table source query
