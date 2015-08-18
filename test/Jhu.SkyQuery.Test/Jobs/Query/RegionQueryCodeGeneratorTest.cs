@@ -3,6 +3,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Data;
+using System.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
@@ -11,10 +13,10 @@ using Jhu.Graywulf.Schema;
 using Jhu.SkyQuery.Parser;
 using Jhu.SkyQuery.Jobs.Query;
 
-namespace Jhu.SkyQuery.Jobs.Query
+namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
-    public class RegionQueryCodeGeneratorTest : Jhu.Graywulf.Test.TestClassBase
+    public class RegionQueryCodeGeneratorTest : SkyQueryTestBase
     {
         private RegionQueryCodeGenerator CodeGenerator
         {
@@ -309,5 +311,83 @@ WHERE @r.ContainsEq(ra, dec) = 1
 
             Assert.AreEqual(gt, CodeGenerator.Execute(ss));
         }
+
+        #region Statistics query tests
+
+        // TODO: propagate up to test base class
+        protected string GetStatisticsQuery(string sql)
+        {
+            var q = CreateQuery(sql);
+            var cg = new RegionQueryCodeGenerator(q);
+            var ts = q.SelectStatement.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
+
+            ts.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
+            {
+                BinCount = 200,
+                KeyColumn = "dec",
+                KeyColumnDataType = DataTypes.SqlFloat
+            };
+
+            var cmd = cg.GetTableStatisticsCommand(ts);
+
+            return cmd.CommandText;
+        }
+
+        [TestMethod]
+        public void GetTableStatisticsWithRegionCommandTest()
+        {
+            var sql = @"
+SELECT objID
+FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
+REGION 'CIRCLE J2000 0 0 10'
+WHERE ra > 2";
+
+            var gt = @"INSERT [dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+SELECT ROW_NUMBER() OVER (ORDER BY dec), dec
+FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+INNER JOIN [dbo].[test__htm_TEST_dbo_SDSSDR7PhotoObjAll] __htm
+	ON htmid BETWEEN __htm.htmIDStart AND __htm.htmIDEnd
+WHERE ra > 2";
+
+            var res = GetStatisticsQuery(sql);
+            Assert.IsTrue(res.Contains(gt));
+        }
+
+        [TestMethod]
+        public void GetTableStatisticsWithRegionCommandNoHtmTest()
+        {
+            // TODO: implement coordinate only statistics
+
+            var sql = @"
+SELECT objID
+FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
+REGION 'CIRCLE J2000 0 0 10'
+WHERE ra > 2";
+
+            var gt = "";
+
+            var res = GetStatisticsQuery(sql);
+            Assert.IsTrue(res.Contains(gt));
+        }
+
+        [TestMethod]
+        public void GetTableStatisticsWithRegionCommandNoCoordinatesTest()
+        {
+            var sql = @"
+SELECT objID
+FROM TEST:SDSSDR7PhotoObjAll
+REGION 'CIRCLE J2000 0 0 10'
+WHERE ra > 2";
+
+            var gt = @"INSERT [dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+SELECT ROW_NUMBER() OVER (ORDER BY dec), dec
+FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+WHERE ra > 2;";
+
+            var res = GetStatisticsQuery(sql);
+            Assert.IsTrue(res.Contains(gt));
+        }
+
+        #endregion
     }
 }
