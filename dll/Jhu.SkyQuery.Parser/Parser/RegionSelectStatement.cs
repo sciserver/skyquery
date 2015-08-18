@@ -30,6 +30,11 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
+        public RegionSelectStatement(Jhu.Graywulf.SqlParser.SelectStatement old)
+            : base(old)
+        {
+        }
+
         #endregion
     }
 }

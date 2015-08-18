@@ -190,13 +190,16 @@ WHERE @r.ContainsEq(ra, dec) = 1
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void AppendRegionJoinsAndConditionsQuerySpecificationNoCoordinatesTest()
         {
             var sql = @"
 SELECT table.*
-FROM table WITH (HTMID(htmid))
+FROM table
 REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt = @"SELECT table.*
+FROM table
+";
 
             var ss = Parse(sql);
             var qs = ss.EnumerateQuerySpecifications().First();
@@ -204,7 +207,8 @@ REGION 'CIRCLE J2000 10 10 10'";
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, HtmTable, true);
             CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
 
-            CodeGenerator.Execute(qs);
+            Assert.AreEqual(gt, CodeGenerator.Execute(qs));
+
         }
 
         [TestMethod]
@@ -230,8 +234,8 @@ WHERE @r.ContainsEq(ra, dec) = 1
 ))";
 
             var ss = Parse(sql);
-            var htminner = new[] { HtmInner };
-            var htmpartial = new[] { HtmPartial };
+            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner };
+            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial };
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
             CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
@@ -254,8 +258,8 @@ WHERE @r.ContainsEq(ra, dec) = 1
 ";
 
             var ss = Parse(sql);
-            var htminner = new[] { HtmInner };
-            var htmpartial = new[] { HtmPartial };
+            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner };
+            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial };
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
             CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
@@ -303,8 +307,8 @@ WHERE @r.ContainsEq(ra, dec) = 1
 ))";
 
             var ss = Parse(sql);
-            var htminner = new[] { HtmInner, HtmInner };
-            var htmpartial = new[] { HtmPartial, HtmPartial };
+            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner, HtmInner };
+            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial, HtmPartial };
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
             CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
@@ -356,15 +360,16 @@ WHERE ra > 2";
         [TestMethod]
         public void GetTableStatisticsWithRegionCommandNoHtmTest()
         {
-            // TODO: implement coordinate only statistics
-
             var sql = @"
 SELECT objID
 FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = "";
+            var gt = @"INSERT [dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+SELECT ROW_NUMBER() OVER (ORDER BY dec), dec
+FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+WHERE (@r.ContainsEq(ra, dec) = 1) AND (ra > 2);";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));

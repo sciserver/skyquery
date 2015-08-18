@@ -50,7 +50,7 @@ namespace Jhu.SkyQuery.Parser
         /// </summary>
         public bool IsNoRegion
         {
-            get { return false; }
+            get { return !isCartesianSpecified && !isEqSpecified && !isHtmIdSpecified; }
         }
 
         public bool IsEqSpecified

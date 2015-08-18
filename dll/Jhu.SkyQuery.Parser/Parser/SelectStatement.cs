@@ -9,6 +9,11 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class SelectStatement
     {
+        public SelectStatement(Jhu.Graywulf.SqlParser.SelectStatement old)
+            : base(old)
+        {
+        }
+
         public XMatchQuerySpecification XMatchQuerySpecification
         {
             get { return (XMatchQuerySpecification)QueryExpression.FindDescendant<QuerySpecification>(); }
