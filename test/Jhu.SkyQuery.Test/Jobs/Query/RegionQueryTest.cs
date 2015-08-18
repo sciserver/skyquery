@@ -12,7 +12,7 @@ using Jhu.SkyQuery.Jobs.Query;
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
-    public class RegionQueryTest : XMatchQueryTestBase
+    public class RegionQueryTest : SkyQueryTestBase
     {
         [ClassInitialize]
         public static void Initialize(TestContext context)

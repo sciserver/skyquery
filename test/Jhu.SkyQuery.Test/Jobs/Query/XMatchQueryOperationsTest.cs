@@ -11,7 +11,7 @@ using Jhu.Graywulf.Scheduler;
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
-    public class XMatchQueryOperationsTest : XMatchQueryTestBase
+    public class XMatchQueryOperationsTest : SkyQueryTestBase
     {
 
         [ClassInitialize]

@@ -12,7 +12,7 @@ using Jhu.SkyQuery.Jobs.Query;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
-    public class XMatchQueryTestBase : SqlQueryTestBase
+    public class SkyQueryTestBase : SqlQueryTestBase
     {
         protected override UserDatabaseFactory CreateUserDatabaseFactory(Context context)
         {
