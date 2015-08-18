@@ -11,7 +11,15 @@ namespace Jhu.SkyQuery.Parser
 
         public Spherical.Region Region
         {
-            get { return region; }
+            get
+            {
+                if (region == null)
+                {
+                    InterpretRegion();
+                }
+
+                return region;
+            }
         }
 
         #region Constructors and initializers
@@ -23,12 +31,12 @@ namespace Jhu.SkyQuery.Parser
         }
 
         public RegionQuerySpecification(QuerySpecification old)
-            :base(old)
+            : base(old)
         {
         }
 
         public RegionQuerySpecification(RegionQuerySpecification old)
-            :base(old)
+            : base(old)
         {
         }
 
@@ -39,27 +47,11 @@ namespace Jhu.SkyQuery.Parser
             this.region = null;
         }
 
-        protected override void CopyMembers(object other)
-        {
-            base.CopyMembers(other);
-
-            if (other is RegionQuerySpecification)
-            {
-                var old = (RegionQuerySpecification)other;
-
-                this.region = old.region;
-            }
-            else
-            {
-                this.region = null;
-            }
-        }
-
         #endregion
 
-        public override Graywulf.ParserLib.Node Interpret()
+        private void InterpretRegion()
         {
-                        var rc = FindDescendant<RegionClause>();
+            var rc = FindDescendant<RegionClause>();
 
             if (rc != null)
             {
@@ -80,12 +72,6 @@ namespace Jhu.SkyQuery.Parser
                     throw new NotImplementedException();
                 }
             }
-            else
-            {
-                return null;
-            }
-
-            return base.Interpret();
         }
     }
 }
