@@ -14,7 +14,6 @@ namespace Jhu.SkyQuery.SqlClrLib
             public int ZoneID;
             public double DecMin;
             public double DecMax;
-            public double Alpha;
         }
 
         [SqlFunction(
@@ -30,7 +29,7 @@ namespace Jhu.SkyQuery.SqlClrLib
             DataAccess = DataAccessKind.None, IsDeterministic = true, IsPrecise = false,
             SystemDataAccess = SystemDataAccessKind.None,
             FillRowMethodName = "CalculateZones_Fill",
-            TableDefinition = "ZoneID int, DecMin float, DecMax float, Alpha float")]
+            TableDefinition = "ZoneID int, DecMin float, DecMax float")]
         public static IEnumerable GetZones(double zoneHeight, double theta)
         {
             int minzone = 0;
@@ -44,7 +43,6 @@ namespace Jhu.SkyQuery.SqlClrLib
                 zd.ZoneID = minzone;
                 zd.DecMin = zonedec;
                 zd.DecMax = zonedec + zoneHeight;
-                zd.Alpha = Alpha(theta, zd.DecMin, zd.DecMax, zoneHeight);
 
                 yield return zd;
 
@@ -52,14 +50,13 @@ namespace Jhu.SkyQuery.SqlClrLib
             }
         }
 
-        public static void CalculateZones_Fill(object o, out int zoneID, out double decMin, out double decMax, out double alpha)
+        public static void CalculateZones_Fill(object o, out int zoneID, out double decMin, out double decMax)
         {
             ZoneDef zd = (ZoneDef)o;
 
             zoneID = zd.ZoneID;
             decMin = zd.DecMin;
             decMax = zd.DecMax;
-            alpha = zd.Alpha;
         }
 
         /// <summary>
