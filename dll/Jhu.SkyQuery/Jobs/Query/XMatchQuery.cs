@@ -96,13 +96,13 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (xmatchTables == null || forceReinitialize)
             {
-                InterpretXMatchQuery((Jhu.SkyQuery.Parser.SelectStatement)SelectStatement);
+                InterpretXMatchQuery((XMatchSelectStatement)SelectStatement);
             }
 
             base.FinishInterpret(forceReinitialize);
         }
 
-        private void InterpretXMatchQuery(Jhu.SkyQuery.Parser.SelectStatement selectStatement)
+        private void InterpretXMatchQuery(XMatchSelectStatement selectStatement)
         {
             // Interpret xmatch parameters
             // Bayes factor or probability limit

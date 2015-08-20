@@ -15,7 +15,7 @@ using Jhu.Spherical;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-    public abstract class XMatchQueryCodeGenerator : RegionQueryCodeGenerator
+    public class XMatchQueryCodeGenerator : RegionQueryCodeGenerator
     {
         #region Constants
 
@@ -462,7 +462,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             return queryObject.GetTemporaryTable(String.Format("Match_{0}", step.StepNumber));
         }
 
-        protected abstract string GetCreateMatchTableScript(XMatchQueryStep step);
+        protected virtual string GetCreateMatchTableScript(XMatchQueryStep step)
+        {
+            throw new NotImplementedException();
+        }
 
         public SqlCommand GetCreateMatchTableCommand(XMatchQueryStep step, Table matchtable)
         {
@@ -506,9 +509,15 @@ namespace Jhu.SkyQuery.Jobs.Query
             return columnlist.ToString();
         }
 
-        protected abstract string GetPopulateMatchTableScript(XMatchQueryStep step);
+        protected virtual string GetPopulateMatchTableScript(XMatchQueryStep step)
+        {
+            throw new NotImplementedException();
+        }
 
-        protected abstract void AppendPopulateMatchTableParameters(XMatchQueryStep step, SqlCommand cmd);
+        protected virtual void AppendPopulateMatchTableParameters(XMatchQueryStep step, SqlCommand cmd)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// When overriden in a derived class, populates a match table
@@ -569,7 +578,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
 
             var sql = new StringBuilder(GetPopulateMatchTableScript(step));
-            
+
 
             sql.Replace("[$newtablename]", GetResolvedTableName(matchtable));     // new match table
             sql.Replace("[$insertcolumnlist]", insertcolumnlist.ToString());
@@ -648,7 +657,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             return null;
         }
 
-        protected abstract string GetBuildMatchTableIndexScript(XMatchTableSpecification table, int stepNumber);
+        protected virtual string GetBuildMatchTableIndexScript(XMatchTableSpecification table, int stepNumber)
+        {
+            throw new NotImplementedException();
+        }
 
         public SqlCommand GetBuildInitialMatchTableIndexCommand(XMatchQueryStep step, Table matchtable)
         {
