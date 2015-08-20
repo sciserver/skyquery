@@ -55,9 +55,9 @@
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchScripts.Designer.cs">
-      <DependentUpon>BayesFactorXMatchScripts.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>BayesFactorXMatchScripts.resx</DependentUpon>
     </Compile>
     <Compile Include="Jobs\Query\ComputeSearchRadius.cs" />
     <Compile Include="Jobs\Query\Constants.cs" />
@@ -84,7 +84,12 @@
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
-    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateZoneTableRegion.sql" />
+    <Content Include="Jobs\Query\XMatchResources\ComputeMinMaxError.sql" />
+    <None Include="Jobs\Query\XMatchResources\CreateZoneTable.sql" />
+    <Content Include="Jobs\Query\XMatchResources\PopulateLinkTable.sql" />
+    <None Include="Jobs\Query\XMatchResources\PopulateZoneTable.sql" />
+    <None Include="Jobs\Query\XMatchResources\PopulateZoneTableRegion.sql" />
+    <None Include="Jobs\Query\XMatchResources\PopulatePairTable.sql" />
     <Compile Include="Jobs\Query\XMatchScripts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -174,28 +179,13 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\CreateMatchTable.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Jobs\Query\BayesFactorXMatchResources\CreateZoneTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateLinkTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateMatchTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulatePairTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateZoneTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Jobs\Query\BayesFactorXMatchScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\RegionScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -219,9 +209,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Jobs\Query\XMatchResources\PopulateZoneDefTable.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateInitialMatchTableRegion.sql" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Jobs\Query\RegionResources\DropHtmTables.sql" />

@@ -77,6 +77,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+        #region Step generation
 
         /// <summary>
         /// Generates cross-match steps.
@@ -103,6 +104,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
+        #endregion
         #region Compute search radius
 
         /// <summary>
@@ -110,17 +112,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// catalog into account.
         /// </summary>
         /// <param name="step"></param>
-        public void ComputeSearchRadius(XMatchQueryStep step)
+        public override void ComputeSearchRadius(XMatchQueryStep step)
         {
-            using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand())
+            if (step.StepNumber > 0)
             {
-                ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand(step))
+                {
+                    var theta = (double)ExecuteSqlCommandScalar(cmd, CommandTarget.Code);
+                    step.SearchRadius = Math.Sqrt(theta) * 180.0 / Math.PI;
+                }
             }
         }
 
-
-
         #endregion
-
     }
 }

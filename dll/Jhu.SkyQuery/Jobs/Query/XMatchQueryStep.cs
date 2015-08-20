@@ -62,6 +62,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             this.stepNumber = 0;
             this.xMatchTable = null;
+            this.searchRadius = 0;
         }
     }
 }

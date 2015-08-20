@@ -11,10 +11,30 @@ namespace Jhu.SkyQuery.Parser
     public partial class XMatchTableSpecification : ICloneable, IComparable<XMatchTableSpecification>
     {
         private XMatchInclusionMethod inclusionMethod;
+        private bool hasHtmIndex;
+        private bool hasZoneIndex;
+        private bool isZoneTableNecessary;
+
+        #region Properties
 
         public XMatchInclusionMethod InclusionMethod
         {
             get { return inclusionMethod; }
+        }
+
+        public bool HasHtmIndex
+        {
+            get { return hasHtmIndex; }
+        }
+
+        public bool HasZoneIndex
+        {
+            get { return hasZoneIndex; }
+        }
+
+        public bool IsZoneTableNecessary
+        {
+            get { return isZoneTableNecessary; }
         }
 
         public TableReference TableReference
@@ -32,6 +52,7 @@ namespace Jhu.SkyQuery.Parser
             get { return TableSource.Coordinates; }
         }
 
+        #endregion
         #region Constructors and initializers
 
         protected override void InitializeMembers()

@@ -34,6 +34,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             return (QuerySpecification)ss.EnumerateQuerySpecifications().First(); ;
         }
 
+#if false
         // --- GetPropagatedColumnList
 
         private string GetPropagatedColumnListTestHelper(string query, ColumnListInclude include)
@@ -313,5 +314,6 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
      (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[zoneId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
 WHERE [c].[ra] BETWEEN 1 AND 2", res);
         }
+#endif
     }
 }

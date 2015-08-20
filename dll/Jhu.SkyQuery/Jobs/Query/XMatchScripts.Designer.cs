@@ -61,13 +61,25 @@ namespace Jhu.SkyQuery.Jobs.Query {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- *** XMatchResources/ComputeMinMaxError.sql *** ---
+        ///
+        ///SELECT MIN(CAST([$error] AS float)), MAX(CAST([$error] AS float))
+        ///FROM [$tablename]
+        ///[$where].
+        /// </summary>
+        internal static string ComputeMinMaxError {
+            get {
+                return ResourceManager.GetString("ComputeMinMaxError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -- *** XMatchResources/CreateLinkTable.sql *** ---
         ///
         ///CREATE TABLE [$tablename]
         ///(
-        ///	[ZoneID1] [bigint] NOT NULL,
+        ///	[ZoneID1] [int] NOT NULL,
         ///	[ZoneID2] [int] NOT NULL,
-        ///	[Alpha1] [float] NOT NULL,
         ///	[Alpha2] [float] NOT NULL
         ///)
         ///
@@ -102,14 +114,12 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///
         ///CREATE TABLE [$tablename]
         ///(
-        ///	ZoneID int NOT NULL,
+        ///	ZoneID int NOT NULL PRIMARY KEY,
         ///	DecMin float NOT NULL,
-        ///	DecMax float NOT NULL,
-        ///	Alpha float NOT NULL
+        ///	DecMax float NOT NULL
         ///) 
         ///
-        ///ALTER TABLE [$tablename] ADD CONSTRAINT [$indexname] PRIMARY KEY (ZoneID)
-        ///.
+        ///ALTER TABLE [$tablename] ADD CONSTRAINT [$indexname] PRIMARY KEY ( [ZoneID] ).
         /// </summary>
         internal static string CreateZoneDefTable {
             get {
@@ -118,14 +128,146 @@ namespace Jhu.SkyQuery.Jobs.Query {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- *** XMatchResources/CreateZoneTable.sql *** ---
+        ///
+        ///CREATE TABLE [$tablename]
+        ///(
+        ///	[ZoneID] int NOT NULL,
+        ///	[RA] float NOT NULL,
+        ///	[Dec] float NOT NULL,
+        ///	[Cx] float NOT NULL,
+        ///	[Cy] float NOT NULL,
+        ///	[Cz] float NOT NULL,
+        ///	[$columnlist]
+        ///)
+        ///
+        ///CREATE CLUSTERED INDEX [$indexname] ON [$tablename] ([ZoneID], [RA]).
+        /// </summary>
+        internal static string CreateZoneTable {
+            get {
+                return ResourceManager.GetString("CreateZoneTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- *** XMatchResources/PopulateLinkTable.sql *** ---
+        ///
+        ///-- Calculate overlap
+        ///DECLARE @nzone int = CONVERT(int, FLOOR(@theta/@H) + 1)
+        ///
+        ///INSERT [$tablename] WITH (TABLOCKX)
+        ///SELECT D1.ZoneID,
+        ///	   D2.ZoneID, 
+        ///	   skyquery.Alpha(@theta, [D2].[DecMin], [D2].[DecMax], @H)
+        ///FROM	   [$zonedeftable] AS [D1]
+        ///INNER JOIN [$zonedeftable] AS [D2]
+        ///	ON [D2].[ZoneID] BETWEEN [D1].[ZoneID] - @nzone AND [D1].[ZoneID] + @nzone
+        ///[$where].
+        /// </summary>
+        internal static string PopulateLinkTable {
+            get {
+                return ResourceManager.GetString("PopulateLinkTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- *** XMatchResources/PopulatePairTable.sql *** ---
+        ///
+        ///DECLARE @dist2 float = 4 * POWER(SIN(RADIANS(@theta/2)), 2);
+        ///
+        ///WITH
+        ///__t1 AS
+        ///(
+        ///	[$query1]
+        ///),
+        ///__t2 AS
+        ///(
+        ///	[$query2]
+        ///),
+        ///pairs AS
+        ///(
+        ///	SELECT	
+        ///		[$columnlist1],
+        ///		[$columnlist2],
+        ///		__t1.[RA] AS [RA1],
+        ///		__t2.[RA] AS [RA2],
+        ///		__link.[Alpha] AS [Alpha],
+        ///		__t2.[Cx] - __t1.[Cx] AS [Dx],
+        ///		__t2.[Cy] - __t1.[Cy] AS [Dy],
+        ///		__t2.[Cz] - __t1.[Cz] AS [Dz]
+        ///	FROM __t1
+        ///	INNER LOOP JOIN [$linktable] AS __link ON  __link.[ZoneID1] = __t1.[ZoneID]
+        ///	I [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PopulatePairTable {
+            get {
+                return ResourceManager.GetString("PopulatePairTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -- *** XMatchResources/PopulateZoneDefTable.sql *** ---
         ///
         ///INSERT [$tablename] WITH (TABLOCKX)
-        ///SELECT [zd].* FROM [SkyQuery_Code].[dbo].[CalculateZones](@ZoneHeight, @Theta, @PartitionMin, @PartitionMax) AS [zd].
+        ///SELECT [ZD].* 
+        ///FROM skyquery.GetZones(@H, @Theta) AS [ZD].
         /// </summary>
         internal static string PopulateZoneDefTable {
             get {
                 return ResourceManager.GetString("PopulateZoneDefTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- *** XMatchResources/PopulateZoneTable.sql *** ---
+        ///
+        ///INSERT [$zonetablename] WITH (TABLOCKX)
+        ///SELECT CONVERT(INT,FLOOR((([$dec]) + 90.0) / @H)) as [ZoneID],
+        ///		[$ra] AS [RA],
+        ///		[$dec] AS [Dec],
+        ///		[$cx] AS [Cx],
+        ///		[$cy] AS [Cy],
+        ///		[$cz] AS [Cz],
+        ///		[$selectcolumnlist]
+        ///FROM [$tablename]
+        ///[$where].
+        /// </summary>
+        internal static string PopulateZoneTable {
+            get {
+                return ResourceManager.GetString("PopulateZoneTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateZoneTableRegion.sql *** ---
+        ///
+        ///-- Generate HTM ranges
+        ///
+        ///CREATE TABLE [$htm_inner]
+        ///(
+        ///	htmIDStart bigint NOT NULL,
+        ///	htmIDEnd bigint NOT NULL
+        ///);
+        ///
+        ///INSERT [$htm_inner] WITH(TABLOCKX)
+        ///SELECT htmIDStart, htmIDEnd
+        ///FROM htm.Cover(@region) AS htm
+        ///WHERE partial = 0;
+        ///
+        ///CREATE TABLE [$htm_partial]
+        ///(
+        ///	htmIDStart bigint NOT NULL,
+        ///	htmIDEnd bigint NOT NULL
+        ///);
+        ///
+        ///INSERT [$htm_partial] WITH(TABLOCKX)
+        ///SELECT htmIDStart, htmIDEnd
+        ///FROM htm.Cover(@region) AS htm
+        ///WHERE p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string PopulateZoneTableRegion {
+            get {
+                return ResourceManager.GetString("PopulateZoneTableRegion", resourceCulture);
             }
         }
     }

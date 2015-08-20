@@ -52,7 +52,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="selectStatement"></param>
         /// <returns></returns>
-        public override SourceTableQuery GetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
+        protected override SourceTableQuery GetExecuteQueryImpl(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
         {
             if (!(selectStatement is RegionSelectStatement))
             {
@@ -71,18 +71,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             GenerateHtmTablesScript(htminner, htmpartial, create, drop);
 
             // Rewrite query
-            var ss = new RegionSelectStatement(selectStatement);
-            AppendRegionJoinsAndConditions(ss, htminner, htmpartial);
-            RemoveNonStandardTokens(ss, method);
+            AppendRegionJoinsAndConditions(selectStatement, htminner, htmpartial);
+            RemoveNonStandardTokens(selectStatement, method);
 
-            SubstituteDatabaseNames(ss, queryObject.AssignedServerInstance, Partition.Query.SourceDatabaseVersionName);
-            SubstituteRemoteTableNames(ss, queryObject.TemporaryDataset, queryObject.TemporaryDataset.DefaultSchemaName);
+            SubstituteDatabaseNames(selectStatement, queryObject.AssignedServerInstance, Partition.Query.SourceDatabaseVersionName);
+            SubstituteRemoteTableNames(selectStatement);
 
             // Compose final script
             var sql = new StringBuilder();
             sql.AppendLine(create.ToString());
 
-            AppendQuery(sql, ss, method, destination);
+            AppendQuery(sql, selectStatement, method, destination);
             
             sql.AppendLine(drop.ToString());
 
@@ -187,7 +186,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        private void AppendRegionJoinsAndConditions(Jhu.SkyQuery.Parser.SelectStatement selectStatement, List<TableReference> htmInner, List<TableReference> htmPartial)
+        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.SelectStatement selectStatement, List<TableReference> htmInner, List<TableReference> htmPartial)
         {
             int qsi = 0;
 
@@ -492,7 +491,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return where;
         }
 
-        private void AppendRegionParameter(SqlCommand cmd, Spherical.Region region)
+        protected void AppendRegionParameter(SqlCommand cmd, Spherical.Region region)
         {
             if (region != null)
             {
@@ -500,7 +499,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        private void AppendRegionParameters(SourceTableQuery source, List<Spherical.Region> regions)
+        protected void AppendRegionParameters(SourceTableQuery source, List<Spherical.Region> regions)
         {
             for (int i = 0; i < regions.Count; i++)
             {

@@ -100,102 +100,16 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///	   [l] [float],
         ///	   [q] [float],
         ///	   [logBF] [float],
-        ///	   [ZoneID] [int],
+        ///	   [ZoneID] [int]
         ///	   [$columnlist]
         ///)
         ///
-        ///ALTER TABLE [$tablename] ADD CONSTRAINT [$indexname] PRIMARY KEY ( [MatchID] ).
+        ///ALTER TABLE [$tablename] ADD CONSTRA
+        ///INT [$indexname] PRIMARY KEY ( [MatchID] ).
         /// </summary>
         internal static string CreateMatchTable {
             get {
                 return ResourceManager.GetString("CreateMatchTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/CreateZoneTable.sql *** ---
-        ///
-        ///CREATE TABLE [$tablename]
-        ///(
-        ///	[ZoneID] int NOT NULL,
-        ///	[RA] float NOT NULL,
-        ///	[Dec] float NOT NULL,
-        ///	[Cx] float NOT NULL,
-        ///	[Cy] float NOT NULL,
-        ///	[Cz] float NOT NULL,
-        ///	[$columnlist]
-        ///)
-        ///
-        ///CREATE CLUSTERED INDEX [$indexname] ON [$tablename] ([ZoneID], [RA]).
-        /// </summary>
-        internal static string CreateZoneTable {
-            get {
-                return ResourceManager.GetString("CreateZoneTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateInitialMatchTable.sql *** ---
-        ///
-        ///INSERT [$newtablename] WITH (TABLOCKX)
-        ///       ([RA], [Dec], [Cx], [Cy], [Cz], [a], [l], [q], [logBF], [ZoneID], [$insertcolumnlist])
-        ///SELECT [$ra] AS [RA],
-        ///       [$dec] AS [Dec],
-        ///       [$cx] AS [Cx],
-        ///       [$cy] AS [Cy],
-        ///       [$cz] AS [Cz],
-        ///       [$weight] AS [a],
-        ///       LOG([$weight]) AS [l],
-        ///       0 AS [q],
-        ///       ([$n] - 1) * LOG(2) AS [logBF],
-        ///       CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
-        ///       [ [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulateInitialMatchTable {
-            get {
-                return ResourceManager.GetString("PopulateInitialMatchTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateInitialMatchTable.sql *** ---
-        ///
-        ///INSERT [$newtablename] WITH (TABLOCKX)
-        ///       ([RA], [Dec], [Cx], [Cy], [Cz], [a], [l], [q], [logBF], [ZoneID], [$insertcolumnlist])
-        ///SELECT [$ra] AS [RA],
-        ///       [$dec] AS [Dec],
-        ///       [$cx] AS [Cx],
-        ///       [$cy] AS [Cy],
-        ///       [$cz] AS [Cz],
-        ///       [$weight] AS [a],
-        ///       LOG([$weight]) AS [l],
-        ///       0 AS [q],
-        ///       ([$n] - 1) * LOG(2) AS [logBF],
-        ///       CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
-        ///       [ [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulateInitialMatchTableRegion {
-            get {
-                return ResourceManager.GetString("PopulateInitialMatchTableRegion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateLinkTable.sql *** ---
-        ///
-        ///DECLARE @nzone int = CONVERT(int, FLOOR(@theta/@h) + 1)
-        ///
-        ///INSERT [$tablename] WITH (TABLOCKX)
-        ///SELECT [Z1].[ZoneID], [Z2].[ZoneID], 
-        ///	SkyQuery_Code.dbo.CalculateAlpha(@theta, [D1].[DecMin], [D1].[DecMax], @H),
-        ///	SkyQuery_Code.dbo.CalculateAlpha(@theta, [D2].[DecMin], [D2].[DecMax], @H)
-        ///FROM       (SELECT DISTINCT [ZoneID] FROM [$zonetable1]) AS [Z1]
-        ///INNER JOIN (SELECT DISTINCT [ZoneID] FROM [$zonetable2]) AS [Z2]
-        ///      ON [Z2].[ZoneID]  [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulateLinkTable {
-            get {
-                return ResourceManager.GetString("PopulateLinkTable", resourceCulture);
             }
         }
         
@@ -221,88 +135,6 @@ namespace Jhu.SkyQuery.Jobs.Query {
         internal static string PopulateMatchTable {
             get {
                 return ResourceManager.GetString("PopulateMatchTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulatePairTable.sql *** ---
-        ///
-        ///DECLARE @dist2 float = 4 * POWER(SIN(RADIANS(@theta/2)), 2);
-        ///--
-        ///INSERT [$pairtable] WITH (TABLOCKX)
-        ///SELECT	[$columnlist1],
-        ///		[$columnlist2],
-        ///		[tableB].[Cx] - [tableA].[Cx],
-        ///		[tableB].[Cy] - [tableA].[Cy],
-        ///		[tableB].[Cz] - [tableA].[Cz]
-        ///FROM [$matchzonetable] AS [tableA]
-        ///INNER LOOP JOIN [$linktable] AS [linktable] ON [linktable].ZoneID1 = [tableA].ZoneID
-        ///INNER LOOP JOIN [$zonetable] AS [tableB] ON [linktable].ZoneID2 = [tableB].Z [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulatePairTable {
-            get {
-                return ResourceManager.GetString("PopulatePairTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateZoneTable.sql *** ---
-        ///
-        ///INSERT [$zonetablename] WITH (TABLOCKX)
-        ///SELECT CONVERT(INT,FLOOR(([$dec] + 90.0) / @H)) as [ZoneID],
-        ///       [$ra] AS [RA],
-        ///       [$dec] AS [Dec],
-        ///       [$cx] AS [Cx],
-        ///       [$cy] AS [Cy],
-        ///       [$cz] AS [Cz],
-        ///       [$columnlist]
-        ///FROM [$tablename] AS [$tablealias] WITH (NOLOCK)
-        ///[$where]
-        ///ORDER BY [ZoneID], [RA]
-        ///
-        ///-- Add wrap-around
-        ///
-        ///INSERT [$zonetablename] WITH (TABLOCKX)
-        ///SELECT [t].[ZoneID],
-        ///       [t].[RA] - 360,
-        ///        [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulateZoneTable {
-            get {
-                return ResourceManager.GetString("PopulateZoneTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateZoneTableRegion.sql *** ---
-        ///
-        ///-- Generate HTM ranges
-        ///
-        ///CREATE TABLE [$htm_inner]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm_inner] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) AS htm
-        ///WHERE partial = 0;
-        ///
-        ///CREATE TABLE [$htm_partial]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm_partial] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) AS htm
-        ///WHERE p [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulateZoneTableRegion {
-            get {
-                return ResourceManager.GetString("PopulateZoneTableRegion", resourceCulture);
             }
         }
     }

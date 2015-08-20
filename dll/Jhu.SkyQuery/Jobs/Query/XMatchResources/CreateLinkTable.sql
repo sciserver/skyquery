@@ -2,9 +2,8 @@
 
 CREATE TABLE [$tablename]
 (
-	[ZoneID1] [bigint] NOT NULL,
+	[ZoneID1] [int] NOT NULL,
 	[ZoneID2] [int] NOT NULL,
-	[Alpha1] [float] NOT NULL,
 	[Alpha2] [float] NOT NULL
 )
 

@@ -12,8 +12,9 @@ CREATE TABLE [$tablename]
 	   [l] [float],
 	   [q] [float],
 	   [logBF] [float],
-	   [ZoneID] [int],
+	   [ZoneID] [int]
 	   [$columnlist]
 )
 
-ALTER TABLE [$tablename] ADD CONSTRAINT [$indexname] PRIMARY KEY ( [MatchID] )
+ALTER TABLE [$tablename] ADD CONSTRA
+INT [$indexname] PRIMARY KEY ( [MatchID] )

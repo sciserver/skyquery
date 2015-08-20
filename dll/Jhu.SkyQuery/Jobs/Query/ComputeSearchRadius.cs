@@ -23,7 +23,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             XMatchQueryStep xmatchstep = XMatchStep.Get(activityContext);
 
-            BayesFactorXMatchQueryPartition xmqp = (BayesFactorXMatchQueryPartition)xmatchstep.QueryPartition;
+            var xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
 
             switch (xmqp.Query.ExecutionMode)
             {
@@ -45,7 +45,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return EnqueueAsync(_ => OnAsyncExecute(workflowInstanceGuid, activityInstanceId, xmatchstep, xmqp), callback, state);
         }
 
-        private void OnAsyncExecute(Guid workflowInstanceGuid, string activityInstanceId, XMatchQueryStep xmatchstep, BayesFactorXMatchQueryPartition xmqp)
+        private void OnAsyncExecute(Guid workflowInstanceGuid, string activityInstanceId, XMatchQueryStep xmatchstep, XMatchQueryPartition xmqp)
         {
             RegisterCancelable(workflowInstanceGuid, activityInstanceId, xmqp);
             xmqp.ComputeSearchRadius(xmatchstep);

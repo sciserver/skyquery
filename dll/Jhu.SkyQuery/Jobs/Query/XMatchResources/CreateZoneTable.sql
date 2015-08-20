@@ -1,4 +1,4 @@
--- *** BayesFactorXMatchResources/CreateZoneTable.sql *** ---
+-- *** XMatchResources/CreateZoneTable.sql *** ---
 
 CREATE TABLE [$tablename]
 (

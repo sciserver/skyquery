@@ -85,6 +85,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+        #region Step generation
 
         /// <summary>
         /// When overriden in derived classes, initializes the
@@ -93,6 +94,31 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="tables"></param>
         public abstract void GenerateSteps(XMatchTableSpecification[] tables);
 
+        #endregion
+        #region Compute search radius
+
+        public void ComputeMinMaxError(XMatchQueryStep step)
+        {
+            double min, max;
+
+            using (var cmd = CodeGenerator.GetComputeMinMaxErrorCommand(step))
+            {
+                ExecuteSqlCommandReader(cmd, CommandTarget.Temp, dr =>
+                    {
+                        if (dr.Read())
+                        {
+                            min = dr.GetDouble(0);
+                            max = dr.GetDouble(1);
+                        }
+                    });
+            }
+
+            // TODO: propagate these results to the table
+        }
+
+        public abstract void ComputeSearchRadius(XMatchQueryStep step);
+
+        #endregion
         #region ZoneDef table function
 
         public void CreateZoneDefTable(XMatchQueryStep step)
@@ -100,7 +126,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // This is done only for the second catalog and on
             if (step.StepNumber > 0)
             {
-                var zonedeftable = CodeGenerator.GetZoneDefTable(step.StepNumber);
+                var zonedeftable = CodeGenerator.GetZoneDefTable(step);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 zonedeftable.Drop();
@@ -120,6 +146,33 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+        #region Link table functions
+
+        public void CreateLinkTable(XMatchQueryStep step)
+        {
+            if (step.StepNumber != 0)
+            {
+                var zonedeftable = CodeGenerator.GetZoneDefTable(step);
+                var linktable = CodeGenerator.GetLinkTable(step);
+
+                // Drop table if it exists (unlikely, but might happen during debugging)
+                linktable.Drop();
+
+                using (var cmd = CodeGenerator.GetCreateLinkTableCommand(step, linktable))
+                {
+                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                }
+
+                using (var cmd = CodeGenerator.GetPopulateLinkTableCommand(step, zonedeftable, linktable))
+                {
+                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                }
+
+                TemporaryTables.TryAdd(linktable.TableName, linktable);
+            }
+        }
+
+        #endregion
         #region Zone table functions
 
         /// <summary>
@@ -135,77 +188,27 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public void CreateZoneTable(XMatchQueryStep step)
         {
-            // TODO: modify this to create a zone table only if the 
-            // source catalog doesn't have a zone index or it has a strong
-            // filter (i.e. small region) defined in the query
+            var table = Query.XMatchTables[step.XMatchTable];
 
-            // Create zone table from match table
-            if (step.StepNumber > 0)
+            if (table.IsZoneTableNecessary)
             {
-                var table = Query.XMatchTables[step.XMatchTable];
-                var zonetable = CodeGenerator.GetZoneTable(table.TableReference);
-                var zonedeftable = CodeGenerator.GetZoneDefTable(step.StepNumber);
+                var zonetable = CodeGenerator.GetZoneTable(step);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 zonetable.Drop();
 
-                using (var cmd = CodeGenerator.GetCreateZoneTableCommand(table, zonetable))
+                using (var cmd = CodeGenerator.GetCreateZoneTableCommand(step, zonetable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Temp);
                 }
 
-                using (var cmd = CodeGenerator.GetPopulateZoneTableCommand(table, zonedeftable, zonetable))
+                using (var cmd = CodeGenerator.GetPopulateZoneTableCommand(step, zonetable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(zonetable.TableName, zonetable);
             }
-        }
-
-        /// <summary>
-        /// Drops a temporary zone table.
-        /// </summary>
-        /// <param name="step">Number of XMatch step.</param>
-        public void DropZoneTable(XMatchQueryStep step)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-        #region Link table functions
-
-
-        public void CreateLinkTable(XMatchQueryStep step)
-        {
-            if (step.StepNumber != 0)
-            {
-                var linktable = CodeGenerator.GetLinkTable(step.StepNumber);
-
-                // Drop table if it exists (unlikely, but might happen during debugging)
-                linktable.Drop();
-
-                using (var cmd = CodeGenerator.GetCreateLinkTableCommand(linktable))
-                {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
-                }
-
-                using (var cmd = CodeGenerator.GetPopulateLinkTableCommand(/* TODO */))
-                {
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
-                }
-
-                TemporaryTables.TryAdd(linktable.TableName, linktable);
-            }
-        }
-
-        /// <summary>
-        /// Drops a link table.
-        /// </summary>
-        /// <param name="step">Reference to the XMatch step.</param>
-        public void DropLinkTable(XMatchQueryStep step)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
@@ -225,32 +228,23 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber != 0)
             {
                 var table = Query.XMatchTables[step.XMatchTable];
-                var pairtable = CodeGenerator.GetPairTable(step.StepNumber);
+                var pairtable = CodeGenerator.GetPairTable(step);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 pairtable.Drop();
 
-                using (var cmd = CodeGenerator.GetCreatePairTableCommand(table, step.StepNumber, pairtable))
+                using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, table, pairtable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Temp);
                 }
 
-                using (var cmd = CodeGenerator.GetPopulatePairTableCommand(pairtable))
+                using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, table, pairtable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(pairtable.TableName, pairtable);
             }
-        }
-
-        /// <summary>
-        /// Drops a pair table.
-        /// </summary>
-        /// <param name="step"></param>
-        public void DropPairTable(XMatchQueryStep step)
-        {
-            throw new NotImplementedException();
         }
 
         #endregion
@@ -273,30 +267,33 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public void CreateMatchTable(XMatchQueryStep step)
         {
-            // Create real match tables
-            var matchtable = CodeGenerator.GetMatchTable(step.StepNumber);
-
-            // Drop table if it exists (unlikely, but might happen during debugging)
-            matchtable.Drop();
-
-            using (var cmd = CodeGenerator.GetCreateMatchTableCommand(step, matchtable))
+            if (step.StepNumber > 0)
             {
-                ExecuteSqlCommand(cmd, CommandTarget.Temp);
-            }
+                // Create real match tables
+                var matchtable = CodeGenerator.GetMatchTable(step);
 
-            using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, matchtable))
-            {
-                ExecuteSqlCommand(cmd, CommandTarget.Code);
-            }
+                // Drop table if it exists (unlikely, but might happen during debugging)
+                matchtable.Drop();
 
-            using (var cmd = CodeGenerator.GetBuildInitialMatchTableIndexCommand(step, matchtable))
-            {
-                ExecuteSqlCommand(cmd, CommandTarget.Temp);
-            }
+                using (var cmd = CodeGenerator.GetCreateMatchTableCommand(step, matchtable))
+                {
+                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                }
 
-            TemporaryTables.TryAdd(matchtable.TableName, matchtable);
-        }        
-        
+                using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, matchtable))
+                {
+                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                }
+
+                using (var cmd = CodeGenerator.GetBuildInitialMatchTableIndexCommand(step, matchtable))
+                {
+                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                }
+
+                TemporaryTables.TryAdd(matchtable.TableName, matchtable);
+            }
+        }
+
         /// <summary>
         /// Drops a temporary match table.
         /// </summary>
@@ -308,10 +305,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected double GetWeight(double sigma)
-        {
-            return 1 / Math.Pow(sigma / 3600 / 180 * Math.PI, 2);
-        }
+
 
         private double GetBufferZoneSize(XMatchQueryStep step)
         {
