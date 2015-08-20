@@ -55,16 +55,16 @@ namespace Jhu.SkyQuery.Parser
         #endregion
         #region Constructors and initializers
 
-        protected override void InitializeMembers()
+        protected override void OnInitializeMembers()
         {
-            base.InitializeMembers();
+            base.OnInitializeMembers();
 
             this.inclusionMethod = XMatchInclusionMethod.Unknown;
         }
 
-        protected override void CopyMembers(object other)
+        protected override void OnCopyMembers(object other)
         {
-            base.CopyMembers(other);
+            base.OnCopyMembers(other);
 
             var old = (XMatchTableSpecification)other;
 
@@ -73,11 +73,11 @@ namespace Jhu.SkyQuery.Parser
 
         #endregion
 
-        public override Node Interpret()
+        public override void Interpret()
         {
-            inclusionMethod = InterpretInclusionMethod();
+            base.Interpret();
 
-            return base.Interpret();
+            inclusionMethod = InterpretInclusionMethod();
         }
 
         private XMatchInclusionMethod InterpretInclusionMethod()

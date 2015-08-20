@@ -24,16 +24,16 @@ namespace Jhu.SkyQuery.Parser
 
         #region Constructors and initializers
 
-        protected override void InitializeMembers()
+        protected override void OnInitializeMembers()
         {
-            base.InitializeMembers();
+            base.OnInitializeMembers();
 
             this.coordinates = null;
         }
 
-        protected override void CopyMembers(object other)
+        protected override void OnCopyMembers(object other)
         {
-            base.CopyMembers(other);
+            base.OnCopyMembers(other);
 
             var old = (SimpleTableSource)other;
 
@@ -42,11 +42,11 @@ namespace Jhu.SkyQuery.Parser
         
         #endregion
 
-        public override Jhu.Graywulf.ParserLib.Node Interpret()
+        public override void Interpret()
         {
-            coordinates = new TableCoordinates(this);
+            base.Interpret();
 
-            return base.Interpret();
+            coordinates = new TableCoordinates(this);
         }
     }
 }

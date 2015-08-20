@@ -27,7 +27,6 @@ namespace Jhu.SkyQuery.Parser
         public RegionQuerySpecification()
             : base()
         {
-            InitializeMembers();
         }
 
         public RegionQuerySpecification(QuerySpecification old)
@@ -40,11 +39,16 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
-        protected override void InitializeMembers()
+        protected override void OnInitializeMembers()
         {
-            base.InitializeMembers();
+            base.OnInitializeMembers();
 
             this.region = null;
+        }
+
+        public override object Clone()
+        {
+            return new RegionQuerySpecification(this);
         }
 
         #endregion

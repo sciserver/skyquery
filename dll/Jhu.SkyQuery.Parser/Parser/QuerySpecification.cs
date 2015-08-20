@@ -9,7 +9,7 @@ namespace Jhu.SkyQuery.Parser
 {
     public partial class QuerySpecification
     {
-        public override Node Interpret()
+        public override Node Exchange()
         {            
             // Look for specific nodes to decide on query type
             
@@ -20,8 +20,6 @@ namespace Jhu.SkyQuery.Parser
                 var xts = from.FindDescendantRecursive<XMatchTableSource>();
                 if (xts != null)
                 {
-                    base.Interpret();
-
                     XMatchQuerySpecification xmqs;
                     var algorithm = xts.XMatchAlgorithm;
 
@@ -34,7 +32,6 @@ namespace Jhu.SkyQuery.Parser
                         throw new NotImplementedException();
                     }
 
-                    xmqs.InterpretChildren();
                     return xmqs;
                 }
             }
@@ -45,11 +42,10 @@ namespace Jhu.SkyQuery.Parser
             if (region != null)
             {
                 var rqs = new RegionQuerySpecification(this);
-                rqs.InterpretChildren();
                 return rqs;
             }
 
-            return base.Interpret();
+            return base.Exchange();
         }
     }
 }

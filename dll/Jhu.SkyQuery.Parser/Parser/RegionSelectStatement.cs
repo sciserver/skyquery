@@ -35,6 +35,11 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
+        public override object Clone()
+        {
+            return new RegionSelectStatement(this);
+        }
+
         #endregion
     }
 }

@@ -14,12 +14,7 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
-        public XMatchQuerySpecification XMatchQuerySpecification
-        {
-            get { return (XMatchQuerySpecification)QueryExpression.FindDescendant<QuerySpecification>(); }
-        }
-
-        public override Node Interpret()
+        public override Node Exchange()
         {
             // Look for descentant nodes in the parsing tree to determine
             // query type. An XMathTableSource means it's a cross-match query.
@@ -28,18 +23,16 @@ namespace Jhu.SkyQuery.Parser
             if (FindDescendantRecursive<XMatchTableSource>() != null)
             {
                 var xms = new XMatchSelectStatement(this);
-                xms.InterpretChildren();
                 return xms;
             }
             else if (FindDescendantRecursive<RegionClause>() != null)
             {
                 var rs = new RegionSelectStatement(this);
-                rs.InterpretChildren();
                 return rs;
             }
             else
             {
-                return base.Interpret();
+                return base.Exchange();
             }
         }
     }

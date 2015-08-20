@@ -9,19 +9,10 @@ namespace Jhu.SkyQuery.Parser
 {
     public class BayesianXMatchTableSource : XMatchTableSource
     {
-        private TableReference tableReference;
-
-        public override TableReference TableReference
-        {
-            get { return tableReference; }
-            set { tableReference = value; }
-        }
-
         #region Constructors and initialiters
 
         public BayesianXMatchTableSource()
         {
-            InitializeMembers();
         }
 
         public BayesianXMatchTableSource(XMatchTableSource old)
@@ -32,30 +23,23 @@ namespace Jhu.SkyQuery.Parser
         public BayesianXMatchTableSource(BayesianXMatchTableSource old)
             : base(old)
         {
-            CopyMembers(old);
         }
 
-        private void InitializeMembers()
+        public override object Clone()
         {
-        }
-
-        private void CopyMembers(BayesianXMatchTableSource old)
-        {
-            this.tableReference = old.tableReference;
+            return new BayesianXMatchTableSource(this);
         }
 
         #endregion
 
-        public override Node Interpret()
+        public override void Interpret()
         {
-            tableReference = new BayesianXMatchTableReference()
+ 	        base.Interpret();
+
+            TableReference = new BayesianXMatchTableReference()
             {
                 Alias = this.Alias
             };
-
-            return base.Interpret();
         }
-
-
     }
 }

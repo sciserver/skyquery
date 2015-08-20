@@ -21,8 +21,19 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
-        public BayesianXMatchQuerySpecification(BayesianXMatchQuerySpecification old)
+        public BayesianXMatchQuerySpecification(XMatchQuerySpecification xqs)
+            :base(xqs)
         {
+        }
+
+        public BayesianXMatchQuerySpecification(BayesianXMatchQuerySpecification old)
+            :base(old)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new BayesianXMatchQuerySpecification(this);
         }
 
         #endregion
