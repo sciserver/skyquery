@@ -33,7 +33,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        private Jhu.Graywulf.SqlParser.TableReference HtmTable
+        protected Jhu.Graywulf.SqlParser.TableReference HtmTable
         {
             get
             {
@@ -45,7 +45,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        private Jhu.Graywulf.SqlParser.TableReference HtmInner
+        protected Jhu.Graywulf.SqlParser.TableReference HtmInner
         {
             get
             {
@@ -57,7 +57,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        private Jhu.Graywulf.SqlParser.TableReference HtmPartial
+        protected Jhu.Graywulf.SqlParser.TableReference HtmPartial
         {
             get
             {
@@ -347,11 +347,11 @@ REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
             var gt = @"INSERT [dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY dec), dec
+SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 INNER JOIN [dbo].[test__htm_TEST_dbo_SDSSDR7PhotoObjAll] __htm
 	ON htmid BETWEEN __htm.htmIDStart AND __htm.htmIDEnd
-WHERE ra > 2";
+WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -367,9 +367,9 @@ REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
             var gt = @"INSERT [dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY dec), dec
+SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-WHERE (@r.ContainsEq(ra, dec) = 1) AND (ra > 2);";
+WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2);";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -385,15 +385,13 @@ REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
             var gt = @"INSERT [dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY dec), dec
+SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-WHERE ra > 2;";
+WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
         }
-
-        
 
         #endregion
     }
