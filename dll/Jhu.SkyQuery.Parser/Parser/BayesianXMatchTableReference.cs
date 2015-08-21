@@ -22,6 +22,7 @@ namespace Jhu.SkyQuery.Parser
 
             DatabaseObject = new Table();
 
+            AddColumn("MatchID", DataTypes.SqlBigInt);
             AddColumn("LogBF", DataTypes.SqlFloat);
             AddColumn("RA", DataTypes.SqlFloat);
             AddColumn("Dec", DataTypes.SqlFloat);
