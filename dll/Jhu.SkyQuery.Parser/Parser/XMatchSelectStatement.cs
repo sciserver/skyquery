@@ -8,6 +8,11 @@ namespace Jhu.SkyQuery.Parser
 {
     public class XMatchSelectStatement : RegionSelectStatement
     {
+        public override bool IsPartitioned
+        {
+            get { return true; }
+        }
+
         public XMatchQuerySpecification XMatchQuerySpecification
         {
             get { return (XMatchQuerySpecification)QueryExpression.FindDescendant<QuerySpecification>(); }
