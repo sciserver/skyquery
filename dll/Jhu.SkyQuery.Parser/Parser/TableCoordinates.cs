@@ -133,7 +133,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return zoneIdHintArguments[0].FindDescendant<Expression>();
+                return zoneIdHintArguments[0];
             }
         }
 
@@ -141,7 +141,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return zoneIdHintArguments[0].FindDescendant<Expression>().FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                return zoneIdHintArguments[0].FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
             }
         }
 
@@ -168,7 +168,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return errorHintArguments[0].FindDescendant<Expression>();
+                return errorHintArguments[0];
             }
         }
 
@@ -176,7 +176,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return errorHintArguments[1].FindDescendant<Expression>();
+                return errorHintArguments[1];
             }
         }
 
@@ -184,7 +184,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return errorHintArguments[2].FindDescendant<Expression>();
+                return errorHintArguments[2];
             }
         }
 
