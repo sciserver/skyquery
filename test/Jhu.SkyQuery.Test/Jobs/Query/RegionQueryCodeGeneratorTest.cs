@@ -78,8 +78,6 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         protected override SqlQuery CreateQuery(string query)
         {
             var q = base.CreateQuery(query);
-            q.ExecutionMode = ExecutionMode.SingleServer;
-
             return q;
         }
 
@@ -336,8 +334,7 @@ WHERE @r.ContainsEq(ra, dec) = 1
             ts.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
             {
                 BinCount = 200,
-                KeyColumn = "dec",
-                KeyColumnDataType = DataTypes.SqlFloat
+                KeyColumn = new Graywulf.SqlParser.ColumnReference("dec", DataTypes.SqlFloat)
             };
 
             var cmd = cg.GetTableStatisticsCommand(ts);
@@ -354,10 +351,10 @@ FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"INSERT [Graywulf_Temp].[dbo].[skyquerytemp_stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+            var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
 SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-INNER JOIN [Graywulf_Temp].[dbo].[skyquerytemp_htm_TEST_dbo_SDSSDR7PhotoObjAll] __htm
+INNER JOIN [Graywulf_Temp].[dbo].[test__htm_TEST_dbo_SDSSDR7PhotoObjAll] __htm
 	ON htmid BETWEEN __htm.htmIDStart AND __htm.htmIDEnd
 WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
 
@@ -374,7 +371,7 @@ FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"INSERT [Graywulf_Temp].[dbo].[skyquerytemp_stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+            var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
 SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2);";
@@ -392,7 +389,7 @@ FROM TEST:SDSSDR7PhotoObjAll
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"INSERT [Graywulf_Temp].[dbo].[skyquerytemp_stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+            var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
 SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
