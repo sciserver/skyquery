@@ -52,32 +52,3 @@ FROM [$tablename]
 INNER JOIN [$htm_partial] __htm
 	ON [$htmid] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd
 [$where_partial]
-
-ORDER BY [ZoneID], [RA]
-
--- Add wrap-around
-
-INSERT [$zonetablename] WITH (TABLOCKX)
-SELECT [t].[ZoneID],
-       [t].[RA] - 360,
-       [t].[Dec],
-       [t].[Cx],
-       [t].[Cy],
-       [t].[Cz],
-       [$insertcolumnlist]
-FROM [$zonetablename] AS [t]
-INNER JOIN [$zonedeftable] [d] ON [d].[ZoneID] = [t].[ZoneID]
-WHERE [t].[RA] + [d].[Alpha] > 360
-
-
-INSERT [$zonetablename] WITH (TABLOCKX)
-SELECT [t].[ZoneID],
-       [t].[RA] + 360,
-       [t].[Dec],
-       [t].[Cx],
-       [t].[Cy],
-       [t].[Cz],
-       [$insertcolumnlist]
-FROM [$zonetablename] AS [t]
-INNER JOIN [$zonedeftable] [d] ON [d].[ZoneID] = [t].[ZoneID]
-WHERE [t].[RA] < [d].[Alpha]
