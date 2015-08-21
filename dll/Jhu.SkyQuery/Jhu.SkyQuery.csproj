@@ -212,7 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Jobs\Query\RegionResources\DropHtmTables.sql" />
-    <Content Include="Jobs\Query\RegionResources\ExecuteQuery.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatisticsNoHtm.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatistics.sql" />
   </ItemGroup>

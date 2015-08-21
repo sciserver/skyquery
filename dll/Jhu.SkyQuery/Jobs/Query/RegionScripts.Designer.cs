@@ -94,45 +94,16 @@ namespace Jhu.SkyQuery.Jobs.Query {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to -- *** RegionResources/DropHtmTables.sql *** ---
+        ///
+        ///-- Clean up
+        ///
+        ///DROP TABLE [$htm_inner];
+        ///DROP TABLE [$htm_partial];.
         /// </summary>
         internal static string DropHtmTables {
             get {
                 return ResourceManager.GetString("DropHtmTables", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** RegionResources/ExecuteQuery.sql *** ---
-        ///
-        ///DECLARE @r dbo.Region = @region;
-        ///
-        ///-- Generate HTM ranges
-        ///
-        ///CREATE TABLE [$htm_inner]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm_inner] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) AS htm
-        ///WHERE partial = 0;
-        ///
-        ///CREATE TABLE [$htm_partial]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm_partial] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) A [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ExecuteQuery {
-            get {
-                return ResourceManager.GetString("ExecuteQuery", resourceCulture);
             }
         }
         
