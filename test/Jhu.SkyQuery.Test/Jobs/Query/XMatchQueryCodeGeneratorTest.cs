@@ -153,6 +153,7 @@ FROM XMATCH
         private string GetExecuteQueryTextTestHelper(string sql)
         {
             var xmq = CreateQuery(sql);
+            xmq.ExecutionMode = ExecutionMode.SingleServer;
 
             var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
             xmqp.ID = 0;
