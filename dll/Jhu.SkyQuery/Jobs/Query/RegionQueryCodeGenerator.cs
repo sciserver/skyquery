@@ -237,10 +237,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (qs is RegionQuerySpecification)
             {
                 var qsinner = new Jhu.Graywulf.SqlParser.QuerySpecification(qs);
-                var needinner = AppendRegionJoinsAndConditions(qsinner, htmInner[qsi], false);
+                var needinner = AppendRegionJoinsAndConditions(qsinner, qsi, htmInner[qsi], false);
 
                 var qspartial = new Jhu.Graywulf.SqlParser.QuerySpecification(qs);
-                var needpartial = AppendRegionJoinsAndConditions(qspartial, htmPartial[qsi], true);
+                var needpartial = AppendRegionJoinsAndConditions(qspartial, qsi, htmPartial[qsi], true);
 
                 qsi++;
 
@@ -275,7 +275,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="htmtable"></param>
         /// <param name="partial"></param>
         /// <returns>Returns true if the query specification needs to be rewritten.</returns>
-        private bool AppendRegionJoinsAndConditions(Jhu.Graywulf.SqlParser.QuerySpecification qs, TableReference htmTable, bool partial)
+        private bool AppendRegionJoinsAndConditions(Jhu.Graywulf.SqlParser.QuerySpecification qs, int qsi, TableReference htmTable, bool partial)
         {
             Jhu.Graywulf.SqlParser.SearchCondition joinConditions = null;
             Jhu.Graywulf.SqlParser.SearchCondition whereConditions = null;
@@ -305,11 +305,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                     }
                 }
 
-                if (partial)
+                if (partial ^ !coords.IsHtmIdSpecified)
                 {
                     // No HTM column is avaiable, filter using region.Contains
                     // Also, points in partial HTM trixels need explicit filtering
-                    var sc = CreateRegionContainsCondition(ts);
+                    var sc = CreateRegionContainsCondition(ts, qsi);
 
                     if (whereConditions == null)
                     {
@@ -369,19 +369,29 @@ namespace Jhu.SkyQuery.Jobs.Query
             return Jhu.Graywulf.SqlParser.SearchCondition.Create(false, p);
         }
 
-        private Jhu.Graywulf.SqlParser.SearchCondition CreateRegionContainsCondition(SkyQuery.Parser.SimpleTableSource ts)
+        private Jhu.Graywulf.SqlParser.SearchCondition CreateRegionContainsCondition(SkyQuery.Parser.SimpleTableSource ts, int qsi)
         {
+            string udt;
             var coords = ts.Coordinates;
+
+            if (qsi >= 0)
+            {
+                udt = regionUdtVariableName + qsi.ToString();
+            }
+            else
+            {
+                udt = regionUdtVariableName;
+            }
 
             UdtFunctionCall udtf;
 
             if (coords.IsCartesianSpecified)
             {
-                udtf = UdtFunctionCall.Create(regionUdtVariableName, "ContainsXyz", coords.GetXyzExpressions(CodeDataset));
+                udtf = UdtFunctionCall.Create(udt, "ContainsXyz", coords.GetXyzExpressions(CodeDataset));
             }
             else if (coords.IsEqSpecified)
             {
-                udtf = UdtFunctionCall.Create(regionUdtVariableName, "ContainsEq", coords.GetEqExpressions(CodeDataset));
+                udtf = UdtFunctionCall.Create(udt, "ContainsEq", coords.GetEqExpressions(CodeDataset));
             }
             else
             {
@@ -493,7 +503,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // In this case, no HTM ID columns is specified so we have to use coordinates
                 // and function calls to apply region filter
 
-                var sc = CreateRegionContainsCondition((SkyQuery.Parser.SimpleTableSource)tableSource);
+                var sc = CreateRegionContainsCondition((SkyQuery.Parser.SimpleTableSource)tableSource, -1);
 
                 if (where == null)
                 {
