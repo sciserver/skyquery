@@ -92,7 +92,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <see cref="Steps"/> collection.
         /// </summary>
         /// <param name="tables"></param>
-        public abstract void GenerateSteps(XMatchTableSpecification[] tables);
+        public abstract void GenerateSteps(IEnumerable<XMatchTableSpecification> tables);
 
         #endregion
         #region Compute search radius
@@ -285,7 +285,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     ExecuteSqlCommand(cmd, CommandTarget.Code);
                 }
 
-                using (var cmd = CodeGenerator.GetBuildInitialMatchTableIndexCommand(step, matchtable))
+                using (var cmd = CodeGenerator.GetBuildMatchTableIndexCommand(step, matchtable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Temp);
                 }

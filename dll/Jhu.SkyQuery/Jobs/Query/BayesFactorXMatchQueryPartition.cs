@@ -77,6 +77,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+
+        protected override SqlServerCodeGenerator CreateCodeGenerator()
+        {
+            return new BayesFactorXMatchQueryCodeGenerator(this);
+        }
+
         #region Step generation
 
         /// <summary>
@@ -89,18 +95,21 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// we don't build the Match and Zone_Match tables, only views on
         /// the zone table of source table.
         /// </remarks>
-        public override void GenerateSteps(XMatchTableSpecification[] tables)
+        public override void GenerateSteps(IEnumerable<XMatchTableSpecification> tables)
         {
             System.Diagnostics.Debug.Assert(steps.Count == 0);
 
-            for (int i = 0; i < tables.Length; i++)
+            int i = 0;
+            foreach (var t in tables)
             {
                 var s = new BayesFactorXMatchQueryStep(this, Context);
 
                 s.StepNumber = i;
-                s.XMatchTable = tables[i].TableReference.UniqueName;
+                s.XMatchTable = t.TableReference.UniqueName;
 
                 steps.Add(s);
+
+                i++;
             }
         }
 

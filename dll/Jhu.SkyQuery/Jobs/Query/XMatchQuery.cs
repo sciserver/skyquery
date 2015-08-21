@@ -124,5 +124,40 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return res;
         }
+
+        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat)
+        {
+            // XmathTables might be reinitialized, so copy statistics
+            foreach (var st in TableSourceStatistics)
+            {
+                xmatchTables[st.TableReference.UniqueName].TableReference.Statistics = st.TableReference.Statistics;
+            }
+
+            // Order tables based on incusion method and statistics
+            var tables = xmatchTables.Values.OrderBy(i => i).ToArray();
+
+            // Find stat histogram with most bins, that will be used to generate partitions
+            // instead of the very first table
+            int statmax = -1;
+            for (int i = 0; i < tables.Length; i++)
+            {
+                if (statmax == -1 ||
+                    tables[i].TableReference.Statistics.RowCount > tables[statmax].TableReference.Statistics.RowCount)
+                {
+                    statmax = i;
+                }
+            }
+
+            stat = tables[statmax].TableReference.Statistics;
+
+            // Generate partitions the standard way
+            base.OnGeneratePartitions(partitionCount, stat);
+
+            // Create steps
+            foreach (var qp in Partitions)
+            {
+                ((XMatchQueryPartition)qp).GenerateSteps(tables);
+            }
+        }
     }
 }

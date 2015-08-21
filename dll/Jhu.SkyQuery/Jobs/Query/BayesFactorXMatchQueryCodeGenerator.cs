@@ -82,8 +82,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 else
                 {
                     // Swap max/min because w = 1 / s^2
-                    min = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorMinExpression, false), System.Globalization.CultureInfo.InvariantCulture);
-                    max = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorMaxExpression, false), System.Globalization.CultureInfo.InvariantCulture);
+                    // TODO: instead of rendering the expression, try to find the number in it
+                    min = double.Parse(Execute(coords.ErrorMinExpression), System.Globalization.CultureInfo.InvariantCulture);
+                    max = double.Parse(Execute(coords.ErrorMaxExpression), System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 if (i == step.StepNumber)
@@ -98,7 +99,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             double factor = (Partition.Steps.Count - 1) * Math.Log(2);
             double wmin = GetWeight(stepmax);
 
-            cmd.Parameters.Add("@H", SqlDbType.Float).Value = Partition.Query.ZoneHeight;
+            AppendZoneHeightParameter(cmd);
             cmd.Parameters.Add("@weightMin", SqlDbType.Float).Value = wmin;
             cmd.Parameters.Add("@factor", SqlDbType.Float).Value = factor;
             cmd.Parameters.Add("@lmax", SqlDbType.Float).Value = lmax;

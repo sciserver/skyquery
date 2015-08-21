@@ -627,6 +627,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return cmd;
         }
 
+#if false
         /// <summary>
         /// When overriden in a derived class, populates a match table from
         /// an original dataset (i.e. no real matching occures)
@@ -685,13 +686,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return null;
         }
+#endif
 
         protected virtual string GetBuildMatchTableIndexScript(XMatchTableSpecification table, int stepNumber)
         {
             throw new NotImplementedException();
         }
 
-        public SqlCommand GetBuildInitialMatchTableIndexCommand(XMatchQueryStep step, Table matchtable)
+
+        public SqlCommand GetBuildMatchTableIndexCommand(XMatchQueryStep step, Table matchtable)
         {
             /*
             var indexname = GetMatchTableZoneIndexName(stepNumber);
@@ -707,6 +710,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return null;
         }
+
 
         #endregion
         #region Final query execution

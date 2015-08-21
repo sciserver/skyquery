@@ -317,7 +317,7 @@ WHERE @r0.ContainsEq(ra, dec) = 1
             ts.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
             {
                 BinCount = 200,
-                KeyColumn = new Graywulf.SqlParser.ColumnReference("dec", DataTypes.SqlFloat)
+                KeyColumn = Graywulf.SqlParser.Expression.Create(new Graywulf.SqlParser.ColumnReference("dec", DataTypes.SqlFloat))
             };
 
             var cmd = cg.GetTableStatisticsCommand(ts);

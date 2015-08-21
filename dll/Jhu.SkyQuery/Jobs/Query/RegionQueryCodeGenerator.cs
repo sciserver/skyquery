@@ -65,7 +65,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var create = new StringBuilder();
             var drop = new StringBuilder();
             int qsi = 0;
-            
+
             // Generate HTM tables
             CollectHtmTables(selectStatement.QueryExpression, htminner, htmpartial, regions, ref qsi);
 
@@ -91,7 +91,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.AppendLine(create.ToString());
 
             AppendQuery(sql, selectStatement, method, destination);
-            
+
             sql.AppendLine(drop.ToString());
 
             // Return a table source query
@@ -413,7 +413,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             var coords = ts.Coordinates;
             var qs = ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
 
-            if (qs is RegionQuerySpecification && coords != null && !coords.IsNoRegion)
+            if (qs is RegionQuerySpecification && ((RegionQuerySpecification)qs).Region != null &&
+                coords != null && !coords.IsNoRegion)
             {
                 return this.GetTableStatisticsWithRegionCommand(tableSource);
             }

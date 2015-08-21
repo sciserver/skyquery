@@ -42,9 +42,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override void CollectTablesForStatistics()
         {
-            /*
             TableSourceStatistics.Clear();
-            decimal binsize = (decimal)(5 * ZoneHeight);   // histogram bin size in Dec
 
             foreach (var table in xmatchTables.Values)
             {
@@ -52,24 +50,23 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 // Collect statistics for zoneID
                 tr.Statistics = new Graywulf.SqlParser.TableStatistics();
-                tr.Statistics.KeyColumnDataType = DataTypes.Int32;
-                tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdString(CodeDataset);
+                tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdExpression(CodeDataset);
+                tr.Statistics.KeyColumnDataType = DataTypes.SqlInt;
 
                 TableSourceStatistics.Add(table.TableSource);
             }
-             * */
         }
 
+#if false
         public override void GeneratePartitions(int partitionCount)
         {
-            /*
             switch (ExecutionMode)
             {
                 case ExecutionMode.SingleServer:
                     {
                         // No partitioning for single server
                         // Use this for debugging purposes too
-                        var qp = new BayesFactorXMatchQueryPartition(this, null);
+                        var qp = new BayesFactorXMatchQueryPartition(this);
                         qp.GenerateSteps(xmatchTables.Values.ToArray());
                         AppendPartition(qp);
                     }
@@ -97,54 +94,16 @@ namespace Jhu.SkyQuery.Jobs.Query
                         }
 
                         var stat = tables[statmax].TableReference.Statistics;
-                        GeneratePartitions(partitionCount, stat, tables);
+                        GeneratePartitionsInternal(partitionCount, stat, tables);
                     }
                     break;
                 default:
                     throw new NotImplementedException();
             }
-             * */
         }
+#endif
 
-        private void GeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat, XMatchTableSpecification[] tables)
-        {
-            /*
-            // TODO: verify with repeating keys!
-
-            BayesFactorXMatchQueryPartition qp = null;
-            int s = stat.KeyValue.Count / partitionCount;
-
-            if (s == 0)
-            {
-                qp = new BayesFactorXMatchQueryPartition(this, this.Context);
-                qp.GenerateSteps(tables);
-                AppendPartition(qp);
-            }
-            else
-            {
-                for (int i = 0; i < partitionCount; i++)
-                {
-                    qp = new BayesFactorXMatchQueryPartition(this, this.Context);
-                    qp.GenerateSteps(tables);
-
-                    // *** TODO: verify bounds
-                    qp.PartitioningKeyTo = stat.KeyValue[Math.Min((i + 1) * s, stat.KeyValue.Count - 1)];
-                    if (i == 0)
-                    {
-                        qp.PartitioningKeyFrom = null;
-                    }
-                    else
-                    {
-                        qp.PartitioningKeyFrom = Partitions[i - 1].PartitioningKeyTo;
-                    }
-
-                    AppendPartition(qp);
-                }
-
-                Partitions[Partitions.Count - 1].PartitioningKeyTo = null;
-            }
-             * */
-        }
+        
 
         protected override SqlQueryCodeGenerator CreateCodeGenerator()
         {

@@ -39,6 +39,22 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         [TestMethod]
         [TestCategory("Query")]
+        public void SimpleXMatchTest()
+        {
+            var sql = @"
+SELECT x.matchID, a.objID, b.objID
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS b WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x";
+
+            RunQuery(sql, new TimeSpan(0, 10, 0));
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void SelfJoinTest()
         {
             var sql =
