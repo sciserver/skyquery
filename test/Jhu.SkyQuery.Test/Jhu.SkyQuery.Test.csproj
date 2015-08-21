@@ -53,12 +53,9 @@
     <Compile Include="Format\Fits\FitsReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
-    <Compile Include="Jobs\Query\MyDBSqlQueryTest.cs" />
-    <Compile Include="Jobs\Query\PartitionedSqlQueryTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGeneratorTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryTest.cs" />
     <Compile Include="Jobs\Query\SkyQueryTestBase.cs" />
-    <Compile Include="Jobs\Query\SqlQueryTest.cs" />
     <Compile Include="Jobs\Query\TableStatisticsTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGeneratorTest.cs">
       <SubType>Code</SubType>
