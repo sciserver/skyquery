@@ -31,25 +31,6 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        /*private SchemaManager CreateSchemaManager()
-        {
-            return new SqlServerSchemaManager();
-        }
-
-        private QuerySpecification Parse(string query)
-        {
-            var p = new Jhu.SkyQuery.Parser.SkyQueryParser();
-            var ss = (SelectStatement)p.Execute(query);
-
-            var nr = new Jhu.SkyQuery.Parser.SkyQueryNameResolver();
-            nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
-            nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
-            nr.SchemaManager = CreateSchemaManager();
-            nr.Execute(ss);
-
-            return (QuerySpecification)ss.EnumerateQuerySpecifications().First(); ;
-        }*/
-
         private string[] GeneratePropagatedColumnListTestHelper(string sql, ColumnListInclude include)
         {
             var res = new List<string>();
@@ -137,10 +118,9 @@ FROM XMATCH
 
         #endregion
 
-#if false
 
         // ---
-
+        /* TODO: delete
         private string GetExecuteQueryTextTestHelper(string query)
         {
             var sm = CreateSchemaManager();
@@ -168,6 +148,26 @@ FROM XMATCH
 
             return (string)m.Invoke(xmqp, null);
         }
+         * */
+
+        private string GetExecuteQueryTextTestHelper(string sql)
+        {
+            var xmq = CreateQuery(sql);
+
+            var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
+            xmqp.ID = 0;
+            xmqp.InitializeQueryObject(null);
+
+            var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
+            var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
+            var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
+            xmqp.GenerateSteps(xmtables);
+
+            var cg = new XMatchQueryCodeGenerator(xmqp);
+            var res = cg.GetExecuteQuery(xmq.SelectStatement);
+
+            return res.Query;
+        }
 
         [TestMethod]
         public void GetOutputSelectQueryTest()
@@ -177,18 +177,19 @@ FROM XMATCH
 b.objID, b.ra, b.dec,
 x.ra, x.dec
 FROM XMATCH
-    (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-     MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+    (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+     MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            var res = GetExecuteQueryTextTestHelper(sql);
-
-            Assert.AreEqual(
+            var gt = 
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
 [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
 [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]", res);
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+";
 
+            var res = GetExecuteQueryTextTestHelper(sql);
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -199,16 +200,19 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]", res);
          b.objID, b.ra, b.dec,
          x.ra, x.dec
 FROM XMATCH
-     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
-      MUST EXIST IN CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
+     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+      MUST EXIST IN TEST:CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
       LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            Assert.AreEqual(
+            var gt =
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
          [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]", GetExecuteQueryTextTestHelper(sql));
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]
+";
+
+            Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
         }
 
         [TestMethod]
@@ -220,19 +224,21 @@ FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]", GetExecuteQ
          c.objID, c.ra, c.dec,
          x.ra, x.dec
 FROM XMATCH
-     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
       LIMIT BAYESFACTOR TO 1e3) AS x
-CROSS JOIN CatalogC c";
+CROSS JOIN TEST:CatalogC c";
 
-            Assert.AreEqual(
+            var gt =
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
          [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
-CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]", GetExecuteQueryTextTestHelper(sql));
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]
+";
 
+            Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
         }
 
         [TestMethod]
@@ -244,20 +250,23 @@ CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]", GetExecuteQueryTextTestHelper(s
          c.objID, c.ra, c.dec,
          x.ra, x.dec
 FROM XMATCH
-     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
       LIMIT BAYESFACTOR TO 1e3) AS x
-INNER JOIN CatalogC c ON c.objId = a.objId";
+INNER JOIN TEST:CatalogC c ON c.objId = a.objId";
 
-            var res = GetExecuteQueryTextTestHelper(sql);
-
-            Assert.AreEqual(
+            var gt =
 @"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
          [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
-INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [matchtable].[_TEST_dbo_CatalogA_a_objId]", res);
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [matchtable].[_TEST_dbo_CatalogA_a_objId]
+";
+
+            var res = GetExecuteQueryTextTestHelper(sql);
+
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -266,17 +275,20 @@ INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [matchtable].[_T
             var sql =
 @"SELECT a.objID, b.objID
 FROM XMATCH
-     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
       LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE a.ra BETWEEN 1 AND 2";
 
+            var gt =
+@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+WHERE [matchtable].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2
+";
+
             var res = GetExecuteQueryTextTestHelper(sql);
 
-            Assert.AreEqual(
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
-WHERE [matchtable].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2", res);
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -285,19 +297,22 @@ WHERE [matchtable].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2", res);
             var sql =
 @"SELECT a.objID, b.objID
 FROM XMATCH
-     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
       LIMIT BAYESFACTOR TO 1e3) AS x,
-     CatalogC c
+     TEST:CatalogC c
 WHERE c.ra BETWEEN 1 AND 2";
+
+            var gt =
+@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
+     [SkyNode_Test].[dbo].[CatalogC] [c]
+WHERE [c].[ra] BETWEEN 1 AND 2
+";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
-            Assert.AreEqual(
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
-     [SkyNode_Test].[dbo].[CatalogC] [c]
-WHERE [c].[ra] BETWEEN 1 AND 2", res);
+            Assert.AreEqual(gt, res);
 
         }
 
@@ -307,21 +322,24 @@ WHERE [c].[ra] BETWEEN 1 AND 2", res);
             var sql =
 @"SELECT a.objID, b.objID, c.objID
 FROM XMATCH
-     (MUST EXIST IN CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
+      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
       LIMIT BAYESFACTOR TO 1e3) AS x,
-     (SELECT * FROM CatalogC) c
+     (SELECT * FROM TEST:CatalogC) c
 WHERE c.ra BETWEEN 1 AND 2";
+
+            var gt =
+@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
+     (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[zoneId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
+WHERE [c].[ra] BETWEEN 1 AND 2
+";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
-            Assert.AreEqual(
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
-FROM [SkyNode_Test].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
-     (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[zoneId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
-WHERE [c].[ra] BETWEEN 1 AND 2", res);
+            Assert.AreEqual(gt, res);
 
         }
-#endif
+
     }
 }

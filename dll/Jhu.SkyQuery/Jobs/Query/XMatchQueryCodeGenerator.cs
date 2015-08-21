@@ -29,6 +29,25 @@ namespace Jhu.SkyQuery.Jobs.Query
             get { return queryObject as XMatchQueryPartition; }
         }
 
+        private XMatchQuery Query
+        {
+            get
+            {
+                if (queryObject is XMatchQuery)
+                {
+                    return (XMatchQuery)queryObject;
+                }
+                else if (queryObject is XMatchQueryPartition)
+                {
+                    return Partition.Query;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         #endregion
         #region Constructors and initializers
 
@@ -59,12 +78,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             return 1.0 / (a * a);
         }
 
+        protected void AppendZoneHeightParameter(SqlCommand cmd)
+        {
+            cmd.Parameters.Add(zoneHeightParameterName, SqlDbType.Float).Value = Query.ZoneHeight;
+        }
+
         #region Search radius functions
 
         public SqlCommand GetComputeMinMaxErrorCommand(XMatchQueryStep step)
         {
             var sql = new StringBuilder(XMatchScripts.ComputeMinMaxError);
-            var table = Partition.Query.XMatchTables[step.XMatchTable];
+            var table = Query.XMatchTables[step.XMatchTable];
             var coords = table.Coordinates;
 
             var where = GetTableSpecificWhereClause(table.TableSource);
@@ -204,7 +228,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var cmd = new SqlCommand(sql.ToString());
 
-            cmd.Parameters.Add("@H", SqlDbType.Float).Value = Partition.Query.ZoneHeight;
+            cmd.Parameters.Add("@H", SqlDbType.Float).Value = Query.ZoneHeight;
             cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = Partition.Steps[step.StepNumber].SearchRadius;
             AppendPartitioningConditionParameters(cmd);
 
@@ -231,7 +255,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public SqlCommand GetCreateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
-            var table = Partition.Query.XMatchTables[step.XMatchTable];
+            var table = Query.XMatchTables[step.XMatchTable];
 
             var sql = new StringBuilder(XMatchScripts.CreateZoneTable);
 
@@ -254,7 +278,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public SqlCommand GetPopulateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
-            var table = Partition.Query.XMatchTables[step.XMatchTable];
+            var table = Query.XMatchTables[step.XMatchTable];
             var coords = table.Coordinates;
             var qs = (XMatchQuerySpecification)table.FindAscendant<SkyQuery.Parser.QuerySpecification>();
             var region = qs.Region;
@@ -393,8 +417,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             var step1 = Partition.Steps[step.StepNumber - 1];
             var step2 = step;
 
-            var table1 = Partition.Query.XMatchTables[step1.XMatchTable];
-            var table2 = Partition.Query.XMatchTables[step2.XMatchTable];
+            var table1 = Query.XMatchTables[step1.XMatchTable];
+            var table2 = Query.XMatchTables[step2.XMatchTable];
 
             StringBuilder sql = new StringBuilder(XMatchScripts.PopulatePairTable);
 
@@ -462,6 +486,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             return queryObject.GetTemporaryTable(String.Format("Match_{0}", step.StepNumber));
         }
 
+        protected string GetMatchTableZoneIndexName(XMatchQueryStep step)
+        {
+            return String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
+        }
+
         protected virtual string GetCreateMatchTableScript(XMatchQueryStep step)
         {
             throw new NotImplementedException();
@@ -492,10 +521,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 // TODO: check this when implementing drop-outs
 
-                if (Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
+                if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
                     var columns = GeneratePropagatedColumnList(
-                        Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource,
+                        Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource,
                         null,
                         ColumnListInclude.Referenced,
                         ColumnListType.ForCreateTable,
@@ -531,7 +560,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new InvalidOperationException();
             }
 
-            var table = Partition.Query.XMatchTables[step.XMatchTable];
+            var table = Query.XMatchTables[step.XMatchTable];
 
             var tr = new TableReference(table.TableReference);
             SubstituteRemoteTableName(tr);
@@ -547,7 +576,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var selectcolumnlist = new StringBuilder();
             for (int i = 0; i <= step.StepNumber; i++)
             {
-                if (Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
+                if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
                     if (insertcolumnlist.Length != 0)
                     {
@@ -559,20 +588,20 @@ namespace Jhu.SkyQuery.Jobs.Query
                     var listtype = (i < step.StepNumber) ? ColumnListType.ForSelectNoAlias : ColumnListType.ForSelectWithOriginalName;
 
                     // ForSelectNoalias -> ForInsert
-                    insertcolumnlist.Append(GeneratePropagatedColumnList(Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, null, include, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
-                    selectcolumnlist.Append(GeneratePropagatedColumnList(Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, tablealias, include, listtype, ColumnListNullType.Nothing, false));
+                    insertcolumnlist.Append(GeneratePropagatedColumnList(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, null, include, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
+                    selectcolumnlist.Append(GeneratePropagatedColumnList(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, tablealias, include, listtype, ColumnListNullType.Nothing, false));
                 }
             }
 
             // --- Zone table join conditions
             var join = new StringBuilder();
-            var t = (TableOrView)Partition.Query.XMatchTables[step.XMatchTable].TableReference.DatabaseObject;
+            var t = (TableOrView)Query.XMatchTables[step.XMatchTable].TableReference.DatabaseObject;
 
             foreach (var c in t.PrimaryKey.Columns.Values)
             {
                 join.AppendLine(String.Format(
                     "[tableB].[{1}] = [pairtable].[{0}]",
-                    EscapePropagatedColumnName(Partition.Query.XMatchTables[step.XMatchTable].TableReference, c.Name),
+                    EscapePropagatedColumnName(Query.XMatchTables[step.XMatchTable].TableReference, c.Name),
                     c.Name));
             }
 
@@ -680,34 +709,33 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
-        #region Temporary table name generator functions
+        #region Final query execution
 
-
-        protected string GetMatchTableZoneIndexName(XMatchQueryStep step)
+        protected override SourceTableQuery GetExecuteQueryImpl(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
         {
-            return String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
+            // Collect tables that are part of the XMatch operation
+            var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+
+            ReplaceXMatchClause(qs);
+
+            return base.GetExecuteQueryImpl(selectStatement, method, destination);
         }
 
-        #endregion
-
-        public void AppendZoneHeightParameter(SqlCommand cmd)
+        protected void ReplaceXMatchClause(XMatchQuerySpecification qs)
         {
-            cmd.Parameters.Add(zoneHeightParameterName, SqlDbType.Float).Value = Partition.Query.ZoneHeight;
-        }
+            var xmts = qs.XMatchTableSource;
+            var xmtstr = new List<TableReference>(xmts.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
+            var matchtable = GetMatchTable(Partition.Steps[Partition.Steps.Count - 1]);
 
-        private void SubstituteEscapedColumnNames(Jhu.Graywulf.SqlParser.QuerySpecification qs, List<TableReference> xmtstr)
-        {
-            // Replace column references to point to match table
-            // also, change column names to the escaped names
-            foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Jhu.Graywulf.SqlParser.Subquery)))
-            {
-                var cr = ci.ColumnReference;
+            SubstituteEscapedColumnNames(qs, xmtstr);
+            SubstituteMatchTableName(qs, xmtstr);
 
-                if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
-                {
-                    cr.ColumnName = EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);
-                }
-            }
+            // Create match table expression tree
+            var mtr = new TableReference(matchtable, "matchtable");
+
+            var nts = Jhu.Graywulf.SqlParser.SimpleTableSource.Create(mtr);
+
+            xmts.ExchangeWith(nts);
         }
 
         private void SubstituteMatchTableName(Jhu.Graywulf.SqlParser.QuerySpecification qs, List<TableReference> xmtstr)
@@ -734,49 +762,19 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        #region Final query execution
-
-        protected override SourceTableQuery GetExecuteQueryImpl(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
+        private void SubstituteEscapedColumnNames(Jhu.Graywulf.SqlParser.QuerySpecification qs, List<TableReference> xmtstr)
         {
-            // Collect tables that are part of the XMatch operation
-            var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
-
-            ReplaceXMatchClause(qs);
-
-            return base.GetExecuteQueryImpl(selectStatement, method, destination);
-        }
-
-        protected void ReplaceXMatchClause(XMatchQuerySpecification qs)
-        {
-            var xm = qs.XMatchTableSource;
-            var xmtstr = new List<TableReference>(xm.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
-            var matchtable = GetMatchTable(Partition.Steps[Partition.Steps.Count - 1]);
-
-            SubstituteEscapedColumnNames(qs, xmtstr);
-            SubstituteMatchTableName(qs, xmtstr);
-
-            // Create match table expression tree
-
-            var nts = new Jhu.Graywulf.SqlParser.ComputedTableSource();
-            nts.TableReference = new TableReference()
+            // Replace column references to point to match table
+            // also, change column names to the escaped names
+            foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Jhu.Graywulf.SqlParser.Subquery)))
             {
-                DatabaseName = matchtable.DatabaseName,
-                SchemaName = matchtable.SchemaName,
-                DatabaseObjectName = matchtable.TableName,
-                Alias = "matchtable"                            // *** TODO use constant
-            };
+                var cr = ci.ColumnReference;
 
-            nts.Stack.AddLast(TableOrViewName.Create(nts.TableReference));
-            nts.Stack.AddLast(Whitespace.Create());
-            nts.Stack.AddLast(Jhu.Graywulf.ParserLib.Keyword.Create("AS"));
-            nts.Stack.AddLast(Whitespace.Create());
-            nts.Stack.AddLast(TableAlias.Create("matchtable"));                 // *** TODO use constant
-
-            // Replace XMATCH part with match table
-            xm.Parent.Stack.AddBefore(
-                xm.Parent.Stack.Find(xm),
-                Jhu.Graywulf.SqlParser.TableSource.Create(nts));
-            xm.Parent.Stack.Remove(xm);
+                if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
+                {
+                    cr.ColumnName = EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);
+                }
+            }
         }
 
         #endregion

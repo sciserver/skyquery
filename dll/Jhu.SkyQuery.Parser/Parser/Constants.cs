@@ -16,7 +16,5 @@ namespace Jhu.SkyQuery.Parser
         public const string HtmIdHintIdentifier = "HTMID";
         public const string ZoneIdHintIdentifier = "ZONEID";
         public const string ErrorHintIdentifier = "ERROR";
-
-        public const string DefaultCodeDatasetFunctionPrefix = "[SkyQuery_Code].[dbo]";
     }
 }

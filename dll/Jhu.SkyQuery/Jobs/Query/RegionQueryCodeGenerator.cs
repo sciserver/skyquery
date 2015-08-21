@@ -56,7 +56,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (!(selectStatement is RegionSelectStatement))
             {
-                return base.GetExecuteQuery(selectStatement, method, destination);
+                return base.GetExecuteQueryImpl(selectStatement, method, destination);
             }
 
             var htminner = new List<TableReference>();
@@ -68,13 +68,22 @@ namespace Jhu.SkyQuery.Jobs.Query
             
             // Generate HTM tables
             CollectHtmTables(selectStatement.QueryExpression, htminner, htmpartial, regions, ref qsi);
+
+            // XMatch queries might not have a REGION constraint but they
+            // still inherit from RegionQuerySpecification. In this case, simply
+            // revert to non-region logic
+            if (qsi == 0)
+            {
+                return base.GetExecuteQueryImpl(selectStatement, method, destination);
+            }
+
             GenerateHtmTablesScript(htminner, htmpartial, create, drop);
 
             // Rewrite query
             AppendRegionJoinsAndConditions(selectStatement, htminner, htmpartial);
             RemoveNonStandardTokens(selectStatement, method);
 
-            SubstituteDatabaseNames(selectStatement, queryObject.AssignedServerInstance, Partition.Query.SourceDatabaseVersionName);
+            SubstituteServerSpecificDatabaseNames(selectStatement, queryObject.AssignedServerInstance, Partition.Query.SourceDatabaseVersionName);
             SubstituteRemoteTableNames(selectStatement);
 
             // Compose final script
@@ -150,11 +159,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             var qs = queryExpression.FindDescendant<Jhu.Graywulf.SqlParser.QuerySpecification>();
             if (qs is RegionQuerySpecification)
             {
-                htmInner.Add(GetHtmTable(qsi, false));
-                htmPartial.Add(GetHtmTable(qsi, true));
-                regions.Add(((RegionQuerySpecification)qs).Region);
+                var rqs = (RegionQuerySpecification)qs;
 
-                qsi++;
+                // XMatch queries might not have a REGION constraint but they
+                // still inherit from RegionQuerySpecification
+                if (rqs.Region != null)
+                {
+                    htmInner.Add(GetHtmTable(qsi, false));
+                    htmPartial.Add(GetHtmTable(qsi, true));
+                    regions.Add(rqs.Region);
+
+                    qsi++;
+                }
             }
         }
 
@@ -384,9 +400,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource)
         {
             var ts = (SkyQuery.Parser.SimpleTableSource)tableSource;
+            var coords = ts.Coordinates;
             var qs = ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
 
-            if (qs is RegionQuerySpecification)
+            if (qs is RegionQuerySpecification && coords != null && !coords.IsNoRegion)
             {
                 return this.GetTableStatisticsWithRegionCommand(tableSource);
             }
@@ -424,7 +441,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var table = (TableOrView)tableSource.TableReference.DatabaseObject;
             var coords = ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates;
-            var tablename = GetEscapedUniqueName(tableSource.TableReference);
+            var tablename = GenerateEscapedUniqueName(tableSource.TableReference);
             var htmtable = new TableReference(queryObject.GetTemporaryTable("htm_" + tablename), "__htm");
 
             if (coords == null || coords.IsNoRegion)

@@ -6,7 +6,7 @@ using Jhu.Graywulf.ParserLib;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class XMatchSelectStatement : SelectStatement
+    public class XMatchSelectStatement : RegionSelectStatement
     {
         public XMatchQuerySpecification XMatchQuerySpecification
         {
