@@ -96,6 +96,17 @@ FROM table WITH (HTMID(htmid))";
             Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd", sc.ToString());
         }
 
+        private string CreateRegionContainsConditionTestHelper(string sql)
+        {
+            var ss = Parse(sql);
+            var ts = ss.EnumerateSourceTables(false).First();
+
+            var sc = (Jhu.Graywulf.SqlParser.SearchCondition)CallMethod(CodeGenerator, "CreateRegionContainsCondition", ts, -1);
+
+            return CodeGenerator.Execute(sc);
+        }
+
+
         [TestMethod]
         public void CreateRegionContainsConditionXyzTest()
         {
@@ -103,12 +114,9 @@ FROM table WITH (HTMID(htmid))";
 SELECT *
 FROM table WITH (POINT(cx, cy, cz))";
 
-            var ss = Parse(sql);
-            var ts = ss.EnumerateSourceTables(false).First();
+            var gt = "@r.ContainsXyz(cx, cy, cz) = 1";
 
-            var sc = CallMethod(CodeGenerator, "CreateRegionContainsCondition", ts);
-
-            Assert.AreEqual("@r.ContainsXyz(cx, cy, cz) = 1", sc.ToString());
+            Assert.AreEqual(gt, CreateRegionContainsConditionTestHelper(sql));
         }
 
         [TestMethod]
@@ -118,12 +126,20 @@ FROM table WITH (POINT(cx, cy, cz))";
 SELECT *
 FROM table WITH (POINT(ra, dec))";
 
+            var gt = "@r.ContainsEq(ra, dec) = 1";
+
+            Assert.AreEqual(gt, CreateRegionContainsConditionTestHelper(sql));
+        }
+
+        private string AppendRegionJoinsAndConditionsTestHelper(string sql, bool partial)
+        {
             var ss = Parse(sql);
-            var ts = ss.EnumerateSourceTables(false).First();
+            var qs = ss.EnumerateQuerySpecifications().First();
 
-            var sc = CallMethod(CodeGenerator, "CreateRegionContainsCondition", ts);
+            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, -1, HtmTable, partial);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
 
-            Assert.AreEqual("@r.ContainsEq(ra, dec) = 1", sc.ToString());
+            return CodeGenerator.Execute(qs);
         }
 
         [TestMethod]
@@ -140,13 +156,7 @@ INNER JOIN htmtable AS [__htm]
 ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
 ";
 
-            var ss = Parse(sql);
-            var qs = ss.EnumerateQuerySpecifications().First();
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, HtmTable, false);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
-
-            Assert.AreEqual(gt, CodeGenerator.Execute(qs));
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
         }
 
         [TestMethod]
@@ -164,13 +174,7 @@ ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
 WHERE @r.ContainsEq(ra, dec) = 1
 ";
 
-            var ss = Parse(sql);
-            var qs = ss.EnumerateQuerySpecifications().First();
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, HtmTable, true);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
-
-            Assert.AreEqual(gt, CodeGenerator.Execute(qs));
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, true));
         }
 
         [TestMethod]
@@ -186,13 +190,7 @@ FROM table
 WHERE @r.ContainsEq(ra, dec) = 1
 ";
 
-            var ss = Parse(sql);
-            var qs = ss.EnumerateQuerySpecifications().First();
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, HtmTable, true);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
-
-            Assert.AreEqual(gt, CodeGenerator.Execute(qs));
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
         }
 
         [TestMethod]
@@ -207,14 +205,20 @@ REGION 'CIRCLE J2000 10 10 10'";
 FROM table
 ";
 
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
+
+        }
+
+        private string AppendRegionJoinsAndConditionsTestHelper2(string sql)
+        {
             var ss = Parse(sql);
-            var qs = ss.EnumerateQuerySpecifications().First();
+            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner, HtmInner };
+            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial, HtmPartial };
 
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, HtmTable, true);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
+            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
 
-            Assert.AreEqual(gt, CodeGenerator.Execute(qs));
-
+            return CodeGenerator.Execute(ss);
         }
 
         [TestMethod]
@@ -236,17 +240,10 @@ UNION ALL
 FROM table 
 INNER JOIN htmpartial AS [__htm_partial]
 ON htmid BETWEEN __htm_partial.HtmIDStart AND __htm_partial.HtmIDEnd
-WHERE @r.ContainsEq(ra, dec) = 1
+WHERE @r0.ContainsEq(ra, dec) = 1
 ))";
 
-            var ss = Parse(sql);
-            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner };
-            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial };
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
-
-            Assert.AreEqual(gt, CodeGenerator.Execute(ss));
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
         }
 
         [TestMethod]
@@ -260,17 +257,10 @@ REGION 'CIRCLE J2000 10 10 10'";
             var gt = @"
 SELECT table.*
 FROM table 
-WHERE @r.ContainsEq(ra, dec) = 1
+WHERE @r0.ContainsEq(ra, dec) = 1
 ";
 
-            var ss = Parse(sql);
-            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner };
-            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial };
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
-
-            Assert.AreEqual(gt, CodeGenerator.Execute(ss));
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
         }
 
         [TestMethod]
@@ -296,7 +286,7 @@ UNION ALL
 FROM table 
 INNER JOIN htmpartial AS [__htm_partial]
 ON htmid BETWEEN __htm_partial.HtmIDStart AND __htm_partial.HtmIDEnd
-WHERE @r.ContainsEq(ra, dec) = 1
+WHERE @r1.ContainsEq(ra, dec) = 1
 ))
 UNION
 ((SELECT table2.*
@@ -309,17 +299,10 @@ UNION ALL
 FROM table2 
 INNER JOIN htmpartial AS [__htm_partial]
 ON htmid BETWEEN __htm_partial.HtmIDStart AND __htm_partial.HtmIDEnd
-WHERE @r.ContainsEq(ra, dec) = 1
+WHERE @r0.ContainsEq(ra, dec) = 1
 ))";
 
-            var ss = Parse(sql);
-            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner, HtmInner };
-            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial, HtmPartial };
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
-
-            Assert.AreEqual(gt, CodeGenerator.Execute(ss));
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
         }
 
         #region Statistics query tests

@@ -532,5 +532,108 @@ FROM XMATCH
                 }
             }
         }
+
+        /*
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchRegionQueryTest()
+        {
+            var sql = @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
+INTO [$into]
+FROM XMATCH
+    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec, s.cx, s.cy, s.cz), HTMID(s.htmid), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec, g.cx, g.cy, g.cz), HTMID(g.htmid), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 2.5 2.5 120'";
+
+            RunQuery(sql);
+        }
+         * */
+
+        /*
+         * [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithoutZoneIDTest()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM XMATCH
+    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+         * */
+
+        /*
+         * [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchRegionQueryWithHtm()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM XMATCH
+    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS s WITH(POINT(ra, dec), HTMID(htmid), ZONEID(zoneID), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS g WITH(POINT(ra, dec), HTMID(htmid), ZONEID(zoneID), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 60'";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchRegionQueryWithHtmNoZone()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM XMATCH
+    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), HTMID(htmid), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), HTMID(htmid), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 60'";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchRegionQueryWithNoHtm()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM XMATCH
+    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 60'";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchRegionQueryWithNoHtmWithWhere()
+        {
+            var sql =
+@"SELECT s.objid, g.objid
+INTO [$targettable]
+FROM XMATCH
+    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1)),
+     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 60'
+WHERE s.ra < 0";
+
+            RunQuery(sql, GetTestUniqueName());
+        }
+         * */
     }
 }
