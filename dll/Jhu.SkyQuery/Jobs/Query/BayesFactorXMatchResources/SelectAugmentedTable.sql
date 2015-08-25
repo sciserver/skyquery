@@ -1,6 +1,6 @@
 ﻿	SELECT [$ra] AS [RA],
-		   [$dec] AS [Dec],
-		   [$cx] AS [Cx],
+	       [$dec] AS [Dec],
+	       [$cx] AS [Cx],
 	       [$cy] AS [Cy],
 	       [$cz] AS [Cz],
 	       [$weight] AS [a],
