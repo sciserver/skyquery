@@ -10,7 +10,10 @@ using Jhu.Graywulf.SqlParser;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
+using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
+
+
 namespace Jhu.SkyQuery.Jobs.Query
 {
     public class BayesFactorXMatchQueryCodeGenerator : XMatchQueryCodeGenerator
@@ -33,22 +36,61 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+        #region Source table functions
+
+        protected override StringBuilder GetSelectAugmentedTableTemplate()
+        {
+            return new StringBuilder(BayesFactorXMatchScripts.SelectSourceTable);
+        }
+
+        protected override StringBuilder GetSelectSourceTableQueryHtmTemplate()
+        {
+            return new StringBuilder(BayesFactorXMatchScripts.SelectSourceTableHtm);
+        }
+
+        protected override StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
+        {
+            var coords = options.Table.Coordinates;
+            var error = new Expression(coords.ErrorExpression);
+            var weight = GetWeightExpressionString(Execute(error));
+
+            var sql = base.GenerateAugmentedTableQuery(options);
+
+            sql.Replace("[$weight]", weight);
+            sql.Replace("[$n]", Partition.Steps.Count.ToString());
+
+            return sql;
+        }
+
+        #endregion
         #region Search radius functions
 
         public SqlCommand GetComputeSearchRadiusCommand(XMatchQueryStep step)
         {
-            if (step.StepNumber == 0)
-            {
-                throw new NotImplementedException();
-            }
-
+            var table = Partition.Query.XMatchTables[step.XMatchTable];
+            var coords = table.Coordinates;
+            var region = table.Region;
             var matchtable = GetMatchTable(step);
             var sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
 
-            sql.Replace("[$matchtable]", GetResolvedTableName(matchtable));
+            // Generate the augmented table query
+            if (step.StepNumber == 0)
+            {
+                var options = new AugmentedTableQueryOptions(table.TableSource, region);
+
+                sql.Replace("[$query]", GenerateAugmentedTableQuery(options).ToString());
+            }
+            else
+            {
+                var query = GenerateSelectStarQuery(matchtable, -1);
+
+                sql.Replace("[$query]", query);
+            }
 
             var cmd = new SqlCommand(sql.ToString());
+
             AppendComputeSearchRadiusCommandParameters(step, cmd);
+            AppendRegionParameter(cmd, region);
 
             return cmd;
         }
@@ -117,18 +159,37 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override string GetPopulateMatchTableScript(XMatchQueryStep step)
         {
-            StringBuilder sql = new StringBuilder(BayesFactorXMatchScripts.PopulateMatchTable);
+            if (step.StepNumber < 1)
+            {
+                throw new InvalidOperationException();
+            }
 
-            var table = Partition.Query.XMatchTables[step.XMatchTable];
-            var coords = table.Coordinates;
-            var error = new Expression( coords.ErrorExpression);
-            var weight = GetWeightExpressionString(Execute(error));
+            var pstep = Partition.Steps[step.StepNumber - 1];
+            var table1 = Partition.Query.XMatchTables[pstep.XMatchTable];
+            var table2 = Partition.Query.XMatchTables[step.XMatchTable];
 
-            // Change alias to tableB and back to avoid side-effects
-            // TODO
-            // xmatchTables[step.XMatchTable].TableReference.Alias = "tableB";         // *** TODO
-            
-            sql.Replace("[$weight]", weight);
+            string query1, query2;
+
+            if (step.StepNumber == 1)
+            {
+                // The first table is a source table
+                var options = new AugmentedTableQueryOptions(table1.TableSource, table1.Region);
+                query1 = GenerateAugmentedTableQuery(options).ToString();
+            }
+            else
+            {
+                // The first table is a match table
+                query1 = GenerateSelectStarQuery(GetMatchTable(pstep), -1);
+            }
+
+            // The second table is always the next source table
+            var options2 = new AugmentedTableQueryOptions(table2.TableSource, table2.Region);
+            query2 = GenerateAugmentedTableQuery(options2).ToString();
+
+            var sql = new StringBuilder(BayesFactorXMatchScripts.PopulateMatchTable);
+
+            sql.Replace("[query1]", query1);
+            sql.Replace("[query2]", query2);
 
             return sql.ToString();
         }

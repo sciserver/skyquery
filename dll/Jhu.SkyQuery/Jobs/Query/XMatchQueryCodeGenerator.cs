@@ -64,7 +64,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected string GetWeightExpressionString(string sigmaExpression)
         {
-            return String.Format(" 1 / POWER(CONVERT(float,{0}) / 3600 / 180 * PI(), 2) ", sigmaExpression);
+            return String.Format("POWER(CONVERT(float,{0}) / 3600.0 / 180.0 * PI(), -2)", sigmaExpression);
         }
 
         protected string GetZoneIDExpressionString(string dec)
@@ -82,7 +82,21 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             cmd.Parameters.Add(zoneHeightParameterName, SqlDbType.Float).Value = Query.ZoneHeight;
         }
+        #region Source table functions
 
+        protected virtual StringBuilder GetSelectAugmentedTableTemplate()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual StringBuilder GetSelectSourceTableQueryHtmTemplate()
+        {
+            throw new NotImplementedException();
+        }
+
+        
+
+        #endregion
         #region Search radius functions
 
         public SqlCommand GetComputeMinMaxErrorCommand(XMatchQueryStep step)
@@ -214,7 +228,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Partitioning is done on the ZoneID of the first table
             var tr = new TableReference("D1");
             var cr = new ColumnReference(tr, "ZoneID", DataTypes.SqlInt);
-            var sc = GetPartitioningConditions(cr);
+            var sc = GetPartitioningConditions(cr);     // TODO: this needs to use and expression here
+                                                        // then detele GetPartitioningConditions accepting a cr
 
             if (sc != null)
             {
@@ -318,7 +333,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$where]", Execute(where));
             sql.Replace("[$selectcolumnlist]", GeneratePropagatedColumnList(table.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithOriginalName, ColumnListNullType.Nothing, false));
 
-            SubstituteCoordinates(sql, coords, hasregion);
+            SubstituteCoordinates(sql, coords, hasregion, true);
 
             if (hasregion)
             {
@@ -345,21 +360,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             return cmd;
         }
 
-        protected void SubstituteCoordinates(StringBuilder sql, TableCoordinates coords, bool hasRegion)
-        {
-            sql.Replace("[$ra]", coords.GetRAExpression(queryObject.CodeDataset).ToString());
-            sql.Replace("[$dec]", coords.GetDecExpression(queryObject.CodeDataset).ToString());
-            sql.Replace("[$cx]", coords.GetXExpression(queryObject.CodeDataset).ToString());
-            sql.Replace("[$cy]", coords.GetYExpression(queryObject.CodeDataset).ToString());
-            sql.Replace("[$cz]", coords.GetZExpression(queryObject.CodeDataset).ToString());
-
-            // HTMID is required for region queries only
-            if (hasRegion)
-            {
-                sql.Replace("[$htmid]", coords.GetHtmIdExpression().ToString());
-            }
-        }
-
         #endregion
         #region Pair table functions
 
@@ -382,8 +382,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Creates a pair table from a link table.
         /// </summary>
         /// <param name="step">Reference to the XMatch step.</param>
-        public SqlCommand GetCreatePairTableCommand(XMatchQueryStep step, XMatchTableSpecification table, Table pairtable)
+        public SqlCommand GetCreatePairTableCommand(XMatchQueryStep step, Table pairtable)
         {
+            var table = Query.XMatchTables[step.XMatchTable];
+
             var sql = new StringBuilder(XMatchScripts.CreatePairTable);
 
             sql.Replace("[$tablename]", GetResolvedTableName(pairtable));
@@ -402,7 +404,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// 
         /// </summary>
         /// <param name="step"></param>
-        public SqlCommand GetPopulatePairTableCommand(XMatchQueryStep step, XMatchTableSpecification table, Table pairtable)
+        public SqlCommand GetPopulatePairTableCommand(XMatchQueryStep step, Table linktable, Table pairtable)
         {
             // Table 1 is, with the exception of the very first step, the match table of a previous xmatch step.
             // In this case the match table contains all necessary columns and includes a zone index.
@@ -411,58 +413,76 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Similarly, Table 2 is either a catalog table with the right index or a dynamically built zone table.
             // If we use an existing match table or a zone table, we know the column names. Otherwise it's a bit
             // tricky to get the list of columns
+            var pstep = Partition.Steps[step.StepNumber - 1];
+            var table1 = Query.XMatchTables[pstep.XMatchTable];
+            var table2 = Query.XMatchTables[step.XMatchTable];
 
-            var linktable = GetLinkTable(step);
-
-            var step1 = Partition.Steps[step.StepNumber - 1];
-            var step2 = step;
-
-            var table1 = Query.XMatchTables[step1.XMatchTable];
-            var table2 = Query.XMatchTables[step2.XMatchTable];
-
-            StringBuilder sql = new StringBuilder(XMatchScripts.PopulatePairTable);
-
-            sql.Replace("[$pairtable]", GetResolvedTableName(pairtable));
-            sql.Replace("[$linktable]", GetResolvedTableName(linktable));
+            // Generate source table queries
+            string query1, query2;
+            string columnlist1, columnlist2;
+            string selectlist1, selectlist2;
 
             if (step.StepNumber == 1 && !table1.IsZoneTableNecessary)
             {
-                // Use catalog table for Table 1
-                throw new NotImplementedException();
+                // Use source table for Table 1
+                var options = new AugmentedTableQueryOptions(table1.TableSource, table1.Region);
+
+                query1 = GenerateAugmentedTableQuery(options).ToString();
+                columnlist1 = GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
+                selectlist1 = GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
             }
             else if (step.StepNumber == 1)
             {
                 // Use zone table for Table 1
                 // PK needs to be figured out from catalog table
-                sql.Replace("[$query1]", "SELECT * FROM " + GetResolvedTableName(GetZoneTable(step1)));
-                sql.Replace("[$columnlist1]", GeneratePropagatedColumnList(table1.TableSource, "__t1", ColumnListInclude.PrimaryKey, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
-                sql.Replace("[$selectlist1]", GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
+                
+                query1 = GenerateSelectStarQuery(GetZoneTable(pstep), -1);
+                columnlist1 = GeneratePropagatedColumnList(table1.TableSource, "__t1", ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
+                selectlist1 = GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
             }
             else
             {
                 // Use match table for Table 1
                 // PK in match table is always MatchID
-                sql.Replace("[$query1]", "SELECT * FROM " + GetResolvedTableName(GetMatchTable(step1)));
-                sql.Replace("[$columnlist1]", "__t1.[MatchID]");
-                sql.Replace("[$selectlist1]", "__t1_MatchID");
+                query1 = GenerateSelectStarQuery(GetMatchTable(pstep), -1);
+                columnlist1 = "__t1.[MatchID]";
+                selectlist1 = "__t1_MatchID";
             }
 
             if (!table2.IsZoneTableNecessary)
             {
-                // Use catalog table for Table 2
-                throw new NotImplementedException();
+                // Use source table for Table 1
+                // Do NOT partition on second table!
+                var options = new AugmentedTableQueryOptions(table2.TableSource, table2.Region)
+                {
+                    UsePartitioning = false
+                };
+
+                query2 = GenerateAugmentedTableQuery(options).ToString();
+                columnlist2 = GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
+                selectlist2 = GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
             }
             else
             {
                 // Use zone table for Table 2
                 // PK needs to be figured out from catalog table
-                sql.Replace("[$query2]", "SELECT * FROM " + GetResolvedTableName(GetZoneTable(step2)));
-                sql.Replace("[$columnlist2]", GeneratePropagatedColumnList(table2.TableSource, "__t2", ColumnListInclude.PrimaryKey, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
-                sql.Replace("[$selectlist2]", GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
+                query2 = GenerateSelectStarQuery(GetZoneTable(step), -1);
+                columnlist2 = GeneratePropagatedColumnList(table2.TableSource, "__t2", ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
+                selectlist2 = GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
             }
+
+            StringBuilder sql = new StringBuilder(XMatchScripts.PopulatePairTable);
+
+            sql.Replace("[$query1]", query1);
+            sql.Replace("[$query2]", query2);
+            sql.Replace("[$columnlist1]", columnlist1);
+            sql.Replace("[$columnlist2]", columnlist2);
+            sql.Replace("[$pairtable]", GetResolvedTableName(pairtable));
+            sql.Replace("[$linktable]", GetResolvedTableName(linktable));
 
             var cmd = new SqlCommand(sql.ToString());
 
+            AppendRegionParameter(cmd, table1.Region);
             cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
 
             return cmd;
@@ -560,7 +580,17 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new InvalidOperationException();
             }
 
+            // A new match table is created by either joining two existing match tables
+            // (stepNumber > 1) or a two source tables with the pair table.
+
             var table = Query.XMatchTables[step.XMatchTable];
+
+            // HTM filtering might be necessary
+            var htmcreate = new StringBuilder();
+            var htmdrop = new StringBuilder();
+            var htminner = GetHtmTable(step.StepNumber, false);
+            var htmpartial = GetHtmTable(step.StepNumber, true);
+            GenerateHtmTablesScript(htminner, htmpartial, htmcreate, htmdrop);
 
             var tr = new TableReference(table.TableReference);
             SubstituteRemoteTableName(tr);
@@ -568,12 +598,29 @@ namespace Jhu.SkyQuery.Jobs.Query
             var tablename = GetResolvedTableName(tr);
             var schemaname = Partition.TemporaryDataset.DefaultSchemaName;
 
+            // To propagate columns gather all columns from previous steps
             var include = ColumnListInclude.All;
+            var tables = new List<ITableSource>();
+            var aliases = new List<string>();
+            for (int i = 0; i <= step.StepNumber; i++)
+            {
+                // TODO: what to do with drops?
+                //if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
+                //{
 
-            // --- Propagated columns
-            // Gather all columns from previous steps
+                tables.Add(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource);
+                aliases.Add(i < step.StepNumber ? "__t1" : "__t2");
+
+                //}
+            }
+
+            var insertcolumnlist = GeneratePropagatedColumnList(tables, aliases, include, ColumnListType.ForInsert, ColumnListNullType.Nothing, false);
+            var selectcolumnlist = GeneratePropagatedColumnList(tables, aliases, include, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
+
+            /* TODO: delete
             var insertcolumnlist = new StringBuilder();
             var selectcolumnlist = new StringBuilder();
+
             for (int i = 0; i <= step.StepNumber; i++)
             {
                 if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
@@ -592,6 +639,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     selectcolumnlist.Append(GeneratePropagatedColumnList(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, tablealias, include, listtype, ColumnListNullType.Nothing, false));
                 }
             }
+            */
 
             // --- Zone table join conditions
             var join = new StringBuilder();
@@ -609,12 +657,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             var sql = new StringBuilder(GetPopulateMatchTableScript(step));
 
 
-            sql.Replace("[$newtablename]", GetResolvedTableName(matchtable));     // new match table
+            sql.Replace("[$matchtable]", GetResolvedTableName(matchtable));     // new match table
             sql.Replace("[$insertcolumnlist]", insertcolumnlist.ToString());
             sql.Replace("[$selectcolumnlist]", selectcolumnlist.ToString());
             sql.Replace("[$selectcolumnlist2]", insertcolumnlist.ToString());
             sql.Replace("[$pairtable]", GetResolvedTableName(GetPairTable(step)));
-            sql.Replace("[$matchtable]", GetResolvedTableName((GetMatchTable(Partition.Steps[step.StepNumber - 1]))));        // tableA (old match table)
+            
             sql.Replace("[$matchidcolumn]", String.Format("PK_Match_{0}_MatchID", step.StepNumber - 1));    // TODO
             sql.Replace("[$table]", tablename);        // tableB (source table)
             sql.Replace("[$tablejoinconditions]", join.ToString());
@@ -622,6 +670,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var cmd = new SqlCommand(sql.ToString());
 
             AppendZoneHeightParameter(cmd);
+            AppendRegionParameter(cmd, table.Region);
             AppendPopulateMatchTableParameters(step, cmd);
 
             return cmd;
@@ -715,14 +764,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Final query execution
 
-        protected override SourceTableQuery GetExecuteQueryImpl(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
+        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
         {
             // Collect tables that are part of the XMatch operation
             var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
 
             ReplaceXMatchClause(qs);
 
-            return base.GetExecuteQueryImpl(selectStatement, method, destination);
+            return base.OnGetExecuteQuery(selectStatement, method, destination);
         }
 
         protected void ReplaceXMatchClause(XMatchQuerySpecification qs)

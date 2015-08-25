@@ -41,7 +41,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 foreach (var ts in qs.EnumerateSourceTables(false))
                 {
-                    var type = ColumnListType.ForSelectNoAlias;
+                    var type = ColumnListType.ForSelectWithEscapedNameNoAlias;
                     var nullType = ColumnListNullType.Nothing;
                     var leadingComma = false;
 

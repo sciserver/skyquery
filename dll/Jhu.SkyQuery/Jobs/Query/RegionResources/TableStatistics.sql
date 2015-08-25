@@ -1,18 +1,8 @@
 -- *** RegionResources/TableStatistics.sql *** ---
 
--- Generate HTM ranges
+DECLARE @r dbo.Region = @region
 
-CREATE TABLE [$htm]
-(
-	htmIDStart bigint NOT NULL,
-	htmIDEnd bigint NOT NULL
-);
-
-INSERT [$htm] WITH(TABLOCKX)
-SELECT htmIDStart, htmIDEnd
-FROM htm.Cover(@region) AS htm;
-
--- Compute statistics
+-- Create temp table to store keys
 
 CREATE TABLE [$temptable]
 (
@@ -20,12 +10,13 @@ CREATE TABLE [$temptable]
 	[key] [$keytype]
 );
 
+WITH __t AS
+(
+	[$query]
+)
 INSERT [$temptable] WITH(TABLOCKX)
 SELECT ROW_NUMBER() OVER (ORDER BY [$keycol]), [$keycol]
-FROM [$tablename]
-INNER JOIN [$htm] __htm
-	ON [$htmid] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd
-[$where];
+FROM __t;
 
 DECLARE @count bigint = @@ROWCOUNT;
 DECLARE @step bigint = @count / @bincount;
@@ -37,5 +28,4 @@ FROM [$temptable]
 WHERE [rn] % @step = 0 OR [rn] = @count
 ORDER BY [rn];
 
-DROP TABLE [$temptable];
-DROP TABLE [$htm];
+DROP TABLE [$temptable]

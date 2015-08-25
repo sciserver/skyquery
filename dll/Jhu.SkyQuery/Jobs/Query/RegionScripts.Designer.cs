@@ -108,42 +108,39 @@ namespace Jhu.SkyQuery.Jobs.Query {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- *** RegionResources/TableStatistics.sql *** ---
-        ///
-        ///-- Generate HTM ranges
-        ///
-        ///CREATE TABLE [$htm]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) AS htm;
-        ///
-        ///-- Compute statistics
-        ///
-        ///CREATE TABLE [$temptable]
-        ///(
-        ///	[rn] bigint PRIMARY KEY,
-        ///	[key] [$keytype]
-        ///);
-        ///
-        ///INSERT [$temptable] WITH(TABLOCKX)
-        ///SELECT ROW_NUMBER() OVER (ORDER BY [$keycol]), [$keycol]
-        ///FROM [$tablename]
-        ///INNER JOIN [$htm] __htm
-        ///	ON [$ [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to 	SELECT [$columnlist]
+        ///	FROM [$tablename]
+        ///	[$where].
         /// </summary>
-        internal static string TableStatistics {
+        internal static string SelectAugmentedTable {
             get {
-                return ResourceManager.GetString("TableStatistics", resourceCulture);
+                return ResourceManager.GetString("SelectAugmentedTable", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to -- *** RegionResources/TableStatisticsNoHtm.sql *** ---
+        ///   Looks up a localized string similar to 	SELECT [$columnlist]
+        ///	FROM [$tablename]
+        ///	INNER JOIN [$codedb].htm.Cover(@r) __htm
+        ///		ON [$htmid] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
+        ///	[$where_inner]
+        ///
+        ///	UNION ALL
+        ///
+        ///	SELECT [$columnlist]
+        ///	FROM [$tablename]
+        ///	INNER JOIN [$codedb].htm.Cover(@r) __htm
+        ///		ON [$htmid] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
+        ///	[$where_partial].
+        /// </summary>
+        internal static string SelectAugmentedTableHtm {
+            get {
+                return ResourceManager.GetString("SelectAugmentedTableHtm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- *** RegionResources/TableStatistics.sql *** ---
         ///
         ///DECLARE @r dbo.Region = @region
         ///
@@ -155,10 +152,13 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///	[key] [$keytype]
         ///);
         ///
+        ///WITH __t AS
+        ///(
+        ///	[$query]
+        ///)
         ///INSERT [$temptable] WITH(TABLOCKX)
         ///SELECT ROW_NUMBER() OVER (ORDER BY [$keycol]), [$keycol]
-        ///FROM [$tablename]
-        ///[$where];
+        ///FROM __t;
         ///
         ///DECLARE @count bigint = @@ROWCOUNT;
         ///DECLARE @step bigint = @count / @bincount;
@@ -167,11 +167,11 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///
         ///SELECT [rn], [key]
         ///FROM [$temptable]
-        ///WHERE [rn] % @ste [rest of string was truncated]&quot;;.
+        ///WHERE [rn]  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TableStatisticsNoHtm {
+        internal static string TableStatistics {
             get {
-                return ResourceManager.GetString("TableStatisticsNoHtm", resourceCulture);
+                return ResourceManager.GetString("TableStatistics", resourceCulture);
             }
         }
     }

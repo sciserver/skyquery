@@ -52,6 +52,16 @@ namespace Jhu.SkyQuery.Parser
             get { return TableSource.Coordinates; }
         }
 
+        // TODO: move this somewhere from here
+        public Spherical.Region Region
+        {
+            get
+            {
+                var qs = (XMatchQuerySpecification)FindAscendant<SkyQuery.Parser.QuerySpecification>();
+                return qs.Region;
+            }
+        }
+
         #endregion
         #region Constructors and initializers
 

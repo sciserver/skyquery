@@ -76,8 +76,14 @@ namespace Jhu.SkyQuery.Jobs.Query {
         /// <summary>
         ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/ComputeRSquared.sql *** ---
         ///
+        ///WITH __t AS
+        ///(
+        ///[$query]
+        ///)
         ///SELECT CAST(ISNULL(MAX( (1 / a + 1 / @weightMin) * (2 * (@factor + l + @lmax - LOG(a + @amin) - @limit) - q) ), 0.0000000000) AS float)
-        ///FROM [$matchtable].
+        ///FROM __t
+        ///
+        ///-------------------------------------------------------------.
         /// </summary>
         internal static string ComputeRSquared {
             get {
@@ -116,25 +122,83 @@ namespace Jhu.SkyQuery.Jobs.Query {
         /// <summary>
         ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateMatchTable.sql *** ---
         ///
-        ///INSERT [$newtablename] WITH (TABLOCKX)
-        ///	([RA], [Dec], [Cx], [Cy], [Cz], [a], [l], [q], [logBF], [ZoneID], [$insertcolumnlist])
-        ///SELECT
-        ///	t.calc.Ra, t.calc.Dec,
-        ///	t.calc.Cx, t.calc.Cy, t.calc.Cz,
-        ///	t.calc.A,
-        ///	t.calc.L,
-        ///	q + t.calc.dQ,
-        ///	t.calc.LogBF,
-        ///	CONVERT(INT,FLOOR((t.calc.Dec + 90.0) / @H)) as [ZoneID],
-        ///	[$selectcolumnlist2]
-        ///FROM
+        ///WITH 
+        ///__t1 AS
         ///(
-        ///	SELECT  [tableA].[q] AS q,
-        ///			[SkyQuery_Code].dbo.BayesFactorCalcPosition([tableA].[Cx], [tableA [rest of string was truncated]&quot;;.
+        ///	[$query1]
+        ///),
+        ///__t2 AS
+        ///(
+        ///	[$query2]
+        ///),
+        ///__match AS
+        ///(
+        ///	SELECT  __t1.[q] AS [q],
+        ///			skyquery.BayesFactorCalcPosition(
+        ///				__t1.[Cx], __t1.[Cy], __t1.[Cz],  __t1.[a], __t1.[l], __t1.[logBF],
+        ///				[$weight],
+        ///				__pair.[Dx], __pair.[Dy], __pair.[Dz]) AS __calc
+        ///		    [$selectcolumnlist1]
+        ///			[$selectcolumnlist2]
+        ///	FROM [$pairtable] AS __pair
+        ///	INNER JOIN __t1
+        ///		   ON [$tablejoin1]
+        ///	INNER JOIN __t2
+        ///		   ON [$tablej [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PopulateMatchTable {
             get {
                 return ResourceManager.GetString("PopulateMatchTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 	SELECT [$ra] AS [RA],
+        ///		   [$dec] AS [Dec],
+        ///		   [$cx] AS [Cx],
+        ///	       [$cy] AS [Cy],
+        ///	       [$cz] AS [Cz],
+        ///	       [$weight] AS [a],
+        ///	       LOG([$weight]) AS [l],
+        ///	       0 AS [q],
+        ///	       ([$n] - 1) * LOG(2) AS [logBF],
+        ///	       [$columnlist]
+        ///	FROM [$tablename]
+        ///	[$where].
+        /// </summary>
+        internal static string SelectSourceTable {
+            get {
+                return ResourceManager.GetString("SelectSourceTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 	SELECT [$ra] AS [RA],
+        ///		   [$dec] AS [Dec],
+        ///		   [$cx] AS [Cx],
+        ///		   [$cy] AS [Cy],
+        ///		   [$cz] AS [Cz],
+        ///		   [$weight] AS [a],
+        ///		   LOG([$weight]) AS [l],
+        ///		   0 AS [q],
+        ///		   ([$n] - 1) * LOG(2) AS [logBF],
+        ///		   [$columnlist]
+        ///	FROM [$tablename]
+        ///	INNER JOIN [$codedb].htm.Cover(@r) __htm
+        ///		ON [$htmid] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
+        ///	[$where_inner]
+        ///
+        ///	UNION ALL
+        ///
+        ///	SELECT [$ra] AS [RA],
+        ///		   [$dec] AS [Dec],
+        ///		   [$cx] AS [Cx],
+        ///		   [$cy] AS [Cy],
+        ///		   [$cz [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string SelectSourceTableHtm {
+            get {
+                return ResourceManager.GetString("SelectSourceTableHtm", resourceCulture);
             }
         }
     }

@@ -71,6 +71,8 @@
     <Compile Include="Jobs\Query\RegionQuery.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
+    <Content Include="Jobs\Query\BayesFactorXMatchResources\SelectAugmentedTableHtm.sql" />
+    <Content Include="Jobs\Query\BayesFactorXMatchResources\SelectAugmentedTable.sql" />
     <Content Include="Jobs\Query\RegionResources\CreateHtmTables.sql" />
     <Compile Include="Jobs\Query\RegionScripts.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -79,11 +81,15 @@
     </Compile>
     <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
+    <Compile Include="Jobs\Query\HtmTableQuery.cs" />
+    <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
+    <Content Include="Jobs\Query\RegionResources\SelectAugmentedTable.sql" />
+    <Content Include="Jobs\Query\RegionResources\SelectAugmentedTableHtm.sql" />
     <Content Include="Jobs\Query\XMatchResources\ComputeMinMaxError.sql" />
     <None Include="Jobs\Query\XMatchResources\CreateZoneTable.sql" />
     <Content Include="Jobs\Query\XMatchResources\PopulateLinkTable.sql" />
@@ -212,12 +218,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Jobs\Query\RegionResources\DropHtmTables.sql" />
-    <Content Include="Jobs\Query\RegionResources\TableStatisticsNoHtm.sql" />
     <Content Include="Jobs\Query\RegionResources\TableStatistics.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)

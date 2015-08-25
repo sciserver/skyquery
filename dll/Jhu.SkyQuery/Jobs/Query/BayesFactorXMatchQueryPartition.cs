@@ -125,7 +125,11 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber > 0)
             {
-                using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand(step))
+                // Calculate search radius from the first sourca table our the output of
+                // the previous match
+                var pstep = Steps[step.StepNumber - 1];
+                
+                using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand(pstep))
                 {
                     var theta = (double)ExecuteSqlCommandScalar(cmd, CommandTarget.Code);
                     step.SearchRadius = Math.Sqrt(theta) * 180.0 / Math.PI;

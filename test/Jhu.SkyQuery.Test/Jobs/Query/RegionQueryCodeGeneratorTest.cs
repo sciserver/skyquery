@@ -82,7 +82,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         }
 
         [TestMethod]
-        public void CreateHtmJoinConditionTest()
+        public void GenerateHtmJoinConditionTest()
         {
             var sql = @"
 SELECT *
@@ -91,24 +91,24 @@ FROM table WITH (HTMID(htmid))";
             var ss = Parse(sql);
             var ts = ss.EnumerateSourceTables(false).First();
 
-            var sc = CallMethod(CodeGenerator, "CreateHtmJoinCondition", ts, HtmTable);
+            var sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable);
 
             Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd", sc.ToString());
         }
 
-        private string CreateRegionContainsConditionTestHelper(string sql)
+        private string GenerateRegionContainsConditionTestHelper(string sql)
         {
             var ss = Parse(sql);
             var ts = ss.EnumerateSourceTables(false).First();
 
-            var sc = (Jhu.Graywulf.SqlParser.SearchCondition)CallMethod(CodeGenerator, "CreateRegionContainsCondition", ts, -1);
+            var sc = (Jhu.Graywulf.SqlParser.SearchCondition)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
 
             return CodeGenerator.Execute(sc);
         }
 
 
         [TestMethod]
-        public void CreateRegionContainsConditionXyzTest()
+        public void GenerateRegionContainsConditionXyzTest()
         {
             var sql = @"
 SELECT *
@@ -116,11 +116,11 @@ FROM table WITH (POINT(cx, cy, cz))";
 
             var gt = "@r.ContainsXyz(cx, cy, cz) = 1";
 
-            Assert.AreEqual(gt, CreateRegionContainsConditionTestHelper(sql));
+            Assert.AreEqual(gt, GenerateRegionContainsConditionTestHelper(sql));
         }
 
         [TestMethod]
-        public void CreateRegionContainsConditionEqTest()
+        public void GenerateRegionContainsConditionEqTest()
         {
             var sql = @"
 SELECT *
@@ -128,7 +128,7 @@ FROM table WITH (POINT(ra, dec))";
 
             var gt = "@r.ContainsEq(ra, dec) = 1";
 
-            Assert.AreEqual(gt, CreateRegionContainsConditionTestHelper(sql));
+            Assert.AreEqual(gt, GenerateRegionContainsConditionTestHelper(sql));
         }
 
         private string AppendRegionJoinsAndConditionsTestHelper(string sql, bool partial)
@@ -314,10 +314,15 @@ WHERE @r0.ContainsEq(ra, dec) = 1
             var cg = new RegionQueryCodeGenerator(q);
             var ts = q.SelectStatement.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
 
+            // Fake that dec is used as a partitioning key
+            var keycol = ts.TableReference.ColumnReferences.First(c => c.ColumnName == "dec");
+            keycol.ColumnContext |= Graywulf.SqlParser.ColumnContext.SelectList;
+
             ts.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
             {
                 BinCount = 200,
-                KeyColumn = Graywulf.SqlParser.Expression.Create(new Graywulf.SqlParser.ColumnReference("dec", DataTypes.SqlFloat))
+                KeyColumn = Graywulf.SqlParser.Expression.Create(keycol),
+                KeyColumnDataType = DataTypes.SqlFloat
             };
 
             var cmd = cg.GetTableStatisticsCommand(ts);
@@ -334,12 +339,25 @@ FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
-FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-INNER JOIN [Graywulf_Temp].[dbo].[test__htm_TEST_dbo_SDSSDR7PhotoObjAll] __htm
-	ON htmid BETWEEN __htm.htmIDStart AND __htm.htmIDEnd
-WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
+            var gt = @"WITH __t AS
+(
+		SELECT [objId], [ra], [dec]
+	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+	INNER JOIN [$codedb].htm.Cover(@r) __htm
+		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
+	WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
+
+	UNION ALL
+
+	SELECT [objId], [ra], [dec]
+	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+	INNER JOIN [$codedb].htm.Cover(@r) __htm
+		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
+	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)
+)
+INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+SELECT ROW_NUMBER() OVER (ORDER BY [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]), [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]
+FROM __t;";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -354,10 +372,15 @@ FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
-FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2);";
+            var gt = @"WITH __t AS
+(
+		SELECT [objId], [ra], [dec]
+	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)
+)
+INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
+SELECT ROW_NUMBER() OVER (ORDER BY [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]), [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]
+FROM __t;";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -373,7 +396,7 @@ REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
             var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY [dec]), [dec]
+SELECT ROW_NUMBER() OVER (ORDER BY [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]), [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]
 FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
 

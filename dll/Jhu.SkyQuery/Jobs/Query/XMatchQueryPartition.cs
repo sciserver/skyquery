@@ -123,7 +123,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public void CreateZoneDefTable(XMatchQueryStep step)
         {
-            // This is done only for the second catalog and on
             if (step.StepNumber > 0)
             {
                 var zonedeftable = CodeGenerator.GetZoneDefTable(step);
@@ -150,7 +149,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public void CreateLinkTable(XMatchQueryStep step)
         {
-            if (step.StepNumber != 0)
+            if (step.StepNumber > 0)
             {
                 var zonedeftable = CodeGenerator.GetZoneDefTable(step);
                 var linktable = CodeGenerator.GetLinkTable(step);
@@ -225,20 +224,21 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public void CreatePairTable(XMatchQueryStep step)
         {
-            if (step.StepNumber != 0)
+            if (step.StepNumber > 0)
             {
                 var table = Query.XMatchTables[step.XMatchTable];
+                var linktable = CodeGenerator.GetLinkTable(step);
                 var pairtable = CodeGenerator.GetPairTable(step);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 pairtable.Drop();
 
-                using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, table, pairtable))
+                using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, pairtable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Temp);
                 }
 
-                using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, table, pairtable))
+                using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, linktable, pairtable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Code);
                 }

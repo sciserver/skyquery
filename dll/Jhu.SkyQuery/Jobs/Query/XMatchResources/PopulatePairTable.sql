@@ -2,6 +2,8 @@
 
 DECLARE @dist2 float = 4 * POWER(SIN(RADIANS(@theta/2)), 2);
 
+[$htm_create]
+
 WITH
 __t1 AS
 (
@@ -57,3 +59,5 @@ SELECT
 	[$selectlist2],
 	[Dx], [Dy], [Dz]
 FROM __wrap
+
+[$htm_drop]

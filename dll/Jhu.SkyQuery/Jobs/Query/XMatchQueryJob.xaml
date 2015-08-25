@@ -105,10 +105,10 @@
                         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                       </scg3:Dictionary>
                     </sap:WorkflowViewStateService.ViewState>
+                    <local:CreateZoneTable DisplayName="CreateZoneTable" sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
                     <local:ComputeSearchRadius sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
                     <local:CreateZoneDefTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
                     <local:CreateLinkTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
-                    <local:CreateZoneTable DisplayName="CreateZoneTable" sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
                     <local:CreatePairTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
                     <local:CreateMatchTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
                   </Sequence>
