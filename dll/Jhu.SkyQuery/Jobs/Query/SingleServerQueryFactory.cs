@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.Jobs.Query
     /// single server mode.
     /// </summary>
     [Serializable]
-    public class SingleServerXMatchQueryFactory : XMatchQueryFactory
+    public class SingleServerQueryFactory : SkyQueryQueryFactory
     {
         private Dictionary<string, SqlServerDataset> customDatasets;
 
@@ -27,7 +27,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             get { return customDatasets; }
         }
 
-        public SingleServerXMatchQueryFactory()
+        public SingleServerQueryFactory()
         {
             InitializeMembers();
         }

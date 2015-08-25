@@ -24,7 +24,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         protected override QueryFactory CreateQueryFactory(Context context)
         {
             return QueryFactory.Create(
-                typeof(XMatchQueryFactory).AssemblyQualifiedName,
+                typeof(SkyQueryQueryFactory).AssemblyQualifiedName,
                 context);
         }
 

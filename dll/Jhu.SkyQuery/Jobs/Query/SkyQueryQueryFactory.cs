@@ -15,17 +15,17 @@ namespace Jhu.SkyQuery.Jobs.Query
     [Serializable]
     // TODO: Rename to SkyQueryQueryFactory once build is stable enough for
     // testing so that config can be safely changed.
-    public class XMatchQueryFactory : SqlQueryFactory
+    public class SkyQueryQueryFactory : SqlQueryFactory
     {
         #region Constructors and initializers
 
-        public XMatchQueryFactory()
+        public SkyQueryQueryFactory()
             : base()
         {
             InitializeMembers(new StreamingContext());
         }
 
-        public XMatchQueryFactory(Context context)
+        public SkyQueryQueryFactory(Context context)
             : base(context)
         {
             InitializeMembers(new StreamingContext());

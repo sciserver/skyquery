@@ -79,7 +79,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RegionScripts.resx</DependentUpon>
     </Compile>
-    <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
+    <Compile Include="Jobs\Query\SingleServerQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
     <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />

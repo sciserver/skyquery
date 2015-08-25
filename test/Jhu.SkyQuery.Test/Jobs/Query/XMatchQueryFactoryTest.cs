@@ -40,7 +40,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         private SqlQuery CreateQuery(string query)
         {
-            var f = new SingleServerXMatchQueryFactory();
+            var f = new SingleServerQueryFactory();
             return f.CreateQuery(query);
         }
 

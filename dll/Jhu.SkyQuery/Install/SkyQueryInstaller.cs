@@ -26,7 +26,7 @@ namespace Jhu.SkyQuery.Install
 
             Federation.SchemaManager = GetUnversionedTypeName(typeof(Jhu.Graywulf.Schema.GraywulfSchemaManager));
             Federation.UserDatabaseFactory = GetUnversionedTypeName(typeof(Jhu.Graywulf.CasJobs.CasJobsUserDatabaseFactory));
-            Federation.QueryFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
+            Federation.QueryFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Jobs.Query.SkyQueryQueryFactory));
             Federation.FileFormatFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Format.SkyQueryFileFormatFactory));
             Federation.StreamFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.IO.SkyQueryStreamFactory));
             Federation.ImportTablesJobFactory = GetUnversionedTypeName(typeof(Jhu.Graywulf.SciDrive.SciDriveImportTablesJobFactory));

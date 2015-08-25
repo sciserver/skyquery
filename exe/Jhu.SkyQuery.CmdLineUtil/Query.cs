@@ -90,7 +90,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var query = System.IO.File.ReadAllText(input);
 
             // Read connection strings from config
-            var f = new SingleServerXMatchQueryFactory();
+            var f = new SingleServerQueryFactory();
             f.LoadCustomDatasets(this.server, this.userId, this.password, this.integratedSecurity);
 
             // Create query and verify
