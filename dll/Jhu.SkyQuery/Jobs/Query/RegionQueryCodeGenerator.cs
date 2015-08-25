@@ -373,7 +373,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var htmidend = new ColumnReference(htmTable, "HtmIDEnd", DataTypes.SqlBigInt);
 
             var p = Jhu.Graywulf.SqlParser.Predicate.CreateBetween(
-                coords.GetHtmIdExpression(),
+                GetHtmIdExpression(coords),
                 Expression.Create(ColumnIdentifier.Create(htmidstart)),
                 Expression.Create(ColumnIdentifier.Create(htmidend)));
 
@@ -398,11 +398,11 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (coords.IsCartesianSpecified)
             {
-                udtf = UdtFunctionCall.Create(udt, "ContainsXyz", coords.GetXyzExpressions(CodeDataset));
+                udtf = UdtFunctionCall.Create(udt, "ContainsXyz", GetXyzExpressions(coords));
             }
             else if (coords.IsEqSpecified)
             {
-                udtf = UdtFunctionCall.Create(udt, "ContainsEq", coords.GetEqExpressions(CodeDataset));
+                udtf = UdtFunctionCall.Create(udt, "ContainsEq", GetEqExpressions(coords));
             }
             else
             {
@@ -510,7 +510,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 sql = GetSelectAugmentedTableHtmTemplate();
 
-                sql.Replace("[$htmid]", Execute(coords.GetHtmIdExpression()));
+                sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
                 sql.Replace("[$where_inner]", Execute(where));
                 sql.Replace("[$where_partial]", Execute(whereregion));
             }
@@ -526,15 +526,15 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$columnlist]", columnlist.GetString());
 
             // Substitute coordinates
-            sql.Replace("[$ra]", Execute(coords.GetRAExpression(queryObject.CodeDataset)));
-            sql.Replace("[$dec]", Execute(coords.GetDecExpression(queryObject.CodeDataset)));
-            sql.Replace("[$cx]", Execute(coords.GetXExpression(queryObject.CodeDataset)));
-            sql.Replace("[$cy]", Execute(coords.GetYExpression(queryObject.CodeDataset)));
-            sql.Replace("[$cz]", Execute(coords.GetZExpression(queryObject.CodeDataset)));
+            sql.Replace("[$ra]", Execute(GetRAExpression(coords)));
+            sql.Replace("[$dec]", Execute(GetDecExpression(coords)));
+            sql.Replace("[$cx]", Execute(GetXExpression(coords)));
+            sql.Replace("[$cy]", Execute(GetYExpression(coords)));
+            sql.Replace("[$cz]", Execute(GetZExpression(coords)));
 
             if (options.UsePartitioning)
             {
-                sql.Replace("[$zoneid]", Execute(coords.GetZoneIdExpression(CodeDataset)));
+                sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
             }
 
             return sql;
@@ -543,21 +543,198 @@ namespace Jhu.SkyQuery.Jobs.Query
         // TODO: delete if not needed
         protected void SubstituteCoordinates(StringBuilder sql, TableCoordinates coords, bool useHtm, bool useZoneID)
         {
-            sql.Replace("[$ra]", Execute(coords.GetRAExpression(queryObject.CodeDataset)));
-            sql.Replace("[$dec]", Execute(coords.GetDecExpression(queryObject.CodeDataset)));
-            sql.Replace("[$cx]", Execute(coords.GetXExpression(queryObject.CodeDataset)));
-            sql.Replace("[$cy]", Execute(coords.GetYExpression(queryObject.CodeDataset)));
-            sql.Replace("[$cz]", Execute(coords.GetZExpression(queryObject.CodeDataset)));
+            sql.Replace("[$ra]", Execute(GetRAExpression(coords)));
+            sql.Replace("[$dec]", Execute(GetDecExpression(coords)));
+            sql.Replace("[$cx]", Execute(GetXExpression(coords)));
+            sql.Replace("[$cy]", Execute(GetYExpression(coords)));
+            sql.Replace("[$cz]", Execute(GetZExpression(coords)));
 
             // HTMID is required for region queries only
             if (useHtm)
             {
-                sql.Replace("[$htmid]", Execute(coords.GetHtmIdExpression()));
+                sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
             }
 
             if (useZoneID)
             {
-                sql.Replace("[$zoneid]", Execute(coords.GetZoneIdExpression(CodeDataset)));
+                sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
+            }
+        }
+
+        #endregion
+        #region Coordinate column functions
+
+        public Expression GetRAExpression(TableCoordinates coords)
+        {
+            if (coords.IsEqSpecified)
+            {
+                return coords.RAExpression;
+            }
+            else if (coords.IsCartesianSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "CartesianToEqRa"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, coords.XExpression, coords.YExpression, coords.ZExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetDecExpression(TableCoordinates coords)
+        {
+            if (coords.IsEqSpecified)
+            {
+                return coords.DecExpression;
+            }
+            else if (coords.IsCartesianSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "CartesianToEqDec"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, coords.XExpression, coords.YExpression, coords.ZExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression[] GetEqExpressions(TableCoordinates coords)
+        {
+            return new Expression[]
+            {
+                GetRAExpression(coords),
+                GetDecExpression(coords)
+            };
+        }
+
+        public Expression GetXExpression(TableCoordinates coords)
+        {
+            if (coords.IsCartesianSpecified)
+            {
+                return coords.XExpression;
+            }
+            else if (coords.IsEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "EqToCartesianX"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, coords.RAExpression, coords.DecExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetYExpression(TableCoordinates coords)
+        {
+            if (coords.IsCartesianSpecified)
+            {
+                return coords.YExpression;
+            }
+            else if (coords.IsEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "EqToCartesianY"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, coords.RAExpression, coords.DecExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetZExpression(TableCoordinates coords)
+        {
+            if (coords.IsCartesianSpecified)
+            {
+                return coords.ZExpression;
+            }
+            else if (coords.IsEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "EqToCartesianZ"
+                };
+
+                return Expression.Create(FunctionCall.Create(fr, coords.RAExpression, coords.DecExpression));
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression[] GetXyzExpressions(TableCoordinates coords)
+        {
+            return new Expression[]
+            {
+                GetXExpression(coords),
+                GetYExpression(coords),
+                GetZExpression(coords)
+            };
+        }
+
+        public Expression GetHtmIdExpression(TableCoordinates coords)
+        {
+            if (coords.IsHtmIdSpecified)
+            {
+                return coords.HtmIdExpression;
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
+            }
+        }
+
+        public Expression GetZoneIdExpression(TableCoordinates coords)
+        {
+            if (coords.IsZoneIdSpecified)
+            {
+                return coords.ZoneIdExpression;
+            }
+            else if (coords.IsEqSpecified || coords.IsCartesianSpecified)
+            {
+                throw new NotImplementedException();
+
+                // TODO: make it into a precise CLR function
+                /*return String.Format(System.Globalization.CultureInfo.InvariantCulture,
+                    "CONVERT(INT,FLOOR(({0} + 90.0) / @H))",
+                    GetDecString(codeDataset));*/
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw new NotImplementedException();
             }
         }
 

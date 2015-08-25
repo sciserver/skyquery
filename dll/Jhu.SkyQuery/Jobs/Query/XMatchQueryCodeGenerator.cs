@@ -92,7 +92,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var coords = table.Coordinates;
 
             var where = GetTableSpecificWhereClause(table.TableSource);
-            var sc = GetPartitioningConditions(coords.GetZoneIdExpression(Partition.CodeDataset));
+            var sc = GetPartitioningConditions(GetZoneIdExpression(coords));
 
             if (where != null && sc != null)
             {
@@ -306,7 +306,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Build where clauses
             var where = GetTableSpecificWhereClause(table.TableSource);
-            var sc = GetPartitioningConditions(coords.GetZoneIdExpression(queryObject.CodeDataset));
+            var sc = GetPartitioningConditions(GetZoneIdExpression(coords));
 
             // TODO: add HTM join if necessary
 

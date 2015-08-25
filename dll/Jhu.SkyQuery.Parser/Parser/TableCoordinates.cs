@@ -63,7 +63,7 @@ namespace Jhu.SkyQuery.Parser
             get { return isCartesianSpecified; }
         }
 
-        private Expression RAExpression
+        public Expression RAExpression
         {
             get
             {
@@ -71,7 +71,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Expression DecExpression
+        public Expression DecExpression
         {
             get
             {
@@ -79,7 +79,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Expression XExpression
+        public Expression XExpression
         {
             get
             {
@@ -87,7 +87,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Expression YExpression
+        public Expression YExpression
         {
             get
             {
@@ -95,7 +95,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private Expression ZExpression
+        public Expression ZExpression
         {
             get
             {
@@ -108,7 +108,7 @@ namespace Jhu.SkyQuery.Parser
             get { return isHtmIdSpecified; }
         }
 
-        private Expression HtmIdExpression
+        public Expression HtmIdExpression
         {
             get
             {
@@ -116,7 +116,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private ColumnReference HtmIdColumnReference
+        public ColumnReference HtmIdColumnReference
         {
             get
             {
@@ -129,7 +129,7 @@ namespace Jhu.SkyQuery.Parser
             get { return isZoneIdSpecified; }
         }
 
-        private Expression ZoneIdExpression
+        public Expression ZoneIdExpression
         {
             get
             {
@@ -137,7 +137,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        private ColumnReference ZoneIdColumnReference
+        public ColumnReference ZoneIdColumnReference
         {
             get
             {
@@ -441,321 +441,6 @@ namespace Jhu.SkyQuery.Parser
 
             return null;
         }
-
-        #endregion
-        #region Coordinate string accessor functions
-
-        public Expression GetRAExpression(SqlServerDataset codeDataset)
-        {
-            if (isEqSpecified)
-            {
-                return RAExpression;
-            }
-            else if (isCartesianSpecified)
-            {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = codeDataset.DatabaseName,
-                    SchemaName = codeDataset.DefaultSchemaName,
-                    DatabaseObjectName = "CartesianToEqRa"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, XExpression, YExpression, ZExpression));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public Expression GetDecExpression(SqlServerDataset codeDataset)
-        {
-            if (isEqSpecified)
-            {
-                return DecExpression;
-            }
-            else if (isCartesianSpecified)
-            {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = codeDataset.DatabaseName,
-                    SchemaName = codeDataset.DefaultSchemaName,
-                    DatabaseObjectName = "CartesianToEqDec"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, XExpression, YExpression, ZExpression));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public Expression[] GetEqExpressions(SqlServerDataset codeDataset)
-        {
-            return new Expression[]
-            {
-                GetRAExpression(codeDataset),
-                GetDecExpression(codeDataset)
-            };
-        }
-
-        public Expression GetXExpression(SqlServerDataset codeDataset)
-        {
-            if (isCartesianSpecified)
-            {
-                return XExpression;
-            }
-            else if (isEqSpecified)
-            {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = codeDataset.DatabaseName,
-                    SchemaName = codeDataset.DefaultSchemaName,
-                    DatabaseObjectName = "EqToCartesianX"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, RAExpression, DecExpression));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public Expression GetYExpression(SqlServerDataset codeDataset)
-        {
-            if (isCartesianSpecified)
-            {
-                return YExpression;
-            }
-            else if (isEqSpecified)
-            {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = codeDataset.DatabaseName,
-                    SchemaName = codeDataset.DefaultSchemaName,
-                    DatabaseObjectName = "EqToCartesianY"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, RAExpression, DecExpression));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public Expression GetZExpression(SqlServerDataset codeDataset)
-        {
-            if (isCartesianSpecified)
-            {
-                return ZExpression;
-            }
-            else if (isEqSpecified)
-            {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = codeDataset.DatabaseName,
-                    SchemaName = codeDataset.DefaultSchemaName,
-                    DatabaseObjectName = "EqToCartesianZ"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, RAExpression, DecExpression));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public Expression[] GetXyzExpressions(SqlServerDataset codeDataset)
-        {
-            return new Expression[]
-            {
-                GetXExpression(codeDataset),
-                GetYExpression(codeDataset),
-                GetZExpression(codeDataset)
-            };
-        }
-
-        public Expression GetHtmIdExpression()
-        {
-            if (isHtmIdSpecified)
-            {
-                return HtmIdExpression;
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public Expression GetZoneIdExpression(SqlServerDataset codeDataset)
-        {
-            if (isZoneIdSpecified)
-            {
-                return ZoneIdExpression;
-            }
-            else if (isEqSpecified || isCartesianSpecified)
-            {
-                throw new NotImplementedException();
-
-                // TODO: make it into a precise CLR function
-                /*return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-                    "CONVERT(INT,FLOOR(({0} + 90.0) / @H))",
-                    GetDecString(codeDataset));*/
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        /* TODO: delete
-         * public string GetRAString(SqlServerDataset codeDataset)
-        {
-            if (isEqSpecified)
-            {
-                return SqlServerCodeGenerator.GetCode(RAExpression, true);
-            }
-            else if (isCartesianSpecified)
-            {
-                return String.Format(
-                    "{0}.CartesianToEqRa(({1}),({2}),({3}))",
-                    GetCodeDatasetPrefix(codeDataset),
-                    GetXString(codeDataset),
-                    GetYString(codeDataset),
-                    GetZString(codeDataset));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public string GetDecString(SqlServerDataset codeDataset)
-        {
-            if (isEqSpecified)
-            {
-                return SqlServerCodeGenerator.GetCode(DecExpression, true);
-            }
-            else if (isCartesianSpecified)
-            {
-                return String.Format(
-                    "{0}.CartesianToEqDec(({1}),({2}),({3}))",
-                    GetCodeDatasetPrefix(codeDataset),
-                    GetXString(codeDataset),
-                    GetYString(codeDataset),
-                    GetZString(codeDataset));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public string GetXString(SqlServerDataset codeDataset)
-        {
-            if (isCartesianSpecified)
-            {
-                return SqlServerCodeGenerator.GetCode(XExpression, true);
-            }
-            else if (isEqSpecified)
-            {
-                return String.Format("{0}.EqToCartesianX(({1}),({2}))",
-                    GetCodeDatasetPrefix(codeDataset),
-                    GetRAString(codeDataset),
-                    GetDecString(codeDataset));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public string GetYString(SqlServerDataset codeDataset)
-        {
-            if (isCartesianSpecified)
-            {
-                return SqlServerCodeGenerator.GetCode(YExpression, true);
-            }
-            else if (isEqSpecified)
-            {
-                return String.Format("{0}.EqToCartesianY(({1}),({2}))",
-                    GetCodeDatasetPrefix(codeDataset),
-                    GetRAString(codeDataset),
-                    GetDecString(codeDataset));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public string GetZString(SqlServerDataset codeDataset)
-        {
-            if (isCartesianSpecified)
-            {
-                return SqlServerCodeGenerator.GetCode(ZExpression, true);
-            }
-            else if (isEqSpecified)
-            {
-                return String.Format("{0}.EqToCartesianZ(({1}),({2}))",
-                    GetCodeDatasetPrefix(codeDataset),
-                    GetRAString(codeDataset),
-                    GetDecString(codeDataset));
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public string GetHtmIdString()
-        {
-            if (isHtmIdSpecified)
-            {
-                return SqlServerCodeGenerator.GetCode(HtmIdExpression, true);
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw new NotImplementedException();
-            }
-        }
-
-        public string GetZoneIdString(SqlServerDataset codeDataset)
-        {
-                if (isZoneIdSpecified)
-                {
-                    return SqlServerCodeGenerator.GetCode(ZoneIdExpression, true);
-                }
-                else if (isEqSpecified || isCartesianSpecified)
-                {
-                    return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-                        "CONVERT(INT,FLOOR(({0} + 90.0) / @H))",
-                        GetDecString(codeDataset));
-                }
-                else
-                {
-                    // TODO: Figure out from metadata
-                    throw new NotImplementedException();
-                }
-        }
-         * */
 
         #endregion
 

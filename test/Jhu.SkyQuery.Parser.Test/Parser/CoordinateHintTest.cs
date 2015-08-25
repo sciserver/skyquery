@@ -42,14 +42,14 @@ FROM
             Assert.AreEqual(3, ts.Length);
 
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
-            Assert.AreEqual("[c1].[ra]", coords.GetRAExpression(CodeDataset).ToString());
-            Assert.AreEqual("[c1].[dec]", coords.GetDecExpression(CodeDataset).ToString());
+            Assert.AreEqual("[c1].[ra]", coords.RAExpression.ToString());
+            Assert.AreEqual("[c1].[dec]", coords.DecExpression.ToString());
             Assert.AreEqual("0.1", coords.Error);
             Assert.IsTrue(coords.IsConstantError);
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[ra]", coords.GetRAExpression(CodeDataset).ToString());
-            Assert.AreEqual("[c2].[dec]", coords.GetDecExpression(CodeDataset).ToString());
+            Assert.AreEqual("[c2].[ra]", coords.RAExpression.ToString());
+            Assert.AreEqual("[c2].[dec]", coords.DecExpression.ToString());
             Assert.AreEqual("[c2].[err]", coords.Error);
             Assert.AreEqual("0.1", coords.ErrorMin);
             Assert.AreEqual("0.5", coords.ErrorMax);
@@ -75,12 +75,12 @@ FROM
             Assert.AreEqual(3, ts.Length);
 
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
-            Assert.AreEqual("[c1].[ra]", coords.GetRAExpression(CodeDataset).ToString());
-            Assert.AreEqual("[c1].[dec]", coords.GetDecExpression(CodeDataset).ToString());
-            Assert.AreEqual("[c1].[htmID]", coords.GetHtmIdExpression().ToString());
+            Assert.AreEqual("[c1].[ra]", coords.RAExpression.ToString());
+            Assert.AreEqual("[c1].[dec]", coords.DecExpression.ToString());
+            Assert.AreEqual("[c1].[htmID]", coords.HtmIdExpression.ToString());
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[htmID]", coords.GetHtmIdExpression().ToString());
+            Assert.AreEqual("[c2].[htmID]", coords.HtmIdExpression.ToString());
         }
 
         [TestMethod]
@@ -102,12 +102,12 @@ FROM
             Assert.AreEqual(3, ts.Length);
 
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
-            Assert.AreEqual("[c1].[ra]", coords.GetRAExpression(CodeDataset).ToString());
-            Assert.AreEqual("[c1].[dec]", coords.GetDecExpression(CodeDataset).ToString());
-            Assert.AreEqual("[c1].[zoneID]", coords.GetZoneIdExpression(CodeDataset).ToString());
+            Assert.AreEqual("[c1].[ra]", coords.RAExpression.ToString());
+            Assert.AreEqual("[c1].[dec]", coords.DecExpression.ToString());
+            Assert.AreEqual("[c1].[zoneID]", coords.ZoneIdExpression.ToString());
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[zoneID]", coords.GetZoneIdExpression(CodeDataset).ToString());
+            Assert.AreEqual("[c2].[zoneID]", coords.ZoneIdExpression.ToString());
         }
 
         [TestMethod]

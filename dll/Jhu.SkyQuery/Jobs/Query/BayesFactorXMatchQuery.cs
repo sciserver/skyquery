@@ -50,7 +50,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 // Collect statistics for zoneID
                 tr.Statistics = new Graywulf.SqlParser.TableStatistics();
-                tr.Statistics.KeyColumn = table.Coordinates.GetZoneIdExpression(CodeDataset);
+                tr.Statistics.KeyColumn = table.Coordinates.ZoneIdExpression;
                 tr.Statistics.KeyColumnDataType = DataTypes.SqlInt;
 
                 TableSourceStatistics.Add(table.TableSource);
