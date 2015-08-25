@@ -2,16 +2,14 @@
 
 DECLARE @dist2 float = 4 * POWER(SIN(RADIANS(@theta/2)), 2);
 
-[$htm_create]
-
 WITH
 __t1 AS
 (
-	[$query1]
+[$query1]
 ),
 __t2 AS
 (
-	[$query2]
+[$query2]
 ),
 pairs AS
 (
@@ -60,4 +58,3 @@ SELECT
 	[Dx], [Dy], [Dz]
 FROM __wrap
 
-[$htm_drop]
