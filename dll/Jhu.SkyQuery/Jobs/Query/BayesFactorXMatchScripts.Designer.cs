@@ -166,9 +166,9 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///	FROM [$tablename]
         ///	[$where].
         /// </summary>
-        internal static string SelectSourceTable {
+        internal static string SelectAugmentedTable {
             get {
-                return ResourceManager.GetString("SelectSourceTable", resourceCulture);
+                return ResourceManager.GetString("SelectAugmentedTable", resourceCulture);
             }
         }
         
@@ -196,9 +196,9 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///		   [$cy] AS [Cy],
         ///		   [$cz [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string SelectSourceTableHtm {
+        internal static string SelectAugmentedTableHtm {
             get {
-                return ResourceManager.GetString("SelectSourceTableHtm", resourceCulture);
+                return ResourceManager.GetString("SelectAugmentedTableHtm", resourceCulture);
             }
         }
     }

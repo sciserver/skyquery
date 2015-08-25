@@ -40,12 +40,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override StringBuilder GetSelectAugmentedTableTemplate()
         {
-            return new StringBuilder(BayesFactorXMatchScripts.SelectSourceTable);
+            return new StringBuilder(BayesFactorXMatchScripts.SelectAugmentedTable);
         }
 
-        protected override StringBuilder GetSelectSourceTableQueryHtmTemplate()
+        protected override StringBuilder GetSelectAugmentedTableHtmTemplate()
         {
-            return new StringBuilder(BayesFactorXMatchScripts.SelectSourceTableHtm);
+            return new StringBuilder(BayesFactorXMatchScripts.SelectAugmentedTableHtm);
         }
 
         protected override StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)

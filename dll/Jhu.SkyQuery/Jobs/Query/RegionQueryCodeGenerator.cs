@@ -418,14 +418,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Augmented table query generation
         
-        protected virtual string GetSelectAugmentedTableTemplate()
+        protected virtual StringBuilder GetSelectAugmentedTableTemplate()
         {
-            return RegionScripts.SelectAugmentedTable;
+            return new StringBuilder(RegionScripts.SelectAugmentedTable);
         }
 
-        protected virtual string GetSelectAugmentedTableHtmTemplate()
+        protected virtual StringBuilder GetSelectAugmentedTableHtmTemplate()
         {
-            return RegionScripts.SelectAugmentedTableHtm;
+            return new StringBuilder(RegionScripts.SelectAugmentedTableHtm);
         }
 
         /// <summary>
@@ -508,7 +508,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (options.Region != null && options.UseRegion && options.UseHtm)
             {
-                sql = new StringBuilder(GetSelectAugmentedTableHtmTemplate());
+                sql = GetSelectAugmentedTableHtmTemplate();
 
                 sql.Replace("[$htmid]", Execute(coords.GetHtmIdExpression()));
                 sql.Replace("[$where_inner]", Execute(where));
@@ -516,7 +516,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             else
             {
-                sql = new StringBuilder(GetSelectAugmentedTableTemplate());
+                sql = GetSelectAugmentedTableTemplate();
 
                 sql.Replace("[$where]", Execute(whereregion));
             }

@@ -82,21 +82,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             cmd.Parameters.Add(zoneHeightParameterName, SqlDbType.Float).Value = Query.ZoneHeight;
         }
-        #region Source table functions
 
-        protected virtual StringBuilder GetSelectAugmentedTableTemplate()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected virtual StringBuilder GetSelectSourceTableQueryHtmTemplate()
-        {
-            throw new NotImplementedException();
-        }
-
-        
-
-        #endregion
         #region Search radius functions
 
         public SqlCommand GetComputeMinMaxErrorCommand(XMatchQueryStep step)
