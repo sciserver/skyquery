@@ -7,27 +7,27 @@ using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class BayesianXMatchTableSource : XMatchTableSource
+    public class BayesFactorXMatchTableSource : XMatchTableSource
     {
         #region Constructors and initialiters
 
-        public BayesianXMatchTableSource()
+        public BayesFactorXMatchTableSource()
         {
         }
 
-        public BayesianXMatchTableSource(XMatchTableSource old)
+        public BayesFactorXMatchTableSource(XMatchTableSource old)
             :base(old)
         {
         }
 
-        public BayesianXMatchTableSource(BayesianXMatchTableSource old)
+        public BayesFactorXMatchTableSource(BayesFactorXMatchTableSource old)
             : base(old)
         {
         }
 
         public override object Clone()
         {
-            return new BayesianXMatchTableSource(this);
+            return new BayesFactorXMatchTableSource(this);
         }
 
         #endregion
@@ -36,7 +36,7 @@ namespace Jhu.SkyQuery.Parser
         {
  	        base.Interpret();
 
-            TableReference = new BayesianXMatchTableReference()
+            TableReference = new BayesFactorXMatchTableReference()
             {
                 Alias = this.Alias
             };

@@ -71,7 +71,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual(3, ts.Length);
@@ -99,7 +99,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
@@ -147,7 +147,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
@@ -178,7 +178,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
@@ -209,7 +209,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
@@ -240,7 +240,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual("[a].[cx]", xts[0].Coordinates.GetXExpression(CodeDataset).ToString());
@@ -273,7 +273,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesianXMatchTableSource>();
+            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
             Assert.AreEqual(XMatchInclusionMethod.Must, xts[0].InclusionMethod);

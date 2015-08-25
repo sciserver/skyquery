@@ -12,7 +12,7 @@ using Jhu.Graywulf.RemoteService;
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
-    public class BayesianXMatchQueryTest : SkyQueryTestBase
+    public class BayesFactorXMatchQueryTest : SkyQueryTestBase
     {
         [ClassInitialize]
         public static void Initialize(TestContext context)

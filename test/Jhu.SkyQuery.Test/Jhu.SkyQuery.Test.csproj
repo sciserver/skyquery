@@ -53,7 +53,7 @@
     <Compile Include="Format\Fits\FitsReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
-    <Compile Include="Jobs\Query\BayesianXMatchQueryTest.cs" />
+    <Compile Include="Jobs\Query\BayesFactorXMatchQueryTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGeneratorTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryTest.cs" />
     <Compile Include="Jobs\Query\SkyQueryTestBase.cs" />

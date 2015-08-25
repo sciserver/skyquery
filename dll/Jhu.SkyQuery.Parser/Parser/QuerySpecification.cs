@@ -25,7 +25,7 @@ namespace Jhu.SkyQuery.Parser
 
                     if (SkyQueryParser.ComparerInstance.Compare(algorithm, Constants.AlgorithmBayesFactor) == 0)
                     {
-                        xmqs = new BayesianXMatchQuerySpecification(this);
+                        xmqs = new BayesFactorXMatchQuerySpecification(this);
                     }
                     else
                     {

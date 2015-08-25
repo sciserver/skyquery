@@ -6,34 +6,34 @@ using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class BayesianXMatchQuerySpecification : XMatchQuerySpecification
+    public class BayesFactorXMatchQuerySpecification : XMatchQuerySpecification
     {
 
         #region Constructors and initializers
 
-        public BayesianXMatchQuerySpecification()
+        public BayesFactorXMatchQuerySpecification()
             : base()
         {
         }
 
-        public BayesianXMatchQuerySpecification(QuerySpecification qs)
+        public BayesFactorXMatchQuerySpecification(QuerySpecification qs)
             :base(qs)
         {
         }
 
-        public BayesianXMatchQuerySpecification(XMatchQuerySpecification xqs)
+        public BayesFactorXMatchQuerySpecification(XMatchQuerySpecification xqs)
             :base(xqs)
         {
         }
 
-        public BayesianXMatchQuerySpecification(BayesianXMatchQuerySpecification old)
+        public BayesFactorXMatchQuerySpecification(BayesFactorXMatchQuerySpecification old)
             :base(old)
         {
         }
 
         public override object Clone()
         {
-            return new BayesianXMatchQuerySpecification(this);
+            return new BayesFactorXMatchQuerySpecification(this);
         }
 
         #endregion

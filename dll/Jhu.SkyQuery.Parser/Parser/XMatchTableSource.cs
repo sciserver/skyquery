@@ -70,7 +70,7 @@ namespace Jhu.SkyQuery.Parser
             switch (XMatchAlgorithm.ToUpper())
             {
                 case Constants.AlgorithmBayesFactor:
-                    var xts = new BayesianXMatchTableSource(this);
+                    var xts = new BayesFactorXMatchTableSource(this);
                     return xts;
                 default:
                     throw new NotImplementedException();

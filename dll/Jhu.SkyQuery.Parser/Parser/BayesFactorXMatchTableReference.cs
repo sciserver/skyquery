@@ -8,9 +8,9 @@ using Jhu.Graywulf.Schema;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class BayesianXMatchTableReference : TableReference
+    public class BayesFactorXMatchTableReference : TableReference
     {
-        public BayesianXMatchTableReference()
+        public BayesFactorXMatchTableReference()
             : base()
         {
             InitializeMembers();

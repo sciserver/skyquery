@@ -74,9 +74,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Copyright.cs" />
-    <Compile Include="Parser\BayesianXMatchQuerySpecification.cs" />
-    <Compile Include="Parser\BayesianXMatchTableReference.cs" />
-    <Compile Include="Parser\BayesianXMatchTableSource.cs" />
+    <Compile Include="Parser\BayesFactorXMatchQuerySpecification.cs" />
+    <Compile Include="Parser\BayesFactorXMatchTableReference.cs" />
+    <Compile Include="Parser\BayesFactorXMatchTableSource.cs" />
     <Compile Include="Parser\Constants.cs" />
     <Compile Include="Parser\Enum.cs" />
     <Compile Include="Parser\ExceptionMessages.Designer.cs">
