@@ -271,12 +271,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
             var table = Query.XMatchTables[step.XMatchTable];
+            var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForCreateTable,
+                NullType = ColumnListNullType.NotNull,
+            };
 
             var sql = new StringBuilder(XMatchScripts.CreateZoneTable);
 
             sql.Replace("[$tablename]", GetResolvedTableName(zonetable));
             sql.Replace("[$indexname]", GeneratePrimaryKeyName(zonetable));
-            sql.Replace("[$columnlist]", GeneratePropagatedColumnList(table.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForCreateTable, ColumnListNullType.NotNull, false));
+            sql.Replace("[$columnlist]", columnlist.GetString());
 
             return new SqlCommand(sql.ToString());
         }
@@ -328,10 +334,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             var partwhere = sc == null ? null : SkyQuery.Parser.WhereClause.Create(sc);
 
+            // List of primary key columns
+            var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForSelectWithOriginalName,
+            };
+
             sql.Replace("[$zonetablename]", GetResolvedTableName(zonetable));
             sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(table.TableReference));
             sql.Replace("[$where]", Execute(where));
-            sql.Replace("[$selectcolumnlist]", GeneratePropagatedColumnList(table.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithOriginalName, ColumnListNullType.Nothing, false));
+            sql.Replace("[$selectcolumnlist]", columnlist.GetString());
 
             SubstituteCoordinates(sql, coords, hasregion, true);
 
@@ -385,12 +398,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreatePairTableCommand(XMatchQueryStep step, Table pairtable)
         {
             var table = Query.XMatchTables[step.XMatchTable];
+            var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForCreateTable,
+                NullType = ColumnListNullType.NotNull,
+            };
 
             var sql = new StringBuilder(XMatchScripts.CreatePairTable);
 
             sql.Replace("[$tablename]", GetResolvedTableName(pairtable));
             sql.Replace("[$createcolumnlist1]", String.Format("PK_Match_{0}_MatchID [bigint] NOT NULL", step.StepNumber - 1));
-            sql.Replace("[$createcolumnlist2]", GeneratePropagatedColumnList(table.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForCreateTable, ColumnListNullType.NotNull, false));
+            sql.Replace("[$createcolumnlist2]", columnlist.GetString());
 
             return new SqlCommand(sql.ToString());
         }
@@ -425,20 +444,37 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber == 1 && !table1.IsZoneTableNecessary)
             {
                 // Use source table for Table 1
-                var options = new AugmentedTableQueryOptions(table1.TableSource, table1.Region);
+                var tqoptions = new AugmentedTableQueryOptions(table1.TableSource, table1.Region);
+                var columnlist = new SqlQueryColumnListGenerator(table1.TableReference)
+                {
+                    Context = ColumnContext.PrimaryKey,
+                    ListType = ColumnListType.ForSelectWithEscapedName,
+                };
 
-                query1 = GenerateAugmentedTableQuery(options).ToString();
-                columnlist1 = GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
-                selectlist1 = GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
+                query1 = GenerateAugmentedTableQuery(tqoptions).ToString();
+                columnlist1 = columnlist.GetString();
+                selectlist1 = columnlist.GetString();
             }
             else if (step.StepNumber == 1)
             {
                 // Use zone table for Table 1
                 // PK needs to be figured out from catalog table
+                var columnlist = new SqlQueryColumnListGenerator(table1.TableReference)
+                {
+                    TableAlias = "__t1",
+                    Context = ColumnContext.PrimaryKey,
+                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+                };
+
+                var selectlist = new SqlQueryColumnListGenerator(table1.TableReference)
+                {
+                    Context = ColumnContext.PrimaryKey,
+                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+                };
                 
                 query1 = GenerateSelectStarQuery(GetZoneTable(pstep), -1);
-                columnlist1 = GeneratePropagatedColumnList(table1.TableSource, "__t1", ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
-                selectlist1 = GeneratePropagatedColumnList(table1.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
+                columnlist1 = columnlist.GetString();
+                selectlist1 = selectlist.GetString();
             }
             else
             {
@@ -458,17 +494,37 @@ namespace Jhu.SkyQuery.Jobs.Query
                     UsePartitioning = false
                 };
 
+                var columnlist = new SqlQueryColumnListGenerator(table2.TableReference)
+                {
+                    TableAlias = "__t1",
+                    Context = ColumnContext.PrimaryKey,
+                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+                };
+
                 query2 = GenerateAugmentedTableQuery(options).ToString();
-                columnlist2 = GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
-                selectlist2 = GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedName, ColumnListNullType.Nothing, false);
+                columnlist2 = columnlist.GetString();
+                selectlist2 = columnlist.GetString();
             }
             else
             {
                 // Use zone table for Table 2
                 // PK needs to be figured out from catalog table
+                var columnlist = new SqlQueryColumnListGenerator(table2.TableReference)
+                {
+                    TableAlias = "__t2",
+                    Context = ColumnContext.PrimaryKey,
+                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+                };
+
+                var selectlist = new SqlQueryColumnListGenerator(table2.TableReference)
+                {
+                    Context = ColumnContext.PrimaryKey,
+                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+                };
+
                 query2 = GenerateSelectStarQuery(GetZoneTable(step), -1);
-                columnlist2 = GeneratePropagatedColumnList(table2.TableSource, "__t2", ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
-                selectlist2 = GeneratePropagatedColumnList(table2.TableSource, null, ColumnListInclude.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
+                columnlist2 = columnlist.GetString();
+                selectlist2 = selectlist.GetString();
             }
 
             StringBuilder sql = new StringBuilder(XMatchScripts.PopulatePairTable);
@@ -543,15 +599,14 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
-                    var columns = GeneratePropagatedColumnList(
-                        Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource,
-                        null,
-                        ColumnListInclude.Referenced,
-                        ColumnListType.ForCreateTable,
-                        ColumnListNullType.NotNull,
-                        true);
+                    var columns = new SqlQueryColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference)
+                    {
+                        ListType = ColumnListType.ForCreateTable,
+                        NullType = ColumnListNullType.NotNull,
+                        LeadingComma = true,
+                    };
 
-                    columnlist.AppendLine(columns);
+                    columnlist.AppendLine(columns.GetString());
                 }
             }
 
@@ -599,47 +654,45 @@ namespace Jhu.SkyQuery.Jobs.Query
             var schemaname = Partition.TemporaryDataset.DefaultSchemaName;
 
             // To propagate columns gather all columns from previous steps
-            var include = ColumnListInclude.All;
-            var tables = new List<ITableSource>();
-            var aliases = new List<string>();
-            for (int i = 0; i <= step.StepNumber; i++)
-            {
-                // TODO: what to do with drops?
-                //if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
-                //{
-
-                tables.Add(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource);
-                aliases.Add(i < step.StepNumber ? "__t1" : "__t2");
-
-                //}
-            }
-
-            var insertcolumnlist = GeneratePropagatedColumnList(tables, aliases, include, ColumnListType.ForInsert, ColumnListNullType.Nothing, false);
-            var selectcolumnlist = GeneratePropagatedColumnList(tables, aliases, include, ColumnListType.ForSelectWithEscapedNameNoAlias, ColumnListNullType.Nothing, false);
-
-            /* TODO: delete
-            var insertcolumnlist = new StringBuilder();
-            var selectcolumnlist = new StringBuilder();
+            string insertcolumnlist = String.Empty;
+            string selectcolumnlist = String.Empty;
 
             for (int i = 0; i <= step.StepNumber; i++)
             {
-                if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
+                var cg = new SqlQueryColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference)
                 {
-                    if (insertcolumnlist.Length != 0)
+                    TableAlias = i < step.StepNumber ? "__t1" : "__t2",
+                    Context = ColumnContext.AllReferenced,
+                };
+
+                // Insert columns
+                cg.ListType = ColumnListType.ForInsert;
+                var icl = cg.GetString();
+
+                if (!String.IsNullOrWhiteSpace(icl))
+                {
+                    if (insertcolumnlist != String.Empty)
                     {
-                        insertcolumnlist.Append(", ");
-                        selectcolumnlist.Append(", ");
+                        insertcolumnlist += ", ";
                     }
 
-                    var tablealias = (i < step.StepNumber) ? "tableA" : "tableB";
-                    var listtype = (i < step.StepNumber) ? ColumnListType.ForSelectNoAlias : ColumnListType.ForSelectWithOriginalName;
+                    insertcolumnlist += icl;
+                }
+                
+                // Select columns
+                cg.ListType = ColumnListType.ForSelectWithEscapedNameNoAlias;
+                var scl = cg.GetString();
 
-                    // ForSelectNoalias -> ForInsert
-                    insertcolumnlist.Append(GeneratePropagatedColumnList(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, null, include, ColumnListType.ForSelectNoAlias, ColumnListNullType.Nothing, false));
-                    selectcolumnlist.Append(GeneratePropagatedColumnList(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableSource, tablealias, include, listtype, ColumnListNullType.Nothing, false));
+                if (!String.IsNullOrWhiteSpace(scl))
+                {
+                    if (selectcolumnlist != String.Empty)
+                    {
+                        selectcolumnlist += ", ";
+                    }
+
+                    selectcolumnlist += scl;
                 }
             }
-            */
 
             // --- Zone table join conditions
             var join = new StringBuilder();
@@ -653,9 +706,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     c.Name));
             }
 
-
             var sql = new StringBuilder(GetPopulateMatchTableScript(step));
-
 
             sql.Replace("[$matchtable]", GetResolvedTableName(matchtable));     // new match table
             sql.Replace("[$insertcolumnlist]", insertcolumnlist.ToString());

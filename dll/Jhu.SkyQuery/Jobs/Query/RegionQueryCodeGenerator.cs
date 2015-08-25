@@ -444,24 +444,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // 1. Generate column list
 
-            ColumnListType listtype;
-
-            if (options.EscapeColumnNames)
+            var columnlist = new SqlQueryColumnListGenerator(options.Table.TableReference)
             {
-                listtype = ColumnListType.ForSelectWithOriginalName;
-            }
-            else
-            {
-                listtype = ColumnListType.ForSelectWithOriginalNameNoAlias;
-            }
-
-            var columnlist = GeneratePropagatedColumnList(
-                options.Table,
-                options.Table.TableReference.Alias,
-                ColumnListInclude.Referenced,
-                listtype,
-                ColumnListNullType.Nothing,
-                false);
+                ListType = options.EscapeColumnNames ?
+                    ColumnListType.ForSelectWithOriginalName :
+                    ColumnListType.ForSelectWithOriginalNameNoAlias
+            };
 
             // 2. Figure out where clause
 
@@ -535,7 +523,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Substitute additional tokens
             sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
-            sql.Replace("[$columnlist]", columnlist);
+            sql.Replace("[$columnlist]", columnlist.GetString());
 
             // Substitute coordinates
             sql.Replace("[$ra]", Execute(coords.GetRAExpression(queryObject.CodeDataset)));
