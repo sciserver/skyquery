@@ -31,7 +31,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        private string[] GeneratePropagatedColumnListTestHelper(string sql, ColumnListInclude include)
+        private string[] GeneratePropagatedColumnListTestHelper(string sql, ColumnContext context)
         {
             var res = new List<string>();
             var q = CreateQuery(sql);
@@ -41,11 +41,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 foreach (var ts in qs.EnumerateSourceTables(false))
                 {
-                    var type = ColumnListType.ForSelectWithEscapedNameNoAlias;
-                    var nullType = ColumnListNullType.Nothing;
-                    var leadingComma = false;
+                    var columns = new SqlQueryColumnListGenerator(ts.TableReference, context)
+                    {
+                        TableAlias = "tablealias",
+                        ListType = ColumnListType.ForSelectWithEscapedNameNoAlias
+                    };
 
-                    res.Add(cg.GeneratePropagatedColumnList(ts, "tablealias", include, type, nullType, leadingComma));
+                    res.Add(columns.GetString());
                 }
             }
 
@@ -57,6 +59,8 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         [TestMethod]
         public void GetPropagatedColumnListTest()
         {
+            // TODO fix this once column propagation works with full query tests
+
             var sql =
 @"SELECT a.objID, a.ra, a.dec,
          b.objID, b.ra, b.dec,
@@ -66,19 +70,21 @@ FROM XMATCH
      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1000) AS x";
 
-            var res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.Referenced);
-            Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec], [tablealias].[_TEST_dbo_CatalogA_a_cx], [tablealias].[_TEST_dbo_CatalogA_a_cy], [tablealias].[_TEST_dbo_CatalogA_a_cz]", res[1]);
+            var res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.Default);
+            Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res[1]);
 
-            res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.PrimaryKey);
+            res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.PrimaryKey);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId]", res[1]);
 
-            res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.All);
+            res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.AllReferenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec], [tablealias].[_TEST_dbo_CatalogA_a_cx], [tablealias].[_TEST_dbo_CatalogA_a_cy], [tablealias].[_TEST_dbo_CatalogA_a_cz]", res[1]);
         }
 
         [TestMethod]
         public void GetPropagatedColumnListTest2()
         {
+            // TODO fix this once column propagation works with full query tests
+
             var sql =
 @"SELECT a.ra
 FROM XMATCH
@@ -86,19 +92,21 @@ FROM XMATCH
      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            var res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.Referenced);
-            Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res[1]);
+            var res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.Default);
+            Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra]", res[1]);
 
-            res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.PrimaryKey);
+            res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.PrimaryKey);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId]", res[1]);
 
-            res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.All);
+            res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.AllReferenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res[1]);
         }
 
         [TestMethod]
         public void GetPropagatedColumnListWithAliasesTest()
         {
+            // TODO fix this once column propagation works with full query tests
+
             var sql =
 @"SELECT a.ra
 FROM XMATCH
@@ -106,13 +114,13 @@ FROM XMATCH
      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            var res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.Referenced);
-            Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res[1]);
+            var res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.Default);
+            Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_ra]", res[1]);
 
-            res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.PrimaryKey);
+            res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.PrimaryKey);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId]", res[1]);
 
-            res = GeneratePropagatedColumnListTestHelper(sql, ColumnListInclude.All);
+            res = GeneratePropagatedColumnListTestHelper(sql, ColumnContext.AllReferenced);
             Assert.AreEqual("[tablealias].[_TEST_dbo_CatalogA_a_objId], [tablealias].[_TEST_dbo_CatalogA_a_ra], [tablealias].[_TEST_dbo_CatalogA_a_dec]", res[1]);
         }
 
