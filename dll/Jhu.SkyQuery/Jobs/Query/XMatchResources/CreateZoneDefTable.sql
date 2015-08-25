@@ -2,7 +2,7 @@
 
 CREATE TABLE [$tablename]
 (
-	ZoneID int NOT NULL PRIMARY KEY,
+	ZoneID int NOT NULL,
 	DecMin float NOT NULL,
 	DecMax float NOT NULL
 ) 
