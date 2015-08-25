@@ -81,7 +81,6 @@
     </Compile>
     <Compile Include="Jobs\Query\SingleServerXMatchQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
-    <Compile Include="Jobs\Query\HtmTableQuery.cs" />
     <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
