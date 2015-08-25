@@ -55,6 +55,19 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         }
 
         [TestMethod]
+        public void TestRegionQuery()
+        {
+            var q = CreateQuery(@"
+SELECT * 
+FROM CatalogA a WITH(POINT(a.Ra, a.Dec))
+REGION 'CIRCLE J2000 10 10 10'");
+
+            Assert.IsTrue(q is SqlQuery);
+            Assert.IsTrue(q is RegionQuery);
+            Assert.IsFalse(q is XMatchQuery);
+        }
+
+        [TestMethod]
         public void TestXMatchQuery()
         {
             var q = CreateQuery(@"
