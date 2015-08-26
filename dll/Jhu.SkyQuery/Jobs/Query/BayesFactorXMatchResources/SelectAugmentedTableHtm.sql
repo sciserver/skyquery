@@ -3,6 +3,7 @@
 	       [$cx] AS [Cx],
 	       [$cy] AS [Cy],
 	       [$cz] AS [Cz],
+	       [$zoneid] AS [ZoneID],
 	       [$weight] AS [a],
 	       LOG([$weight]) AS [l],
 	       0 AS [q],
