@@ -16,6 +16,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         private bool useConditions;
         private bool useHtm;
         private bool usePartitioning;
+        private ColumnContext columnContext;
         private bool escapeColumnNames;
 
         public SkyQuery.Parser.SimpleTableSource Table
@@ -53,6 +54,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             set { usePartitioning = value; }
         }
 
+        public ColumnContext ColumnContext
+        {
+            get { return columnContext; }
+            set { columnContext = value; }
+        }
+
         public bool EscapeColumnNames
         {
             get { return escapeColumnNames; }
@@ -80,7 +87,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.useConditions = true;
             this.useHtm = true;
             this.usePartitioning = true;
-            this.escapeColumnNames = false;
+            this.columnContext = ColumnContext.Default;
+            this.escapeColumnNames = true;
         }
     }
 }
