@@ -215,7 +215,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var tr = new TableReference("D1");
             var cr = new ColumnReference(tr, "ZoneID", DataTypes.SqlInt);
             var sc = GetPartitioningConditions(cr);     // TODO: this needs to use and expression here
-                                                        // then detele GetPartitioningConditions accepting a cr
+            // then detele GetPartitioningConditions accepting a cr
 
             if (sc != null)
             {
@@ -373,9 +373,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void SubstituteZoneId(StringBuilder sql, TableCoordinates coords)
         {
-            
-                sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
-            
+
+            sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
+
         }
 
         #endregion
@@ -402,21 +402,70 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="step">Reference to the XMatch step.</param>
         public SqlCommand GetCreatePairTableCommand(XMatchQueryStep step, Table pairtable)
         {
+            var pstep = Partition.Steps[step.StepNumber - 1];
+
+            string columnlist1, columnlist2;
+
+            GenerateColumnListForCreatePairTable(pstep, 1, out columnlist1);
+            GenerateColumnListForCreatePairTable(step, 2, out columnlist2);
+
+            var sql = new StringBuilder(XMatchScripts.CreatePairTable);
+
+            sql.Replace("[$tablename]", GetResolvedTableName(pairtable));
+            sql.Replace("[$createcolumnlist1]", columnlist1);
+            sql.Replace("[$createcolumnlist2]", columnlist2);
+
+            return new SqlCommand(sql.ToString());
+        }
+
+        private void GenerateColumnListForCreatePairTable(XMatchQueryStep step, int i, out string columnlist)
+        {
             var table = Query.XMatchTables[step.XMatchTable];
-            var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
+
+            if (i == 1)
+            {
+                if (step.StepNumber == 0)
+                {
+                    // Directly use a source table or zone table for pair table building
+                    GenerateColumnListFromSourceTableForCreatePairTable(step, out columnlist);
+                }
+                else
+                {
+                    // Use match table computed earlier for pair table building
+                    GenerateColumnListFromMatchTableForCreatePairTable(step, out columnlist);
+                }
+            }
+            else if (i == 2)
+            {
+                // Directly use a source table or zone table for pair table building
+                GenerateColumnListFromSourceTableForCreatePairTable(step, out columnlist);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private void GenerateColumnListFromSourceTableForCreatePairTable(XMatchQueryStep step, out string columnlist)
+        {
+            var table = Query.XMatchTables[step.XMatchTable];
+
+            // Primary key of source table or zone table
+            // To be used in the pairs select
+            var clg = new SqlQueryColumnListGenerator(table.TableReference)
             {
                 Context = ColumnContext.PrimaryKey,
                 ListType = ColumnListType.ForCreateTable,
                 NullType = ColumnListNullType.NotNull,
             };
 
-            var sql = new StringBuilder(XMatchScripts.CreatePairTable);
+            columnlist = clg.GetString();
+        }
 
-            sql.Replace("[$tablename]", GetResolvedTableName(pairtable));
-            sql.Replace("[$createcolumnlist1]", String.Format("PK_Match_{0}_MatchID [bigint] NOT NULL", step.StepNumber - 1));
-            sql.Replace("[$createcolumnlist2]", columnlist.GetString());
-
-            return new SqlCommand(sql.ToString());
+        private void GenerateColumnListFromMatchTableForCreatePairTable(XMatchQueryStep step, out string columnlist)
+        {
+            // Primary key of previous match table
+            columnlist = String.Format("{0} [bigint] NOT NULL", GetEscapedMatchIDString(step.StepNumber));
         }
 
         /// <summary>
@@ -446,93 +495,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             string columnlist1, columnlist2;
             string selectlist1, selectlist2;
 
-            if (step.StepNumber == 1 && !table1.IsZoneTableNecessary)
-            {
-                // Use source table for Table 1
-                var tqoptions = new AugmentedTableQueryOptions(table1.TableSource, table1.Region)
-                {
-                    EscapeColumnNames = true
-                };
-                query1 = GenerateAugmentedTableQuery(tqoptions).ToString();
-
-                var columnlist = new SqlQueryColumnListGenerator(table1.TableReference)
-                {
-                    Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithOriginalName,
-                };
-                columnlist1 = selectlist1 = columnlist.GetString();
-            }
-            else if (step.StepNumber == 1)
-            {
-                // Use zone table for Table 1
-                // PK needs to be figured out from catalog table
-                var columnlist = new SqlQueryColumnListGenerator(table1.TableReference)
-                {
-                    TableAlias = "__t1",
-                    Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-                };
-
-                var selectlist = new SqlQueryColumnListGenerator(table1.TableReference)
-                {
-                    Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-                };
-                
-                query1 = GenerateSelectStarQuery(GetZoneTable(pstep), -1);
-                columnlist1 = columnlist.GetString();
-                selectlist1 = selectlist.GetString();
-            }
-            else
-            {
-                // Use match table for Table 1
-                // PK in match table is always MatchID
-                query1 = GenerateSelectStarQuery(GetMatchTable(pstep), -1);
-                columnlist1 = "__t1.[MatchID]";
-                selectlist1 = "__t1_MatchID";
-            }
-
-            if (!table2.IsZoneTableNecessary)
-            {
-                // Use source table for Table 1
-                // Do NOT partition on second table!
-                var options = new AugmentedTableQueryOptions(table2.TableSource, table2.Region)
-                {
-                    EscapeColumnNames = true,
-                    UsePartitioning = false
-                };
-                query2 = GenerateAugmentedTableQuery(options).ToString();
-
-                var columnlist = new SqlQueryColumnListGenerator(table2.TableReference)
-                {
-                    TableAlias = "__t1",
-                    Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-                };
-                columnlist2 = columnlist.GetString();
-                selectlist2 = columnlist.GetString();
-            }
-            else
-            {
-                // Use zone table for Table 2
-                // PK needs to be figured out from catalog table
-                var columnlist = new SqlQueryColumnListGenerator(table2.TableReference)
-                {
-                    TableAlias = "__t2",
-                    Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-                };
-
-                var selectlist = new SqlQueryColumnListGenerator(table2.TableReference)
-                {
-                    Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-                };
-
-                query2 = GenerateSelectStarQuery(GetZoneTable(step), -1);
-                columnlist2 = columnlist.GetString();
-                selectlist2 = selectlist.GetString();
-            }
+            GenerateSourceQueryForPopulatePairTable(pstep, 1, out query1, out columnlist1, out selectlist1);
+            GenerateSourceQueryForPopulatePairTable(step, 2, out query2, out columnlist2, out selectlist2);
 
             StringBuilder sql = new StringBuilder(XMatchScripts.PopulatePairTable);
 
@@ -540,15 +504,130 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$query2]", query2);
             sql.Replace("[$columnlist1]", columnlist1);
             sql.Replace("[$columnlist2]", columnlist2);
+            sql.Replace("[$selectlist1]", selectlist1);
+            sql.Replace("[$selectlist2]", selectlist2);
             sql.Replace("[$pairtable]", GetResolvedTableName(pairtable));
             sql.Replace("[$linktable]", GetResolvedTableName(linktable));
 
             var cmd = new SqlCommand(sql.ToString());
 
+            // Region is same for all tables
             AppendRegionParameter(cmd, table1.Region);
             cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
 
             return cmd;
+        }
+
+        private void GenerateSourceQueryForPopulatePairTable(XMatchQueryStep step, int i, out string query, out string columnlist, out string selectlist)
+        {
+            var table = Query.XMatchTables[step.XMatchTable];
+
+            if (i == 1)
+            {
+                var alias = "__t1";
+
+                if (step.StepNumber == 0 && !table.IsZoneTableNecessary)
+                {
+                    // Directly use a source table for pair table building
+                    GenerateSourceQueryFromSourceTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                }
+                else if (step.StepNumber == 0)
+                {
+                    // Use a zone table computed earlier for pair table building
+                    GenerateSourceQueryFromZoneTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                }
+                else
+                {
+                    // Use match table computed earlier for pair table building
+                    GenerateSourceQueryFromMatchTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                }
+            }
+            else if (i == 2)
+            {
+                var alias = "__t2";
+
+                if (!table.IsZoneTableNecessary)
+                {
+                    // Directly use a source table for pair table building
+                    GenerateSourceQueryFromSourceTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                }
+                else
+                {
+                    // Use a zone table computed earlier for pair table building
+                    GenerateSourceQueryFromZoneTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        private void GenerateSourceQueryFromSourceTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
+        {
+            var table = Query.XMatchTables[step.XMatchTable];
+
+            // Directly use a source table for pair table building
+            var tqoptions = new AugmentedTableQueryOptions(table.TableSource, table.Region)
+            {
+                EscapeColumnNames = true
+            };
+            query = GenerateAugmentedTableQuery(tqoptions).ToString();
+
+            // To be used in the pairs select
+            var clg = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                TableAlias = alias,
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+            };
+
+            columnlist = clg.GetString();
+
+            // To be used in the final select that goes into the insert
+            var slg = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+            };
+
+            selectlist = slg.GetString();
+        }
+
+        private void GenerateSourceQueryFromZoneTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
+        {
+            var table = Query.XMatchTables[step.XMatchTable];
+
+            // Use a zone table computed earlier for pair table building
+            query = GenerateSelectStarQuery(GetZoneTable(step), -1);
+
+            // PK needs to be figured out from catalog table
+            var clg = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                TableAlias = alias,
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+            };
+
+            columnlist = clg.GetString();
+
+            var slg = new SqlQueryColumnListGenerator(table.TableReference)
+            {
+                Context = ColumnContext.PrimaryKey,
+                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+            };
+
+            selectlist = slg.GetString();
+        }
+
+        private void GenerateSourceQueryFromMatchTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
+        {
+            // Use match table computed earlier for pair table building
+            query = GenerateSelectStarQuery(GetMatchTable(step), -1);
+
+            // PK in match table is always MatchID
+            columnlist = String.Format("{0}.[MatchID] AS {1}", alias, GetEscapedMatchIDString(step.StepNumber));
+            selectlist = GetEscapedMatchIDString(step.StepNumber);
         }
 
         #endregion
@@ -574,6 +653,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             return String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
         }
 
+        protected string GetEscapedMatchIDString(int stepNumber)
+        {
+            return String.Format("_Match_{0}_MatchID", stepNumber);
+        }
+
         protected virtual string GetCreateMatchTableScript(XMatchQueryStep step)
         {
             throw new NotImplementedException();
@@ -587,27 +671,28 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             sql.Replace("[$tablename]", GetResolvedTableName(matchtable));
             sql.Replace("[$indexname]", GeneratePrimaryKeyName(matchtable));
-            sql.Replace("[$columnlist]", GetCreateMatchTableColumns(step));
+            sql.Replace("[$columnlist]", GenerateCreateMatchTableColumns(step));
 
             return new SqlCommand(sql.ToString());
-
         }
 
-        private string GetCreateMatchTableColumns(XMatchQueryStep step)
+        private string GenerateCreateMatchTableColumns(XMatchQueryStep step)
         {
-            // TODO: need to propagate primary key when lazy columns are being implemented
+            // Add all primary keys and referenced columns from all source tables
+            // that have been processed so far
 
-            // Add all propagated columns
+            // TODO: check this when implementing drop-outs
+            // there's no point in propagating anything other than PKs
+
             var columnlist = new StringBuilder();
 
             for (int i = 0; i <= step.StepNumber; i++)
             {
-                // TODO: check this when implementing drop-outs
-
                 if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
                     var columns = new SqlQueryColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference)
                     {
+                        Context = ColumnContext.Default,
                         ListType = ColumnListType.ForCreateTable,
                         NullType = ColumnListNullType.NotNull,
                         LeadingComma = true,
@@ -685,7 +770,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     insertcolumnlist += icl;
                 }
-                
+
                 // Select columns
                 cg.ListType = ColumnListType.ForSelectWithEscapedNameNoAlias;
                 var scl = cg.GetString();
@@ -720,7 +805,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$selectcolumnlist]", selectcolumnlist.ToString());
             sql.Replace("[$selectcolumnlist2]", insertcolumnlist.ToString());
             sql.Replace("[$pairtable]", GetResolvedTableName(GetPairTable(step)));
-            
+
             sql.Replace("[$matchidcolumn]", String.Format("PK_Match_{0}_MatchID", step.StepNumber - 1));    // TODO
             sql.Replace("[$table]", tablename);        // tableB (source table)
             sql.Replace("[$tablejoinconditions]", join.ToString());

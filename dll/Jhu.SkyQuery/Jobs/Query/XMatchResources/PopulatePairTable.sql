@@ -33,14 +33,14 @@ __wrap AS
 (
 	SELECT * FROM pairs
 	WHERE
-		[tableBRA] BETWEEN [RA1] - [Alpha] AND [RA1] + [Alpha]
+		[RA2] BETWEEN [RA1] - [Alpha] AND [RA1] + [Alpha]
 
 	UNION ALL
 
 	-- Take care of negative wrap-around
 	SELECT * FROM pairs
 	WHERE
-		[RA1] BETWEEN 360 - Alpha AND 360  AND
+		[RA1] BETWEEN 360 - [Alpha] AND 360  AND
 		[RA2] BETWEEN 0 AND [RA1] - 360 + [Alpha]
 
 	UNION ALL
@@ -48,7 +48,7 @@ __wrap AS
 	-- Take care of positive wrap-around
 	SELECT * FROM pairs
 	WHERE
-		[RA1] BETWEEN 0 AND Alpha AND
+		[RA1] BETWEEN 0 AND [Alpha] AND
 		[RA2] BETWEEN [RA1] + 360 - [Alpha] AND 360
 )
 INSERT [$pairtable] WITH (TABLOCKX)
