@@ -510,6 +510,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 sql = GetSelectAugmentedTableHtmTemplate();
 
+                SubstituteHtmId(sql, coords);
+
                 sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
                 sql.Replace("[$where_inner]", Execute(where));
                 sql.Replace("[$where_partial]", Execute(whereregion));
@@ -525,40 +527,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
             sql.Replace("[$columnlist]", columnlist.GetString());
 
-            // Substitute coordinates
-            sql.Replace("[$ra]", Execute(GetRAExpression(coords)));
-            sql.Replace("[$dec]", Execute(GetDecExpression(coords)));
-            sql.Replace("[$cx]", Execute(GetXExpression(coords)));
-            sql.Replace("[$cy]", Execute(GetYExpression(coords)));
-            sql.Replace("[$cz]", Execute(GetZExpression(coords)));
-
-            if (options.UsePartitioning)
-            {
-                sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
-            }
+            SubstituteAugmentedTableColumns(sql, options);
 
             return sql;
         }
 
-        // TODO: delete if not needed
-        protected void SubstituteCoordinates(StringBuilder sql, TableCoordinates coords, bool useHtm, bool useZoneID)
+        protected virtual void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
         {
-            sql.Replace("[$ra]", Execute(GetRAExpression(coords)));
-            sql.Replace("[$dec]", Execute(GetDecExpression(coords)));
-            sql.Replace("[$cx]", Execute(GetXExpression(coords)));
-            sql.Replace("[$cy]", Execute(GetYExpression(coords)));
-            sql.Replace("[$cz]", Execute(GetZExpression(coords)));
-
-            // HTMID is required for region queries only
-            if (useHtm)
-            {
-                sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
-            }
-
-            if (useZoneID)
-            {
-                sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
-            }
+        }
+        
+        protected void SubstituteHtmId(StringBuilder sql, TableCoordinates coords)
+        {
+            sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
         }
 
         #endregion

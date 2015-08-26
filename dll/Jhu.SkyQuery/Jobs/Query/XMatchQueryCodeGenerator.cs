@@ -332,10 +332,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             sql.Replace("[$where]", Execute(where));
             sql.Replace("[$selectcolumnlist]", columnlist.GetString());
 
-            SubstituteCoordinates(sql, coords, hasregion, true);
-
             if (hasregion)
             {
+                SubstituteHtmId(sql, coords);
+
                 var htminner = GetHtmTable(step.StepNumber, false);
                 var htmpartial = GetHtmTable(step.StepNumber, true);
 
@@ -350,6 +350,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$where]", Execute(where));
             }
 
+            SubstituteCoordinates(sql, coords);
+            SubstituteZoneId(sql, coords);
+
             var cmd = new SqlCommand(sql.ToString());
 
             AppendPartitioningConditionParameters(cmd);
@@ -357,6 +360,22 @@ namespace Jhu.SkyQuery.Jobs.Query
             AppendZoneHeightParameter(cmd);
 
             return cmd;
+        }
+
+        protected void SubstituteCoordinates(StringBuilder sql, TableCoordinates coords)
+        {
+            sql.Replace("[$ra]", Execute(GetRAExpression(coords)));
+            sql.Replace("[$dec]", Execute(GetDecExpression(coords)));
+            sql.Replace("[$cx]", Execute(GetXExpression(coords)));
+            sql.Replace("[$cy]", Execute(GetYExpression(coords)));
+            sql.Replace("[$cz]", Execute(GetZExpression(coords)));
+        }
+
+        protected void SubstituteZoneId(StringBuilder sql, TableCoordinates coords)
+        {
+            
+                sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
+            
         }
 
         #endregion
@@ -430,16 +449,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber == 1 && !table1.IsZoneTableNecessary)
             {
                 // Use source table for Table 1
-                var tqoptions = new AugmentedTableQueryOptions(table1.TableSource, table1.Region);
+                var tqoptions = new AugmentedTableQueryOptions(table1.TableSource, table1.Region)
+                {
+                    EscapeColumnNames = true
+                };
+                query1 = GenerateAugmentedTableQuery(tqoptions).ToString();
+
                 var columnlist = new SqlQueryColumnListGenerator(table1.TableReference)
                 {
                     Context = ColumnContext.PrimaryKey,
-                    ListType = ColumnListType.ForSelectWithEscapedName,
+                    ListType = ColumnListType.ForSelectWithOriginalName,
                 };
-
-                query1 = GenerateAugmentedTableQuery(tqoptions).ToString();
-                columnlist1 = columnlist.GetString();
-                selectlist1 = columnlist.GetString();
+                columnlist1 = selectlist1 = columnlist.GetString();
             }
             else if (step.StepNumber == 1)
             {
@@ -477,8 +498,10 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // Do NOT partition on second table!
                 var options = new AugmentedTableQueryOptions(table2.TableSource, table2.Region)
                 {
+                    EscapeColumnNames = true,
                     UsePartitioning = false
                 };
+                query2 = GenerateAugmentedTableQuery(options).ToString();
 
                 var columnlist = new SqlQueryColumnListGenerator(table2.TableReference)
                 {
@@ -486,8 +509,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                     Context = ColumnContext.PrimaryKey,
                     ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
                 };
-
-                query2 = GenerateAugmentedTableQuery(options).ToString();
                 columnlist2 = columnlist.GetString();
                 selectlist2 = columnlist.GetString();
             }

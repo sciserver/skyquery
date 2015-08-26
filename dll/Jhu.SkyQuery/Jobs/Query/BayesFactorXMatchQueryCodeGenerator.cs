@@ -56,10 +56,19 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var sql = base.GenerateAugmentedTableQuery(options);
 
+            sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
             sql.Replace("[$weight]", weight);
             sql.Replace("[$n]", Partition.Steps.Count.ToString());
 
             return sql;
+        }
+
+        protected override void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
+        {
+            base.SubstituteAugmentedTableColumns(sql, options);
+
+            var coords = options.Table.Coordinates;
+            SubstituteCoordinates(sql, coords);
         }
 
         #endregion
