@@ -16,5 +16,4 @@ CREATE TABLE [$tablename]
 	   [$columnlist]
 )
 
-ALTER TABLE [$tablename] ADD CONSTRA
-INT [$indexname] PRIMARY KEY ( [MatchID] )
+ALTER TABLE [$tablename] ADD CONSTRAINT [$indexname] PRIMARY KEY ( [MatchID] )
