@@ -18,10 +18,7 @@ pairs AS
 		[$columnlist2],
 		__t1.[RA] AS [RA1],
 		__t2.[RA] AS [RA2],
-		__link.[Alpha] AS [Alpha],
-		__t2.[Cx] - __t1.[Cx] AS [Dx],
-		__t2.[Cy] - __t1.[Cy] AS [Dy],
-		__t2.[Cz] - __t1.[Cz] AS [Dz]
+		__link.[Alpha] AS [Alpha]
 	FROM __t1
 	INNER LOOP JOIN [$linktable] AS __link ON  __link.[ZoneID1] = __t1.[ZoneID]
 	INNER LOOP JOIN __t2 ON  __link.[ZoneID2] = __t2.ZoneID
@@ -54,7 +51,5 @@ __wrap AS
 INSERT [$pairtable] WITH (TABLOCKX)
 SELECT 
 	[$selectlist1],
-	[$selectlist2],
-	[Dx], [Dy], [Dz]
+	[$selectlist2]
 FROM __wrap
-

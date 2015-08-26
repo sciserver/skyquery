@@ -55,6 +55,6 @@ namespace Jhu.SkyQuery.SqlClrLib
         public double A;
         public double L;
         public double LogBF;
-        public double dQ;
+        public double Q;
     }
 }
