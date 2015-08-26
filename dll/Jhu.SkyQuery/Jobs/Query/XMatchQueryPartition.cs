@@ -269,7 +269,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber > 0)
             {
-                // Create real match tables
+                var pairtable = CodeGenerator.GetPairTable(step);
                 var matchtable = CodeGenerator.GetMatchTable(step);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
@@ -280,7 +280,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     ExecuteSqlCommand(cmd, CommandTarget.Temp);
                 }
 
-                using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, matchtable))
+                using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, pairtable, matchtable))
                 {
                     ExecuteSqlCommand(cmd, CommandTarget.Code);
                 }

@@ -446,9 +446,11 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var columnlist = new SqlQueryColumnListGenerator(options.Table.TableReference)
             {
+                ColumnContext = options.ColumnContext,
                 ListType = options.EscapeColumnNames ?
                     ColumnListType.ForSelectWithOriginalName :
-                    ColumnListType.ForSelectWithOriginalNameNoAlias
+                    ColumnListType.ForSelectWithOriginalNameNoAlias,
+                LeadingComma = true,
             };
 
             // 2. Figure out where clause
@@ -525,7 +527,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Substitute additional tokens
             sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
-            sql.Replace("[$columnlist]", columnlist.GetString());
+            sql.Replace("[$columnlist]", columnlist.GetColumnListString());
 
             SubstituteAugmentedTableColumns(sql, options);
 

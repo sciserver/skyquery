@@ -2,4 +2,8 @@
 
 CREATE INDEX [$indexname]
 ON [$tablename] ( ZoneID, Ra )
-INCLUDE ([Dec], [Cx], [Cy], [Cz], [$columnlist])
+INCLUDE 
+(
+	[Dec], [Cx], [Cy], [Cz]
+	[$columnlist]
+)

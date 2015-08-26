@@ -42,13 +42,17 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         public void SimpleXMatchTest()
         {
             var sql = @"
-SELECT x.matchID, a.objID, b.objID
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.objID, b.ra, b.dec, b.g, b.r, b.i
 INTO [$into]
 FROM XMATCH(
     MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
     MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
-) AS x";
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
 
             RunQuery(sql, 1, new TimeSpan(0, 10, 0));
         }

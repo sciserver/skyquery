@@ -7,7 +7,7 @@
 	       [$weight] AS [a],
 	       LOG([$weight]) AS [l],
 	       0 AS [q],
-	       ([$n] - 1) * LOG(2) AS [logBF],
+	       ([$n] - 1) * LOG(2) AS [logBF]		-- ln(N) of Eq. 33
 	       [$columnlist]
 	FROM [$tablename]
 	[$where]

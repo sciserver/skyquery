@@ -47,7 +47,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                         ListType = ColumnListType.ForSelectWithEscapedNameNoAlias
                     };
 
-                    res.Add(columns.GetString());
+                    res.Add(columns.GetColumnListString());
                 }
             }
 
