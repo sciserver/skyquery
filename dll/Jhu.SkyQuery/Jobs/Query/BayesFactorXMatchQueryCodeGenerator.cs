@@ -58,7 +58,17 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
             sql.Replace("[$weight]", weight);
-            sql.Replace("[$n]", Partition.Steps.Count.ToString());
+
+            // When called from HTM table statistics, there is no partition yet
+            // This is a simple hack here, should do it for now
+            if (Partition != null)
+            {
+                sql.Replace("[$n]", Partition.Steps.Count.ToString());
+            }
+            else
+            {
+                sql.Replace("[$n]", "1");
+            }
 
             return sql;
         }
