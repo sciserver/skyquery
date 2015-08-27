@@ -192,13 +192,27 @@ namespace Jhu.SkyQuery.Jobs.Query
             double lmin = 0;
             double amax = 0;
 
-            // TODO: this fails here if only a single constant error is given instead of constant and limits
             for (int i = step.StepNumber + 1; i < Partition.Steps.Count; i++)
             {
-                // Swap max/min because w = 1 / s^2
-                var minexp = Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].Coordinates.ErrorMinExpression;
-                var maxexp = Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].Coordinates.ErrorMaxExpression;
+                Expression minexp, maxexp;
+                var coords = Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].Coordinates;
 
+                if (coords.IsErrorSpecified && coords.IsConstantError)
+                {
+                    minexp = maxexp = coords.ErrorExpression;
+                }
+                else if (coords.IsErrorSpecified)
+                {
+                    // Swap max/min because w = 1 / s^2 <--- TODO: verify this
+                    minexp = coords.ErrorMinExpression;
+                    maxexp = coords.ErrorMaxExpression;
+                }
+                else
+                {
+                    // TODO: return maybe 1?
+                    throw new NotImplementedException();
+                }
+                
                 // TODO: add logic to handle case when no min/max specified
 
                 lmin += Math.Log(GetWeight(double.Parse(SqlServerCodeGenerator.GetCode(maxexp, false))));
