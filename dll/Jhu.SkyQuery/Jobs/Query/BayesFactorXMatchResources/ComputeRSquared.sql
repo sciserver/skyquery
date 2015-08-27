@@ -1,5 +1,7 @@
 -- *** BayesFactorXMatchResources/ComputeRSquared.sql *** ---
 
+DECLARE @r dbo.Region = @region;
+
 WITH __t AS
 (
 [$query]

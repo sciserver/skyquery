@@ -1,5 +1,6 @@
 -- *** XMatchResources/PopulatePairTable.sql *** ---
 
+DECLARE @r dbo.Region = @region;
 DECLARE @dist2 float = 4 * POWER(SIN(RADIANS(@theta/2)), 2);
 
 WITH
