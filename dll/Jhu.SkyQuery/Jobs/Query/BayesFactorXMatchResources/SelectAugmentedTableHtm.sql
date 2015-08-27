@@ -1,9 +1,10 @@
-﻿	SELECT [$ra] AS [RA],
+﻿	SELECT [$zoneid] AS [ZoneID],
+	       [$ra] AS [RA],
 	       [$dec] AS [Dec],
 	       [$cx] AS [Cx],
 	       [$cy] AS [Cy],
 	       [$cz] AS [Cz],
-	       [$zoneid] AS [ZoneID],
+	       [$htmid] AS [HtmID],
 	       [$weight] AS [a],
 	       LOG([$weight]) AS [l],
 	       0 AS [q],
@@ -16,12 +17,13 @@
 
 	UNION ALL
 
-	SELECT [$ra] AS [RA],
+	SELECT [$zoneid] AS [ZoneID],
+	       [$ra] AS [RA],
 	       [$dec] AS [Dec],
 	       [$cx] AS [Cx],
 	       [$cy] AS [Cy],
 	       [$cz] AS [Cz],
-		   [$zoneid] AS [ZoneID],
+	       [$htmid] AS [HtmID],
 	       [$weight] AS [a],
 	       LOG([$weight]) AS [l],
 	       0 AS [q],

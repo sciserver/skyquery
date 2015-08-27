@@ -79,6 +79,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var coords = options.Table.Coordinates;
             SubstituteCoordinates(sql, coords);
+            SubstituteHtmId(sql, coords);
         }
 
         #endregion
