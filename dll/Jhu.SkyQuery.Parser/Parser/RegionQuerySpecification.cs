@@ -75,6 +75,11 @@ namespace Jhu.SkyQuery.Parser
                     // TODO: implement direct region grammar
                     throw new NotImplementedException();
                 }
+
+                if (!region.IsSimplified)
+                {
+                    region.Simplify();
+                }
             }
         }
     }
