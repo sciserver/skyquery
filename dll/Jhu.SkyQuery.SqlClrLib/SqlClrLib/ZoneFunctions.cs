@@ -17,11 +17,35 @@ namespace Jhu.SkyQuery.SqlClrLib
         }
 
         [SqlFunction(
-            Name = "skyquery.ZoneID",
-            IsDeterministic = true, IsPrecise = true)]
-        public static SqlInt32 ZoneID(SqlDouble dec, SqlDouble zoneHeight)
+            Name = "skyquery.ZoneIDFromDec",
+            IsDeterministic = true, IsPrecise = false)]
+        public static SqlInt32 ZoneIDFromDec(SqlDouble dec, SqlDouble zoneHeight)
         {
             return new SqlInt32((int)Math.Floor(dec.Value + 90.0 / zoneHeight.Value));
+        }
+
+        [SqlFunction(
+            Name = "skyquery.ZoneIDFromZ",
+            IsDeterministic = true, IsPrecise = false)]
+        public static SqlInt32 ZoneIDFromZ(SqlDouble cz, SqlDouble zoneHeight)
+        {
+            double z = cz.Value;
+            double dec;
+
+            if (z >= 1)
+            {
+                dec = 90;
+            }
+            else if (z <= -1)
+            {
+                dec = -90;
+            }
+            else
+            {
+                dec = Math.Asin(z) * Constants.Radian2Degree;
+            }
+
+            return new SqlInt32((int)Math.Floor(dec + 90.0 / zoneHeight.Value));
         }
 
         [SqlFunction(
