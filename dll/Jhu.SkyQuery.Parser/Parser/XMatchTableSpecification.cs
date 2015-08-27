@@ -13,7 +13,6 @@ namespace Jhu.SkyQuery.Parser
         private XMatchInclusionMethod inclusionMethod;
         private bool hasHtmIndex;
         private bool hasZoneIndex;
-        private bool isZoneTableNecessary;
 
         #region Properties
 
@@ -30,11 +29,6 @@ namespace Jhu.SkyQuery.Parser
         public bool HasZoneIndex
         {
             get { return hasZoneIndex; }
-        }
-
-        public bool IsZoneTableNecessary
-        {
-            get { return isZoneTableNecessary; }
         }
 
         public TableReference TableReference
@@ -135,6 +129,39 @@ namespace Jhu.SkyQuery.Parser
 
             // Order tables by cardinality
             return Math.Sign(other.TableReference.Statistics.RowCount - this.TableReference.Statistics.RowCount);
+        }
+
+        /// <summary>
+        /// Returns true if building a zone table on the fly is necessary
+        /// </summary>
+        /// <returns></returns>
+        public bool IsZoneTableNecessary()
+        {
+            // It might be worth building a zone table if:
+            // - the doesn't have a zoneID or it's not indexed
+            // - the region constraint is small
+            // - a region constraint is specified but the table has no HTMID
+            
+            var coords = this.Coordinates;
+
+            if (!coords.IsZoneIdSpecified || coords.FindZoneIndex() == null)
+            {
+                return true;
+            }
+
+            if (this.Region != null)
+            {
+                // TODO: is 10 sq deg enough?
+                if (!coords.IsHtmIdSpecified || Region.Area < 10)
+                {
+                    return true;
+                }
+            }
+
+            // TODO: compare statistics with total row count to find tables with strong
+            // where clause conditions
+
+            return false;
         }
     }
 }
