@@ -706,6 +706,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // has been done at creating the pair table already
                 var options = new AugmentedTableQueryOptions(table1.TableSource, table1.Region)
                 {
+                    ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                     UseRegion = false,
                     UsePartitioning = false,
                     UseConditions = false,
@@ -721,6 +722,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // The second table is always the next source table
             var options2 = new AugmentedTableQueryOptions(table2.TableSource, table2.Region)
             {
+                ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                 UseRegion = false,
                 UsePartitioning = false,
                 UseConditions = false,
@@ -731,19 +733,30 @@ namespace Jhu.SkyQuery.Jobs.Query
             // other referenced columns (default)
             // these are all referenced by escaped names, so generated names are unique by default
             var columnlist1 = GenerateMatchTableColumns(step, ColumnListType.ForSelectWithEscapedNameNoAlias, true);
-
             var columnlist2 = GenerateMatchTableColumns(step, ColumnListType.ForSelectWithEscapedNameNoAlias, false);
 
             // 3. Generate join conditions between the pair table and source tables
             // on primary keys
-            var jlg1 = new SqlQueryColumnListGenerator(table1.TableReference)
-            {
-                TableAlias = "__t1",
-                JoinedTableAlias = "__pair",
-                ColumnContext = ColumnContext.PrimaryKey,
-            };
-            var tablejoin1 = jlg1.GetJoinString();
+            string tablejoin1;
 
+            if (step.StepNumber == 1)
+            {
+                // The first table is a source table.
+                var jlg1 = new SqlQueryColumnListGenerator(table1.TableReference)
+                {
+                    TableAlias = "__t1",
+                    JoinedTableAlias = "__pair",
+                    ColumnContext = ColumnContext.PrimaryKey,
+                };
+                tablejoin1 = jlg1.GetJoinString();
+            }
+            else
+            {
+                // The first table is a match table
+                tablejoin1 = "__t1.MatchID = __pair." + GetEscapedMatchIDString(pstep.StepNumber);
+            }
+
+            // The second table is always the next source table
             var jlg2 = new SqlQueryColumnListGenerator(table2.TableReference)
             {
                 TableAlias = "__t2",
