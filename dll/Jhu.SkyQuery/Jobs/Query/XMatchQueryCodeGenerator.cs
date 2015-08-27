@@ -287,76 +287,31 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var table = Query.XMatchTables[step.XMatchTable];
             var coords = table.Coordinates;
-            var qs = (XMatchQuerySpecification)table.FindAscendant<SkyQuery.Parser.QuerySpecification>();
-            var region = qs.Region;
-            var hasregion = coords.IsHtmIdSpecified && region != null;
-
-            StringBuilder sql;
-
-            // Tables in xmatch queries are always filtered by coordinates if the
-            // query contains a REGION cluse
-            if (hasregion)
+            
+            // Generate augmented query for select
+            var query = new AugmentedTableQueryOptions(table.TableSource, table.Region)
             {
-                sql = new StringBuilder(XMatchScripts.PopulateZoneTableRegion);
-            }
-            else
-            {
-                sql = new StringBuilder(XMatchScripts.PopulateZoneTable);
-            }
+                ColumnContext = ColumnContext.PrimaryKey,
+            };
 
-            // Build where clauses
-            var where = GetTableSpecificWhereClause(table.TableSource);
-            var sc = GetPartitioningConditions(GetZoneIdExpression(coords));
-
-            // TODO: add HTM join if necessary
-
-            if (sc != null && where == null)
-            {
-                where = Jhu.Graywulf.SqlParser.WhereClause.Create(sc);
-            }
-            else if (sc != null)
-            {
-                where.AppendCondition(sc, "AND");
-            }
-            var partwhere = sc == null ? null : SkyQuery.Parser.WhereClause.Create(sc);
-
-            // List of primary key columns
+            // Generate primary key list for insert
             var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
             {
                 ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForSelectWithOriginalName,
+                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
+                LeadingComma = true
             };
 
+            var sql = new StringBuilder(XMatchScripts.PopulateZoneTable);
+
+            sql.Replace("[$query]", GenerateAugmentedTableQuery(query).ToString());
             sql.Replace("[$zonetablename]", GetResolvedTableName(zonetable));
-            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(table.TableReference));
-            sql.Replace("[$where]", Execute(where));
             sql.Replace("[$selectcolumnlist]", columnlist.GetColumnListString());
-
-            if (hasregion)
-            {
-                SubstituteHtmId(sql, coords);
-
-                var htminner = GetHtmTable(step.StepNumber, false);
-                var htmpartial = GetHtmTable(step.StepNumber, true);
-
-                sql.Replace("[$htm_inner]", GetResolvedTableName(htminner));
-                sql.Replace("[$htm_partial]", GetResolvedTableName(htmpartial));
-
-                sql.Replace("[$where_inner]", Execute(where));
-                sql.Replace("[$where_partial]", Execute(where));
-            }
-            else
-            {
-                sql.Replace("[$where]", Execute(where));
-            }
-
-            SubstituteCoordinates(sql, coords);
-            SubstituteZoneId(sql, coords);
 
             var cmd = new SqlCommand(sql.ToString());
 
             AppendPartitioningConditionParameters(cmd);
-            AppendRegionParameter(cmd, region);
+            AppendRegionParameter(cmd, table.Region);
             AppendZoneHeightParameter(cmd);
 
             return cmd;
@@ -373,9 +328,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void SubstituteZoneId(StringBuilder sql, TableCoordinates coords)
         {
-
             sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
-
         }
 
         #endregion
@@ -526,7 +479,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t1";
 
-                if (step.StepNumber == 0 && !table.IsZoneTableNecessary)
+                if (step.StepNumber == 0 && !table.IsZoneTableNecessary())
                 {
                     // Directly use a source table for pair table building
                     GenerateSourceQueryFromSourceTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
@@ -546,7 +499,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t2";
 
-                if (!table.IsZoneTableNecessary)
+                if (!table.IsZoneTableNecessary())
                 {
                     // Directly use a source table for pair table building
                     GenerateSourceQueryFromSourceTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);

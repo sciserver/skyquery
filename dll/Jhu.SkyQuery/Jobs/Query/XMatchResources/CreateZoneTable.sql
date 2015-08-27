@@ -8,6 +8,7 @@ CREATE TABLE [$tablename]
 	[Cx] float NOT NULL,
 	[Cy] float NOT NULL,
 	[Cz] float NOT NULL,
+	[HtmID] bigint NOT NULL,
 	[$columnlist]
 )
 

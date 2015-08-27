@@ -189,7 +189,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var table = Query.XMatchTables[step.XMatchTable];
 
-            if (table.IsZoneTableNecessary)
+            if (table.IsZoneTableNecessary())
             {
                 var zonetable = CodeGenerator.GetZoneTable(step);
 
