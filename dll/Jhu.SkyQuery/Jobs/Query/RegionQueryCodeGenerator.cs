@@ -509,7 +509,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // 4. Load and rewrite SQL template
 
-            if (options.Region != null && options.UseRegion && options.UseHtm)
+            if (options.Region != null && options.UseRegion && options.Table.Coordinates.IsHtmIdSpecified && options.UseHtm)
             {
                 sql = GetSelectAugmentedTableHtmTemplate();
 
@@ -692,6 +692,39 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 return coords.HtmIdExpression;
             }
+            else if (coords.IsEqSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = "htmid",
+                    DatabaseObjectName = "FromEq"
+                };
+
+                var fc = FunctionCall.Create(
+                    fr,
+                    coords.RAExpression,
+                    coords.DecExpression);
+
+                return Expression.Create(fc);
+            }
+            else if (coords.IsCartesianSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = "htmid",
+                    DatabaseObjectName = "FromXyz"
+                };
+
+                var fc = FunctionCall.Create(
+                    fr,
+                    coords.XExpression,
+                    coords.YExpression,
+                    coords.ZExpression);
+
+                return Expression.Create(fc);
+            }
             else
             {
                 // TODO: Figure out from metadata
@@ -705,14 +738,37 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 return coords.ZoneIdExpression;
             }
-            else if (coords.IsEqSpecified || coords.IsCartesianSpecified)
+            else if (coords.IsEqSpecified)
             {
-                throw new NotImplementedException();
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "ZoneIDFromDec"
+                };
 
-                // TODO: make it into a precise CLR function
-                /*return String.Format(System.Globalization.CultureInfo.InvariantCulture,
-                    "CONVERT(INT,FLOOR(({0} + 90.0) / @H))",
-                    GetDecString(codeDataset));*/
+                var fc = FunctionCall.Create(
+                    fr,
+                    coords.DecExpression,
+                    Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H")));
+
+                return Expression.Create(fc);
+            }
+            else if (coords.IsCartesianSpecified)
+            {
+                var fr = new FunctionReference()
+                {
+                    DatabaseName = CodeDataset.DatabaseName,
+                    SchemaName = Constants.SkyQueryFunctionSchema,
+                    DatabaseObjectName = "ZoneIDFromZ"
+                };
+
+                var fc = FunctionCall.Create(
+                    fr,
+                    coords.ZExpression,
+                    Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H")));
+
+                return Expression.Create(fc);
             }
             else
             {
