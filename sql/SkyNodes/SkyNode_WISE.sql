@@ -1563,6 +1563,17 @@ CREATE TABLE [dbo].[PhotoObj]
 
 GO
 
+CREATE NONCLUSTERED INDEX [IX_PhotoObj_HtmID] ON [dbo].[PhotoObj]
+(
+	[htmid]
+)
+INCLUDE
+(
+	[ra], [dec], [cx], [cy], [cz]
+)
+WITH (DATA_COMPRESSION = PAGE)
+ON PHOTOIDX
+
 -- Index to support on the fly zone table creation
 CREATE NONCLUSTERED INDEX [IX_PhotoObj_Zone] ON [dbo].[PhotoObj] 
 (
