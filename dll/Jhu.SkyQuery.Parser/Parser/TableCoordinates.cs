@@ -154,7 +154,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return errorHintArguments.Length == 1 && errorHintArguments[0].FindDescendant<Expression>().IsConstantNumber;
+                return errorHintArguments.Length == 1 && errorHintArguments[0].IsConstantNumber;
             }
         }
 
