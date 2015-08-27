@@ -417,7 +417,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
         #region Augmented table query generation
-        
+
         protected virtual StringBuilder GetSelectAugmentedTableTemplate()
         {
             return new StringBuilder(RegionScripts.SelectAugmentedTable);
@@ -446,6 +446,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var columnlist = new SqlQueryColumnListGenerator(options.Table.TableReference)
             {
+                TableAlias = null,
                 ColumnContext = options.ColumnContext,
                 ListType = options.EscapeColumnNames ?
                     ColumnListType.ForSelectWithOriginalName :
@@ -537,7 +538,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected virtual void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
         {
         }
-        
+
         protected void SubstituteHtmId(StringBuilder sql, TableCoordinates coords)
         {
             sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
@@ -779,11 +780,22 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 UseHtm = coords.IsHtmIdSpecified,
                 UsePartitioning = false,
+                EscapeColumnNames = false,
+                ColumnContext = ColumnContext.None,
             };
             var query = GenerateAugmentedTableQuery(options);
 
+            // Statistics key needs to be changed because table is aliased
+            var tr = new TableReference("__t");
+            var keycol = SubstituteTableName(
+                tableSource.TableReference.Statistics.KeyColumn,
+                tableSource.TableReference,
+                tr);
+
             var sql = new StringBuilder(RegionScripts.TableStatistics);
+
             sql.Replace("[$query]", query.ToString());
+            sql.Replace("[$keycol]", Execute(keycol));
             SubstituteTableStatisticsQueryTokens(sql, tableSource);
 
             var cmd = new SqlCommand(sql.ToString());
@@ -835,10 +847,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void AppendRegionParameter(SqlCommand cmd, Spherical.Region region)
         {
-            if (region != null)
-            {
-                cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = region.ToSqlBytes();
-            }
+            cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = region == null ? System.Data.SqlTypes.SqlBytes.Null : region.ToSqlBytes();
         }
 
         protected void AppendRegionParameters(SourceTableQuery source, List<Spherical.Region> regions)

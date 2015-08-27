@@ -62,14 +62,18 @@ WHERE a.ra BETWEEN 0 AND 1 AND
         public void XMatchWithHtmAndRegionTest()
         {
             var sql = @"
-SELECT x.matchID, a.objID, b.objID
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.objID, b.ra, b.dec, b.g, b.r, b.i
 INTO [$into]
 FROM XMATCH(
-    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(HTMID), ZONEID(zoneID)),
-    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS b WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(HTMID), ZONEID(zoneID)),
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'";
+REGION 'CIRCLE J2000 0 0 10'
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
 
             RunQuery(sql, 1, new TimeSpan(0, 10, 0));
         }
