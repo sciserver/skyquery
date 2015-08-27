@@ -149,13 +149,13 @@ namespace Jhu.SkyQuery.Parser
                 return true;
             }
 
+
+            // TODO: we could decide on omitting a zone table if the region is
+            // large but filtering for htmid and join by zoneid cannot be done
+            // at the same time
             if (this.Region != null)
             {
-                // TODO: is 10 sq deg enough?
-                if (!coords.IsHtmIdSpecified || Region.Area < 10)
-                {
                     return true;
-                }
             }
 
             // TODO: compare statistics with total row count to find tables with strong
