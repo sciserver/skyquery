@@ -526,8 +526,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$where]", Execute(whereregion));
             }
 
+            // 5. Substitute remote table name, if necessary
+            var tr = new TableReference(options.Table.TableReference);
+            SubstituteRemoteTableName(tr);
+
             // Substitute additional tokens
-            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
+            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(tr));
             sql.Replace("[$columnlist]", columnlist.GetColumnListString());
 
             SubstituteAugmentedTableColumns(sql, options);

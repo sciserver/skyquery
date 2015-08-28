@@ -214,8 +214,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Partitioning is done on the ZoneID of the first table
             var tr = new TableReference("D1");
             var cr = new ColumnReference(tr, "ZoneID", DataTypes.SqlInt);
-            var sc = GetPartitioningConditions(cr);     // TODO: this needs to use and expression here
-            // then detele GetPartitioningConditions accepting a cr
+            var exp = Expression.Create(ColumnIdentifier.Create(cr));
+            var sc = GetPartitioningConditions(exp);
 
             if (sc != null)
             {
@@ -523,6 +523,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Directly use a source table for pair table building
             var tqoptions = new AugmentedTableQueryOptions(table.TableSource, table.Region)
             {
+                ColumnContext = ColumnContext.PrimaryKey,
                 EscapeColumnNames = true
             };
             query = GenerateAugmentedTableQuery(tqoptions).ToString();
