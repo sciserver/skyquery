@@ -140,6 +140,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 double min, max;
 
+                if (!coords.IsErrorSpecified)
+                {
+                    min = max = Constants.DefaultError;
+                }
                 if (coords.IsConstantError)
                 {
                     min = max = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);

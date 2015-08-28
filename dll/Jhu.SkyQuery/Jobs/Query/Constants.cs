@@ -7,7 +7,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 {
     class Constants
     {
-        public const double DefaultZoneHeight = 4.0 / 3600.0;
+        public const double DefaultZoneHeight = 4.0 / 3600.0;       // deg
+        public const double DefaultError = 0.5;                     // arc sec
         public const string SkyQueryFunctionSchema = "skyquery";
     }
 }
