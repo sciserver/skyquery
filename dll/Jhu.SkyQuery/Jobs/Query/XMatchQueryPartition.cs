@@ -103,7 +103,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             using (var cmd = CodeGenerator.GetComputeMinMaxErrorCommand(step))
             {
-                ExecuteSqlCommandReader(cmd, CommandTarget.Temp, dr =>
+                ExecuteSqlOnAssignedServerReader(cmd, CommandTarget.Temp, dr =>
                     {
                         if (dr.Read())
                         {
@@ -132,12 +132,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateZoneDefTableCommand(step, zonedeftable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateZoneDefTableCommand(step, zonedeftable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(zonedeftable.TableName, zonedeftable);
@@ -159,12 +159,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateLinkTableCommand(step, linktable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateLinkTableCommand(step, zonedeftable, linktable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(linktable.TableName, linktable);
@@ -198,12 +198,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateZoneTableCommand(step, zonetable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateZoneTableCommand(step, zonetable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(zonetable.TableName, zonetable);
@@ -235,12 +235,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, pairtable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, linktable, pairtable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(pairtable.TableName, pairtable);
@@ -277,17 +277,17 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateMatchTableCommand(step, matchtable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, pairtable, matchtable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Code);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
                 }
 
                 using (var cmd = CodeGenerator.GetBuildMatchTableIndexCommand(step, matchtable))
                 {
-                    ExecuteSqlCommand(cmd, CommandTarget.Temp);
+                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
                 }
 
                 TemporaryTables.TryAdd(matchtable.TableName, matchtable);
