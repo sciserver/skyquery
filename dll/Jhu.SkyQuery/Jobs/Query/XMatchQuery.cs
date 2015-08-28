@@ -31,6 +31,11 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Properties
 
+        private XMatchQueryCodeGenerator CodeGenerator
+        {
+            get { return (XMatchQueryCodeGenerator)CreateCodeGenerator(); }
+        }
+
         [IgnoreDataMember]
         public override bool IsPartitioned
         {
@@ -125,12 +130,47 @@ namespace Jhu.SkyQuery.Jobs.Query
             return res;
         }
 
+        public override void CollectTablesForStatistics()
+        {
+            TableSourceStatistics.Clear();
+
+            // Only collect statistics for xmatch tables
+            foreach (var table in xmatchTables.Values)
+            {
+                var tr = table.TableReference;
+
+                // Statistics is only gathered for table on known servers. Skip foreign
+                // datasets here because we cannot make sure they support the necessary
+                // CLR functions.
+                if (tr.DatabaseObject.Dataset is GraywulfDataset)
+                {
+                    // Collect statistics for zoneID
+                    tr.Statistics = new Graywulf.SqlParser.TableStatistics()
+                    {
+                        KeyColumn = CodeGenerator.GetZoneIdExpression(table.Coordinates),
+                        KeyColumnDataType = DataTypes.SqlInt,
+                    };
+
+                    TableSourceStatistics.Add(table.TableSource);
+                }
+            }
+        }
+
         protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat)
         {
             // XmathTables might be reinitialized, so copy statistics
             foreach (var st in TableSourceStatistics)
             {
                 xmatchTables[st.TableReference.UniqueName].TableReference.Statistics = st.TableReference.Statistics;
+            }
+
+            // We don't compute statistics for remote tables so we have to deal with them now
+            foreach (var xt in xmatchTables.Values)
+            {
+                if (xt.TableReference.Statistics == null)
+                {
+                    xt.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics();
+                }
             }
 
             // Order tables based on incusion method and statistics
