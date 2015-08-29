@@ -191,11 +191,11 @@ FROM XMATCH
      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-            var gt = 
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
-[matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
-[matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+            var gt =
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
+[__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
+[__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
 ";
 
             var res = GetExecuteQueryTextTestHelper(sql);
@@ -216,10 +216,10 @@ FROM XMATCH
       LIMIT BAYESFACTOR TO 1e3) AS x";
 
             var gt =
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
-         [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
-         [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [matchtable]
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
+         [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
+         [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [__match]
 ";
 
             Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
@@ -240,11 +240,11 @@ FROM XMATCH
 CROSS JOIN TEST:CatalogC c";
 
             var gt =
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
-         [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
+         [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
-         [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
+         [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
 CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]
 ";
 
@@ -266,12 +266,12 @@ FROM XMATCH
 INNER JOIN TEST:CatalogC c ON c.objId = a.objId";
 
             var gt =
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [matchtable].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
-         [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [matchtable].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [matchtable].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
+         [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
-         [matchtable].[RA] AS [x_RA], [matchtable].[Dec] AS [x_Dec]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
-INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [matchtable].[_TEST_dbo_CatalogA_a_objId]
+         [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
+INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [__match].[_TEST_dbo_CatalogA_a_objId]
 ";
 
             var res = GetExecuteQueryTextTestHelper(sql);
@@ -291,9 +291,9 @@ FROM XMATCH
 WHERE a.ra BETWEEN 1 AND 2";
 
             var gt =
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable]
-WHERE [matchtable].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
+WHERE [__match].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2
 ";
 
             var res = GetExecuteQueryTextTestHelper(sql);
@@ -314,8 +314,8 @@ FROM XMATCH
 WHERE c.ra BETWEEN 1 AND 2";
 
             var gt =
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match],
      [SkyNode_Test].[dbo].[CatalogC] [c]
 WHERE [c].[ra] BETWEEN 1 AND 2
 ";
@@ -339,8 +339,8 @@ FROM XMATCH
 WHERE c.ra BETWEEN 1 AND 2";
 
             var gt =
-@"SELECT [matchtable].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [matchtable].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [matchtable],
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match],
      (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[zoneId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
 WHERE [c].[ra] BETWEEN 1 AND 2
 ";
