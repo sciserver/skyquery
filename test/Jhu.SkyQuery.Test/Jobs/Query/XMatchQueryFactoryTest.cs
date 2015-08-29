@@ -15,29 +15,6 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     [TestClass]
     public class XMatchQueryFactoryTest : SkyQueryTestBase
     {
-        [ClassInitialize]
-        public static void Initialize(TestContext context)
-        {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                PurgeTestJobs();
-            }
-        }
-
-        [ClassCleanup]
-        public static void CleanUp()
-        {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                if (SchedulerTester.Instance.IsRunning)
-                {
-                    SchedulerTester.Instance.DrainStop();
-                }
-
-                PurgeTestJobs();
-            }
-        }
-
         private SqlQuery CreateQuery(string query)
         {
             var f = new SingleServerQueryFactory();

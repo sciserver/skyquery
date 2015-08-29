@@ -17,24 +17,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                PurgeTestJobs();
-            }
+            InitializeQueryTests();
         }
 
         [ClassCleanup]
         public static void CleanUp()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                if (SchedulerTester.Instance.IsRunning)
-                {
-                    SchedulerTester.Instance.DrainStop();
-                }
-
-                PurgeTestJobs();
-            }
+            CleanupQueryTests();
         }
 
         string sampleQuery = @"
