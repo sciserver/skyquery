@@ -283,6 +283,54 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var table = Query.XMatchTables[step.XMatchTable];
             var coords = table.Coordinates;
+
+            // Strict partitioning conditions are applied on the very first table and buffering
+            // is used for the rest of the tables. Buffering depends on the search radius.
+            // When the partition limit is near the poles, buffering should extend to the
+            // entire pole region
+            var keymin = Partition.PartitioningKeyMin;
+            var keymax = Partition.PartitioningKeyMax;
+
+            if (step.StepNumber > 0)
+            {
+                int buffer = (int)Math.Ceiling(step.SearchRadius / Query.ZoneHeight);
+
+                if (!IsPartitioningKeyUnbound(Partition.PartitioningKeyMin))
+                {
+                    var decmin = ((int)keymin * Query.ZoneHeight) - 90;
+
+                    if (decmin - step.SearchRadius < -89.9)
+                    {
+                        keymin = null;
+                    }
+                    else
+                    {
+                        keymin = (int)keymin - buffer;
+                    }
+                }
+                else
+                {
+                    keymin = null;
+                }
+
+                if (!IsPartitioningKeyUnbound(keymax))
+                {
+                    var decmax = ((int)keymax * Query.ZoneHeight) - 90;
+
+                    if (decmax + step.SearchRadius > 89.9)
+                    {
+                        keymax = null;
+                    }
+                    else
+                    {
+                        keymax = (int)keymax + buffer;
+                    }
+                }
+                else
+                {
+                    keymax = null;
+                }
+            }
             
             // Generate augmented query for select
             var query = new AugmentedTableQueryOptions(table.TableSource, table.Region)
@@ -304,7 +352,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var cmd = new SqlCommand(sql.ToString());
 
-            AppendPartitioningConditionParameters(cmd);
+            AppendPartitioningConditionParameters(cmd, keymin, keymax);
             AppendRegionParameter(cmd, table.Region);
             AppendZoneHeightParameter(cmd);
 
@@ -474,11 +522,19 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 if (step.StepNumber == 0 && !table.IsZoneTableNecessary())
                 {
+                    // Partitioning constraints need to be applied on the very first MUST catalog only, as further
+                    // matches might cross the partition boundary. On the other hand, in case of MAY catalogs,
+                    // outer rows need to be filtered for partition constraints.
+
                     // Directly use a source table for pair table building
-                    GenerateSourceQueryFromSourceTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                    GenerateSourceQueryFromSourceTableForPopulatePairTable(step, true, alias, out query, out columnlist, out selectlist);
                 }
                 else if (step.StepNumber == 0)
                 {
+                    // Zone tables are already build with partitioning constraints applied but
+                    // with some buffering, so outer rows of MAY catalogs will need further
+                    // filtering
+
                     // Use a zone table computed earlier for pair table building
                     GenerateSourceQueryFromZoneTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
                 }
@@ -495,7 +551,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 if (!table.IsZoneTableNecessary())
                 {
                     // Directly use a source table for pair table building
-                    GenerateSourceQueryFromSourceTableForPopulatePairTable(step, alias, out query, out columnlist, out selectlist);
+                    GenerateSourceQueryFromSourceTableForPopulatePairTable(step, false, alias, out query, out columnlist, out selectlist);
                 }
                 else
                 {
@@ -509,7 +565,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        private void GenerateSourceQueryFromSourceTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
+        private void GenerateSourceQueryFromSourceTableForPopulatePairTable(XMatchQueryStep step, bool usePartitioning, string alias, out string query, out string columnlist, out string selectlist)
         {
             var table = Query.XMatchTables[step.XMatchTable];
 
@@ -517,7 +573,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             var tqoptions = new AugmentedTableQueryOptions(table.TableSource, table.Region)
             {
                 ColumnContext = ColumnContext.PrimaryKey,
-                EscapeColumnNames = true
+                EscapeColumnNames = true,
+                UsePartitioning = usePartitioning,
             };
             query = GenerateAugmentedTableQuery(tqoptions).ToString();
 

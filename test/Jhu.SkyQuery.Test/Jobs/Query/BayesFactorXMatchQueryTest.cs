@@ -295,6 +295,29 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
     MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
     LIMIT BAYESFACTOR TO 1e3
+) AS x";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void ThreeWayJoinWithRegionTest()
+        {
+            // This test creates zone tables on the fly based on the search region
+            // It can be used to test correct partitioning
+
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
 ) AS x
 REGION 'CIRCLE J2000 0 0 10'";
 

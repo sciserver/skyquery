@@ -87,6 +87,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public SqlCommand GetComputeSearchRadiusCommand(XMatchQueryStep step)
         {
+            // Partitioning is applied on the very first table only. The rest of steps
+            // uses the previous match table.
+
             var table = Partition.Query.XMatchTables[step.XMatchTable];
             var coords = table.Coordinates;
             var region = table.Region;
@@ -130,10 +133,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             double amin = 0;
             double stepmax = 0;
 
-            // TODO: add logic to compute min/max error
-
             // Compute search radius based on the error limits specified for
             // all xmatch tables that have been processed so far
+
+            // Error is measured in arc sec
+            // Weight is calculated as w = 1 / s^2, where
+            // s^2 is expressed in rad^2
+
+            // TODO: add logic to compute min/max error
+
+            
             for (int i = step.StepNumber; i < Partition.Steps.Count; i++)
             {
                 var table = Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable];
@@ -147,11 +156,15 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
                 if (coords.IsConstantError)
                 {
-                    min = max = double.Parse(SqlServerCodeGenerator.GetCode(coords.ErrorExpression, false), System.Globalization.CultureInfo.InvariantCulture);
+                    min = max = double.Parse(Execute(coords.ErrorExpression), System.Globalization.CultureInfo.InvariantCulture);
+                }
+                else if (!coords.IsErrorLimitsSpecified)
+                {
+                    // TODO: something needs to be done with it
+                    min = max = Constants.DefaultError;
                 }
                 else
                 {
-                    // Swap max/min because w = 1 / s^2
                     // TODO: instead of rendering the expression, try to find the number in it
                     min = double.Parse(Execute(coords.ErrorMinExpression), System.Globalization.CultureInfo.InvariantCulture);
                     max = double.Parse(Execute(coords.ErrorMaxExpression), System.Globalization.CultureInfo.InvariantCulture);
@@ -162,6 +175,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     stepmax = max;
                 }
 
+                // Swap max/min because w = 1 / s^2
                 lmax += Math.Log(GetWeight(min));
                 amin += GetWeight(max);
             }
