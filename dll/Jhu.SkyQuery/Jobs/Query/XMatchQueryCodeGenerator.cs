@@ -258,10 +258,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
             var table = Query.XMatchTables[step.XMatchTable];
-            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTable)
-            {
-                NullType = ColumnListNullType.NotNull,
-            };
+            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTableWithEscapedName);
 
             var sql = new StringBuilder(XMatchScripts.CreateZoneTable);
 
@@ -402,7 +399,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Primary key of source table or zone table
             // To be used in the pairs select
-            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTable)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTableWithEscapedName)
             {
                 NullType = ColumnListNullType.NotNull,
             };
@@ -602,7 +599,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreateMatchTableCommand(XMatchQueryStep step, Table matchtable)
         {
             var indexname = String.Format("[PK_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
-            var columnlist = GenerateMatchTableColumns(step, ColumnListType.ForCreateTable, false);
+            var columnlist = GenerateMatchTableColumns(step, ColumnListType.ForCreateTableWithEscapedName, false);
 
             var sql = new StringBuilder(GetCreateMatchTableScript());
 
@@ -629,7 +626,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     var columns = new SqlServerColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference, ColumnContext.Default, listType)
                     {
-                        NullType = ColumnListNullType.NotNull,
                         LeadingComma = true,
                     };
 

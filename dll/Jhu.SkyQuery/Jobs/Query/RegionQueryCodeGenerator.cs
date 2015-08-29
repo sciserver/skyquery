@@ -863,6 +863,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var cmd = new SqlCommand(sql.ToString());
             AppendRegionParameter(cmd, region);
+            AppendTableStatisticsCommandParameters(tableSource, cmd);
             return cmd;
         }
 
