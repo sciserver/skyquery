@@ -118,12 +118,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             xmatchTables = InterpretXMatchTables(qs);
         }
 
-        internal static Dictionary<string, XMatchTableSpecification> InterpretXMatchTables(XMatchQuerySpecification qs)
+        private Dictionary<string, XMatchTableSpecification> InterpretXMatchTables(XMatchQuerySpecification qs)
         {
             var res = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
 
             foreach (var xt in qs.XMatchTableSource.EnumerateXMatchTableSpecifications())
             {
+                // Set partitioning key
+                xt.TableSource.PartitioningKeyExpression = CodeGenerator.GetZoneIdExpression(xt.TableSource.Coordinates);
+                xt.TableSource.PartitioningKeyDataType = DataTypes.SqlInt;
+
                 res.Add(xt.TableReference.UniqueName, xt);
             }
 

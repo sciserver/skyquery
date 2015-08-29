@@ -304,12 +304,5 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
-
-
-
-        private double GetBufferZoneSize(XMatchQueryStep step)
-        {
-            return 2 * step.SearchRadius;
-        }
     }
 }

@@ -456,7 +456,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var cmd = new SqlCommand(sql.ToString());
 
-            // Region is same for all tables
+            // Region and partitioning is same for all tables
+            AppendPartitioningConditionParameters(cmd);
             AppendRegionParameter(cmd, table1.Region);
             cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
 

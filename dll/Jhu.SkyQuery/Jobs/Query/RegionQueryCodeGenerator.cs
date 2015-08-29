@@ -469,7 +469,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (options.UsePartitioning && Partition != null)
             {
-                // TODO: what if no ZoneID exists?
                 var pc = GetPartitioningConditions(options.Table.PartitioningKeyExpression);
 
                 if (pc != null)

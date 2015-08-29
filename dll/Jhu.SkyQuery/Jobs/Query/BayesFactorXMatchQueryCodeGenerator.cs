@@ -113,6 +113,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var cmd = new SqlCommand(sql.ToString());
 
             AppendComputeSearchRadiusCommandParameters(step, cmd);
+            AppendPartitioningConditionParameters(cmd);
             AppendRegionParameter(cmd, region);
 
             return cmd;
