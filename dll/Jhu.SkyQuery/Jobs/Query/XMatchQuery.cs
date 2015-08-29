@@ -189,6 +189,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             stat = tables[statmax].TableReference.Statistics;
+
             base.OnGeneratePartitions(partitionCount, stat);
 
             // Create steps
