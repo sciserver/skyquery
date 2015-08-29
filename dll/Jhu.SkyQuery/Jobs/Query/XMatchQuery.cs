@@ -94,7 +94,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             this.xmatchTables = old.xmatchTables;
         }
-        
+
         #endregion
 
         protected override void FinishInterpret(bool forceReinitialize)
@@ -189,8 +189,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             stat = tables[statmax].TableReference.Statistics;
-
-            // Generate partitions the standard way
             base.OnGeneratePartitions(partitionCount, stat);
 
             // Create steps
