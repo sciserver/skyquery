@@ -44,7 +44,91 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var sql = @"
 SELECT x.matchID,
        a.objID, a.ra, a.dec, a.g, a.r, a.i, 
-       b.objID, b.ra, b.dec, b.g, b.r, b.i
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithHtmAndSmallRegionTest()
+        {
+            var sql = @"
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithHtmAndLargeRegionTest()
+        {
+            var sql = @"
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 300'
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithRegionWithHtmNoZoneTest()
+        {
+            var sql = @"
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void SelfJoinTest()
+        {
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.objID, b.ra, b.dec, b.g, b.r, b.i,
+       x.ra, x.dec
 INTO [$into]
 FROM XMATCH(
     MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
@@ -54,59 +138,7 @@ FROM XMATCH(
 WHERE a.ra BETWEEN 0 AND 1 AND
       b.ra BETWEEN 0 AND 1";
 
-            RunQuery(sql, 1, new TimeSpan(0, 10, 0));
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void XMatchWithHtmAndRegionTest()
-        {
-            var sql = @"
-SELECT x.matchID,
-       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
-       b.objID, b.ra, b.dec, b.g, b.r, b.i
-INTO [$into]
-FROM XMATCH(
-    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
-    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
-    LIMIT BAYESFACTOR TO 1e3
-) AS x
-REGION 'CIRCLE J2000 0 0 10'
-WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
-
-            RunQuery(sql, 1, new TimeSpan(0, 10, 0));
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void SelfJoinTest()
-        {
-            var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN SDSSDR7:PhotoObjAll AS g WITH(POINT(g.cx, g.cy, g.cz), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
-
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var guid = ScheduleQueryJob(
-                                        sql.Replace("[$targettable]", "XMatchQueryTest_SelfJoinTest"),
-                                        QueueType.Long);
-
-                    FinishQueryJob(guid);
-                }
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
@@ -114,49 +146,109 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
         public void CartesianCoordinatesTest()
         {
             var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
 
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-                var guid = ScheduleQueryJob(
-                                    sql.Replace("[$targettable]", "XMatchQueryTest_CartesianCoordinatesTest"),
-                                    QueueType.Long);
+            RunQuery(sql);
+        }
 
-                FinishQueryJob(guid);
-            }
+        [TestMethod]
+        [TestCategory("Query")]
+        public void EquatiorialCoordinatesTest()
+        {
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void ConstantErrorTest()
         {
+            // User specified error limits are only considered when more than two catalogs
+            // are matched, so test this case carefully
+
             var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1)),
-     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'";
 
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-                var guid = ScheduleQueryJob(
-                                    sql.Replace("[$targettable]", "XMatchQueryTest_ConstantErrorTest"),
-                                    QueueType.Long);
+            RunQuery(sql);
+        }
 
-                FinishQueryJob(guid);
-            }
+        [TestMethod]
+        [TestCategory("Query")]
+        public void VariableErrorTest()
+        {
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(raErr + decErr, 0.1, 0.5), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(sigRaDec, 0.1, 0.2), HTMID(htmid), ZONEID(zoneid)),
+MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void VariableErrorWithNoLimitsTest()
+        {
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(raErr + decErr), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(sigRaDec), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+";
+
+            RunQuery(sql);
+
+            // TODO: this must fail with a meaningful error message
         }
 
         [TestMethod]
@@ -164,49 +256,39 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
         public void XMatchViewTest()
         {
             var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObj AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoPrimary AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'";
 
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-                var guid = ScheduleQueryJob(
-                                    sql.Replace("[$targettable]", "XMatchQueryTest_XMatchViewTest"),
-                                    QueueType.Long);
-
-                FinishQueryJob(guid, new TimeSpan(0, 5, 0));
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void XMatchViewOfViewTest()
         {
+            // SDSSDR7Star is a view of view
+
             var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:Star AS s WITH(POINT(s.cx, s.cy, s.cz), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7Star AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'";
 
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-                var guid = ScheduleQueryJob(
-                                    sql.Replace("[$targettable]", "XMatchQueryTest_XMatchViewOfViewTest"),
-                                    QueueType.Long);
-
-                FinishQueryJob(guid, new TimeSpan(0, 5, 0));
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
@@ -214,451 +296,240 @@ WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
         public void ThreeWayJoinTest()
         {
             var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, t.objid, t.ra, t.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     MUST EXIST IN TwoMASS:PhotoObj AS t WITH(POINT(t.ra, t.dec), ERROR(0.5, 0.5, 0.5)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5
-    AND t.ra BETWEEN 0 AND 5 AND t.dec BETWEEN 0 AND 5";
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'";
 
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-                var guid = ScheduleQueryJob(
-                                    sql.Replace("[$targettable]", "XMatchQueryTest_ThreeWayJoinTest"),
-                                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void ColumnOnlyInWhereClauseXMatchQueryTest()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
+            // This is a query that requires building a zone table. At the same time, it
+            // contains columns in the where clause that need to be propagated all
+            // the way down to the final match table, so the where clause can be
+            // applied at the end
 
-                var sql =
-@"SELECT x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
-";
+            // It also tests the correct propagation of primary keys when not explicitly
+            // referenced from the query
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_ColumnOnlyInWhereClauseXMatchQueryTest"),
-                    QueueType.Long);
+            var sql =
+@"SELECT x.matchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+WHERE a.g < b.w1mpro AND b.w2mpro < c.nuv_mag AND a.i < c.fuv_mag";
 
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void TinyRegionXMatchQueryTest()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
+            // Test correct partitioning of very small regions
 
-                var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
+            var sql =
+@"SELECT x.matchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+WHERE a.ra BETWEEN 0 AND 0.1 AND b.dec BETWEEN 0 AND 0.1 AND c.ra BETWEEN 0 AND 0.1 AND c.dec BETWEEN 0 AND 0.1
 ";
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_TinyRegionXMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void TinierRegionXMatchQueryTest()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.01 AND s.dec BETWEEN 0 AND 0.01 AND g.ra BETWEEN 0 AND 0.01 AND g.dec BETWEEN 0 AND 0.01
+            var sql =
+@"SELECT x.matchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+WHERE a.ra BETWEEN 0 AND 0.01 AND b.dec BETWEEN 0 AND 0.01 AND c.ra BETWEEN 0 AND 0.01 AND c.dec BETWEEN 0 AND 0.01
 ";
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_TinierRegionXMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void SelectStarXMatchQueryTest()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
+            // Select all columns from the computed table
 
-                var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.*
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
+            var sql =
+@"SELECT x.*, a.objid
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 10'
 ";
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_SelectStarXMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void SelectStarXMatchQueryTest2()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
+            // Select all columns from the computed table and
+            // the catalogs
 
-                var sql =
-@"SELECT s.objid, s.ra, s.dec, g.*, x.*
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
+            var sql =
+@"SELECT x.*, a.*, b.*, c.*
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 10'
 ";
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_SelectStarXMatchQueryTest2"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
-        public void NoErrorLimitsXMatchQueryTest()
+        public void SelectStarXMatchQueryTest3()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
+            // Select everything
 
-                var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
+            var sql =
+@"SELECT *
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+REGION 'CIRCLE J2000 0 0 10'
 ";
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_TinyRegionXMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void VariableErrorXMatchQueryTest()
-        {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                var sql =
-@"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, x.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
-";
-
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_VariableErrorXMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void JoinedTableMatchQueryTest()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                var sql =
-@"SELECT sp.specObjID, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
-     MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-    INNER JOIN SDSSDR7:SpecObjAll sp ON sp.BestobjID = s.ObjID
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5 AND g.ra BETWEEN 0 AND 0.5 AND g.dec BETWEEN 0 AND 0.5
+            var sql =
+@"SELECT x.MatchID, x.ra, x.dec, rr.objID
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+    INNER JOIN TEST:SDSSDR7PhotoObjAll_NoHtm rr ON rr.objid = a.objid
+REGION 'CIRCLE J2000 0 0 10'
 ";
 
-                var guid = ScheduleQueryJob(
-                    sql.Replace("[$targettable]", "XMatchQueryTest_JoinedTableMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
-        public void MyDBXMatchSmallLimitsQueryTest()
+        public void JoinedTableWithRegionMatchQueryTest()
         {
-            // This test requires a table 'MyCatalog' in mydb
-
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var sql =
-    @"SELECT m.ra, m.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
-     MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5
+            var sql =
+@"SELECT x.MatchID, x.ra, x.dec, rr.objID
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+    INNER JOIN TEST:SDSSDR7PhotoObjAll_NoZone rr WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid))
+        ON rr.objid = a.objid
+REGION 'CIRCLE J2000 0 0 10'
 ";
 
-                    var guid = ScheduleQueryJob(
-                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBXMatchSmallLimitsQueryTest"),
-                        QueueType.Long);
-
-                    FinishQueryJob(guid);
-                }
-            }
-        }
-
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void MyDBXMatchLargeLimitsQueryTest()
-        {
-            // This test requires a table 'MyCatalog' in mydb
-
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var sql =
-    @"SELECT m.ra, m.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
-     MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 1 AND 3 AND s.dec BETWEEN 12 AND 14
-";
-
-                    var guid = ScheduleQueryJob(
-                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBXMatchLargeLimitsQueryTest"),
-                        QueueType.Long);
-
-                    FinishQueryJob(guid);
-                }
-            }
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
-        public void MyDBXMatchNoLimitsQueryTest()
+        public void NoLimitsTest()
         {
-            // This test requires a table 'MyCatalog' in mydb
+            // Full catalog xmatch
 
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var sql =
-    @"SELECT m.ra, m.dec, x.ra, x.dec
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
-     MUST EXIST IN MyCatalog m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
+            var sql =
+@"SELECT x.MatchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
 ";
 
-                    var guid = ScheduleQueryJob(
-                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBXMatchNoLimitsQueryTest"),
-                        QueueType.Long);
+            RunQuery(sql);
+        }
 
-                    FinishQueryJob(guid, new TimeSpan(0, 30, 0));
-                }
-            }
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithMyDBTest()
+        {
+            // Full catalog xmatch with mydb table
+
+            var sql =
+@"SELECT x.MatchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN MYDB:MyCatalog AS m WITH(POINT(ra, dec), ERROR(0.1)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+";
+
+            RunQuery(sql);
         }
 
         [TestMethod]
         [TestCategory("Query")]
         public void MyDBSelfXMatchQueryTest()
         {
-            using (SchedulerTester.Instance.GetExclusiveToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                using (RemoteServiceTester.Instance.GetToken())
-                {
-                    RemoteServiceTester.Instance.EnsureRunning();
-
-                    var sql =
-    @"SELECT m.ra, m.dec, x.ra, x.dec
-INTO [$targettable]
+            var sql =
+@"SELECT m.ra, m.dec, x.ra, x.dec
+INTO [$into]
 FROM XMATCH
     (MUST EXIST IN MyCatalog AS s WITH(POINT(s.ra, s.dec), ERROR(0.3)),
      MUST EXIST IN MyCatalog2 m WITH(POINT(m.ra, m.dec), ERROR(0.2)),
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
-                    var guid = ScheduleQueryJob(
-                        sql.Replace("[$targettable]", "XMatchQueryTest_MyDBSelfXMatchQueryTest"),
-                        QueueType.Long);
-
-                    FinishQueryJob(guid);
-
-                }
-            }
-        }
-
-        /*
-        [TestMethod]
-        [TestCategory("Query")]
-        public void XMatchRegionQueryTest()
-        {
-            var sql = @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec
-INTO [$into]
-FROM XMATCH
-    (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec, s.cx, s.cy, s.cz), HTMID(s.htmid), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN Galex:PhotoObjAll AS g WITH(POINT(g.ra, g.dec, g.cx, g.cy, g.cz), HTMID(g.htmid), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-REGION 'CIRCLE J2000 2.5 2.5 120'";
-
             RunQuery(sql);
         }
-         * */
-
-        /*
-         * [TestMethod]
-        [TestCategory("Query")]
-        public void XMatchWithoutZoneIDTest()
-        {
-            var sql =
-@"SELECT s.objid, g.objid
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
-
-            RunQuery(sql, GetTestUniqueName());
-        }
-         * */
-
-        /*
-         * [TestMethod]
-        [TestCategory("Query")]
-        public void XMatchRegionQueryWithHtm()
-        {
-            var sql =
-@"SELECT s.objid, g.objid
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS s WITH(POINT(ra, dec), HTMID(htmid), ZONEID(zoneID), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS g WITH(POINT(ra, dec), HTMID(htmid), ZONEID(zoneID), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-REGION 'CIRCLE J2000 0 0 60'";
-
-            RunQuery(sql, GetTestUniqueName());
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void XMatchRegionQueryWithHtmNoZone()
-        {
-            var sql =
-@"SELECT s.objid, g.objid
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), HTMID(htmid), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), HTMID(htmid), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-REGION 'CIRCLE J2000 0 0 60'";
-
-            RunQuery(sql, GetTestUniqueName());
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
-        public void XMatchRegionQueryWithNoHtm()
-        {
-            var sql =
-@"SELECT s.objid, g.objid
-INTO [$targettable]
-FROM XMATCH
-    (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1)),
-     MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-REGION 'CIRCLE J2000 0 0 60'";
-
-            RunQuery(sql, GetTestUniqueName());
-        }
-         * */
 
         [TestMethod]
         [TestCategory("Query")]
@@ -674,8 +545,7 @@ FROM XMATCH
 REGION 'CIRCLE J2000 0 0 60'
 WHERE s.ra BETWEEN 0 AND 1";
 
-            RunQuery(sql, 1, new TimeSpan(0, 10, 0));
+            RunQuery(sql);
         }
-
     }
 }
