@@ -32,7 +32,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             var sql = @"
 SELECT TOP 10 objid, ra, dec INTO [$into]
-FROM SDSSDR7:PhotoObj WITH (POINT(ra, dec), HTMID(htmid))
+FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 20 30 10'";
 
             RunQuery(sql);

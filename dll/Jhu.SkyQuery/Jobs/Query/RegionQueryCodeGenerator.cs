@@ -343,13 +343,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Append htm table, if necessary
             if (joinConditions != null)
             {
-                var jt = Jhu.Graywulf.SqlParser.JoinedTable.Create(
-                    JoinType.CreateInner(),
-                    Jhu.Graywulf.SqlParser.TableSource.Create(htmTable),
-                    joinConditions);
-
                 // Filter using HTM index, add a join clause
-                qs.FromClause.AppendJoinedTable(jt);
+                qs.FromClause.PrependJoinedTable(
+                    Jhu.Graywulf.SqlParser.TableSource.Create(htmTable),
+                    JoinType.CreateInnerLoop(),
+                    joinConditions);
             }
 
             return joinConditions != null || whereConditions != null;

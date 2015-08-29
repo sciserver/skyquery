@@ -160,6 +160,53 @@ ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
         }
 
         [TestMethod]
+        public void AppendRegionJoinsAndConditionsWithJoinedTableTest()
+        {
+            // Append HTM to the first table in FROM clause
+
+            var sql = @"
+SELECT table.*
+FROM table WITH (HTMID(htmid))
+CROSS JOIN table2
+CROSS JOIN table3
+CROSS JOIN table4
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt = 
+@"SELECT table.*
+FROM htmtable AS [__htm]
+INNER JOIN table 
+ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
+CROSS JOIN table2
+CROSS JOIN table3
+CROSS JOIN table4
+";
+
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
+        }
+
+        [TestMethod]
+        public void AppendRegionJoinsAndConditionsWithJoinedTable2Test()
+        {
+            // Append HTM to the last table
+
+            var sql = @"
+SELECT table.*
+FROM table2
+CROSS JOIN table WITH (HTMID(htmid))
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt = @"SELECT table.*
+FROM table2
+CROSS JOIN table 
+INNER JOIN htmtable AS [__htm]
+ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
+";
+
+            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
+        }
+
+        [TestMethod]
         public void AppendRegionJoinsAndConditionsQuerySpecificationPartialTest()
         {
             var sql = @"
