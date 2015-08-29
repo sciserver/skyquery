@@ -6,6 +6,8 @@ using Jhu.Graywulf.ParserLib;
 using Jhu.Graywulf.SqlParser;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.SqlCodeGen;
+using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Jobs.Query;
@@ -41,10 +43,9 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 foreach (var ts in qs.EnumerateSourceTables(false))
                 {
-                    var columns = new SqlQueryColumnListGenerator(ts.TableReference, context)
+                    var columns = new SqlServerColumnListGenerator(ts.TableReference, context, ColumnListType.ForSelectWithEscapedNameNoAlias)
                     {
                         TableAlias = "tablealias",
-                        ListType = ColumnListType.ForSelectWithEscapedNameNoAlias
                     };
 
                     res.Add(columns.GetColumnListString());

@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.SqlCodeGen;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
@@ -257,10 +258,8 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
             var table = Query.XMatchTables[step.XMatchTable];
-            var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
+            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTable)
             {
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForCreateTable,
                 NullType = ColumnListNullType.NotNull,
             };
 
@@ -295,10 +294,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             };
 
             // Generate primary key list for insert
-            var columnlist = new SqlQueryColumnListGenerator(table.TableReference)
+            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias)
             {
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
                 LeadingComma = true
             };
 
@@ -405,10 +402,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Primary key of source table or zone table
             // To be used in the pairs select
-            var clg = new SqlQueryColumnListGenerator(table.TableReference)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTable)
             {
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForCreateTable,
                 NullType = ColumnListNullType.NotNull,
             };
 
@@ -529,22 +524,15 @@ namespace Jhu.SkyQuery.Jobs.Query
             query = GenerateAugmentedTableQuery(tqoptions).ToString();
 
             // To be used in the pairs select
-            var clg = new SqlQueryColumnListGenerator(table.TableReference)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias)
             {
                 TableAlias = alias,
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
             };
 
             columnlist = clg.GetColumnListString();
 
             // To be used in the final select that goes into the insert
-            var slg = new SqlQueryColumnListGenerator(table.TableReference)
-            {
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-            };
-
+            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias);
             selectlist = slg.GetColumnListString();
         }
 
@@ -556,20 +544,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             query = GenerateSelectStarQuery(GetZoneTable(step), -1);
 
             // PK needs to be figured out from catalog table
-            var clg = new SqlQueryColumnListGenerator(table.TableReference)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias)
             {
                 TableAlias = alias,
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
             };
 
             columnlist = clg.GetColumnListString();
 
-            var slg = new SqlQueryColumnListGenerator(table.TableReference)
-            {
-                ColumnContext = ColumnContext.PrimaryKey,
-                ListType = ColumnListType.ForSelectWithEscapedNameNoAlias,
-            };
+            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias);
 
             selectlist = slg.GetColumnListString();
         }
@@ -645,10 +627,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
-                    var columns = new SqlQueryColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference)
+                    var columns = new SqlServerColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference, ColumnContext.Default, listType)
                     {
-                        ColumnContext = ColumnContext.Default,
-                        ListType = listType,
                         NullType = ColumnListNullType.NotNull,
                         LeadingComma = true,
                     };
@@ -743,11 +723,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber == 1)
             {
                 // The first table is a source table.
-                var jlg1 = new SqlQueryColumnListGenerator(table1.TableReference)
+                var jlg1 = new SqlServerColumnListGenerator(table1.TableReference, ColumnContext.PrimaryKey)
                 {
                     TableAlias = "__t1",
-                    JoinedTableAlias = "__pair",
-                    ColumnContext = ColumnContext.PrimaryKey,
+                    JoinedTableAlias = "__pair"
                 };
                 tablejoin1 = jlg1.GetJoinString();
             }
@@ -758,11 +737,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // The second table is always the next source table
-            var jlg2 = new SqlQueryColumnListGenerator(table2.TableReference)
+            var jlg2 = new SqlServerColumnListGenerator(table2.TableReference, ColumnContext.PrimaryKey)
             {
                 TableAlias = "__t2",
                 JoinedTableAlias = "__pair",
-                ColumnContext = ColumnContext.PrimaryKey,
             };
             var tablejoin2 = jlg2.GetJoinString();
 
@@ -840,6 +818,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void SubstituteMatchTableName(Jhu.Graywulf.SqlParser.QuerySpecification qs, List<TableReference> xmtstr, TableReference matchtr)
         {
+            var cg = new SqlServerColumnListGenerator();
+
             // Replace table references and substitute column names with escaped version
             foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Jhu.Graywulf.SqlParser.Subquery)))
             {
@@ -853,7 +833,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 else if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
                 {
                     // In case of other tables
-                    cr.ColumnName = EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);
+                    cr.ColumnName = cg.EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);
                     cr.TableReference = matchtr;
                 }
             }

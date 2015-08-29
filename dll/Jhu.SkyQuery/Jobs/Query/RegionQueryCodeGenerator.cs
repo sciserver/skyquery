@@ -8,6 +8,7 @@ using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.ParserLib;
 using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.SqlCodeGen;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
@@ -444,13 +445,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // 1. Generate column list
 
-            var columnlist = new SqlQueryColumnListGenerator(options.Table.TableReference)
+            var columnlist = new SqlServerColumnListGenerator(
+                options.Table.TableReference, 
+                options.ColumnContext,
+                options.EscapeColumnNames ?
+                    ColumnListType.ForSelectWithOriginalName :
+                    ColumnListType.ForSelectWithOriginalNameNoAlias)
             {
                 TableAlias = null,
                 ColumnContext = options.ColumnContext,
-                ListType = options.EscapeColumnNames ?
-                    ColumnListType.ForSelectWithOriginalName :
-                    ColumnListType.ForSelectWithOriginalNameNoAlias,
                 LeadingComma = true,
             };
 
