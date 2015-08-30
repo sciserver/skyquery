@@ -326,6 +326,31 @@ REGION 'CIRCLE J2000 0 0 10'";
 
         [TestMethod]
         [TestCategory("Query")]
+        public void TableOutsideXMatchWithRegionTest()
+        {
+            // The region constraint only applies to the xmatch tables
+            // but the query still should execute.
+
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x 
+INNER JOIN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), HTMID(htmid))
+    ON c.ra = x.ra
+REGION 'CIRCLE J2000 0 0 10'";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void ColumnOnlyInWhereClauseXMatchQueryTest()
         {
             // This is a query that requires building a zone table. At the same time, it

@@ -34,6 +34,17 @@ namespace Jhu.SkyQuery.Parser.Test
             return (QuerySpecification)((SelectStatement)Parser.Execute(query)).EnumerateQuerySpecifications().First(); ;
         }
 
+        protected Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator CodeGenerator
+        {
+            get
+            {
+                return new Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator()
+                {
+                    ResolveNames = true
+                };
+            }
+        }
+
         [TestMethod]
         public void SimpleQueryTest()
         {

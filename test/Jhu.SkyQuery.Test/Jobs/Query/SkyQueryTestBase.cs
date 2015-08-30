@@ -9,6 +9,7 @@ using Jhu.Graywulf.Test;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.Schema;
 using Jhu.SkyQuery.Jobs.Query;
+using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
@@ -26,6 +27,18 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             return QueryFactory.Create(
                 typeof(SkyQueryQueryFactory).AssemblyQualifiedName,
                 context);
+        }
+
+        protected SelectStatement Parse(string sql)
+        {
+            var p = new SkyQueryParser();
+            return (SelectStatement)p.Execute(sql);
+        }
+
+        protected override SqlQuery CreateQuery(string query)
+        {
+            var q = base.CreateQuery(query);
+            return q;
         }
 
         protected void FinishQueryJob(Guid guid)

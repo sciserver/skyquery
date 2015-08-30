@@ -28,12 +28,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                     {
                         Name = "CODE",
                         ConnectionString = "data source=localhost;initial catalog=SkyQuery_Code",
-                    }
+                    },
+                    ResolveNames = true,
                 };
             }
         }
 
-        protected Jhu.Graywulf.SqlParser.TableReference HtmTable
+        private Jhu.Graywulf.SqlParser.TableReference HtmTable
         {
             get
             {
@@ -45,44 +46,9 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        protected Jhu.Graywulf.SqlParser.TableReference HtmInner
-        {
-            get
-            {
-                return new Jhu.Graywulf.SqlParser.TableReference()
-                {
-                    DatabaseObjectName = "htminner",
-                    Alias = "__htm_inner"
-                };
-            }
-        }
-
-        protected Jhu.Graywulf.SqlParser.TableReference HtmPartial
-        {
-            get
-            {
-                return new Jhu.Graywulf.SqlParser.TableReference()
-                {
-                    DatabaseObjectName = "htmpartial",
-                    Alias = "__htm_partial"
-                };
-            }
-        }
-
-        protected SelectStatement Parse(string sql)
-        {
-            var p = new SkyQueryParser();
-            return (SelectStatement)p.Execute(sql);
-        }
-
-        protected override SqlQuery CreateQuery(string query)
-        {
-            var q = base.CreateQuery(query);
-            return q;
-        }
 
         [TestMethod]
-        public void GenerateHtmJoinConditionTest()
+        public void GenerateHtmJoinConditionTest(bool partial)
         {
             var sql = @"
 SELECT *
@@ -91,7 +57,7 @@ FROM table WITH (HTMID(htmid))";
             var ss = Parse(sql);
             var ts = ss.EnumerateSourceTables(false).First();
 
-            var sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable);
+            var sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable, partial, 0);
 
             Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd", sc.ToString());
         }
@@ -114,7 +80,7 @@ FROM table WITH (HTMID(htmid))";
 SELECT *
 FROM table WITH (POINT(cx, cy, cz))";
 
-            var gt = "@r.ContainsXyz(cx, cy, cz) = 1";
+            var gt = "@r.ContainsXyz([cx], [cy], [cz]) = 1";
 
             Assert.AreEqual(gt, GenerateRegionContainsConditionTestHelper(sql));
         }
@@ -126,7 +92,7 @@ FROM table WITH (POINT(cx, cy, cz))";
 SELECT *
 FROM table WITH (POINT(ra, dec))";
 
-            var gt = "@r.ContainsEq(ra, dec) = 1";
+            var gt = "@r.ContainsEq([ra], [dec]) = 1";
 
             Assert.AreEqual(gt, GenerateRegionContainsConditionTestHelper(sql));
         }
@@ -134,12 +100,13 @@ FROM table WITH (POINT(ra, dec))";
         private string AppendRegionJoinsAndConditionsTestHelper(string sql, bool partial)
         {
             var ss = Parse(sql);
-            var qs = ss.EnumerateQuerySpecifications().First();
+            var qs = ss.FindDescendantRecursive<Graywulf.SqlParser.QuerySpecification>();
+            var regions = new List<Spherical.Region>();
 
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", qs, -1, HtmTable, partial);
+            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
             CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
 
-            return CodeGenerator.Execute(qs);
+            return CodeGenerator.Execute(ss);
         }
 
         [TestMethod]
@@ -150,13 +117,22 @@ SELECT table.*
 FROM table WITH (HTMID(htmid))
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = @"SELECT table.*
-FROM table 
-INNER JOIN htmtable AS [__htm]
-ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
+            var gt = @"
+SELECT [table].*
+FROM ((SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+UNION ALL
+(SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1)) AS [__htm_t0]
 ";
 
-            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
+            var res = AppendRegionJoinsAndConditionsTestHelper(sql, false);
+
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -172,14 +148,21 @@ CROSS JOIN table3
 CROSS JOIN table4
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = 
-@"SELECT table.*
-FROM htmtable AS [__htm]
-INNER JOIN table 
-ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
-CROSS JOIN table2
-CROSS JOIN table3
-CROSS JOIN table4
+            var gt =
+@"
+SELECT [table].*
+FROM ((SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+UNION ALL
+(SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1)) AS [__htm_t0]
+CROSS JOIN [table2]
+CROSS JOIN [table3]
+CROSS JOIN [table4]
 ";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
@@ -196,11 +179,10 @@ FROM table2
 CROSS JOIN table WITH (HTMID(htmid))
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = @"SELECT table.*
-FROM table2
-CROSS JOIN table 
-INNER JOIN htmtable AS [__htm]
-ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
+            var gt = @"
+SELECT [table].*
+FROM [table2]
+CROSS JOIN [table] 
 ";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
@@ -214,11 +196,17 @@ SELECT table.*
 FROM table WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = @"SELECT table.*
-FROM table 
-INNER JOIN htmtable AS [__htm]
-ON htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd
-WHERE @r.ContainsEq(ra, dec) = 1
+            var gt = @"
+SELECT [table].*
+FROM ((SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+UNION ALL
+(SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([table].[ra], [table].[dec]) = 1)) AS [__htm_t0]
 ";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, true));
@@ -232,9 +220,10 @@ SELECT table.*
 FROM table WITH (POINT(ra, dec))
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = @"SELECT table.*
-FROM table 
-WHERE @r.ContainsEq(ra, dec) = 1
+            var gt = @"
+SELECT [table].*
+FROM [table] 
+WHERE @r0.ContainsEq([ra], [dec]) = 1
 ";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
@@ -248,8 +237,9 @@ SELECT table.*
 FROM table
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = @"SELECT table.*
-FROM table
+            var gt = @"
+SELECT [table].*
+FROM [table]
 ";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
@@ -259,10 +249,9 @@ FROM table
         private string AppendRegionJoinsAndConditionsTestHelper2(string sql)
         {
             var ss = Parse(sql);
-            var htminner = new List<Graywulf.SqlParser.TableReference>() { HtmInner, HtmInner };
-            var htmpartial = new List<Graywulf.SqlParser.TableReference>() { HtmPartial, HtmPartial };
+            var regions = new List<Spherical.Region>();
 
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, htminner, htmpartial);
+            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
             CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
 
             return CodeGenerator.Execute(ss);
@@ -277,18 +266,17 @@ FROM table WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 10 10 10'";
 
             var gt = @"
-((SELECT table.*
-FROM table 
-INNER JOIN htminner AS [__htm_inner]
-ON htmid BETWEEN __htm_inner.HtmIDStart AND __htm_inner.HtmIDEnd
-)
+SELECT [table].*
+FROM ((SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
 UNION ALL
-(SELECT table.*
-FROM table 
-INNER JOIN htmpartial AS [__htm_partial]
-ON htmid BETWEEN __htm_partial.HtmIDStart AND __htm_partial.HtmIDEnd
-WHERE @r0.ContainsEq(ra, dec) = 1
-))";
+(SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([table].[ra], [table].[dec]) = 1)) AS [__htm_t0]
+";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
         }
@@ -302,9 +290,9 @@ FROM table WITH (POINT(ra, dec))
 REGION 'CIRCLE J2000 10 10 10'";
 
             var gt = @"
-SELECT table.*
-FROM table 
-WHERE @r0.ContainsEq(ra, dec) = 1
+SELECT [table].*
+FROM [table] 
+WHERE @r0.ContainsEq([ra], [dec]) = 1
 ";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
@@ -323,35 +311,70 @@ FROM table2 WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 10 10 10'";
 
             var gt = @"
-((SELECT table.*
-FROM table 
-INNER JOIN htminner AS [__htm_inner]
-ON htmid BETWEEN __htm_inner.HtmIDStart AND __htm_inner.HtmIDEnd
-)
+SELECT [table].*
+FROM ((SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r1) AS [__htm1]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm1].[HtmIDStart] AND [__htm1].[HtmIDEnd] AND [__htm1].[Partial] = 0)
 UNION ALL
-(SELECT table.*
-FROM table 
-INNER JOIN htmpartial AS [__htm_partial]
-ON htmid BETWEEN __htm_partial.HtmIDStart AND __htm_partial.HtmIDEnd
-WHERE @r1.ContainsEq(ra, dec) = 1
-))
+(SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r1) AS [__htm1]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [__htm1].[HtmIDStart] AND [__htm1].[HtmIDEnd] AND [__htm1].[Partial] = 1 AND @r1.ContainsEq([table].[ra], [table].[dec]) = 1)) AS [__htm_t1]
+
 UNION
-((SELECT table2.*
-FROM table2 
-INNER JOIN htminner AS [__htm_inner]
-ON htmid BETWEEN __htm_inner.HtmIDStart AND __htm_inner.HtmIDEnd
-)
+SELECT [table2].*
+FROM ((SELECT [table2].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table2] 
+ON [table2].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
 UNION ALL
-(SELECT table2.*
-FROM table2 
-INNER JOIN htmpartial AS [__htm_partial]
-ON htmid BETWEEN __htm_partial.HtmIDStart AND __htm_partial.HtmIDEnd
-WHERE @r0.ContainsEq(ra, dec) = 1
-))";
+(SELECT [table2].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table2] 
+ON [table2].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([table2].[ra], [table2].[dec]) = 1)) AS [__htm_t0]
+";
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
         }
 
+        #region
+
+        private string GetExecuteQueryTestHelper(string sql)
+        {
+            var q = CreateQuery(sql);
+            var sq = CodeGenerator.GetExecuteQuery(q.SelectStatement);
+            return sq.Query;
+        }
+
+        [TestMethod]
+        public void GetExecuteQueryWithHtmIDTest()
+        {
+            var sql = @"
+SELECT *
+FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt = @"DECLARE @r0 dbo.Region = @region0;
+
+SELECT [__htm_t0].[objId] AS [objId], [__htm_t0].[skyVersion] AS [skyVersion], [__htm_t0].[run] AS [run], [__htm_t0].[rerun] AS [rerun], [__htm_t0].[camcol] AS [camcol], [__htm_t0].[field] AS [field], [__htm_t0].[obj] AS [obj], [__htm_t0].[mode] AS [mode], [__htm_t0].[type] AS [type], [__htm_t0].[ra] AS [ra], [__htm_t0].[dec] AS [dec], [__htm_t0].[raErr] AS [raErr], [__htm_t0].[decErr] AS [decErr], [__htm_t0].[cx] AS [cx], [__htm_t0].[cy] AS [cy], [__htm_t0].[cz] AS [cz], [__htm_t0].[htmId] AS [htmId], [__htm_t0].[zoneId] AS [zoneId], [__htm_t0].[u] AS [u], [__htm_t0].[g] AS [g], [__htm_t0].[r] AS [r], [__htm_t0].[i] AS [i], [__htm_t0].[z] AS [z]
+FROM ((SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
+ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+UNION ALL
+(SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
+ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1)) AS [__htm_t0]
+
+";
+
+            var res = GetExecuteQueryTestHelper(sql);
+            Assert.AreEqual(gt, res);
+        }
+
+        #endregion
         #region Statistics query tests
 
         // TODO: propagate up to test base class
@@ -386,25 +409,19 @@ FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"WITH __t AS
-(
-		SELECT [objId], [ra], [dec]
-	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-	INNER JOIN [$codedb].htm.Cover(@r) __htm
+            var gt = @"SELECT 
+	FROM [$codedb].htm.Cover(@r) __htm
+	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
 	WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
 
 	UNION ALL
 
-	SELECT [objId], [ra], [dec]
-	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-	INNER JOIN [$codedb].htm.Cover(@r) __htm
+	SELECT 
+	FROM [$codedb].htm.Cover(@r) __htm
+	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
-	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)
-)
-INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]), [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]
-FROM __t;";
+	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -419,15 +436,9 @@ FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"WITH __t AS
-(
-		SELECT [objId], [ra], [dec]
+            var gt = @"SELECT 
 	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)
-)
-INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]), [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]
-FROM __t;";
+	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));

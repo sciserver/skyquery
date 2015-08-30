@@ -16,7 +16,7 @@ using System.Reflection;
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
-    public class XMatchQueryCodeGeneratorTest : RegionQueryCodeGeneratorTest
+    public class XMatchQueryCodeGeneratorTest : SkyQueryTestBase
     {
         private XMatchQueryCodeGenerator CodeGenerator
         {

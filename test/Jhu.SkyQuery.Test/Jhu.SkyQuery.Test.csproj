@@ -121,6 +121,10 @@
       <Project>{D9E54B0E-9E09-4E53-95FD-4161F9D61914}</Project>
       <Name>Jhu.SharpFitsIO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\spherical\src\Jhu.Spherical\Jhu.Spherical.csproj">
+      <Project>{93efa6ad-0c3f-4c7f-b1f7-d697d0ba49f7}</Project>
+      <Name>Jhu.Spherical</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{E7744E98-575F-4183-B3B9-9B491C053C18}</Project>
       <Name>Jhu.SkyQuery.IO</Name>
