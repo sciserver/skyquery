@@ -60,50 +60,41 @@ namespace Jhu.SkyQuery.Jobs.Query
                 return base.OnGetExecuteQuery(selectStatement, method, destination);
             }
 
-            var htminner = new List<TableReference>();
-            var htmpartial = new List<TableReference>();
             var regions = new List<Region>();
-            var create = new StringBuilder();
-            var drop = new StringBuilder();
-            int qsi = 0;
-
-            // Generate HTM tables
-            CollectHtmTables(selectStatement.QueryExpression, htminner, htmpartial, regions, ref qsi);
-
-            // XMatch queries might not have a REGION constraint but they
-            // still inherit from RegionQuerySpecification. In this case, simply
-            // revert to non-region logic
-            if (qsi == 0)
-            {
-                return base.OnGetExecuteQuery(selectStatement, method, destination);
-            }
-
-            GenerateHtmTablesScript(htminner, htmpartial, create, drop);
 
             // Rewrite query
-            AppendRegionJoinsAndConditions(selectStatement, htminner, htmpartial);
+            AppendRegionJoinsAndConditions(selectStatement, regions);
             RemoveNonStandardTokens(selectStatement, method);
 
-            SubstituteServerSpecificDatabaseNames(selectStatement, queryObject.AssignedServerInstance, Partition.Query.SourceDatabaseVersionName);
-            SubstituteRemoteTableNames(selectStatement);
+            if (queryObject != null)
+            {
+                SubstituteServerSpecificDatabaseNames(selectStatement);
+                SubstituteRemoteTableNames(selectStatement);
+            }
 
             // Compose final script
             var sql = new StringBuilder();
-            sql.AppendLine(create.ToString());
+
+            for (int i = 0; i < regions.Count; i++)
+            {
+                sql.AppendLine(String.Format("DECLARE @r{0} dbo.Region = @region{0};", i));
+            }
 
             AppendQuery(sql, selectStatement, method, destination);
 
-            sql.AppendLine(drop.ToString());
-
-            // Return a table source query
             var source = new SourceTableQuery()
             {
-                Dataset = queryObject.TemporaryDataset,
                 Query = sql.ToString()
             };
 
-            AppendPartitioningConditionParameters(source);
-            AppendRegionParameters(source, regions);
+            if (queryObject != null)
+            {
+                // Return a table source query
+                source.Dataset = queryObject.TemporaryDataset;
+
+                AppendPartitioningConditionParameters(source);
+                AppendRegionParameters(source, regions);
+            }
 
             return source;
         }
@@ -136,93 +127,24 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
-        #region Region and HTM query support functions
+        #region HTM joins and conditions
 
-        private void CollectHtmTables(Graywulf.SqlParser.QueryExpression queryExpression, List<TableReference> htmInner, List<TableReference> htmPartial, List<Spherical.Region> regions, ref int qsi)
-        {
-            // Recursive calls on children
-
-            // QueryExpression
-            var qe = queryExpression.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpression>();
-            if (qe != null)
-            {
-                CollectHtmTables(qe, htmInner, htmPartial, regions, ref qsi);
-            }
-
-            // QueryExpressionBrackets
-            var qeb = queryExpression.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpressionBrackets>();
-            if (qeb != null)
-            {
-                var qee = qeb.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpression>();
-                CollectHtmTables(qee, htmInner, htmPartial, regions, ref qsi);
-            }
-
-            var qs = queryExpression.FindDescendant<Jhu.Graywulf.SqlParser.QuerySpecification>();
-            if (qs is RegionQuerySpecification)
-            {
-                var rqs = (RegionQuerySpecification)qs;
-
-                // XMatch queries might not have a REGION constraint but they
-                // still inherit from RegionQuerySpecification
-                if (rqs.Region != null)
-                {
-                    htmInner.Add(GetHtmTable(qsi, false));
-                    htmPartial.Add(GetHtmTable(qsi, true));
-                    regions.Add(rqs.Region);
-
-                    qsi++;
-                }
-            }
-        }
-
-        public TableReference GetHtmTable(int i, bool partial)
-        {
-            var table = queryObject.GetTemporaryTable(String.Format("Htm_{0}_{1}", i, partial ? "Partial" : "Inner"));
-            return new TableReference(table, "__htm");
-        }
-
-        public TableReference GetHtmTable(string tableName, bool partial)
-        {
-            var table = queryObject.GetTemporaryTable(String.Format("Htm_{0}_{1}", tableName, partial ? "Partial" : "Inner"));
-            return new TableReference(table, "__htm");
-        }
-
-        protected void GenerateHtmTablesScript(TableReference htmInner, TableReference htmPartial, StringBuilder create, StringBuilder drop)
-        {
-            GenerateHtmTablesScript(new[] { htmInner }, new[] { htmPartial }, create, drop);
-        }
-
-        protected void GenerateHtmTablesScript(IList<TableReference> htmInner, IList<TableReference> htmPartial, StringBuilder create, StringBuilder drop)
-        {
-            for (int i = 0; i < htmInner.Count; i++)
-            {
-                var sql = new StringBuilder(RegionScripts.CreateHtmTables);
-
-                sql.Replace("[$regionudtname]", regionUdtVariableName + i.ToString());
-                sql.Replace("[$regionparname]", regionParameterName + i.ToString());
-                sql.Replace("[$htm_inner]", GetResolvedTableName(htmInner[i]));
-                sql.Replace("[$htm_partial]", GetResolvedTableName(htmPartial[i]));
-
-                create.AppendLine(sql.ToString());
-
-                sql = new StringBuilder(RegionScripts.DropHtmTables);
-
-                sql.Replace("[$htm_inner]", GetResolvedTableName(htmInner[i]));
-                sql.Replace("[$htm_partial]", GetResolvedTableName(htmPartial[i]));
-
-                drop.AppendLine(sql.ToString());
-            }
-        }
-
-        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.SelectStatement selectStatement, List<TableReference> htmInner, List<TableReference> htmPartial)
+        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.SelectStatement selectStatement, List<Region> regions)
         {
             int qsi = 0;
+            int tsi = 0;
 
             var qe = selectStatement.QueryExpression;
-            AppendRegionJoinsAndConditions(qe, htmInner, htmPartial, ref qsi);
+            AppendRegionJoinsAndConditions(qe, regions, ref qsi, ref tsi);
         }
 
-        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.QueryExpression queryExpression, List<TableReference> htmInner, List<TableReference> htmPartial, ref int qsi)
+        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.QueryExpressionBrackets qeb, List<Region> regions, ref int qsi, ref int tsi)
+        {
+            var qee = qeb.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpression>();
+            AppendRegionJoinsAndConditions(qee, regions, ref qsi, ref tsi);
+        }
+
+        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.QueryExpression queryExpression, List<Region> regions, ref int qsi, ref int tsi)
         {
             // QueryExpression can have two children of type QueryExpression,
             // on in brackets and another one after a query operator.
@@ -233,14 +155,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             var qee = queryExpression.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpression>();
             if (qee != null)
             {
-                AppendRegionJoinsAndConditions(qee, htmInner, htmPartial, ref qsi);
+                AppendRegionJoinsAndConditions(qee, regions, ref qsi, ref tsi);
             }
 
             // QueryExpressionBrackets
             var qeb = queryExpression.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpressionBrackets>();
             if (qeb != null)
             {
-                AppendRegionJoinsAndConditions(qeb, htmInner, htmPartial, ref qsi);
+                AppendRegionJoinsAndConditions(qeb, regions, ref qsi, ref tsi);
             }
 
             // Process query specification, generate inner and partial HTM query part
@@ -248,113 +170,115 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (qs is RegionQuerySpecification)
             {
-                var qsinner = new Jhu.Graywulf.SqlParser.QuerySpecification(qs);
-                var needinner = AppendRegionJoinsAndConditions(qsinner, qsi, htmInner[qsi], false);
+                var rqs = (RegionQuerySpecification)qs;
+                var from = rqs.FromClause;
+                var region = rqs.Region;
 
-                var qspartial = new Jhu.Graywulf.SqlParser.QuerySpecification(qs);
-                var needpartial = AppendRegionJoinsAndConditions(qspartial, qsi, htmPartial[qsi], true);
+                // XMatch queries might have no regions
+                if (region != null)
+                {
+                    regions.Add(region);
 
-                qsi++;
+                    // Descend on table sources and append htm constraint to each of them
+                    var ts = from.FindDescendantRecursive<SkyQuery.Parser.TableSource>();
+                    if (ts != null)
+                    {
+                        AppendRegionJoinsAndConditions(ts, qsi, ref tsi);
+                    }
 
-                if (needinner && !needpartial)
-                {
-                    qs.ExchangeWith(qsinner);
-                }
-                else if (!needinner && needpartial)
-                {
-                    qs.ExchangeWith(qspartial);
-                }
-                else if (needinner && needpartial)
-                {
-                    // Combine the two with UNION ALL
-                    var qen = SkyQuery.Parser.QueryExpression.Create(qsinner, qspartial, QueryOperator.CreateUnionAll());
-                    var qenb = SkyQuery.Parser.QueryExpressionBrackets.Create(qen);
-                    qs.ExchangeWith(qenb);
+                    qsi++;
                 }
             }
         }
 
-        private void AppendRegionJoinsAndConditions(Graywulf.SqlParser.QueryExpressionBrackets qeb, List<TableReference> htmInner, List<TableReference> htmPartial, ref int qsi)
+        private void AppendRegionJoinsAndConditions(SkyQuery.Parser.TableSource tableSource, int qsi, ref int tsi)
         {
-            var qee = qeb.FindDescendant<Jhu.Graywulf.SqlParser.QueryExpression>();
-            AppendRegionJoinsAndConditions(qee, htmInner, htmPartial, ref qsi);
-        }
-
-        /// <summary>
-        /// Appends HTM joins and filtering conditions to a query specification.
-        /// </summary>
-        /// <param name="qs"></param>
-        /// <param name="htmtable"></param>
-        /// <param name="partial"></param>
-        /// <returns>Returns true if the query specification needs to be rewritten.</returns>
-        private bool AppendRegionJoinsAndConditions(Jhu.Graywulf.SqlParser.QuerySpecification qs, int qsi, TableReference htmTable, bool partial)
-        {
-            Jhu.Graywulf.SqlParser.SearchCondition joinConditions = null;
-            Jhu.Graywulf.SqlParser.SearchCondition whereConditions = null;
-
-            foreach (var ts in qs.EnumerateDescendantsRecursive<SkyQuery.Parser.SimpleTableSource>())
+            // Descend on table sources and append htm constraint to each of them
+            var rts = tableSource.FindDescendant<SkyQuery.Parser.TableSource>();
+            if (rts != null)
             {
-                var coords = ts.Coordinates;
+                AppendRegionJoinsAndConditions(rts, qsi, ref tsi);
+            }
 
-                if (coords == null || coords.IsNoRegion)
-                {
-                    // The region contraint doesn't apply to the table
-                    continue;
-                }
+            if (tableSource.SpecificTableSource is SkyQuery.Parser.SimpleTableSource)
+            {
+                var ts = (SkyQuery.Parser.SimpleTableSource)tableSource.SpecificTableSource;
+                var coords = ts.Coordinates;
 
                 if (coords.IsHtmIdSpecified)
                 {
-                    // An HTM column is available, filter based on it
-                    var sc = GenerateHtmJoinCondition(ts, htmTable);
+                    var qs1 = GenerateHtmJoinTableQuerySpecification(ts, qsi, false);
+                    var qs2 = GenerateHtmJoinTableQuerySpecification(ts, qsi, true);
 
-                    if (joinConditions == null)
-                    {
-                        joinConditions = sc;
-                    }
-                    else
-                    {
-                        joinConditions = Jhu.Graywulf.SqlParser.SearchCondition.Create(sc, joinConditions, LogicalOperator.CreateAnd());
-                    }
+                    var qe = Jhu.Graywulf.SqlParser.QueryExpression.Create(qs1, qs2, QueryOperator.CreateUnionAll());
+
+                    // Wrap is up into a subquery
+                    var ss = Jhu.Graywulf.SqlParser.SelectStatement.Create(qe);
+                    var sqts = Jhu.Graywulf.SqlParser.SubqueryTableSource.Create(ss, "__htm_t" + tsi.ToString());
+
+                    // Create a copy of the original table reference, substitute subquery with the new one
+                    // and rewrite the old one to point to the subquery
+                    var tr = ts.TableReference;
+                    var ntr = new TableReference(tr);
+
+                    // Replace table reference on subtree to a new one
+                    // that will point to the original table
+                    SubstituteTableReference(ss, tr, ntr);
+
+                    // Rewrite original table reference to point to
+                    // the subquery
+                    ss.QueryExpression.TableReference = tr;
+                    tr.InterpretTableSource(sqts);
+
+                    // Replace table source with subquery
+                    ts.ExchangeWith(sqts);
+
+                    tsi++;
                 }
-
-                if (partial ^ !coords.IsHtmIdSpecified)
+                else if (coords.IsEqSpecified || coords.IsCartesianSpecified)
                 {
-                    // No HTM column is avaiable, filter using region.Contains
-                    // Also, points in partial HTM trixels need explicit filtering
                     var sc = GenerateRegionContainsCondition(ts, qsi);
-
-                    if (whereConditions == null)
-                    {
-                        whereConditions = sc;
-                    }
-                    else
-                    {
-                        whereConditions = Jhu.Graywulf.SqlParser.SearchCondition.Create(sc, whereConditions, LogicalOperator.CreateAnd());
-                    }
+                    var qs = ts.FindAscendant<Jhu.Graywulf.SqlParser.QuerySpecification>();
+                    qs.AppendSearchCondition(sc, "AND");
                 }
             }
+        }
 
-            // Append where condition, if necessary
-            if (whereConditions != null)
-            {
-                qs.AppendSearchCondition(whereConditions, "AND");
-            }
+        private Jhu.Graywulf.SqlParser.QuerySpecification GenerateHtmJoinTableQuerySpecification(SkyQuery.Parser.SimpleTableSource ts, int qsi, bool partial)
+        {
+            var coords = ts.Coordinates;
 
-            // Append htm table, if necessary
-            if (joinConditions != null)
-            {
-                // Filter using HTM index, add a join clause
-                qs.FromClause.PrependJoinedTable(
-                    Jhu.Graywulf.SqlParser.TableSource.Create(htmTable),
-                    JoinType.CreateInnerLoop(),
-                    joinConditions);
-            }
+            var fts = GenerateHtmCoverFunctionCall(qsi);
+            var ts2 = SkyQuery.Parser.TableSource.Create(ts);
+            var jc = GenerateHtmJoinCondition(ts, fts.TableReference, partial, qsi);
+            var jt = Graywulf.SqlParser.JoinedTable.Create(JoinType.CreateInnerLoop(), ts2, jc);
+            var tse = Jhu.Graywulf.SqlParser.TableSourceExpression.Create(fts, jt);
+            var fro = Jhu.Graywulf.SqlParser.FromClause.Create(tse);
+            var qs = Jhu.Graywulf.SqlParser.QuerySpecification.Create(SelectList.CreateStar(ts.TableReference), fro);
 
-            return joinConditions != null || whereConditions != null;
+            return qs;
         }
 
         #endregion
         #region HTM search and join conditions generation
+
+        private Jhu.Graywulf.SqlParser.TableSource GenerateHtmCoverFunctionCall(int qsi)
+        {
+            var fr = new FunctionReference()
+            {
+                DatabaseName = CodeDataset.DatabaseName,
+                SchemaName = "htm",
+                DatabaseObjectName = "Cover"
+            };
+            var udt = regionUdtVariableName + qsi.ToString();
+            var var = Graywulf.SqlParser.Variable.Create(udt);
+            var exp = Expression.Create(var);
+            var fc = TableValuedFunctionCall.Create(fr, exp);
+            var fts = Graywulf.SqlParser.FunctionTableSource.Create(fc, "__htm" + qsi.ToString());
+            var ts = SkyQuery.Parser.TableSource.Create(fts);
+
+            return ts;
+        }
 
         /// <summary>
         /// Create a join condition in the form of
@@ -364,19 +288,35 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="ts"></param>
         /// <param name="htmTable"></param>
         /// <returns></returns>
-        protected Jhu.Graywulf.SqlParser.SearchCondition GenerateHtmJoinCondition(SkyQuery.Parser.SimpleTableSource ts, TableReference htmTable)
+        protected Jhu.Graywulf.SqlParser.SearchCondition GenerateHtmJoinCondition(SkyQuery.Parser.SimpleTableSource ts, TableReference htmTable, bool partial, int qsi)
         {
             var coords = ts.Coordinates;
 
             var htmidstart = new ColumnReference(htmTable, "HtmIDStart", DataTypes.SqlBigInt);
             var htmidend = new ColumnReference(htmTable, "HtmIDEnd", DataTypes.SqlBigInt);
 
-            var p = Jhu.Graywulf.SqlParser.Predicate.CreateBetween(
+            var limitsp = Jhu.Graywulf.SqlParser.Predicate.CreateBetween(
                 GetHtmIdExpression(coords),
                 Expression.Create(ColumnIdentifier.Create(htmidstart)),
                 Expression.Create(ColumnIdentifier.Create(htmidend)));
+            var limitssc = Jhu.Graywulf.SqlParser.SearchCondition.Create(false, limitsp);
 
-            return Jhu.Graywulf.SqlParser.SearchCondition.Create(false, p);
+            var htmpartial = new ColumnReference(htmTable, "Partial", DataTypes.SqlBit);
+            var partialp = Jhu.Graywulf.SqlParser.Predicate.CreateEquals(
+                Expression.Create(htmpartial),
+                Expression.CreateNumber(partial ? "1" : "0"));
+            var partialsc = Jhu.Graywulf.SqlParser.SearchCondition.Create(false, partialp);
+
+            var sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(limitssc, partialsc, LogicalOperator.CreateAnd());
+
+            // Add precise filtering if necessary
+            if (partial && (coords.IsEqSpecified || coords.IsCartesianSpecified))
+            {
+                var rcc = GenerateRegionContainsCondition(ts, qsi);
+                sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(sc, rcc, LogicalOperator.CreateAnd());
+            }
+
+            return sc;
         }
 
         protected Jhu.Graywulf.SqlParser.SearchCondition GenerateRegionContainsCondition(SkyQuery.Parser.SimpleTableSource ts, int qsi)
@@ -444,7 +384,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // 1. Generate column list
 
             var columnlist = new SqlServerColumnListGenerator(
-                options.Table.TableReference, 
+                options.Table.TableReference,
                 options.ColumnContext,
                 options.EscapeColumnNames ?
                     ColumnListType.ForSelectWithOriginalName :
