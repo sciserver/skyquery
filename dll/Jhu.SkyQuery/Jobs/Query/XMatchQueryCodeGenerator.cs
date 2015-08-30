@@ -884,7 +884,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     // In case of a computed table (typically xmatch results table)
                     cr.TableReference = matchtr;
                 }
-                else if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
+                else if (xmtstr.Where(tri => tri.Compare(cr.TableReference, true)).FirstOrDefault() != null)
                 {
                     // In case of other tables
                     cr.ColumnName = cg.EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);
