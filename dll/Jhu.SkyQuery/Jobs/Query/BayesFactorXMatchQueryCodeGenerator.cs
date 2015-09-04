@@ -206,8 +206,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override void AppendPopulateMatchTableParameters(XMatchQueryStep step, SqlCommand cmd)
         {
-            double factor = (Partition.Steps.Count - 1) * Math.Log(2);
-
             double lmin = 0;
             double amax = 0;
 
@@ -241,7 +239,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 amax += GetWeight(double.Parse(SqlServerCodeGenerator.GetCode(minexp, false)));
             }
 
-            cmd.Parameters.Add("@factor", SqlDbType.Float).Value = factor;
+            cmd.Parameters.Add("@stepNumber", SqlDbType.SmallInt).Value = step.StepNumber + 1;
+            cmd.Parameters.Add("@stepCount", SqlDbType.SmallInt).Value = Partition.Steps.Count;
             cmd.Parameters.Add("@lmin", SqlDbType.Float).Value = lmin;
             cmd.Parameters.Add("@amax", SqlDbType.Float).Value = amax;
             cmd.Parameters.Add("@limit", SqlDbType.Float).Value = Math.Log(Partition.Query.Limit);

@@ -47,11 +47,13 @@ namespace Jhu.SkyQuery.SqlClrLib
         // Private member
         private bool m_Null;
 
+        public bool IsMatch;
         public double Ra;
         public double Dec;
         public double Cx;
         public double Cy;
         public double Cz;
+        public short N;
         public double A;
         public double L;
         public double LogBF;

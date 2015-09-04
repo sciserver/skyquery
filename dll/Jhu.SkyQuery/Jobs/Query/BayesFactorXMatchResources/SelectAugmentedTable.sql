@@ -5,10 +5,11 @@
 	       [$cy] AS [Cy],
 	       [$cz] AS [Cz],
 	       [$htmid] AS [HtmID],
+	       CAST(1 AS smallint) AS [n],
 	       [$weight] AS [a],
 	       LOG([$weight]) AS [l],
-	       0 AS [q],
-	       ([$n] - 1) * LOG(2) AS [logBF]		-- ln(N) of Eq. 33
+	       CAST(0 AS float) AS [q],
+	       CAST(0 AS float) AS [logBF]		-- ln(N) of Eq. 33
 	       [$columnlist]
 	FROM [$tablename]
 	[$where]

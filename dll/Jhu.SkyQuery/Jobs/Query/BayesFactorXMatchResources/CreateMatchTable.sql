@@ -8,6 +8,7 @@ CREATE TABLE [$tablename]
 	   [Cx] [float],
 	   [Cy] [float],
 	   [Cz] [float],
+	   [n] [smallint],
 	   [a] [float],
 	   [l] [float],
 	   [q] [float],

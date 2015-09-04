@@ -8,6 +8,9 @@ namespace Jhu.SkyQuery.SqlClrLib
 {
     public partial class UserDefinedFunctions
     {
+        private const double log2 = 0.30102999566398119521373889472449;
+
+
         [Microsoft.SqlServer.Server.SqlFunction(
             Name = "skyquery.BayesFactorCalcPosition",
             DataAccess = DataAccessKind.None,
@@ -15,32 +18,41 @@ namespace Jhu.SkyQuery.SqlClrLib
             IsPrecise = false,
             SystemDataAccess = SystemDataAccessKind.None)]
         public static BayesFactorPoint BayesFactorCalcPosition(
-            double cx, double cy, double cz,        // c_{k-1}
-            double a,       // a_{k-1} from Eq. 38
-            double l,       // l_{k-1}
-            double q,       // q_{k-1}
-            double logBF,   // logBF_{k-1}
-            double cx_k, double cy_k, double cz_k,   // c_k
-            double w_k      // w_k from Eq. 39
+            SqlDouble s_cx_p, SqlDouble s_cy_p, SqlDouble s_cz_p,       // c_{k-1}
+            SqlInt16 s_n_p,             // number of catalogs matched so far
+            SqlDouble s_a_p,            // a_{k-1} from Eq. 38
+            SqlDouble s_l_p,            // l_{k-1}
+            SqlDouble s_q_p,            // q_{k-1}
+            SqlDouble s_cx_k, SqlDouble s_cy_k, SqlDouble s_cz_k,       // c_k
+            SqlDouble s_w_k,            // w_k from Eq. 39
+            SqlInt16 s_k,               // step number (kth catalog being matched)
+            SqlDouble s_a_max,
+            SqlDouble s_l_min,
+            SqlInt16 s_n_max,           // total number of catalogs
+            SqlDouble s_logBF_limit
             )
         {
-            // Calculate new coordinates and update parameters for every match
-            /* 
-             * variables without _k index: previous step
-             * variables with _k: current step
-             * 
-             * c[x,y,z] : coordinates in the k-1st catalog
-             * c[x,y,z]_k : norm(sum(w_i * c_i, i=1..k)), best position till matching with the kth catalog (Eq. 36)
-             * w_k : weight of point (inverse squared error) in the kth catalog
-             * a_k : sum(w_i, i=1..k), accumulated weight till matching with the kth catalog (Eq. 34)
-             * l_k : sum(log(w_i), i=1..k), accumulated log weight till matching with the kth catalog
-             * logBF_k : log(N) - 0.5 * sum(a_{i-1}/a_i*w_i*d_i^2, i=2..k), log of Bayes factor (Eq. 32)
-             * N = 2^{n-1} * prod(w_i, i=1..n) / sum(w_i, i=1..n), (Eq. 33)
-             * n : number of catalogs
-             * d[x,y,z]: separation from previous best match (Eq. 35)
-             * q_k : (Eq. 39)
-             * */
+            var cx_p = s_cx_p.Value;        // Best match coordinates after previous match
+            var cy_p = s_cy_p.Value;
+            var cz_p = s_cz_p.Value;
+            var n_p = s_n_p.Value;          // Number of matches till the previous match
+            var a_p = s_a_p.Value;          // Sum of weights till the previous match (Eq. 38)
+            var l_p = s_l_p.Value;          // Sum of the log-weights
+            var q_p = s_q_p.Value;          // (Eq. 39)
 
+            var cx_k = s_cx_k.Value;        // Coordinates in the current catalog
+            var cy_k = s_cy_k.Value;        
+            var cz_k = s_cz_k.Value;
+            var k = s_k.Value;              // Index of the current catalog
+            var w_k = s_w_k.Value;          // Weight in the current catalog
+
+            var a_max = s_a_max.Value;      // Upper limit on sum of weights of the unmatched catalogs
+            var l_min = s_l_min.Value;      // Upper limit on sum of log-weights
+            var n_max = s_n_max.Value;      // Total number of catalogs, i.e. the upper limit on the number of matches
+
+            var logBF_limit = s_logBF_limit.Value;  // Bayes factor limit as specified by the user
+
+            
             // initial values (for the very first catalog) -- see SelectAugmentedTable.sql
             // c[x,y,z] = c[x,y,z] of the particular catalog
             // a_1 = w_1
@@ -48,67 +60,82 @@ namespace Jhu.SkyQuery.SqlClrLib
             // q_1 = 0
             // logBF_1 = (n - 1) * log(2)       : ln(N) of Eq. 33
 
+            // Separation (Eq. 35)
+            var dx = cx_p - cx_k;
+            var dy = cy_p - cy_k;
+            var dz = cz_p - cz_k;
 
-            // Separation
-            var dx = cx - cx_k;
-            var dy = cy - cy_k;
-            var dz = cz - cz_k;
+            // Eq. 34 and 38
+            var a_k = a_p + w_k;
+            var l_k = l_p + Math.Log(w_k);
 
-            // Eq. 38
-            var a_k = a + w_k;
-            var l_k = l + Math.Log(w_k);
+            // Eq. 32, 39 and 35
+            var da = a_p / a_k * w_k;
+            var dq = da * (dx * dx + dy * dy + dz * dz);
+            var q_k = q_p + dq;
 
-            // Eq. 39
-            var dq = a / a_k * w_k * (dx * dx + dy * dy + dz * dz);
-            var q_k = q + dq;
+            // Number of catalogs matched so far
+            // TODO: update this to implement outer match
+            var n_k = (short)(n_p + 1);
 
-            // Eq. 37
-            // TODO: delete old code
-            //var logBF_k = logBF + Math.Log(w_k) + Math.Log(a) - Math.Log(a + w) - (a / (a + w) * w * (dx * dx + dy * dy + dz * dz)) / 2.0,
-            var logBF_k = logBF + Math.Log(w_k * a / a_k) - 0.5 * dq;
+            // Cut on Bayes factor
+            // The formula is an upper limit on the Bayes factor, considering the weights of all remaining catalogs
+            // n is now the number of previously matched catalogs
+            var q_max = 2 * (log2 * (n_max - k + n_k) + l_k + l_min - Math.Log(a_k + a_max)) - logBF_limit;
 
-            // Eq. 40
-            var c_k = new Spherical.Cartesian(
-                cx + w_k / (a + w_k) * dx,
-                cy + w_k / (a + w_k) * dy,
-                cz + w_k / (a + w_k) * dz,
-                true);
-
-            // The maximum search radius is calculated as (Eq. 37)
-            // 1 / a + 1 / w_min is an upper bound of b_k of Eq. 37
-            // (1 / a + 1 / w_min) * (2 * (factor + l + l_max - ln(a + a_min) - limit) - q)
-            // where
-            // factor: (n_max - 1) * ln(2)
-            // n_max = the maximum number of matches
-            // w_min = w_k, weight of the current catalog
-            // a_min = sum(w_max_i,i=1..k), where w_max_i is the max error specified for the catalog
-            // l_max = sum(log(w_min_i,i=1..k), where w_min_i is the min error specified for the catalog
-            // limit = bayes factor limit, as specified by the user
-            // q = sum(a/a_i*w_i*d_k^2,i=1..k), weighted separation
-
-
-            // The final cut will be on q_k
-            // q_k < 2 * (factor + l_k + l_min - Math.Log(a + a_max) - limit)
-            // where
-            // factor = (n - 1) * ln(2);
-            // l_min = sum(log(w_i), i=k+1..n)
-            // limit: bayes factor limit as specified by user
-            
-
-
-            return new BayesFactorPoint()
+            if (q_k < q_max)
             {
-                Ra = c_k.RA,
-                Dec = c_k.Dec,
-                Cx = c_k.X,
-                Cy = c_k.Y,
-                Cz = c_k.Z,
-                A = a_k,
-                L = l_k,    
-                Q = q_k,
-                LogBF = logBF_k,
-            };
+                // This is a match as we are inside the limit
 
+                // Calculate updated bayes factor
+                // log of Eq. 33 and 32
+                var logN_k = (n_k - 1) * log2 + l_k - Math.Log(a_k);
+                var logBF_k = logN_k - 0.5 * q_k;
+
+                // Update best match coordinates Eq. 40
+                var wc = w_k / a_k;
+                cx_k = cx_p + wc * dx;
+                cy_k = cy_p + wc * dy;
+                cz_k = cz_p + wc * dz;
+
+                var c_k = new Spherical.Cartesian(cx_k, cy_k, cz_k, true);
+
+                // The maximum search radius is calculated as (Eq. 37)
+                // 1 / a + 1 / w_min is an upper bound of b_k of Eq. 37
+                // (1 / a + 1 / w_min) * (2 * (factor + l + l_max - ln(a + a_min) - limit) - q)
+                // where
+                // factor: (n_max - 1) * ln(2)
+                // n_max = the maximum number of matches
+                // w_min = w_k, weight of the current catalog
+                // a_min = sum(w_max_i,i=1..k), where w_max_i is the max error specified for the catalog
+                // l_max = sum(log(w_min_i,i=1..k), where w_min_i is the min error specified for the catalog
+                // limit = bayes factor limit, as specified by the user
+                // q = sum(a/a_i*w_i*d_k^2,i=1..k), weighted separation
+
+                // Return updated values
+                return new BayesFactorPoint()
+                {
+                    IsMatch = true,
+                    Ra = c_k.RA,
+                    Dec = c_k.Dec,
+                    Cx = c_k.X,
+                    Cy = c_k.Y,
+                    Cz = c_k.Z,
+                    N = n_k,
+                    A = a_k,
+                    L = l_k,
+                    Q = q_k,
+                    LogBF = logBF_k,
+                };
+            }
+            else
+            {
+                // Return a non-match
+                return new BayesFactorPoint()
+                {
+                    IsMatch = false,
+                };
+            }
         }
     }
 
