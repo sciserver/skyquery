@@ -211,6 +211,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             double lmin = 0;
             double amax = 0;
 
+            // Compute the sum and log sum of weights of the _remaining_ catalogs
+            // This will give us a lower limit on the Bayes factor, so we can
+            // apply a cut reliably
             for (int i = step.StepNumber + 1; i < Partition.Steps.Count; i++)
             {
                 Expression minexp, maxexp;
