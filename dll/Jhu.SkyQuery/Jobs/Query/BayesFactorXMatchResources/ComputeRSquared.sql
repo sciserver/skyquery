@@ -6,7 +6,6 @@ WITH __t AS
 (
 [$query]
 )
-SELECT CAST(ISNULL(MAX( (1 / a + 1 / @weightMin) * (2 * (@factor + l + @lmax - LOG(a + @amin) - @limit) - q) ), 0.0000000000) AS float)
+SELECT MAX(skyquery.BayesFactorCalcSearchRadius(
+	a, l, q, @weightMin, @amin, @lmax, @stepCount, @limit))
 FROM __t
-
--------------------------------------------------------------

@@ -180,14 +180,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 amin += GetWeight(max);
             }
 
-            double factor = (Partition.Steps.Count - 1) * Math.Log(2);
             double wmin = GetWeight(stepmax);
 
             AppendZoneHeightParameter(cmd);
             cmd.Parameters.Add("@weightMin", SqlDbType.Float).Value = wmin;
-            cmd.Parameters.Add("@factor", SqlDbType.Float).Value = factor;
             cmd.Parameters.Add("@lmax", SqlDbType.Float).Value = lmax;
             cmd.Parameters.Add("@amin", SqlDbType.Float).Value = amin;
+            cmd.Parameters.Add("@stepCount", SqlDbType.SmallInt).Value = Partition.Steps.Count;
             cmd.Parameters.Add("@limit", SqlDbType.Float).Value = Math.Log(Partition.Query.Limit);
         }
 

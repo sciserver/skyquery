@@ -137,6 +137,43 @@ namespace Jhu.SkyQuery.SqlClrLib
                 };
             }
         }
+
+        [Microsoft.SqlServer.Server.SqlFunction(
+            Name = "skyquery.BayesFactorCalcSearchRadius",
+            DataAccess = DataAccessKind.None,
+            IsDeterministic = true,
+            IsPrecise = false,
+            SystemDataAccess = SystemDataAccessKind.None)]
+        public static SqlDouble BayesFactorCalcSearchRadius(
+            SqlDouble s_a,
+            SqlDouble s_l,
+            SqlDouble s_q,
+            SqlDouble s_w_min,
+            SqlDouble s_a_min,
+            SqlDouble s_l_max,
+            SqlInt16 s_n_max,           // total number of catalogs
+            SqlDouble s_logBF_limit
+            )
+        {
+            // Eq. 37
+
+            var a = s_a.Value;
+            var l = s_l.Value;
+            var q = s_q.Value;
+            var w_min = s_w_min.Value;
+            var a_min = s_a_min.Value;
+            var l_max = s_l_max.Value;
+            var n_max = s_n_max.Value;
+            var logBF_limit = s_logBF_limit.Value;
+
+            var logN = log2 * (n_max - 1) + l + l_max - Math.Log(a + a_min);
+            var b = 1 / a + 1 / w_min;
+            var r = b * (2 * (logN - logBF_limit) - q);
+                        
+            //(1 / a + 1 / @weightMin) * (2 * (@factor + l + @lmax - LOG(a + @amin) - @limit) - q)
+
+            return new SqlDouble(r);
+        }
     }
 
 }
