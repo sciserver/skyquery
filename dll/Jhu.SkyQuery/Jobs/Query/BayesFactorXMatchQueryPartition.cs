@@ -131,7 +131,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 
                 using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand(pstep))
                 {
-                    var theta = (double)ExecuteSqlOnAssignedServerScalar(cmd, CommandTarget.Code);
+                    var res = ExecuteSqlOnAssignedServerScalar(cmd, CommandTarget.Code);
+                    var theta = res != DBNull.Value ? (double)res : 0;
                     step.SearchRadius = Math.Sqrt(theta) * 180.0 / Math.PI;
                 }
             }
