@@ -48,6 +48,26 @@ WHERE a.ra BETWEEN 0 AND 1 AND
 
         [TestMethod]
         [TestCategory("Query")]
+        public void XMatchWithoutMatchIDTest()
+        {
+            // The primary key is not part of the select list
+
+            var sql = @"
+SELECT b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void XMatchWithHtmAndSmallRegionTest()
         {
             var sql = @"
