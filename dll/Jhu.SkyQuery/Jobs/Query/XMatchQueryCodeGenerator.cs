@@ -661,6 +661,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var sql = new StringBuilder(GetCreateMatchTableScript());
 
+            sql.Replace("[$idseed]", (((long)Partition.ID + 1L) * 1000000000000L).ToString());
             sql.Replace("[$tablename]", GetResolvedTableName(matchtable));
             sql.Replace("[$indexname]", GeneratePrimaryKeyName(matchtable));
             sql.Replace("[$columnlist]", columnlist);
@@ -846,14 +847,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Final query execution
 
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
+        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement)
         {
             // Collect tables that are part of the XMatch operation
             var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
 
             ReplaceXMatchClause(qs);
 
-            return base.OnGetExecuteQuery(selectStatement, method, destination);
+            return base.OnGetExecuteQuery(selectStatement);
         }
 
         protected void ReplaceXMatchClause(XMatchQuerySpecification qs)

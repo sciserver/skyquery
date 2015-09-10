@@ -2,7 +2,7 @@
 
 CREATE TABLE [$tablename]
 (
-	   [MatchID] [bigint] NOT NULL IDENTITY (1, 1),
+	   [MatchID] [bigint] NOT NULL IDENTITY ([$idseed], 1),
 	   [RA] [float],
 	   [Dec] [float],
 	   [Cx] [float],
