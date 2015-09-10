@@ -252,7 +252,7 @@ FROM [table]
             var regions = new List<Spherical.Region>();
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss, CommandMethod.Select);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
 
             return CodeGenerator.Execute(ss);
         }
@@ -340,11 +340,11 @@ ON [table2].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [_
 
         #region
 
-        private string GetExecuteQueryTestHelper(string sql)
+        private Graywulf.IO.Tasks.SourceTableQuery GetExecuteQueryTestHelper(string sql)
         {
             var q = CreateQuery(sql);
             var sq = CodeGenerator.GetExecuteQuery(q.SelectStatement);
-            return sq.Query;
+            return sq;
         }
 
         [TestMethod]
@@ -355,8 +355,10 @@ SELECT *
 FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
 REGION 'CIRCLE J2000 10 10 10'";
 
-            var gt = @"DECLARE @r0 dbo.Region = @region0;
+            var gt1 = @"DECLARE @r0 dbo.Region = @region0;
+";
 
+            var gt2 = @"
 SELECT [__htm_t0].[objId] AS [objId], [__htm_t0].[skyVersion] AS [skyVersion], [__htm_t0].[run] AS [run], [__htm_t0].[rerun] AS [rerun], [__htm_t0].[camcol] AS [camcol], [__htm_t0].[field] AS [field], [__htm_t0].[obj] AS [obj], [__htm_t0].[mode] AS [mode], [__htm_t0].[type] AS [type], [__htm_t0].[ra] AS [ra], [__htm_t0].[dec] AS [dec], [__htm_t0].[raErr] AS [raErr], [__htm_t0].[decErr] AS [decErr], [__htm_t0].[cx] AS [cx], [__htm_t0].[cy] AS [cy], [__htm_t0].[cz] AS [cz], [__htm_t0].[htmId] AS [htmId], [__htm_t0].[zoneId] AS [zoneId], [__htm_t0].[u] AS [u], [__htm_t0].[g] AS [g], [__htm_t0].[r] AS [r], [__htm_t0].[i] AS [i], [__htm_t0].[z] AS [z]
 FROM ((SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
@@ -367,11 +369,11 @@ UNION ALL
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
 INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
 ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1)) AS [__htm_t0]
-
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
-            Assert.AreEqual(gt, res);
+            Assert.AreEqual(gt1, res.Header);
+            Assert.AreEqual(gt2, res.Query);
         }
 
         #endregion

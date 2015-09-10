@@ -195,8 +195,7 @@ FROM XMATCH
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
 [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
 [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
-";
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]";
 
             var res = GetExecuteQueryTextTestHelper(sql);
             Assert.AreEqual(gt, res);
@@ -219,8 +218,7 @@ FROM XMATCH
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
          [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
-FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [__match]
-";
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [__match]";
 
             Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
         }
@@ -245,8 +243,7 @@ CROSS JOIN TEST:CatalogC c";
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
-CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]
-";
+CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]";
 
             Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
         }
@@ -271,8 +268,7 @@ INNER JOIN TEST:CatalogC c ON c.objId = a.objId";
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
-INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [__match].[_TEST_dbo_CatalogA_a_objId]
-";
+INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [__match].[_TEST_dbo_CatalogA_a_objId]";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
@@ -293,8 +289,7 @@ WHERE a.ra BETWEEN 1 AND 2";
             var gt =
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
-WHERE [__match].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2
-";
+WHERE [__match].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
@@ -317,8 +312,7 @@ WHERE c.ra BETWEEN 1 AND 2";
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match],
      [SkyNode_Test].[dbo].[CatalogC] [c]
-WHERE [c].[ra] BETWEEN 1 AND 2
-";
+WHERE [c].[ra] BETWEEN 1 AND 2";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
@@ -342,8 +336,7 @@ WHERE c.ra BETWEEN 1 AND 2";
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match],
      (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[zoneId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
-WHERE [c].[ra] BETWEEN 1 AND 2
-";
+WHERE [c].[ra] BETWEEN 1 AND 2";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
