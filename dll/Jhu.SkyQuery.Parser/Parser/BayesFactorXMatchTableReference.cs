@@ -22,7 +22,8 @@ namespace Jhu.SkyQuery.Parser
 
             DatabaseObject = new Table();
 
-            AddColumn("MatchID", DataTypes.SqlBigInt);
+            AddColumn("MatchID", DataTypes.SqlBigInt).IsKey = true;
+
             AddColumn("RA", DataTypes.SqlFloat);
             AddColumn("Dec", DataTypes.SqlFloat);
             AddColumn("Cx", DataTypes.SqlFloat);
@@ -35,9 +36,9 @@ namespace Jhu.SkyQuery.Parser
             AddColumn("LogBF", DataTypes.SqlFloat);
         }
 
-        private void AddColumn(string name, DataType type)
+        private Column AddColumn(string name, DataType type)
         {
-            Column col = new Column();
+            var col = new Column();
             col.Name = name;
             col.DataType = type;
             ((IColumns)this.DatabaseObject).Columns.TryAdd(col.Name, col);
@@ -47,6 +48,8 @@ namespace Jhu.SkyQuery.Parser
             cr.DataType = type;
             cr.TableReference = this;
             this.ColumnReferences.Add(cr);
+
+            return col;
         }
     }
 }
