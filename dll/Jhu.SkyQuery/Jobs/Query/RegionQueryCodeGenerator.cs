@@ -53,18 +53,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="selectStatement"></param>
         /// <returns></returns>
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement, CommandMethod method, Table destination)
+        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement)
         {
             if (!(selectStatement is RegionSelectStatement))
             {
-                return base.OnGetExecuteQuery(selectStatement, method, destination);
+                return base.OnGetExecuteQuery(selectStatement);
             }
 
             var regions = new List<Region>();
 
             // Rewrite query
             AppendRegionJoinsAndConditions(selectStatement, regions);
-            RemoveNonStandardTokens(selectStatement, method);
+            RemoveNonStandardTokens(selectStatement);
 
             if (queryObject != null)
             {
@@ -73,18 +73,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // Compose final script
-            var sql = new StringBuilder();
+            var header = new StringBuilder();
 
             for (int i = 0; i < regions.Count; i++)
             {
-                sql.AppendLine(String.Format("DECLARE @r{0} dbo.Region = @region{0};", i));
+                header.AppendLine(String.Format("DECLARE @r{0} dbo.Region = @region{0};", i));
             }
-
-            AppendQuery(sql, selectStatement, method, destination);
 
             var source = new SourceTableQuery()
             {
-                Query = sql.ToString()
+                Header = header.ToString(),
+                Query = Execute(selectStatement),
             };
 
             if (queryObject != null)
