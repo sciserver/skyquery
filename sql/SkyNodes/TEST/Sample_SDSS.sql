@@ -10,28 +10,76 @@ GO
 
 CREATE TABLE [dbo].[SDSSDR7PhotoObjAll]
 (
+	--/ <summary>Photometric object identifier</summary>
+	--/ <class>meta.id, meta.main</class>
 	[objId] [bigint] NOT NULL,
+
+	--/ <class>meta.version</class>
 	[skyVersion] [tinyint] NOT NULL,
+
 	[run] [smallint] NOT NULL,
+
 	[rerun] [smallint] NOT NULL,
+
 	[camcol] [tinyint] NOT NULL,
+
 	[field] [smallint] NOT NULL,
+
 	[obj] [smallint] NOT NULL,
+
 	[mode] [tinyint] NOT NULL,
+
 	[type] [smallint] NOT NULL,
+
+	--/ <class>pos.eq.ra, pos.frame=FK5</class>
+	--/ <unit>deg</unit>
 	[ra] [float] NOT NULL,
+
+	--/ <class>pos.eq.dec, pos.frame=FK5</class>
+	--/ <unit>deg</unit>
 	[dec] [float] NOT NULL,
+
+	--/ <class>stat.error, pos.eq.ra, pos.frame=FK5</class>
+	--/ <unit>deg</unit>
 	[raErr] [float] NOT NULL,
+	
+	--/ <class>stat.error, pos.eq.dec, pos.frame=FK5</class>
+	--/ <unit>arc</unit>
 	[decErr] [float] NOT NULL,
+
+	--/ <class>pos.cartesian.x, pos.frame=FK5</class>
 	[cx] [float] NOT NULL,
+
+	--/ <class>pos.cartesian.y, pos.frame=FK5</class>
 	[cy] [float] NOT NULL,
+
+	--/ <class>pos.cartesian.z, pos.frame=FK5</class>
 	[cz] [float] NOT NULL,
+
+	--/ <class>pos.eq.htm, pos.frame=FK5</class>
 	[htmId] [bigint] NOT NULL,
+
+	--/ <class>pos.eq.zone, pos.frame=FK5</class>
 	[zoneId] [bigint] NOT NULL,
+
+	--/ <class>phot.mag, em.opt.u</class>
+	--/ <unit>mag</unit>
 	[u] [real] NOT NULL,
+	
+	--/ <class>phot.mag, em.opt.g</class>	
+	--/ <unit>mag</unit>
 	[g] [real] NOT NULL,
+
+	--/ <class>phot.mag, em.opt.r</class>
+	--/ <unit>mag</unit>
 	[r] [real] NOT NULL,
+
+	--/ <class>phot.mag, em.opt.i</class>
+	--/ <unit>mag</unit>
 	[i] [real] NOT NULL,
+
+	--/ <class>phot.mag, em.opt.z</class>
+	--/ <unit>mag</unit>
 	[z] [real] NOT NULL,
 
 	CONSTRAINT PK_SDSSDR7PhotoObjAll PRIMARY KEY 
