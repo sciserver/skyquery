@@ -454,7 +454,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 SubstituteHtmId(sql, coords);
 
-                sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
                 sql.Replace("[$where_inner]", Execute(where));
                 sql.Replace("[$where_partial]", Execute(whereregion));
             }
@@ -484,7 +483,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void SubstituteHtmId(StringBuilder sql, TableCoordinates coords)
         {
-            sql.Replace("[$htmid]", Execute(GetHtmIdExpression(coords)));
+            var htmex = GetHtmIdExpression(coords);
+            SubstituteSystemDatabaseNames(htmex);
+            sql.Replace("[$htmid]", Execute(htmex));
         }
 
         #endregion

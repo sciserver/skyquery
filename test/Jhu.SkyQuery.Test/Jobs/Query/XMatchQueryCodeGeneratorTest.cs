@@ -128,55 +128,39 @@ FROM XMATCH
         #endregion
 
 
-        // ---
-        /* TODO: delete
-        private string GetExecuteQueryTextTestHelper(string query)
-        {
-            var sm = CreateSchemaManager();
-
-            var xmq = new BayesFactorXMatchQuery(null);
-            xmq.QueryString = query;
-            xmq.QueryFactoryTypeName = Jhu.Graywulf.Util.TypeNameFormatter.ToUnversionedAssemblyQualifiedName(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQueryFactory));
-            xmq.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
-            xmq.TemporaryDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
-            xmq.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
-
-            var xmqp = new BayesFactorXMatchQueryPartition(xmq);
-            xmqp.ID = 0;
-            xmqp.InitializeQueryObject(null);
-
-            var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
-            var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-            var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
-            xmqp.GenerateSteps(xmtables);
-
-            var xmtstr = new List<TableReference>(xmtables.Select(ts => ts.TableReference));
-
-            var m = xmqp.GetType().GetMethod("GetExecuteQueryText", BindingFlags.NonPublic | BindingFlags.Instance);
-            Assert.IsNotNull(m);
-
-            return (string)m.Invoke(xmqp, null);
-        }
-         * */
-
         private string GetExecuteQueryTextTestHelper(string sql)
         {
-            var xmq = CreateQuery(sql);
-            xmq.ExecutionMode = ExecutionMode.SingleServer;
+            using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
+            {
+                var sm = new GraywulfSchemaManager(context.Federation);
 
-            var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
-            xmqp.ID = 0;
-            xmqp.InitializeQueryObject(null);
+                var xmq = CreateQuery(sql);
+                xmq.ExecutionMode = ExecutionMode.SingleServer;
 
-            var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
-            var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-            var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
-            xmqp.GenerateSteps(xmtables);
+                var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
+                xmqp.ID = 0;
+                xmqp.InitializeQueryObject(null);
+                xmqp.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+                xmqp.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
+                
+                // TODO: where to take this? let's just hack it for now
+                xmqp.TemporaryDataset = new SqlServerDataset()
+                {
+                    Name = Jhu.Graywulf.Registry.Constants.TempDbName,
+                    DatabaseName = "Graywulf_Temp"
+                };
 
-            var cg = new XMatchQueryCodeGenerator(xmqp);
-            var res = cg.GetExecuteQuery(xmq.SelectStatement);
+                var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
+                var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
+                var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
+                xmqp.GenerateSteps(xmtables);
 
-            return res.Query;
+                var cg = new XMatchQueryCodeGenerator(xmqp);
+
+                var res = cg.GetExecuteQuery(xmq.SelectStatement);
+
+                return res.Query;
+            }
         }
 
         [TestMethod]
@@ -244,7 +228,7 @@ CROSS JOIN TEST:CatalogC c";
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
 CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]";
-
+            
             Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
         }
 
