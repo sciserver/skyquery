@@ -2,7 +2,7 @@
 
 
 
-CREATE TABLE [dbo].[MyCatalog]
+CREATE TABLE [mydb].[MyCatalog]
 (
 	[ObjID] [bigint] IDENTITY(1,1) NOT NULL,
 	[Ra] [float] NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[MyCatalog]
 GO
 
 
-INSERT MyCatalog
+INSERT [mydb].[MyCatalog]
 	(Ra, Dec, mag_g, mag_r, mag_i)
 VALUES
 	(263.40867207, 6.27896065, 23.47177, 21.69188, 21.18722),
@@ -126,7 +126,7 @@ VALUES
 GO
 
 
-CREATE TABLE [dbo].[MyCatalog2]
+CREATE TABLE [mydb].[MyCatalog2]
 (
 	[ObjID] [bigint] IDENTITY(1,1) NOT NULL,
 	[Ra] [float] NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE [dbo].[MyCatalog2]
 GO
 
 
-INSERT MyCatalog2
+INSERT [mydb].[MyCatalog2]
 	(Ra, Dec, mag_g, mag_r, mag_i)
 VALUES
 	(263.40867207, 6.27896065, 23.47177, 21.69188, 21.18722),
@@ -285,7 +285,7 @@ GO
 
 
 
-CREATE TABLE [dbo].[SampleData](
+CREATE TABLE [mydb].[SampleData](
 	[float] [real] NULL,
 	[double] [float] NULL,
 	[decimal] [money] NULL,
@@ -303,7 +303,7 @@ CREATE TABLE [dbo].[SampleData](
 
 
 
-INSERT [dbo].[SampleData]
+INSERT [mydb].[SampleData]
 VALUES (1.234568,
 		1.23456789,
 		1.2346,
