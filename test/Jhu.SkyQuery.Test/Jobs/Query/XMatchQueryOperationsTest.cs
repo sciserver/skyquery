@@ -27,15 +27,15 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         }
 
         string sampleQuery = @"
-SELECT p.objId, s.BestObjID, p.ra, p.dec, s.specObjId, s.ra, s.dec
+SELECT p.objId, g.ObjID, p.ra, p.dec, g.ra, g.dec
 INTO [$targettable]
 FROM XMATCH
     (
-        MUST EXIST IN SDSSDR7:PhotoObjAll AS p WITH(Point(p.ra, p.dec), ERROR(0.1, 0.1, 0.1)),
-        MUST EXIST IN SDSSDR7:SpecObjAll AS s WITH(Point(s.ra, s.dec), ERROR(0.1, 0.1, 0.1)),
+        MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS p WITH(Point(p.ra, p.dec), ERROR(0.1, 0.1, 0.1)),
+        MUST EXIST IN TEST:GalexPhotoObjAll AS g WITH(Point(g.ra, g.dec), ERROR(0.1, 0.1, 0.1)),
         LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
-      AND s.RA BETWEEN 0 AND 5 AND s.Dec BETWEEN 0 AND 5 ";
+      AND g.RA BETWEEN 0 AND 5 AND g.Dec BETWEEN 0 AND 5 ";
 
         [TestMethod]
         [TestCategory("Query")]
