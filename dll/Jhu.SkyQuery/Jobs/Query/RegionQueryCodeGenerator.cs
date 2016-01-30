@@ -786,10 +786,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Statistics key needs to be changed because table is aliased
             var tr = new TableReference("__t");
-            var keycol = SubstituteTableName(
-                tableSource.TableReference.Statistics.KeyColumn,
-                tableSource.TableReference,
-                tr);
+            var keycol = SubstituteTableName(tableSource.TableReference.Statistics.KeyColumn, tableSource.TableReference, tr);
+            SubstituteSystemDatabaseNames(keycol);
 
             var sql = new StringBuilder(RegionScripts.TableStatistics);
 
