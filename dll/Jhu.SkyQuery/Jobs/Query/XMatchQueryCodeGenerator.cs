@@ -863,7 +863,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var xmtstr = new List<TableReference>(xmts.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
             
             var matchtable = GetMatchTable(Partition.Steps[Partition.Steps.Count - 1]);
-            var mtr = new TableReference(matchtable, "__match");
+            var mtr = new TableReference(matchtable, "__match", false);
             
             SubstituteMatchTableName(qs, xmtstr, mtr);
 

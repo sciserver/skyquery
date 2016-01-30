@@ -35,12 +35,6 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             return (SelectStatement)p.Execute(sql);
         }
 
-        protected override SqlQuery CreateQuery(string query)
-        {
-            var q = base.CreateQuery(query);
-            return q;
-        }
-
         protected void FinishQueryJob(Guid guid)
         {
             FinishQueryJob(guid, new TimeSpan(0, 5, 0));
