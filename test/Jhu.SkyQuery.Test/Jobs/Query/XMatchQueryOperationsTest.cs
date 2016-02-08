@@ -17,13 +17,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            InitializeQueryTests();
+            InitializeJobTests();
         }
 
         [ClassCleanup]
         public static void CleanUp()
         {
-            CleanupQueryTests();
+            CleanupJobTests();
         }
 
         string sampleQuery = @"

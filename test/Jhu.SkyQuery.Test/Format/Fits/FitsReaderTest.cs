@@ -4,20 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.IO;
+using Jhu.Graywulf.Util;
 using Jhu.Graywulf.Format;
+using Jhu.Graywulf.Test;
 using Jhu.SkyQuery.Format.Fits;
 
 namespace Jhu.SkyQuery.Format.Fits.Test
 {
     [TestClass]
-    public class FitsReaderTest
+    public class FitsReaderTest : TestClassBase
     {
         private FitsFileWrapper OpenFits(string path)
         {
-            var f = new FitsFileWrapper(
-                new Uri(String.Format("../../../../../skyquery/test/files/{0}", path), UriKind.Relative),
-                DataFileMode.Read
-                )
+            var filename = GetTestFilePath("skyquery/test/files", path);
+            var f = new FitsFileWrapper(UriConverter.FromFilePath(filename), DataFileMode.Read)
             {
                 GenerateIdentityColumn = false
             };
