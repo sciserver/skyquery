@@ -604,5 +604,63 @@ WHERE s.ra BETWEEN 0 AND 1";
 
             RunQuery(sql);
         }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void CreatePrimaryKeyTest()
+        {
+            var sql = @"
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithXMatchOutputTest()
+        {
+            DropUserDatabaseTable("XMatchWithXMatchOutput1");
+
+            var sql = @"
+SELECT x.matchID AS matchID,
+       x.ra AS ra, x.dec AS dec,
+        x.cx AS cx, x.cy AS cy, x.cz AS cz
+INTO XMatchWithXMatchOutput1
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+
+            sql = @"
+SELECT x.matchID,
+       a.objID, a.ra, a.dec, 
+       b.ra, b.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN MYDB:XMatchWithXMatchOutput1 AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1
+";
+
+            RunQuery(sql);
+        }
     }
 }
