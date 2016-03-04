@@ -48,7 +48,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
 
         [TestMethod]
-        public void GenerateHtmJoinConditionTest(bool partial)
+        public void GenerateHtmJoinConditionTest()
         {
             var sql = @"
 SELECT *
@@ -57,9 +57,11 @@ FROM table WITH (HTMID(htmid))";
             var ss = Parse(sql);
             var ts = ss.EnumerateSourceTables(false).First();
 
-            var sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable, partial, 0);
+            var sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable, true, 0);
+            Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd AND __htm.Partial = 1", sc.ToString());
 
-            Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd", sc.ToString());
+            sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable, false, 0);
+            Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd AND __htm.Partial = 0", sc.ToString());
         }
 
         private string GenerateRegionContainsConditionTestHelper(string sql)

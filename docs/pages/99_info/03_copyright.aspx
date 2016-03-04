@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Title="Copyright" MasterPageFile="~/Docs/Docs.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" Title="Copyright" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Text" runat="server">
     <h3>

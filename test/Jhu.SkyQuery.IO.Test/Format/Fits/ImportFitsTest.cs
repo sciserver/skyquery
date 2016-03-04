@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 using Jhu.SkyQuery.Format.Fits;
+using Jhu.Graywulf.Test;
 
 namespace Jhu.SkyQuery.Format.Fits.Test
 {
@@ -20,7 +21,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         [TestMethod]
         public void ImportSdssSpecTest()
         {
-            var path = @"..\..\..\files\sdssdr10_specsdss.fits";
+            var path = GetTestFilePath(@"skyquery/test/files/sdssdr10_specsdss.fits");
             var table = "ImportFitsTest_ImportSdssSpecTest";
             var it = GetImportTableTask(path, table, false);
 
@@ -32,7 +33,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         [TestMethod]
         public void ImportBossSpecTest()
         {
-            var path = @"..\..\..\files\sdssdr10_specboss.fits";
+            var path = GetTestFilePath(@"skyquery/test/files/sdssdr10_specboss.fits");
             var table = "ImportFitsTest_ImportBossSpecTest";
             var it = GetImportTableTask(path, table, false);
 

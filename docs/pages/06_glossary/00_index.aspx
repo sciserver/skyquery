@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Title="Glossary" MasterPageFile="~/Docs/Docs.master" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" Title="Glossary" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Text" runat="server">
     <h3>
