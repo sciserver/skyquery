@@ -7,7 +7,7 @@ using Microsoft.SqlServer.Server;
 namespace Jhu.SkyQuery.SqlClrLib
 {
     [Serializable]
-    [Microsoft.SqlServer.Server.SqlUserDefinedType(Format.Native, Name = "skyquery.BayesFactorPoint")]
+    [SqlUserDefinedType(Format.Native, Name = "skyquery.BayesFactorPoint")]
     public struct BayesFactorPoint : INullable
     {
         public override string ToString()
@@ -29,8 +29,18 @@ namespace Jhu.SkyQuery.SqlClrLib
         {
             get
             {
-                BayesFactorPoint h = new BayesFactorPoint();
+                var h = new BayesFactorPoint();
                 h.m_Null = true;
+                return h;
+            }
+        }
+
+        public static BayesFactorPoint NoMatch
+        {
+            get
+            {
+                var h = new BayesFactorPoint();
+                h.IsMatch = false;
                 return h;
             }
         }

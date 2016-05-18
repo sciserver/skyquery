@@ -45,7 +45,6 @@
     <Compile Include="SqlClrLib\BayesFactorXMatch.cs" />
     <Compile Include="SqlClrLib\Constants.cs" />
     <Compile Include="SqlClrLib\CoordinateConverters.cs" />
-    <Compile Include="SqlClrLib\Match.cs" />
     <Compile Include="SqlClrLib\ZoneFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +54,14 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)$(OutDir)
+copy $(TargetDir)$(TargetName).pdb $(SolutionDir)$(OutDir)
+
+$(SolutionDir)graywulf\build\Jhu.Graywulf.SqlClrUtil\$(OutputPath)gwsqlclrutil.exe $(TargetPath)
+copy $(TargetDir)$(TargetName).Drop.sql $(SolutionDir)$(OutputPath)
+copy $(TargetDir)$(TargetName).Create.sql $(SolutionDir)$(OutputPath)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
