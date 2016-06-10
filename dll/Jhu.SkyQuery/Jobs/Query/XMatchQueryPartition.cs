@@ -233,10 +233,10 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 pairtable.Drop();
 
-                using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, pairtable))
+                /*using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, pairtable))
                 {
                     ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
-                }
+                }*/
 
                 using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, linktable, pairtable))
                 {
