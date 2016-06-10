@@ -311,11 +311,74 @@ REGION 'CIRCLE J2000 0 0 10'";
        c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
 INTO [$into]
 FROM XMATCH(
-    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
-    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1), HTMID(htmid), ZONEID(zoneid)),
-    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.5), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(2.0), HTMID(htmid), ZONEID(zoneid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void ThreeWayJoinWithWhereTest()
+        {
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.5), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(2.0), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.RA BETWEEN 0 AND 5 AND a.dec BETWEEN 0 AND 5
+	AND b.RA BETWEEN 0 AND 5 AND b.dec BETWEEN 0 AND 5
+    AND c.RA BETWEEN 0 AND 5 AND c.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void ThreeWayJoinWithWhereTest2()
+        {
+            // Work on real databases
+
+            var sql = @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec, t.ra, t.dec
+INTO [$into]
+FROM XMATCH
+     (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec, s.cx, s.cy, s.cz), ERROR(0.2, 0.2, 0.2), HTMID(htmid), ZONEID(zoneid)),
+      MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec, g.cx, g.cy, g.cz), ERROR(2.0, 2.0, 2.0), HTMID(htmid), ZONEID(zoneid)),
+      MUST EXIST IN TwoMass:PhotoPSC AS t WITH(POINT(t.ra, t.dec, t.cx, t.cy, t.cz), ERROR(0.4, 0.4, 0.4), HTMID(htmid), ZONEID(zoneid)),
+      LIMIT BAYESFACTOR TO 1e3) AS x
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5
+    AND t.ra BETWEEN 0 AND 5 AND t.dec BETWEEN 0 AND 5
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void ThreeWayJoinWithWhereTest3()
+        {
+            var sql = @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec, t.ra, t.dec
+INTO [$into]
+FROM XMATCH
+     (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec, s.cx, s.cy, s.cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
+      MUST EXIST IN WISE:PhotoObj AS t WITH(POINT(t.ra, t.dec, t.cx, t.cy, t.cz), ERROR(0.5), HTMID(htmid), ZONEID(zoneid)),
+      MUST EXIST IN GALEX:PhotoObjAll AS g WITH(POINT(g.ra, g.dec, g.cx, g.cy, g.cz), ERROR(2.0), HTMID(htmid), ZONEID(zoneid)),
+      LIMIT BAYESFACTOR TO 1e3) AS x
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+	AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5
+    AND t.ra BETWEEN 0 AND 5 AND t.dec BETWEEN 0 AND 5
+";
 
             RunQuery(sql);
         }
