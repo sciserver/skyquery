@@ -96,7 +96,6 @@
     <None Include="Jobs\Query\XMatchResources\CreateZoneTable.sql" />
     <Content Include="Jobs\Query\XMatchResources\PopulateLinkTable.sql" />
     <None Include="Jobs\Query\XMatchResources\PopulateZoneTable.sql" />
-    <None Include="Jobs\Query\XMatchResources\PopulateZoneTableRegion.sql" />
     <None Include="Jobs\Query\XMatchResources\PopulatePairTable.sql" />
     <Compile Include="Jobs\Query\XMatchScripts.Designer.cs">
       <AutoGen>True</AutoGen>

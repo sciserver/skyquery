@@ -21,7 +21,7 @@ namespace Jhu.SkyQuery.SqlClrLib
             IsDeterministic = true, IsPrecise = false)]
         public static SqlInt32 ZoneIDFromDec(SqlDouble dec, SqlDouble zoneHeight)
         {
-            return new SqlInt32((int)Math.Floor(dec.Value + 90.0 / zoneHeight.Value));
+            return new SqlInt32((int)Math.Floor((dec.Value + 90.0) / zoneHeight.Value));
         }
 
         [SqlFunction(
@@ -45,7 +45,7 @@ namespace Jhu.SkyQuery.SqlClrLib
                 dec = Math.Asin(z) * Constants.Radian2Degree;
             }
 
-            return new SqlInt32((int)Math.Floor(dec + 90.0 / zoneHeight.Value));
+            return new SqlInt32((int)Math.Floor((dec + 90.0) / zoneHeight.Value));
         }
 
         [SqlFunction(

@@ -191,10 +191,10 @@ namespace Jhu.SkyQuery.Jobs.Query {
         ///		__t1.[RA] AS [RA1],
         ///		__t2.[RA] AS [RA2],
         ///		__link.[Alpha] AS [Alpha]
-        ///	FROM __t1
-        ///	INNER LOOP JOIN [$linktable] AS __link ON  __link.[ZoneID1] = __t1.[ZoneID]
-        ///	INNER LOOP JOIN __t2 ON  __link.[ZoneID2] = __t2.ZoneID
-        ///	WHERE (__t1.[ [rest of string was truncated]&quot;;.
+        ///	FROM [$linktable] AS __link
+        ///	INNER LOOP JOIN __t1 ON  __link.[ZoneID1] = __t1.[ZoneID]
+        ///	INNER LOOP JOIN __t2 ON  __link.[ZoneID2] = __t2.[ZoneID]
+        ///	WHERE (__t1 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string PopulatePairTable {
             get {
@@ -238,39 +238,6 @@ namespace Jhu.SkyQuery.Jobs.Query {
         internal static string PopulateZoneTable {
             get {
                 return ResourceManager.GetString("PopulateZoneTable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to -- *** BayesFactorXMatchResources/PopulateZoneTableRegion.sql *** ---
-        ///
-        ///-- Generate HTM ranges
-        ///
-        ///CREATE TABLE [$htm_inner]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm_inner] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) AS htm
-        ///WHERE partial = 0;
-        ///
-        ///CREATE TABLE [$htm_partial]
-        ///(
-        ///	htmIDStart bigint NOT NULL,
-        ///	htmIDEnd bigint NOT NULL
-        ///);
-        ///
-        ///INSERT [$htm_partial] WITH(TABLOCKX)
-        ///SELECT htmIDStart, htmIDEnd
-        ///FROM htm.Cover(@region) AS htm
-        ///WHERE p [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string PopulateZoneTableRegion {
-            get {
-                return ResourceManager.GetString("PopulateZoneTableRegion", resourceCulture);
             }
         }
     }
