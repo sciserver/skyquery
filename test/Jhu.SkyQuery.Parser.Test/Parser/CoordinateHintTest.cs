@@ -42,14 +42,14 @@ FROM
             Assert.AreEqual(3, ts.Length);
 
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
-            Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAExpression));
-            Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecExpression));
+            Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAHintExpression));
+            Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecHintExpression));
             Assert.AreEqual("0.1", coords.Error);
             Assert.IsTrue(coords.IsConstantError);
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[ra]", CodeGenerator.Execute(coords.RAExpression));
-            Assert.AreEqual("[c2].[dec]", CodeGenerator.Execute(coords.DecExpression));
+            Assert.AreEqual("[c2].[ra]", CodeGenerator.Execute(coords.RAHintExpression));
+            Assert.AreEqual("[c2].[dec]", CodeGenerator.Execute(coords.DecHintExpression));
             Assert.AreEqual("[c2].[err]", coords.Error);
             Assert.AreEqual("0.1", coords.ErrorMin);
             Assert.AreEqual("0.5", coords.ErrorMax);
@@ -75,12 +75,12 @@ FROM
             Assert.AreEqual(3, ts.Length);
 
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
-            Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAExpression));
-            Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecExpression));
-            Assert.AreEqual("[c1].[htmID]", CodeGenerator.Execute(coords.HtmIdExpression));
+            Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAHintExpression));
+            Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecHintExpression));
+            Assert.AreEqual("[c1].[htmID]", CodeGenerator.Execute(coords.HtmIdHintExpression));
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[htmID]", CodeGenerator.Execute(coords.HtmIdExpression));
+            Assert.AreEqual("[c2].[htmID]", CodeGenerator.Execute(coords.HtmIdHintExpression));
         }
 
         [TestMethod]
@@ -102,12 +102,12 @@ FROM
             Assert.AreEqual(3, ts.Length);
 
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
-            Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAExpression));
-            Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecExpression));
-            Assert.AreEqual("[c1].[zoneID]", CodeGenerator.Execute(coords.ZoneIdExpression));
+            Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAHintExpression));
+            Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecHintExpression));
+            Assert.AreEqual("[c1].[zoneID]", CodeGenerator.Execute(coords.ZoneIdHintExpression));
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
-            Assert.AreEqual("[c2].[zoneID]", CodeGenerator.Execute(coords.ZoneIdExpression));
+            Assert.AreEqual("[c2].[zoneID]", CodeGenerator.Execute(coords.ZoneIdHintExpression));
         }
 
         [TestMethod]

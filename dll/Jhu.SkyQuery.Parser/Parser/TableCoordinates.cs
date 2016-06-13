@@ -50,20 +50,43 @@ namespace Jhu.SkyQuery.Parser
         /// </summary>
         public bool IsNoRegion
         {
-            get { return !isCartesianSpecified && !isEqSpecified && !isHtmIdSpecified; }
+            get
+            {
+                return !isCartesianSpecified && !isEqSpecified && !isHtmIdSpecified &&
+                  !IsEqColumnsAvailable && !IsCartesianColumnsAvailable;
+            }
         }
 
-        public bool IsEqSpecified
+        public bool IsEqColumnsAvailable
+        {
+            get
+            {
+                return table.TableReference.TableOrView.Columns.ContainsKey("ra") &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("dec");
+            }
+        }
+
+        public bool IsEqHintSpecified
         {
             get { return isEqSpecified; }
         }
 
-        public bool IsCartesianSpecified
+        public bool IsCartesianColumnsAvailable
+        {
+            get
+            {
+                return table.TableReference.TableOrView.Columns.ContainsKey("cx") &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("cy") &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("cz");
+            }
+        }
+
+        public bool IsCartesianHintSpecified
         {
             get { return isCartesianSpecified; }
         }
 
-        public Expression RAExpression
+        public Expression RAHintExpression
         {
             get
             {
@@ -71,7 +94,15 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression DecExpression
+        public Expression RAColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("ra");
+            }
+        }
+
+        public Expression DecHintExpression
         {
             get
             {
@@ -79,7 +110,15 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression XExpression
+        public Expression DecColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("dec");
+            }
+        }
+
+        public Expression XHintExpression
         {
             get
             {
@@ -87,7 +126,15 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression YExpression
+        public Expression XColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("cx");
+            }
+        }
+
+        public Expression YHintExpression
         {
             get
             {
@@ -95,7 +142,15 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression ZExpression
+        public Expression YColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("cy");
+            }
+        }
+
+        public Expression ZHintExpression
         {
             get
             {
@@ -103,12 +158,28 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public bool IsHtmIdSpecified
+        public Expression ZColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("cz");
+            }
+        }
+
+        public bool IsHtmIdColumnAvailable
+        {
+            get
+            {
+                return table.TableReference.TableOrView.Columns.ContainsKey("htmid");
+            }
+        }
+
+        public bool IsHtmIdHintSpecified
         {
             get { return isHtmIdSpecified; }
         }
 
-        public Expression HtmIdExpression
+        public Expression HtmIdHintExpression
         {
             get
             {
@@ -116,24 +187,48 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        public Expression HtmIdColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("htmid");
+            }
+        }
+
         public ColumnReference HtmIdColumnReference
         {
             get
             {
-                return HtmIdExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                return HtmIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
             }
         }
 
-        public bool IsZoneIdSpecified
+        public bool IsZoneIdColumnAvailable
+        {
+            get
+            {
+                return table.TableReference.TableOrView.Columns.ContainsKey("zoneid");
+            }
+        }
+
+        public bool IsZoneIdHintSpecified
         {
             get { return isZoneIdSpecified; }
         }
 
-        public Expression ZoneIdExpression
+        public Expression ZoneIdHintExpression
         {
             get
             {
                 return zoneIdHintArguments[0];
+            }
+        }
+
+        public Expression ZoneIDColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression("zoneid");
             }
         }
 
@@ -145,7 +240,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public bool IsErrorSpecified
+        public bool IsErrorHintSpecified
         {
             get { return isErrorSpecified; }
         }
@@ -159,7 +254,7 @@ namespace Jhu.SkyQuery.Parser
         }
 
 
-        public bool IsErrorLimitsSpecified
+        public bool IsErrorLimitsHintSpecified
         {
             get { return isErrorLimitsSpecified; }
         }
@@ -366,7 +461,7 @@ namespace Jhu.SkyQuery.Parser
 
             isZoneIdSpecified = true;
 
-            if (!ZoneIdExpression.IsSingleColumn)
+            if (!ZoneIdHintExpression.IsSingleColumn)
             {
                 throw CreateException(ExceptionMessages.ZoneIdIsNotSingleColumn);
             }
@@ -443,6 +538,12 @@ namespace Jhu.SkyQuery.Parser
         }
 
         #endregion
+
+        private Expression CreateColumnExpression(string column)
+        {
+            var cr = new ColumnReference(table.TableReference, table.TableReference.TableOrView.Columns[column]);
+            return Expression.Create(cr);
+        }
 
         private ValidatorException CreateException(string message)
         {

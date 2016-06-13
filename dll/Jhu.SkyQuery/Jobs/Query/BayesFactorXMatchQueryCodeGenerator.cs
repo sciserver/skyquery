@@ -150,7 +150,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 double min, max;
 
-                if (!coords.IsErrorSpecified)
+                if (!coords.IsErrorHintSpecified)
                 {
                     min = max = Constants.DefaultError;
                 }
@@ -158,7 +158,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     min = max = double.Parse(Execute(coords.ErrorExpression), System.Globalization.CultureInfo.InvariantCulture);
                 }
-                else if (!coords.IsErrorLimitsSpecified)
+                else if (!coords.IsErrorLimitsHintSpecified)
                 {
                     // TODO: something needs to be done with it
                     min = max = Constants.DefaultError;
@@ -216,11 +216,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                 Expression minexp, maxexp;
                 var coords = Partition.Query.XMatchTables[Partition.Steps[i].XMatchTable].Coordinates;
 
-                if (coords.IsErrorSpecified && coords.IsConstantError)
+                if (coords.IsErrorHintSpecified && coords.IsConstantError)
                 {
                     minexp = maxexp = coords.ErrorExpression;
                 }
-                else if (coords.IsErrorSpecified)
+                else if (coords.IsErrorHintSpecified)
                 {
                     // Swap max/min because w = 1 / s^2 <--- TODO: verify this
                     minexp = coords.ErrorMinExpression;

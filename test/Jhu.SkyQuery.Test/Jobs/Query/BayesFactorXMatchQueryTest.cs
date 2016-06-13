@@ -368,6 +368,29 @@ WHERE a.RA BETWEEN 0 AND 5 AND a.dec BETWEEN 0 AND 5
 
         [TestMethod]
         [TestCategory("Query")]
+        public void ThreeWayJoinWithWhereNoHintsTest()
+        {
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro,
+       c.objid, c.ra, c.dec, c.nuv_mag, c.fuv_mag
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(ERROR(0.2)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(ERROR(0.5)),
+    MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(ERROR(2.0)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.RA BETWEEN 0 AND 5 AND a.dec BETWEEN 0 AND 5
+	AND b.RA BETWEEN 0 AND 5 AND b.dec BETWEEN 0 AND 5
+    AND c.RA BETWEEN 0 AND 5 AND c.dec BETWEEN 0 AND 5";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void ThreeWayJoinWithWhereTest2()
         {
             // Work on real databases

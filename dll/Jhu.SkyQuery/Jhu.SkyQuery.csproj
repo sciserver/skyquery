@@ -71,6 +71,12 @@
     <Compile Include="Jobs\Query\CreateZoneTable.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQuery.cs" />
     <Compile Include="Jobs\Query\Enum.cs" />
+    <Compile Include="Jobs\Query\Error.cs" />
+    <Compile Include="Jobs\Query\ExceptionMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.resx</DependentUpon>
+    </Compile>
     <Compile Include="Jobs\Query\RegionQuery.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
@@ -85,6 +91,7 @@
     <Compile Include="Jobs\Query\SingleServerQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
     <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
+    <Compile Include="Jobs\Query\XMatchException.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
@@ -193,6 +200,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>BayesFactorXMatchScripts.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Jobs\Query\ExceptionMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\RegionScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>

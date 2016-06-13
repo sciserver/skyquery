@@ -25,6 +25,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected const string regionUdtVariableName = "@r";
 
         #endregion
+
+        private bool fallBackToDefaultColumns;
+
         #region Properties
 
         private RegionQueryPartition Partition
@@ -37,11 +40,18 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public RegionQueryCodeGenerator()
         {
+            InitializeMembers();
         }
 
         public RegionQueryCodeGenerator(QueryObject queryObject)
             : base(queryObject)
         {
+            InitializeMembers();
+        }
+
+        private void InitializeMembers()
+        {
+            this.fallBackToDefaultColumns = true;
         }
 
         #endregion
@@ -204,7 +214,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var ts = (SkyQuery.Parser.SimpleTableSource)tableSource.SpecificTableSource;
                 var coords = ts.Coordinates;
 
-                if (coords.IsHtmIdSpecified)
+                if (coords.IsHtmIdHintSpecified)
                 {
                     var qs1 = GenerateHtmJoinTableQuerySpecification(ts, qsi, false);
                     var qs2 = GenerateHtmJoinTableQuerySpecification(ts, qsi, true);
@@ -234,7 +244,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     tsi++;
                 }
-                else if (coords.IsEqSpecified || coords.IsCartesianSpecified)
+                else if (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified)
                 {
                     var sc = GenerateRegionContainsCondition(ts, qsi);
                     var qs = ts.FindAscendant<Jhu.Graywulf.SqlParser.QuerySpecification>();
@@ -309,7 +319,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(limitssc, partialsc, LogicalOperator.CreateAnd());
 
             // Add precise filtering if necessary
-            if (partial && (coords.IsEqSpecified || coords.IsCartesianSpecified))
+            if (partial && (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified))
             {
                 var rcc = GenerateRegionContainsCondition(ts, qsi);
                 sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(sc, rcc, LogicalOperator.CreateAnd());
@@ -334,11 +344,11 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             UdtFunctionCall udtf;
 
-            if (coords.IsCartesianSpecified)
+            if (coords.IsCartesianHintSpecified)
             {
                 udtf = UdtFunctionCall.Create(udt, "ContainsXyz", GetXyzExpressions(coords));
             }
-            else if (coords.IsEqSpecified)
+            else if (coords.IsEqHintSpecified)
             {
                 udtf = UdtFunctionCall.Create(udt, "ContainsEq", GetEqExpressions(coords));
             }
@@ -448,7 +458,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // 4. Load and rewrite SQL template
 
-            if (options.Region != null && options.UseRegion && options.Table.Coordinates.IsHtmIdSpecified && options.UseHtm)
+            if (options.Region != null && options.UseRegion && options.Table.Coordinates.IsHtmIdHintSpecified && options.UseHtm)
             {
                 sql = GetSelectAugmentedTableHtmTemplate();
 
@@ -491,51 +501,80 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Coordinate column functions
 
+        private Expression CreateZoneHeightParameter()
+        {
+            return Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H"));
+        }
+
+        private Expression CreateFunction(string name, params Expression[] args)
+        {
+            return CreateFunction(CodeDataset.DatabaseName, Constants.SkyQueryFunctionSchema, name, args);
+        }
+
+        private Expression CreateFunction(string schema, string name, params Expression[] args)
+        {
+            return CreateFunction(CodeDataset.DatabaseName, schema, name, args);
+        }
+
+        private Expression CreateFunction(string database, string schema, string name, params Expression[] args)
+        {
+            var fr = new FunctionReference()
+            {
+                DatabaseName = database,
+                SchemaName = schema,
+                DatabaseObjectName = name
+            };
+
+            return Expression.Create(FunctionCall.Create(fr, args));
+        }
+
         public Expression GetRAExpression(TableCoordinates coords)
         {
-            if (coords.IsEqSpecified)
+            if (coords.IsEqHintSpecified)
             {
-                return coords.RAExpression;
+                return coords.RAHintExpression;
             }
-            else if (coords.IsCartesianSpecified)
+            else if (coords.IsCartesianHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "CartesianToEqRa"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, coords.XExpression, coords.YExpression, coords.ZExpression));
+                return CreateFunction("CartesianToEqRa", coords.XHintExpression, coords.YHintExpression, coords.ZHintExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return coords.RAColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return CreateFunction("CartesianToEqRa", coords.XColumnExpression, coords.YColumnExpression, coords.ZColumnExpression);
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "ra");
             }
         }
 
         public Expression GetDecExpression(TableCoordinates coords)
         {
-            if (coords.IsEqSpecified)
+            if (coords.IsEqHintSpecified)
             {
-                return coords.DecExpression;
+                return coords.DecHintExpression;
             }
-            else if (coords.IsCartesianSpecified)
+            else if (coords.IsCartesianHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "CartesianToEqDec"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, coords.XExpression, coords.YExpression, coords.ZExpression));
+                return CreateFunction("CartesianToEqDec", coords.XHintExpression, coords.YHintExpression, coords.ZHintExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return coords.DecColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return CreateFunction("CartesianToEqDec", coords.XColumnExpression, coords.YColumnExpression, coords.ZColumnExpression);
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "dec");
             }
         }
 
@@ -550,73 +589,76 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public Expression GetXExpression(TableCoordinates coords)
         {
-            if (coords.IsCartesianSpecified)
+            if (coords.IsCartesianHintSpecified)
             {
-                return coords.XExpression;
+                return coords.XHintExpression;
             }
-            else if (coords.IsEqSpecified)
+            else if (coords.IsEqHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "EqToCartesianX"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, coords.RAExpression, coords.DecExpression));
+                return CreateFunction("EqToCartesianX", coords.RAHintExpression, coords.DecHintExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return coords.XColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return CreateFunction("EqToCartesianX", coords.RAColumnExpression, coords.DecColumnExpression);
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "cx");
             }
         }
 
         public Expression GetYExpression(TableCoordinates coords)
         {
-            if (coords.IsCartesianSpecified)
+            if (coords.IsCartesianHintSpecified)
             {
-                return coords.YExpression;
+                return coords.YHintExpression;
             }
-            else if (coords.IsEqSpecified)
+            else if (coords.IsEqHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "EqToCartesianY"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, coords.RAExpression, coords.DecExpression));
+                return CreateFunction("EqToCartesianY", coords.RAHintExpression, coords.DecHintExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return coords.YColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return CreateFunction("EqToCartesianY", coords.RAColumnExpression, coords.DecColumnExpression);
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "cy");
             }
         }
 
         public Expression GetZExpression(TableCoordinates coords)
         {
-            if (coords.IsCartesianSpecified)
+            if (coords.IsCartesianHintSpecified)
             {
-                return coords.ZExpression;
+                return coords.ZHintExpression;
             }
-            else if (coords.IsEqSpecified)
+            else if (coords.IsEqHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "EqToCartesianZ"
-                };
-
-                return Expression.Create(FunctionCall.Create(fr, coords.RAExpression, coords.DecExpression));
+                return CreateFunction("EqToCartesianZ", coords.RAHintExpression, coords.DecHintExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return coords.ZColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return CreateFunction("EqToCartesianZ", coords.RAColumnExpression, coords.DecColumnExpression);
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "cz");
             }
         }
 
@@ -632,92 +674,67 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public Expression GetHtmIdExpression(TableCoordinates coords)
         {
-            if (coords.IsHtmIdSpecified)
+            if (coords.IsHtmIdHintSpecified)
             {
-                return coords.HtmIdExpression;
+                return coords.HtmIdHintExpression;
             }
-            else if (coords.IsEqSpecified)
+            else if (coords.IsEqHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = "htmid",
-                    DatabaseObjectName = "FromEq"
-                };
-
-                var fc = FunctionCall.Create(
-                    fr,
-                    coords.RAExpression,
-                    coords.DecExpression);
-
-                return Expression.Create(fc);
+                return CreateFunction("htmid", "FromEq", coords.RAHintExpression, coords.DecHintExpression);
             }
-            else if (coords.IsCartesianSpecified)
+            else if (coords.IsCartesianHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = "htmid",
-                    DatabaseObjectName = "FromXyz"
-                };
-
-                var fc = FunctionCall.Create(
-                    fr,
-                    coords.XExpression,
-                    coords.YExpression,
-                    coords.ZExpression);
-
-                return Expression.Create(fc);
+                return CreateFunction("htmid", "FromXyz", coords.XHintExpression, coords.YHintExpression, coords.ZHintExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
+            {
+                return coords.HtmIdColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return CreateFunction("htmid", "FromEq", coords.RAColumnExpression, coords.DecColumnExpression);
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return CreateFunction("htmid", "FromXyz", coords.XColumnExpression, coords.YColumnExpression, coords.ZColumnExpression);
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "htmid");
             }
         }
 
         public Expression GetZoneIdExpression(TableCoordinates coords)
         {
-            if (coords.IsZoneIdSpecified)
+            if (coords.IsZoneIdHintSpecified)
             {
-                return coords.ZoneIdExpression;
+                return coords.ZoneIdHintExpression;
             }
-            else if (coords.IsEqSpecified)
+            else if (coords.IsEqHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "ZoneIDFromDec"
-                };
-
-                var fc = FunctionCall.Create(
-                    fr,
-                    coords.DecExpression,
-                    Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H")));
-
-                return Expression.Create(fc);
+                return CreateFunction("ZoneIDFromDec", coords.DecHintExpression, CreateZoneHeightParameter());
             }
-            else if (coords.IsCartesianSpecified)
+            else if (coords.IsCartesianHintSpecified)
             {
-                var fr = new FunctionReference()
-                {
-                    DatabaseName = CodeDataset.DatabaseName,
-                    SchemaName = Constants.SkyQueryFunctionSchema,
-                    DatabaseObjectName = "ZoneIDFromZ"
-                };
-
-                var fc = FunctionCall.Create(
-                    fr,
-                    coords.ZExpression,
-                    Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H")));
-
-                return Expression.Create(fc);
+                return CreateFunction("ZoneIDFromZ", coords.ZHintExpression, CreateZoneHeightParameter());
+            }
+            else if (fallBackToDefaultColumns && coords.IsZoneIdColumnAvailable)
+            {
+                return coords.ZoneIDColumnExpression;
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return CreateFunction("ZoneIDFromDec", coords.DecColumnExpression, CreateZoneHeightParameter());
+            }
+            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return CreateFunction("ZoneIDFromZ", coords.ZColumnExpression, CreateZoneHeightParameter());
             }
             else
             {
                 // TODO: Figure out from metadata
-                throw new NotImplementedException();
+                throw Error.NoCoordinateColumnFound(coords, "zoneid");
             }
         }
 
@@ -778,7 +795,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var options = new AugmentedTableQueryOptions((SkyQuery.Parser.SimpleTableSource)tableSource, region)
             {
-                UseHtm = coords.IsHtmIdSpecified,
+                UseHtm = coords.IsHtmIdHintSpecified,
                 UsePartitioning = false,
                 EscapeColumnNames = false,
                 ColumnContext = ColumnContext.None,
@@ -821,7 +838,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var coords = ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates;
 
-            if (useRegion && coords != null && !coords.IsNoRegion && !coords.IsHtmIdSpecified)
+            if (useRegion && coords != null && !coords.IsNoRegion && !coords.IsHtmIdHintSpecified)
             {
                 // If coords are null we cannot filter the table by regions
                 // If htmID is specified for the table, we use HTM-based filtering                

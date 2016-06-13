@@ -144,7 +144,7 @@ namespace Jhu.SkyQuery.Parser
             
             var coords = this.Coordinates;
 
-            if (!coords.IsZoneIdSpecified || coords.FindZoneIndex() == null)
+            if (!coords.IsZoneIdHintSpecified || coords.FindZoneIndex() == null)
             {
                 return true;
             }
