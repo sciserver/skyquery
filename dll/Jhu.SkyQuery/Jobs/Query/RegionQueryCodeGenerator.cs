@@ -30,6 +30,11 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #region Properties
 
+        protected bool FallBackToDefaultColumns
+        {
+            get { return fallBackToDefaultColumns; }
+        }
+
         private RegionQueryPartition Partition
         {
             get { return queryObject as RegionQueryPartition; }
@@ -214,7 +219,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var ts = (SkyQuery.Parser.SimpleTableSource)tableSource.SpecificTableSource;
                 var coords = ts.Coordinates;
 
-                if (coords.IsHtmIdHintSpecified)
+                if (coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
                 {
                     var qs1 = GenerateHtmJoinTableQuerySpecification(ts, qsi, false);
                     var qs2 = GenerateHtmJoinTableQuerySpecification(ts, qsi, true);
@@ -244,7 +249,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     tsi++;
                 }
-                else if (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified)
+                else if (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified ||
+                    fallBackToDefaultColumns && coords.IsEqColumnsAvailable ||
+                    fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
                 {
                     var sc = GenerateRegionContainsCondition(ts, qsi);
                     var qs = ts.FindAscendant<Jhu.Graywulf.SqlParser.QuerySpecification>();
@@ -319,7 +326,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             var sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(limitssc, partialsc, LogicalOperator.CreateAnd());
 
             // Add precise filtering if necessary
-            if (partial && (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified))
+            if (partial && 
+                (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified ||
+                fallBackToDefaultColumns && coords.IsEqColumnsAvailable ||
+                fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable))
             {
                 var rcc = GenerateRegionContainsCondition(ts, qsi);
                 sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(sc, rcc, LogicalOperator.CreateAnd());
@@ -352,9 +362,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 udtf = UdtFunctionCall.Create(udt, "ContainsEq", GetEqExpressions(coords));
             }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                udtf = UdtFunctionCall.Create(udt, "ContainsXyz", GetXyzExpressions(coords));
+            }
+            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                udtf = UdtFunctionCall.Create(udt, "ContainsEq", GetEqExpressions(coords));
+            }
             else
             {
-                throw new InvalidOperationException();  // *** TODO
+                // TODO: use metadata?
+                throw Error.NoCoordinateColumnsFound(coords);
             }
 
             var p = Jhu.Graywulf.SqlParser.Predicate.CreateEquals(Expression.Create(udtf), Expression.CreateNumber("1"));
@@ -400,7 +419,6 @@ namespace Jhu.SkyQuery.Jobs.Query
                     ColumnListType.ForSelectWithOriginalNameNoAlias)
             {
                 TableAlias = null,
-                ColumnContext = options.ColumnContext,
                 LeadingComma = true,
             };
 
@@ -458,7 +476,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // 4. Load and rewrite SQL template
 
-            if (options.Region != null && options.UseRegion && options.Table.Coordinates.IsHtmIdHintSpecified && options.UseHtm)
+            if (options.Region != null && options.UseRegion && options.UseHtm &&
+                (options.Table.Coordinates.IsHtmIdHintSpecified ||
+                fallBackToDefaultColumns && options.Table.Coordinates.IsHtmIdColumnAvailable))
             {
                 sql = GetSelectAugmentedTableHtmTemplate();
 
@@ -501,12 +521,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Coordinate column functions
 
-        private Expression CreateZoneHeightParameter()
-        {
-            return Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H"));
-        }
-
-        private Expression CreateFunction(string name, params Expression[] args)
+        protected Expression CreateFunction(string name, params Expression[] args)
         {
             return CreateFunction(CodeDataset.DatabaseName, Constants.SkyQueryFunctionSchema, name, args);
         }
@@ -678,6 +693,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 return coords.HtmIdHintExpression;
             }
+            else if (fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
+            {
+                return coords.HtmIdColumnExpression;
+            }
             else if (coords.IsEqHintSpecified)
             {
                 return CreateFunction("htmid", "FromEq", coords.RAHintExpression, coords.DecHintExpression);
@@ -685,10 +704,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             else if (coords.IsCartesianHintSpecified)
             {
                 return CreateFunction("htmid", "FromXyz", coords.XHintExpression, coords.YHintExpression, coords.ZHintExpression);
-            }
-            else if (fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
-            {
-                return coords.HtmIdColumnExpression;
             }
             else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
             {
@@ -702,39 +717,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 // TODO: Figure out from metadata
                 throw Error.NoCoordinateColumnFound(coords, "htmid");
-            }
-        }
-
-        public Expression GetZoneIdExpression(TableCoordinates coords)
-        {
-            if (coords.IsZoneIdHintSpecified)
-            {
-                return coords.ZoneIdHintExpression;
-            }
-            else if (coords.IsEqHintSpecified)
-            {
-                return CreateFunction("ZoneIDFromDec", coords.DecHintExpression, CreateZoneHeightParameter());
-            }
-            else if (coords.IsCartesianHintSpecified)
-            {
-                return CreateFunction("ZoneIDFromZ", coords.ZHintExpression, CreateZoneHeightParameter());
-            }
-            else if (fallBackToDefaultColumns && coords.IsZoneIdColumnAvailable)
-            {
-                return coords.ZoneIDColumnExpression;
-            }
-            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
-            {
-                return CreateFunction("ZoneIDFromDec", coords.DecColumnExpression, CreateZoneHeightParameter());
-            }
-            else if (fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
-            {
-                return CreateFunction("ZoneIDFromZ", coords.ZColumnExpression, CreateZoneHeightParameter());
-            }
-            else
-            {
-                // TODO: Figure out from metadata
-                throw Error.NoCoordinateColumnFound(coords, "zoneid");
             }
         }
 
@@ -795,7 +777,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var options = new AugmentedTableQueryOptions((SkyQuery.Parser.SimpleTableSource)tableSource, region)
             {
-                UseHtm = coords.IsHtmIdHintSpecified,
+                UseHtm = coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable,
                 UsePartitioning = false,
                 EscapeColumnNames = false,
                 ColumnContext = ColumnContext.None,
@@ -804,7 +786,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Statistics key needs to be changed because table is aliased
             var tr = new TableReference("__t");
-            var keycol = SubstituteTableName(tableSource.TableReference.Statistics.KeyColumn, tableSource.TableReference, tr);
+            var keycol = SubstituteColumnTableReference(tableSource.TableReference.Statistics.KeyColumn, tableSource.TableReference, tr);
             SubstituteSystemDatabaseNames(keycol);
 
             var sql = new StringBuilder(RegionScripts.TableStatistics);

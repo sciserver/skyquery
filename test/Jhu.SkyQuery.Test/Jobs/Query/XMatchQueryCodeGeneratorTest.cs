@@ -33,6 +33,8 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
+        #region Helper functions
+
         private string[] GeneratePropagatedColumnListTestHelper(string sql, ColumnContext context)
         {
             var res = new List<string>();
@@ -55,6 +57,42 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             return res.ToArray();
         }
 
+        private string GetExecuteQueryTextTestHelper(string sql)
+        {
+            using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
+            {
+                var sm = new GraywulfSchemaManager(context.Federation);
+
+                var xmq = CreateQuery(sql);
+                xmq.ExecutionMode = ExecutionMode.SingleServer;
+
+                var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
+                xmqp.ID = 0;
+                xmqp.InitializeQueryObject(null);
+                xmqp.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+                xmqp.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
+
+                // TODO: where to take this? let's just hack it for now
+                xmqp.TemporaryDataset = new SqlServerDataset()
+                {
+                    Name = Jhu.Graywulf.Registry.Constants.TempDbName,
+                    DatabaseName = "Graywulf_Temp"
+                };
+
+                var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
+                var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
+                var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
+                xmqp.GenerateSteps(xmtables);
+
+                var cg = new XMatchQueryCodeGenerator(xmqp);
+
+                var res = cg.GetExecuteQuery(xmq.SelectStatement);
+
+                return res.Query;
+            }
+        }
+
+        #endregion
         #region Propagated columns tests
 
         [TestMethod]
@@ -127,44 +165,8 @@ FROM XMATCH
 
         #endregion
 
-
-        private string GetExecuteQueryTextTestHelper(string sql)
-        {
-            using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
-            {
-                var sm = new GraywulfSchemaManager(context.Federation);
-
-                var xmq = CreateQuery(sql);
-                xmq.ExecutionMode = ExecutionMode.SingleServer;
-
-                var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
-                xmqp.ID = 0;
-                xmqp.InitializeQueryObject(null);
-                xmqp.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
-                xmqp.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
-                
-                // TODO: where to take this? let's just hack it for now
-                xmqp.TemporaryDataset = new SqlServerDataset()
-                {
-                    Name = Jhu.Graywulf.Registry.Constants.TempDbName,
-                    DatabaseName = "Graywulf_Temp"
-                };
-
-                var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
-                var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
-                var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
-                xmqp.GenerateSteps(xmtables);
-
-                var cg = new XMatchQueryCodeGenerator(xmqp);
-
-                var res = cg.GetExecuteQuery(xmq.SelectStatement);
-
-                return res.Query;
-            }
-        }
-
         [TestMethod]
-        public void GetOutputSelectQueryTest()
+        public void GetOutputSelectQuery_AllHints_Test()
         {
             var sql =
 @"SELECT a.objID, a.ra, a.dec,
@@ -186,6 +188,28 @@ FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]";
         }
 
         [TestMethod]
+        public void GetOutputSelectQuery_NoHints_Test()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+b.objID, b.ra, b.dec,
+x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN TEST:CatalogA a,
+     MUST EXIST IN TEST:CatalogB b,
+     LIMIT BAYESFACTOR TO 1e3) AS x";
+
+            var gt =
+@"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogA_a_ra] AS [a_ra], [__match].[_TEST_dbo_CatalogA_a_dec] AS [a_dec],
+[__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [__match].[_TEST_dbo_CatalogB_b_ra] AS [b_ra], [__match].[_TEST_dbo_CatalogB_b_dec] AS [b_dec],
+[__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
+FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]";
+
+            var res = GetExecuteQueryTextTestHelper(sql);
+            Assert.AreEqual(gt, res);
+        }
+
+        [TestMethod]
         public void GetOutputSelectQuery_ThreeTablesTest()
         {
             var sql =
@@ -193,9 +217,9 @@ FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]";
          b.objID, b.ra, b.dec,
          x.ra, x.dec
 FROM XMATCH
-     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
-      MUST EXIST IN TEST:CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
+     (MUST EXIST IN TEST:CatalogA a,
+      MUST EXIST IN TEST:CatalogB b,
+      MUST EXIST IN TEST:CatalogC c,
       LIMIT BAYESFACTOR TO 1e3) AS x";
 
             var gt =
@@ -216,8 +240,8 @@ FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [__match]";
          c.objID, c.ra, c.dec,
          x.ra, x.dec
 FROM XMATCH
-     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a,
+      MUST EXIST IN TEST:CatalogB b,
       LIMIT BAYESFACTOR TO 1e3) AS x
 CROSS JOIN TEST:CatalogC c";
 
@@ -228,7 +252,7 @@ CROSS JOIN TEST:CatalogC c";
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
 CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]";
-            
+
             Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
         }
 
@@ -241,8 +265,8 @@ CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]";
          c.objID, c.ra, c.dec,
          x.ra, x.dec
 FROM XMATCH
-     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a,
+      MUST EXIST IN TEST:CatalogB b,
       LIMIT BAYESFACTOR TO 1e3) AS x
 INNER JOIN TEST:CatalogC c ON c.objId = a.objId";
 
@@ -265,8 +289,8 @@ INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [__match].[_TEST
             var sql =
 @"SELECT a.objID, b.objID
 FROM XMATCH
-     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a,
+      MUST EXIST IN TEST:CatalogB b,
       LIMIT BAYESFACTOR TO 1e3) AS x
 WHERE a.ra BETWEEN 1 AND 2";
 
@@ -286,8 +310,8 @@ WHERE [__match].[_TEST_dbo_CatalogA_a_ra] BETWEEN 1 AND 2";
             var sql =
 @"SELECT a.objID, b.objID
 FROM XMATCH
-     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a,
+      MUST EXIST IN TEST:CatalogB b,
       LIMIT BAYESFACTOR TO 1e3) AS x,
      TEST:CatalogC c
 WHERE c.ra BETWEEN 1 AND 2";
@@ -310,8 +334,8 @@ WHERE [c].[ra] BETWEEN 1 AND 2";
             var sql =
 @"SELECT a.objID, b.objID, c.objID
 FROM XMATCH
-     (MUST EXIST IN TEST:CatalogA a WITH(POINT(a.cx, a.cy, a.cz)),
-      MUST EXIST IN TEST:CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
+     (MUST EXIST IN TEST:CatalogA a,
+      MUST EXIST IN TEST:CatalogB b,
       LIMIT BAYESFACTOR TO 1e3) AS x,
      (SELECT * FROM TEST:CatalogC) c
 WHERE c.ra BETWEEN 1 AND 2";

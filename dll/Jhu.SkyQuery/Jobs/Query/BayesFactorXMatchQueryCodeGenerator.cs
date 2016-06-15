@@ -51,7 +51,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected override StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
         {
             var coords = options.Table.Coordinates;
-            var error = new Expression(coords.ErrorExpression);
+            var error = GetCoordinateErrorExpression(coords);
             var weight = GetWeightExpressionString(Execute(error));
 
             var sql = base.GenerateAugmentedTableQuery(options);
@@ -101,7 +101,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var options = new AugmentedTableQueryOptions(table.TableSource, region)
                 {
-                    ColumnContext = ColumnContext.None
+                    ColumnContext = ColumnContext.All
                 };
 
                 sql.Replace("[$query]", GenerateAugmentedTableQuery(options).ToString());
@@ -154,9 +154,10 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     min = max = Constants.DefaultError;
                 }
-                if (coords.IsConstantError)
+                else if (coords.IsConstantError)
                 {
-                    min = max = double.Parse(Execute(coords.ErrorExpression), System.Globalization.CultureInfo.InvariantCulture);
+                    var error = GetCoordinateErrorExpression(coords);
+                    min = max = double.Parse(Execute(error), System.Globalization.CultureInfo.InvariantCulture);
                 }
                 else if (!coords.IsErrorLimitsHintSpecified)
                 {
@@ -166,8 +167,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 else
                 {
                     // TODO: instead of rendering the expression, try to find the number in it
-                    min = double.Parse(Execute(coords.ErrorMinExpression), System.Globalization.CultureInfo.InvariantCulture);
-                    max = double.Parse(Execute(coords.ErrorMaxExpression), System.Globalization.CultureInfo.InvariantCulture);
+                    min = double.Parse(Execute(coords.ErrorHintMinExpression), System.Globalization.CultureInfo.InvariantCulture);
+                    max = double.Parse(Execute(coords.ErrorHintMaxExpression), System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 if (i == step.StepNumber)
@@ -218,13 +219,13 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 if (coords.IsErrorHintSpecified && coords.IsConstantError)
                 {
-                    minexp = maxexp = coords.ErrorExpression;
+                    minexp = maxexp = coords.ErrorHintExpression;
                 }
                 else if (coords.IsErrorHintSpecified)
                 {
                     // Swap max/min because w = 1 / s^2 <--- TODO: verify this
-                    minexp = coords.ErrorMinExpression;
-                    maxexp = coords.ErrorMaxExpression;
+                    minexp = coords.ErrorHintMinExpression;
+                    maxexp = coords.ErrorHintMaxExpression;
                 }
                 else
                 {

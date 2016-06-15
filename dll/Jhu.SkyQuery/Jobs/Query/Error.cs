@@ -16,5 +16,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                 column,
                 coords.Table.TableReference.UniqueName));
         }
+
+        public static XMatchException NoCoordinateColumnsFound(TableCoordinates coords)
+        {
+            return new XMatchException(String.Format(
+                ExceptionMessages.NoCoordinateColumnsFound,
+                coords.Table.TableReference.UniqueName));
+        }
     }
 }

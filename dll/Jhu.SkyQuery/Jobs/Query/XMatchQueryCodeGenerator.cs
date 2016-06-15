@@ -63,6 +63,58 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
+        protected Expression CreateZoneHeightParameter()
+        {
+            return Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H"));
+        }
+
+        public Expression GetCoordinateErrorExpression(TableCoordinates coords)
+        {
+            if (coords.IsErrorHintSpecified)
+            {
+                return coords.ErrorHintExpression;
+            }
+            else
+            {
+                return Expression.CreateNumber(Constants.DefaultError.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            // TODO: Figure out from metadata
+        }
+
+        public Expression GetZoneIdExpression(TableCoordinates coords)
+        {
+            if (coords.IsZoneIdHintSpecified)
+            {
+                return coords.ZoneIdHintExpression;
+            }
+            else if (coords.IsEqHintSpecified)
+            {
+                return CreateFunction("ZoneIDFromDec", coords.DecHintExpression, CreateZoneHeightParameter());
+            }
+            else if (coords.IsCartesianHintSpecified)
+            {
+                return CreateFunction("ZoneIDFromZ", coords.ZHintExpression, CreateZoneHeightParameter());
+            }
+            else if (FallBackToDefaultColumns && coords.IsZoneIdColumnAvailable)
+            {
+                return coords.ZoneIDColumnExpression;
+            }
+            else if (FallBackToDefaultColumns && coords.IsEqColumnsAvailable)
+            {
+                return CreateFunction("ZoneIDFromDec", coords.DecColumnExpression, CreateZoneHeightParameter());
+            }
+            else if (FallBackToDefaultColumns && coords.IsCartesianColumnsAvailable)
+            {
+                return CreateFunction("ZoneIDFromZ", coords.ZColumnExpression, CreateZoneHeightParameter());
+            }
+            else
+            {
+                // TODO: Figure out from metadata
+                throw Error.NoCoordinateColumnFound(coords, "zoneid");
+            }
+        }
+        
         protected string GetWeightExpressionString(string sigmaExpression)
         {
             return String.Format("POWER(CONVERT(float,{0}) / 3600.0 / 180.0 * PI(), -2)", sigmaExpression);
@@ -105,7 +157,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             sql.Replace("[$tablename]", GetResolvedTableName(table.TableReference));
-            sql.Replace("[$error]", Execute(coords.ErrorExpression));
+            sql.Replace("[$error]", Execute(coords.ErrorHintExpression));
             sql.Replace("[$where]", Execute(where));
 
             var cmd = new SqlCommand(sql.ToString());
@@ -885,7 +937,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     // In case of a computed table (typically xmatch results table)
                     cr.TableReference = matchtr;
                 }
-                else if (xmtstr.Where(tri => tri.Compare(cr.TableReference, true)).FirstOrDefault() != null)
+                else if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
                 {
                     // In case of other tables
                     cr.ColumnName = cg.EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);

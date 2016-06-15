@@ -61,7 +61,10 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return table.TableReference.TableOrView.Columns.ContainsKey("ra") &&
+                return 
+                    table.TableReference != null &&
+                    table.TableReference.TableOrView != null &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("ra") &&
                     table.TableReference.TableOrView.Columns.ContainsKey("dec");
             }
         }
@@ -75,7 +78,10 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return table.TableReference.TableOrView.Columns.ContainsKey("cx") &&
+                return
+                    table.TableReference != null &&
+                    table.TableReference.TableOrView != null &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("cx") &&
                     table.TableReference.TableOrView.Columns.ContainsKey("cy") &&
                     table.TableReference.TableOrView.Columns.ContainsKey("cz");
             }
@@ -170,7 +176,10 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return table.TableReference.TableOrView.Columns.ContainsKey("htmid");
+                return
+                    table.TableReference != null &&
+                    table.TableReference.TableOrView != null &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("htmid");
             }
         }
 
@@ -207,7 +216,10 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return table.TableReference.TableOrView.Columns.ContainsKey("zoneid");
+                return
+                    table.TableReference != null &&
+                    table.TableReference.TableOrView != null &&
+                    table.TableReference.TableOrView.Columns.ContainsKey("zoneid");
             }
         }
 
@@ -249,7 +261,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return errorHintArguments.Length == 1 && errorHintArguments[0].IsConstantNumber;
+                return !IsErrorHintSpecified || errorHintArguments.Length == 1 && errorHintArguments[0].IsConstantNumber;
             }
         }
 
@@ -259,7 +271,7 @@ namespace Jhu.SkyQuery.Parser
             get { return isErrorLimitsSpecified; }
         }
 
-        public Expression ErrorExpression
+        public Expression ErrorHintExpression
         {
             get
             {
@@ -267,7 +279,7 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression ErrorMinExpression
+        public Expression ErrorHintMinExpression
         {
             get
             {
@@ -275,59 +287,11 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression ErrorMaxExpression
+        public Expression ErrorHintMaxExpression
         {
             get
             {
                 return errorHintArguments[2];
-            }
-        }
-
-        public string Error
-        {
-            get
-            {
-                if (isErrorSpecified)
-                {
-                    return SqlServerCodeGenerator.GetCode(ErrorExpression, true);
-                }
-                else
-                {
-                    // TODO: Figure out from metadata
-                    throw new NotImplementedException();
-                }
-            }
-        }
-
-        public string ErrorMin
-        {
-            get
-            {
-                if (isErrorLimitsSpecified)
-                {
-                    return SqlServerCodeGenerator.GetCode(ErrorMinExpression, true);
-                }
-                else
-                {
-                    // TODO: Figure out from metadata
-                    throw new NotImplementedException();
-                }
-            }
-        }
-
-        public string ErrorMax
-        {
-            get
-            {
-                if (isErrorLimitsSpecified)
-                {
-                    return SqlServerCodeGenerator.GetCode(ErrorMaxExpression, true);
-                }
-                else
-                {
-                    // TODO: Figure out from metadata
-                    throw new NotImplementedException();
-                }
             }
         }
 

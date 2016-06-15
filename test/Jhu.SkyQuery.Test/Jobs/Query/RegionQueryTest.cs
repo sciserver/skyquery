@@ -28,11 +28,23 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         [TestMethod]
         [TestCategory("Query")]
-        public void SimpleRegionQueryTest()
+        public void SimpleRegionQuery_NoHints_Test()
         {
             var sql = @"
 SELECT objid, ra, dec INTO [$into]
-FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
+FROM TEST:SDSSDR7PhotoObjAll
+REGION 'CIRCLE J2000 20 30 10'";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void SimpleRegionQuery_AllHints_Test()
+        {
+            var sql = @"
+SELECT objid, ra, dec INTO [$into]
+FROM TEST:SDSSDR7PhotoObjAll WITH(POINT(ra, dec, cx, cy, cz), HTMID(htmid))
 REGION 'CIRCLE J2000 20 30 10'";
 
             RunQuery(sql);

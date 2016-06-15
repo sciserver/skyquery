@@ -46,6 +46,73 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
+        #region Helper functions
+
+        private string GenerateRegionContainsConditionTestHelper(string sql)
+        {
+            var ss = Parse(sql);
+            var ts = ss.EnumerateSourceTables(false).First();
+
+            var sc = (Jhu.Graywulf.SqlParser.SearchCondition)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
+
+            return CodeGenerator.Execute(sc);
+        }
+
+        private string AppendRegionJoinsAndConditionsTestHelper(string sql, bool partial)
+        {
+            var ss = Parse(sql);
+            var qs = ss.FindDescendantRecursive<Graywulf.SqlParser.QuerySpecification>();
+            var regions = new List<Spherical.Region>();
+
+            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
+
+            return CodeGenerator.Execute(ss);
+        }
+
+        private string AppendRegionJoinsAndConditionsTestHelper2(string sql)
+        {
+            var ss = Parse(sql);
+            var regions = new List<Spherical.Region>();
+
+            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
+            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
+
+            return CodeGenerator.Execute(ss);
+        }
+
+        private Graywulf.IO.Tasks.SourceTableQuery GetExecuteQueryTestHelper(string sql)
+        {
+            var q = CreateQuery(sql);
+            var sq = CodeGenerator.GetExecuteQuery(q.SelectStatement);
+            return sq;
+        }
+
+        // TODO: propagate up to test base class
+        protected string GetStatisticsQuery(string sql)
+        {
+            var q = CreateQuery(sql);
+            var cg = new RegionQueryCodeGenerator(q);
+            var ts = q.SelectStatement.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
+
+            // Fake that dec is used as a partitioning key
+            var keycol = ts.TableReference.ColumnReferences.First(c => c.ColumnName == "dec");
+            keycol.ColumnContext |= Graywulf.SqlParser.ColumnContext.SelectList;
+
+            ts.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
+            {
+                BinCount = 200,
+                KeyColumn = Graywulf.SqlParser.Expression.Create(keycol),
+                KeyColumnDataType = DataTypes.SqlFloat
+            };
+
+            var cmd = cg.GetTableStatisticsCommand(ts);
+
+            return cmd.CommandText;
+        }
+
+        #endregion
+        #region Detached tests
 
         [TestMethod]
         public void GenerateHtmJoinConditionTest()
@@ -63,18 +130,7 @@ FROM table WITH (HTMID(htmid))";
             sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable, false, 0);
             Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd AND __htm.Partial = 0", sc.ToString());
         }
-
-        private string GenerateRegionContainsConditionTestHelper(string sql)
-        {
-            var ss = Parse(sql);
-            var ts = ss.EnumerateSourceTables(false).First();
-
-            var sc = (Jhu.Graywulf.SqlParser.SearchCondition)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
-
-            return CodeGenerator.Execute(sc);
-        }
-
-
+        
         [TestMethod]
         public void GenerateRegionContainsConditionXyzTest()
         {
@@ -98,19 +154,7 @@ FROM table WITH (POINT(ra, dec))";
 
             Assert.AreEqual(gt, GenerateRegionContainsConditionTestHelper(sql));
         }
-
-        private string AppendRegionJoinsAndConditionsTestHelper(string sql, bool partial)
-        {
-            var ss = Parse(sql);
-            var qs = ss.FindDescendantRecursive<Graywulf.SqlParser.QuerySpecification>();
-            var regions = new List<Spherical.Region>();
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", qs);
-
-            return CodeGenerator.Execute(ss);
-        }
-
+        
         [TestMethod]
         public void AppendRegionJoinsAndConditionsQuerySpecificationTest()
         {
@@ -211,7 +255,24 @@ INNER LOOP JOIN [table]
 ON [table].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([table].[ra], [table].[dec]) = 1)) AS [__htm_t0]
 ";
 
-            Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, true));
+#if false
+
+
+SELECT [table].*
+FROM ((SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [table].[HtmIDStart] AND [table].[HtmIDEnd] AND [table].[Partial] = 0)
+UNION ALL
+(SELECT [table].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [table] 
+ON [table].[htmid] BETWEEN [table].[HtmIDStart] AND [table].[HtmIDEnd] AND [table].[Partial] = 1 AND @r0.ContainsEq([table].[ra], [table].[dec]) = 1)) AS [__htm_t0]
+
+#endif
+
+            var res = AppendRegionJoinsAndConditionsTestHelper(sql, true);
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -246,17 +307,6 @@ FROM [table]
 
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper(sql, false));
 
-        }
-
-        private string AppendRegionJoinsAndConditionsTestHelper2(string sql)
-        {
-            var ss = Parse(sql);
-            var regions = new List<Spherical.Region>();
-
-            CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
-            CallMethod(CodeGenerator, "RemoveNonStandardTokens", ss);
-
-            return CodeGenerator.Execute(ss);
         }
 
         [TestMethod]
@@ -340,28 +390,51 @@ ON [table2].[htmid] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [_
             Assert.AreEqual(gt, AppendRegionJoinsAndConditionsTestHelper2(sql));
         }
 
-        #region
-
-        private Graywulf.IO.Tasks.SourceTableQuery GetExecuteQueryTestHelper(string sql)
-        {
-            var q = CreateQuery(sql);
-            var sq = CodeGenerator.GetExecuteQuery(q.SelectStatement);
-            return sq;
-        }
+        #endregion
+        #region Database-bound HTMID tests
 
         [TestMethod]
-        public void GetExecuteQueryWithHtmIDTest()
+        public void GetExecuteQuery_NoHints_Test()
         {
             var sql = @"
-SELECT *
-FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
+SELECT objID
+FROM TEST:SDSSDR7PhotoObjAll
 REGION 'CIRCLE J2000 10 10 10'";
 
             var gt1 = @"DECLARE @r0 dbo.Region = @region0;
 ";
 
             var gt2 = @"
-SELECT [__htm_t0].[objId] AS [objId], [__htm_t0].[skyVersion] AS [skyVersion], [__htm_t0].[run] AS [run], [__htm_t0].[rerun] AS [rerun], [__htm_t0].[camcol] AS [camcol], [__htm_t0].[field] AS [field], [__htm_t0].[obj] AS [obj], [__htm_t0].[mode] AS [mode], [__htm_t0].[type] AS [type], [__htm_t0].[ra] AS [ra], [__htm_t0].[dec] AS [dec], [__htm_t0].[raErr] AS [raErr], [__htm_t0].[decErr] AS [decErr], [__htm_t0].[cx] AS [cx], [__htm_t0].[cy] AS [cy], [__htm_t0].[cz] AS [cz], [__htm_t0].[htmId] AS [htmId], [__htm_t0].[zoneId] AS [zoneId], [__htm_t0].[u] AS [u], [__htm_t0].[g] AS [g], [__htm_t0].[r] AS [r], [__htm_t0].[i] AS [i], [__htm_t0].[z] AS [z]
+SELECT [__htm_t0].[objId] AS [objId]
+FROM ((SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+UNION ALL
+(SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
+INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
+";
+
+            var res = GetExecuteQueryTestHelper(sql);
+            Assert.AreEqual(gt1, res.Header);
+            Assert.AreEqual(gt2, res.Query);
+        }
+
+        [TestMethod]
+        public void GetExecuteQuery_AllHints_Test()
+        {
+            var sql = @"
+SELECT objID
+FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec, cx, cy, cz), HTMID(htmid))
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt1 = @"DECLARE @r0 dbo.Region = @region0;
+";
+
+            var gt2 = @"
+SELECT [__htm_t0].[objId] AS [objId]
 FROM ((SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
 INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
@@ -370,7 +443,50 @@ UNION ALL
 (SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
 INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
-ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1)) AS [__htm_t0]
+ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
+";
+
+            var res = GetExecuteQueryTestHelper(sql);
+            Assert.AreEqual(gt1, res.Header);
+            Assert.AreEqual(gt2, res.Query);
+        }
+
+        [TestMethod]
+        public void GetExecuteQuery_NoHtm_Test()
+        {
+            var sql = @"
+SELECT objID
+FROM TEST:SDSSDR7PhotoObjAll_NoHtm
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt1 = @"DECLARE @r0 dbo.Region = @region0;
+";
+
+            var gt2 = @"
+SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[objId] AS [objId]
+FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
+WHERE @r0.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1
+";
+
+            var res = GetExecuteQueryTestHelper(sql);
+            Assert.AreEqual(gt1, res.Header);
+            Assert.AreEqual(gt2, res.Query);
+        }
+
+        [TestMethod]
+        public void GetExecuteQuery_NoCoordinates_Test()
+        {
+            var sql = @"
+SELECT ID
+FROM TEST:SampleData_PrimaryKey
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt1 = @"DECLARE @r0 dbo.Region = @region0;
+";
+
+            var gt2 = @"
+SELECT [SkyNode_Test].[dbo].[SampleData_PrimaryKey].[ID] AS [ID]
+FROM [SkyNode_Test].[dbo].[SampleData_PrimaryKey]
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -379,37 +495,16 @@ ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStar
         }
 
         #endregion
-        #region Statistics query tests
-
-        // TODO: propagate up to test base class
-        protected string GetStatisticsQuery(string sql)
-        {
-            var q = CreateQuery(sql);
-            var cg = new RegionQueryCodeGenerator(q);
-            var ts = q.SelectStatement.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
-
-            // Fake that dec is used as a partitioning key
-            var keycol = ts.TableReference.ColumnReferences.First(c => c.ColumnName == "dec");
-            keycol.ColumnContext |= Graywulf.SqlParser.ColumnContext.SelectList;
-
-            ts.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics()
-            {
-                BinCount = 200,
-                KeyColumn = Graywulf.SqlParser.Expression.Create(keycol),
-                KeyColumnDataType = DataTypes.SqlFloat
-            };
-
-            var cmd = cg.GetTableStatisticsCommand(ts);
-
-            return cmd.CommandText;
-        }
+        #region Database-bound statistics query tests
 
         [TestMethod]
-        public void GetTableStatisticsWithRegionCommandTest()
+        public void GetTableStatisticsWithRegion_NoHints_Test()
         {
+            // NOTE: should this generate a fake query with no valid select list
+
             var sql = @"
 SELECT objID
-FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec), HTMID(htmid))
+FROM TEST:SDSSDR7PhotoObjAll
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
@@ -425,47 +520,60 @@ WHERE ra > 2";
 	FROM [$codedb].htm.Cover(@r) __htm
 	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
 		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
-	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
+	WHERE (@r.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
         }
 
         [TestMethod]
-        public void GetTableStatisticsWithRegionCommandNoHtmTest()
+        public void GetTableStatisticsWithRegion_AllHints_Test()
         {
+            // NOTE: should this generate a fake query with no valid select list
+
             var sql = @"
 SELECT objID
-FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
+FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec, cx, cy, cz), HTMID(htmId))
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
             var gt = @"SELECT 
-	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-	WHERE (@r.ContainsEq([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
+	FROM [$codedb].htm.Cover(@r) __htm
+	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
+	WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
+
+	UNION ALL
+
+	SELECT 
+	FROM [$codedb].htm.Cover(@r) __htm
+	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
+		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
+	WHERE (@r.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
         }
 
         [TestMethod]
-        public void GetTableStatisticsWithRegionCommandNoCoordinatesTest()
+        public void GetTableStatisticsWithRegion_NoHtm_Test()
         {
+            // NOTE: should this generate a fake query with no valid select list
+
             var sql = @"
 SELECT objID
-FROM TEST:SDSSDR7PhotoObjAll
+FROM TEST:SDSSDR7PhotoObjAll_NoHtm
 REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
-            var gt = @"INSERT [Graywulf_Temp].[dbo].[test__stat_TEST_dbo_SDSSDR7PhotoObjAll] WITH(TABLOCKX)
-SELECT ROW_NUMBER() OVER (ORDER BY [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]), [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[dec]
-FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2;";
+            var gt = @"SELECT 
+	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
+	WHERE (@r.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
         }
 
-        #endregion
+#endregion
     }
 }

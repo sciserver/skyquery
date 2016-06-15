@@ -68,5 +68,14 @@ namespace Jhu.SkyQuery.Jobs.Query {
                 return ResourceManager.GetString("NoCoordinateColumnFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coordinate columns are not specified with a hint on table &apos;{0}&apos; and cannot be infered automatically..
+        /// </summary>
+        internal static string NoCoordinateColumnsFound {
+            get {
+                return ResourceManager.GetString("NoCoordinateColumnsFound", resourceCulture);
+            }
+        }
     }
 }

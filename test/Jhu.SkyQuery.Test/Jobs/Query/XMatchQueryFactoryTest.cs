@@ -36,7 +36,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             var q = CreateQuery(@"
 SELECT * 
-FROM CatalogA a WITH(POINT(a.Ra, a.Dec))
+FROM CatalogA a
 REGION 'CIRCLE J2000 10 10 10'");
 
             Assert.IsTrue(q is SqlQuery);
@@ -50,8 +50,8 @@ REGION 'CIRCLE J2000 10 10 10'");
             var q = CreateQuery(@"
 SELECT * FROM
     XMATCH
-    (MUST EXIST IN CatalogA a WITH(POINT(a.Ra, a.Dec)),
-     MUST EXIST IN CatalogB b WITH(POINT(b.Ra, b.Dec)),
+    (MUST EXIST IN CatalogA a,
+     MUST EXIST IN CatalogB b,
      LIMIT BAYESFACTOR TO 1e3) AS x");
 
             Assert.IsTrue(q is SqlQuery);

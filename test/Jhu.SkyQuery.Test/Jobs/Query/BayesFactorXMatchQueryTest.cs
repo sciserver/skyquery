@@ -28,6 +28,23 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         [TestMethod]
         [TestCategory("Query")]
+        public void SimplestXMatchTest()
+        {
+            var sql = @"
+SELECT x.matchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll,
+    MUST EXIST IN TEST:WISEPhotoObj,
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void SimpleXMatchTest()
         {
             var sql = @"
@@ -36,8 +53,8 @@ SELECT x.matchID,
        b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
 INTO [$into]
 FROM XMATCH(
-    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
-    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a,
+    MUST EXIST IN TEST:WISEPhotoObj AS b,
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
 WHERE a.ra BETWEEN 0 AND 1 AND

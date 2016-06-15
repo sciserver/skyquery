@@ -44,15 +44,15 @@ FROM
             var coords = new TableCoordinates((SimpleTableSource)ts[1]);
             Assert.AreEqual("[c1].[ra]", CodeGenerator.Execute(coords.RAHintExpression));
             Assert.AreEqual("[c1].[dec]", CodeGenerator.Execute(coords.DecHintExpression));
-            Assert.AreEqual("0.1", coords.Error);
+            Assert.AreEqual("0.1", CodeGenerator.Execute(coords.ErrorHintExpression));
             Assert.IsTrue(coords.IsConstantError);
 
             coords = new TableCoordinates((SimpleTableSource)ts[2]);
             Assert.AreEqual("[c2].[ra]", CodeGenerator.Execute(coords.RAHintExpression));
             Assert.AreEqual("[c2].[dec]", CodeGenerator.Execute(coords.DecHintExpression));
-            Assert.AreEqual("[c2].[err]", coords.Error);
-            Assert.AreEqual("0.1", coords.ErrorMin);
-            Assert.AreEqual("0.5", coords.ErrorMax);
+            Assert.AreEqual("[c2].[err]", CodeGenerator.Execute(coords.ErrorHintExpression));
+            Assert.AreEqual("0.1", coords.ErrorHintMinExpression.ToString());
+            Assert.AreEqual("0.5", coords.ErrorHintMaxExpression.ToString());
             Assert.IsFalse(coords.IsConstantError);
         }
 
