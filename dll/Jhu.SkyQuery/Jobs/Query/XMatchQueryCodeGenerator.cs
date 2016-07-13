@@ -98,7 +98,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             else if (FallBackToDefaultColumns && coords.IsZoneIdColumnAvailable)
             {
-                return coords.ZoneIDColumnExpression;
+                return coords.ZoneIdColumnExpression;
             }
             else if (FallBackToDefaultColumns && coords.IsEqColumnsAvailable)
             {
@@ -572,7 +572,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t1";
 
-                if (step.StepNumber == 0 && !table.IsZoneTableNecessary())
+                if (step.StepNumber == 0 && !table.IsZoneTableNecessary(FallBackToDefaultColumns))
                 {
                     // Partitioning constraints need to be applied on the very first MUST catalog only, as further
                     // matches might cross the partition boundary. On the other hand, in case of MAY catalogs,
@@ -600,7 +600,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t2";
 
-                if (!table.IsZoneTableNecessary())
+                if (!table.IsZoneTableNecessary(FallBackToDefaultColumns))
                 {
                     // Directly use a source table for pair table building
                     GenerateSourceQueryFromSourceTableForPopulatePairTable(step, false, alias, out query, out columnlist, out selectlist);
@@ -949,9 +949,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Table statistics
 
-        public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource)
+        public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
-            var cmd = base.GetTableStatisticsCommand(tableSource);
+            var cmd = base.GetTableStatisticsCommand(tableSource, statisticsDataset);
 
             AppendZoneHeightParameter(cmd);
 

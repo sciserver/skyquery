@@ -158,10 +158,10 @@ FROM XMATCH
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
             var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNotNull(coords.FindHtmIndex());
+            Assert.IsNotNull(coords.FindHtmIndex(false));
 
             coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNotNull(coords.FindHtmIndex());
+            Assert.IsNotNull(coords.FindHtmIndex(false));
         }
 
         [TestMethod]
@@ -189,10 +189,10 @@ FROM XMATCH
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
             var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNull(coords.FindHtmIndex());
+            Assert.IsNull(coords.FindHtmIndex(false));
 
             coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNull(coords.FindHtmIndex());
+            Assert.IsNull(coords.FindHtmIndex(false));
         }
 
         [TestMethod]
@@ -220,10 +220,10 @@ FROM XMATCH
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
             var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNotNull(coords.FindZoneIndex());
+            Assert.IsNotNull(coords.FindZoneIndex(false));
 
             coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNotNull(coords.FindZoneIndex());
+            Assert.IsNotNull(coords.FindZoneIndex(false));
         }
 
         [TestMethod]
@@ -251,10 +251,10 @@ FROM XMATCH
             var tts = qs.EnumerateSourceTables(false).ToArray();
 
             var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNull(coords.FindZoneIndex());
+            Assert.IsNull(coords.FindZoneIndex(false));
 
             coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNull(coords.FindZoneIndex());
+            Assert.IsNull(coords.FindZoneIndex(false));
         }
 
 

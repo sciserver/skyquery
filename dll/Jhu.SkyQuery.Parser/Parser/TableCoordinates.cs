@@ -14,6 +14,14 @@ namespace Jhu.SkyQuery.Parser
     // errors applying to a table from the query or from the metadata
     public class TableCoordinates
     {
+        private const string HtmIdColumnName = "htmid";
+        private const string ZoneIdColumnName = "zoneid";
+        private const string RaColumnName = "ra";
+        private const string DecColumnName = "dec";
+        private const string CxColumnName = "cx";
+        private const string CyColumnName = "cy";
+        private const string CzColumnName = "cz";
+
         #region Private member varibles
 
         private SimpleTableSource table;
@@ -61,11 +69,11 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return 
+                return
                     table.TableReference != null &&
                     table.TableReference.TableOrView != null &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("ra") &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("dec");
+                    table.TableReference.TableOrView.Columns.ContainsKey(RaColumnName) &&
+                    table.TableReference.TableOrView.Columns.ContainsKey(DecColumnName);
             }
         }
 
@@ -81,9 +89,9 @@ namespace Jhu.SkyQuery.Parser
                 return
                     table.TableReference != null &&
                     table.TableReference.TableOrView != null &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("cx") &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("cy") &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("cz");
+                    table.TableReference.TableOrView.Columns.ContainsKey(CxColumnName) &&
+                    table.TableReference.TableOrView.Columns.ContainsKey(CyColumnName) &&
+                    table.TableReference.TableOrView.Columns.ContainsKey(CzColumnName);
             }
         }
 
@@ -104,7 +112,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return CreateColumnExpression("ra");
+                return CreateColumnExpression(RaColumnName);
             }
         }
 
@@ -120,7 +128,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return CreateColumnExpression("dec");
+                return CreateColumnExpression(DecColumnName);
             }
         }
 
@@ -136,7 +144,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return CreateColumnExpression("cx");
+                return CreateColumnExpression(CxColumnName);
             }
         }
 
@@ -152,7 +160,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return CreateColumnExpression("cy");
+                return CreateColumnExpression(CyColumnName);
             }
         }
 
@@ -168,7 +176,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                return CreateColumnExpression("cz");
+                return CreateColumnExpression(CzColumnName);
             }
         }
 
@@ -179,7 +187,7 @@ namespace Jhu.SkyQuery.Parser
                 return
                     table.TableReference != null &&
                     table.TableReference.TableOrView != null &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("htmid");
+                    table.TableReference.TableOrView.Columns.ContainsKey(HtmIdColumnName);
             }
         }
 
@@ -195,20 +203,12 @@ namespace Jhu.SkyQuery.Parser
                 return htmIdHintArguments[0];
             }
         }
-
+        
         public Expression HtmIdColumnExpression
         {
             get
             {
-                return CreateColumnExpression("htmid");
-            }
-        }
-
-        public ColumnReference HtmIdColumnReference
-        {
-            get
-            {
-                return HtmIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                return CreateColumnExpression(HtmIdColumnName);
             }
         }
 
@@ -219,7 +219,7 @@ namespace Jhu.SkyQuery.Parser
                 return
                     table.TableReference != null &&
                     table.TableReference.TableOrView != null &&
-                    table.TableReference.TableOrView.Columns.ContainsKey("zoneid");
+                    table.TableReference.TableOrView.Columns.ContainsKey(ZoneIdColumnName);
             }
         }
 
@@ -235,20 +235,12 @@ namespace Jhu.SkyQuery.Parser
                 return zoneIdHintArguments[0];
             }
         }
-
-        public Expression ZoneIDColumnExpression
+        
+        public Expression ZoneIdColumnExpression
         {
             get
             {
-                return CreateColumnExpression("zoneid");
-            }
-        }
-
-        public ColumnReference ZoneIdColumnReference
-        {
-            get
-            {
-                return zoneIdHintArguments[0].FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                return CreateColumnExpression(ZoneIdColumnName);
             }
         }
 
@@ -468,37 +460,49 @@ namespace Jhu.SkyQuery.Parser
         /// Attempt to find an index that has an HTM ID in is as the first key column
         /// </summary>
         /// <returns></returns>
-        public Index FindHtmIndex()
+        public Index FindHtmIndex(bool fallBackToDefaultColumns)
         {
-            return FindIndexWithFirstKey(HtmIdColumnReference.ColumnName);
+            Index idx = null;
+
+            if (IsHtmIdHintSpecified)
+            {
+                var cr = HtmIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                idx = FindIndexWithFirstKey(cr.ColumnName);
+            }
+            else if (fallBackToDefaultColumns && IsHtmIdColumnAvailable)
+            {
+                idx = FindIndexWithFirstKey(HtmIdColumnName);
+            }
+
+            return idx;
         }
 
-        public Index FindZoneIndex()
+        public Index FindZoneIndex(bool fallBackToDefaultColumns)
         {
-            return FindIndexWithFirstKey(ZoneIdColumnReference.ColumnName);
+            Index idx = null;
+
+            if (IsZoneIdHintSpecified)
+            {
+                var cr = zoneIdHintArguments[0].FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                idx = FindIndexWithFirstKey(cr.ColumnName);
+            }
+            else if (fallBackToDefaultColumns && IsZoneIdColumnAvailable)
+            {
+                idx = FindIndexWithFirstKey(ZoneIdColumnName);
+            }
+
+            return idx;
         }
 
         private Index FindIndexWithFirstKey(string columnName)
         {
             if (table.TableReference.DatabaseObject == null)
             {
-                throw new InvalidOperationException(ExceptionMessages.QueryNamesNotResolved);
+                return null;
             }
 
             var t = (TableOrView)table.TableReference.DatabaseObject;
-
-            foreach (var idx in t.Indexes.Values)
-            {
-                // TODO: modify this once columns are also stored by ordinal index and not just by name
-                var col = idx.Columns.Values.Where(c => !c.IsIncluded).OrderBy(c => c.KeyOrdinal).FirstOrDefault();
-
-                if (SqlServerSchemaManager.Comparer.Compare(columnName, col.Name) == 0)
-                {
-                    return idx;
-                }
-            }
-
-            return null;
+            return t.FindIndexWithFirstKey(columnName);
         }
 
         #endregion

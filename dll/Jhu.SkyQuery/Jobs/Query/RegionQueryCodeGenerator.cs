@@ -30,7 +30,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #region Properties
 
-        protected bool FallBackToDefaultColumns
+        public bool FallBackToDefaultColumns
         {
             get { return fallBackToDefaultColumns; }
         }
@@ -723,7 +723,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Table statistics
 
-        public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource)
+        public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
             var ts = (SkyQuery.Parser.SimpleTableSource)tableSource;
             var coords = ts.Coordinates;
@@ -732,11 +732,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (qs is RegionQuerySpecification && ((RegionQuerySpecification)qs).Region != null &&
                 coords != null && !coords.IsNoRegion)
             {
-                return this.GetTableStatisticsWithRegionCommand(tableSource);
+                return this.GetTableStatisticsWithRegionCommand(tableSource, statisticsDataset);
             }
             else
             {
-                return base.GetTableStatisticsCommand(tableSource);
+                return base.GetTableStatisticsCommand(tableSource, statisticsDataset);
             }
         }
 
@@ -745,7 +745,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="tableSource"></param>
         /// <returns></returns>
-        private SqlCommand GetTableStatisticsWithRegionCommand(ITableSource tableSource)
+        private SqlCommand GetTableStatisticsWithRegionCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
             if (tableSource.TableReference.Statistics == null)
             {
@@ -772,7 +772,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (coords == null || coords.IsNoRegion)
             {
                 // The region contraint doesn't apply to the table
-                return base.GetTableStatisticsCommand(tableSource);
+                return base.GetTableStatisticsCommand(tableSource, statisticsDataset);
             }
 
             var options = new AugmentedTableQueryOptions((SkyQuery.Parser.SimpleTableSource)tableSource, region)

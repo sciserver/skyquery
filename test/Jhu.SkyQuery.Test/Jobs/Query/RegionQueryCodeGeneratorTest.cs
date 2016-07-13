@@ -106,7 +106,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 KeyColumnDataType = DataTypes.SqlFloat
             };
 
-            var cmd = cg.GetTableStatisticsCommand(ts);
+            var cmd = cg.GetTableStatisticsCommand(ts, null);
 
             return cmd.CommandText;
         }

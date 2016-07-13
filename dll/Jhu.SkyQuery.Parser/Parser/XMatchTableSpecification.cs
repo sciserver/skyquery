@@ -135,7 +135,7 @@ namespace Jhu.SkyQuery.Parser
         /// Returns true if building a zone table on the fly is necessary
         /// </summary>
         /// <returns></returns>
-        public bool IsZoneTableNecessary()
+        public bool IsZoneTableNecessary(bool fallBackToDefaultColumns)
         {
             // It might be worth building a zone table if:
             // - the doesn't have a zoneID or it's not indexed
@@ -144,22 +144,23 @@ namespace Jhu.SkyQuery.Parser
             
             var coords = this.Coordinates;
 
-            if (!coords.IsZoneIdHintSpecified || coords.FindZoneIndex() == null)
+            // Always build a zone table if not zoneid is available or it is
+            // not properly indexed
+            if (coords.FindZoneIndex(fallBackToDefaultColumns) == null)
             {
                 return true;
             }
-
-
+            
             // TODO: we could decide on omitting a zone table if the region is
             // large but filtering for htmid and join by zoneid cannot be done
             // at the same time
             if (this.Region != null)
             {
-                    return true;
+                return true;
             }
 
             // TODO: compare statistics with total row count to find tables with strong
-            // where clause conditions
+            // where clause conditions and consider building a zone table for them
 
             return false;
         }
