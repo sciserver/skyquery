@@ -340,16 +340,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             // is used for the rest of the tables. Buffering depends on the search radius.
             // When the partition limit is near the poles, buffering should extend to the
             // entire pole region
-            var keymin = Partition.PartitioningKeyMin;
-            var keymax = Partition.PartitioningKeyMax;
+            var keymin = (IComparable)Convert.ToInt64(Partition.PartitioningKeyMin);
+            var keymax = (IComparable)Convert.ToInt64(Partition.PartitioningKeyMax);
 
             if (step.StepNumber > 0)
             {
-                int buffer = (int)Math.Ceiling(step.SearchRadius / Query.ZoneHeight);
+                long buffer = (long)Math.Ceiling(step.SearchRadius / Query.ZoneHeight);
 
                 if (!IsPartitioningKeyUnbound(Partition.PartitioningKeyMin))
                 {
-                    var decmin = ((int)keymin * Query.ZoneHeight) - 90;
+                    var decmin = ((long)keymin * Query.ZoneHeight) - 90;
 
                     if (decmin - step.SearchRadius < -89.9)
                     {
@@ -357,7 +357,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     }
                     else
                     {
-                        keymin = (int)keymin - buffer;
+                        keymin = (long)keymin - buffer;
                     }
                 }
                 else
@@ -367,7 +367,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 if (!IsPartitioningKeyUnbound(keymax))
                 {
-                    var decmax = ((int)keymax * Query.ZoneHeight) - 90;
+                    var decmax = ((long)keymax * Query.ZoneHeight) - 90;
 
                     if (decmax + step.SearchRadius > 89.9)
                     {
@@ -375,7 +375,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     }
                     else
                     {
-                        keymax = (int)keymax + buffer;
+                        keymax = (long)keymax + buffer;
                     }
                 }
                 else
