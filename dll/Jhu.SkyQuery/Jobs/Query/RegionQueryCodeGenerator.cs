@@ -721,6 +721,43 @@ namespace Jhu.SkyQuery.Jobs.Query
         }
 
         #endregion
+        #region Index selector functions
+
+        /// <summary>
+        /// Attempt to find an index that has an HTM ID in is as the first key column
+        /// </summary>
+        /// <returns></returns>
+        public Index FindHtmIndex(TableCoordinates coords)
+        {
+            Index idx = null;
+
+            if (coords.IsHtmIdHintSpecified)
+            {
+                var cr = coords.HtmIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                idx = FindIndexWithFirstKey(coords.Table, cr.ColumnName);
+            }
+            else if (fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
+            {
+                idx = FindIndexWithFirstKey(coords.Table, TableCoordinates.HtmIdColumnName);
+            }
+
+            return idx;
+        }
+        
+        protected Index FindIndexWithFirstKey(ITableSource table, string columnName)
+        {
+            var tr = table.TableReference;
+
+            if (tr.DatabaseObject == null)
+            {
+                return null;
+            }
+
+            var t = (TableOrView)tr.DatabaseObject;
+            return t.FindIndexWithFirstKey(columnName);
+        }
+
+        #endregion
         #region Table statistics
 
         public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource, DatasetBase statisticsDataset)

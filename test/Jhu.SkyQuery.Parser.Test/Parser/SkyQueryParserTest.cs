@@ -3,48 +3,16 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.ParserLib;
-using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.SqlParser;
-using Jhu.SkyQuery.Parser;
 
-namespace Jhu.SkyQuery.Parser.Test
+namespace Jhu.SkyQuery.Parser
 {
     /// <summary>
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class SkyQueryParserTest
+    public class SkyQueryParserTest : SkyQueryParserTestBase
     {
-        protected SqlServerDataset CodeDataset
-        {
-            get
-            {
-                return new SqlServerDataset("CODE", "Initial Catalog=SkyQuery_CODE");
-            }
-        }
-
-        protected SkyQueryParser Parser
-        {
-            get { return new SkyQueryParser(); }
-        }
-
-        protected QuerySpecification Parse(string query)
-        {
-            return (QuerySpecification)((SelectStatement)Parser.Execute(query)).EnumerateQuerySpecifications().First(); ;
-        }
-
-        protected Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator CodeGenerator
-        {
-            get
-            {
-                return new Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator()
-                {
-                    ResolveNames = true
-                };
-            }
-        }
-
+        
         [TestMethod]
         public void SimpleQueryTest()
         {
@@ -91,7 +59,7 @@ INNER JOIN SDSSDR7:PhotoObj p
         }
 
         [TestMethod]
-        public void CrossJoinXMatchTestTest()
+        public void CrossJoinXMatchTest()
         {
             var sql = @"
 SELECT m.ra, m.dec, x.ra, x.dec

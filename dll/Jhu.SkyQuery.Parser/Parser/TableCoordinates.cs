@@ -14,14 +14,17 @@ namespace Jhu.SkyQuery.Parser
     // errors applying to a table from the query or from the metadata
     public class TableCoordinates
     {
-        private const string HtmIdColumnName = "htmid";
-        private const string ZoneIdColumnName = "zoneid";
-        private const string RaColumnName = "ra";
-        private const string DecColumnName = "dec";
-        private const string CxColumnName = "cx";
-        private const string CyColumnName = "cy";
-        private const string CzColumnName = "cz";
+        #region Constants
 
+        public const string HtmIdColumnName = "htmid";
+        public const string ZoneIdColumnName = "zoneid";
+        public const string RaColumnName = "ra";
+        public const string DecColumnName = "dec";
+        public const string CxColumnName = "cx";
+        public const string CyColumnName = "cy";
+        public const string CzColumnName = "cz";
+
+        #endregion
         #region Private member varibles
 
         private SimpleTableSource table;
@@ -65,6 +68,9 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        #endregion
+        #region Coordinate column accessors
+
         public bool IsEqColumnsAvailable
         {
             get
@@ -75,11 +81,6 @@ namespace Jhu.SkyQuery.Parser
                     table.TableReference.TableOrView.Columns.ContainsKey(RaColumnName) &&
                     table.TableReference.TableOrView.Columns.ContainsKey(DecColumnName);
             }
-        }
-
-        public bool IsEqHintSpecified
-        {
-            get { return isEqSpecified; }
         }
 
         public bool IsCartesianColumnsAvailable
@@ -95,32 +96,11 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public bool IsCartesianHintSpecified
-        {
-            get { return isCartesianSpecified; }
-        }
-
-        public Expression RAHintExpression
-        {
-            get
-            {
-                return pointHintArguments[eqIndex];
-            }
-        }
-
         public Expression RAColumnExpression
         {
             get
             {
                 return CreateColumnExpression(RaColumnName);
-            }
-        }
-
-        public Expression DecHintExpression
-        {
-            get
-            {
-                return pointHintArguments[eqIndex + 1];
             }
         }
 
@@ -132,27 +112,11 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression XHintExpression
-        {
-            get
-            {
-                return pointHintArguments[cartesianIndex];
-            }
-        }
-
         public Expression XColumnExpression
         {
             get
             {
                 return CreateColumnExpression(CxColumnName);
-            }
-        }
-
-        public Expression YHintExpression
-        {
-            get
-            {
-                return pointHintArguments[cartesianIndex + 1];
             }
         }
 
@@ -164,6 +128,59 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
+        public Expression ZColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression(CzColumnName);
+            }
+        }
+
+        #endregion
+        #region Coordinate hint accessors
+
+        public bool IsEqHintSpecified
+        {
+            get { return isEqSpecified; }
+        }
+
+        public Expression RAHintExpression
+        {
+            get
+            {
+                return pointHintArguments[eqIndex];
+            }
+        }
+
+        public Expression DecHintExpression
+        {
+            get
+            {
+                return pointHintArguments[eqIndex + 1];
+            }
+        }
+
+        public bool IsCartesianHintSpecified
+        {
+            get { return isCartesianSpecified; }
+        }
+
+        public Expression XHintExpression
+        {
+            get
+            {
+                return pointHintArguments[cartesianIndex];
+            }
+        }
+
+        public Expression YHintExpression
+        {
+            get
+            {
+                return pointHintArguments[cartesianIndex + 1];
+            }
+        }
+
         public Expression ZHintExpression
         {
             get
@@ -172,13 +189,8 @@ namespace Jhu.SkyQuery.Parser
             }
         }
 
-        public Expression ZColumnExpression
-        {
-            get
-            {
-                return CreateColumnExpression(CzColumnName);
-            }
-        }
+        #endregion
+        #region HtmID column and hint accessors
 
         public bool IsHtmIdColumnAvailable
         {
@@ -188,6 +200,14 @@ namespace Jhu.SkyQuery.Parser
                     table.TableReference != null &&
                     table.TableReference.TableOrView != null &&
                     table.TableReference.TableOrView.Columns.ContainsKey(HtmIdColumnName);
+            }
+        }
+
+        public Expression HtmIdColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression(HtmIdColumnName);
             }
         }
 
@@ -204,13 +224,8 @@ namespace Jhu.SkyQuery.Parser
             }
         }
         
-        public Expression HtmIdColumnExpression
-        {
-            get
-            {
-                return CreateColumnExpression(HtmIdColumnName);
-            }
-        }
+        #endregion
+        #region ZoneID column and hint accessors
 
         public bool IsZoneIdColumnAvailable
         {
@@ -220,6 +235,14 @@ namespace Jhu.SkyQuery.Parser
                     table.TableReference != null &&
                     table.TableReference.TableOrView != null &&
                     table.TableReference.TableOrView.Columns.ContainsKey(ZoneIdColumnName);
+            }
+        }
+
+        public Expression ZoneIdColumnExpression
+        {
+            get
+            {
+                return CreateColumnExpression(ZoneIdColumnName);
             }
         }
 
@@ -236,13 +259,8 @@ namespace Jhu.SkyQuery.Parser
             }
         }
         
-        public Expression ZoneIdColumnExpression
-        {
-            get
-            {
-                return CreateColumnExpression(ZoneIdColumnName);
-            }
-        }
+        #endregion
+        #region Coordinate error hint accessors
 
         public bool IsErrorHintSpecified
         {
@@ -454,59 +472,7 @@ namespace Jhu.SkyQuery.Parser
         }
 
         #endregion
-        #region IndexSelectorFunctions
-
-        /// <summary>
-        /// Attempt to find an index that has an HTM ID in is as the first key column
-        /// </summary>
-        /// <returns></returns>
-        public Index FindHtmIndex(bool fallBackToDefaultColumns)
-        {
-            Index idx = null;
-
-            if (IsHtmIdHintSpecified)
-            {
-                var cr = HtmIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
-                idx = FindIndexWithFirstKey(cr.ColumnName);
-            }
-            else if (fallBackToDefaultColumns && IsHtmIdColumnAvailable)
-            {
-                idx = FindIndexWithFirstKey(HtmIdColumnName);
-            }
-
-            return idx;
-        }
-
-        public Index FindZoneIndex(bool fallBackToDefaultColumns)
-        {
-            Index idx = null;
-
-            if (IsZoneIdHintSpecified)
-            {
-                var cr = zoneIdHintArguments[0].FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
-                idx = FindIndexWithFirstKey(cr.ColumnName);
-            }
-            else if (fallBackToDefaultColumns && IsZoneIdColumnAvailable)
-            {
-                idx = FindIndexWithFirstKey(ZoneIdColumnName);
-            }
-
-            return idx;
-        }
-
-        private Index FindIndexWithFirstKey(string columnName)
-        {
-            if (table.TableReference.DatabaseObject == null)
-            {
-                return null;
-            }
-
-            var t = (TableOrView)table.TableReference.DatabaseObject;
-            return t.FindIndexWithFirstKey(columnName);
-        }
-
-        #endregion
-
+        
         private Expression CreateColumnExpression(string column)
         {
             var cr = new ColumnReference(table.TableReference, table.TableReference.TableOrView.Columns[column]);

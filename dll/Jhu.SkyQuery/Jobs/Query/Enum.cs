@@ -5,5 +5,5 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-    
+
 }

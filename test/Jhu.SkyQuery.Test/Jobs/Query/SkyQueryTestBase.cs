@@ -8,6 +8,7 @@ using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.SkyQuery.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
@@ -29,10 +30,16 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 context);
         }
 
-        protected SelectStatement Parse(string sql)
+        protected SchemaManager CreateSchemaManager()
+        {
+            return new SqlServerSchemaManager();
+        }
+
+        protected virtual SelectStatement Parse(string sql)
         {
             var p = new SkyQueryParser();
-            return (SelectStatement)p.Execute(sql);
+            var ss = (SelectStatement)p.Execute(new SelectStatement(), sql);
+            return ss;
         }
 
         protected void FinishQueryJob(Guid guid)

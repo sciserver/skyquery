@@ -10,15 +10,14 @@ using Jhu.Graywulf.SqlCodeGen;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Jobs.Query;
-using Jhu.SkyQuery.Jobs.Query;
-using System.Reflection;
+using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     [TestClass]
     public class XMatchQueryCodeGeneratorTest : SkyQueryTestBase
     {
-        private XMatchQueryCodeGenerator CodeGenerator
+        protected XMatchQueryCodeGenerator CodeGenerator
         {
             get
             {
@@ -31,6 +30,21 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                     }
                 };
             }
+        }
+
+        protected override SkyQuery.Parser.SelectStatement Parse(string sql)
+        {
+            var p = new SkyQueryParser();
+            var ss = (SkyQuery.Parser.SelectStatement)p.Execute(new SkyQuery.Parser.SelectStatement(), sql);
+            var qs = (SkyQuery.Parser.QuerySpecification)ss.EnumerateQuerySpecifications().First();
+
+            var nr = new SkyQueryNameResolver();
+            nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
+            nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
+            nr.SchemaManager = CreateSchemaManager();
+            nr.Execute(ss);
+
+            return ss;
         }
 
         #region Helper functions
@@ -164,6 +178,98 @@ FROM XMATCH
         }
 
         #endregion
+        #region Index selection tests
+
+        [TestMethod]
+        public void XMatchQueryWithHtmIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            Assert.IsNotNull(CodeGenerator.FindHtmIndex(coords));
+
+            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            Assert.IsNotNull(CodeGenerator.FindHtmIndex(coords));
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithoutHtmIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN [CatalogWithNoPrimaryKey] a WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     MUST EXIST IN [CatalogWithNoPrimaryKey] b WITH(POINT(cx, cy, cz), HTMID(htmID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            Assert.IsNull(CodeGenerator.FindHtmIndex(coords));
+
+            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            Assert.IsNull(CodeGenerator.FindHtmIndex(coords));
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithZoneIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogA a WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     MUST EXIST IN CatalogB b WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            Assert.IsNotNull(CodeGenerator.FindZoneIndex(coords));
+
+            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            Assert.IsNotNull(CodeGenerator.FindZoneIndex(coords));
+        }
+
+        [TestMethod]
+        public void XMatchQueryWithoutZoneIndexTest()
+        {
+            var sql =
+@"SELECT a.objID, a.ra, a.dec,
+         b.objID, b.ra, b.dec,
+         x.ra, x.dec
+FROM XMATCH
+    (MUST EXIST IN CatalogWithNoPrimaryKey a WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     MUST EXIST IN CatalogWithNoPrimaryKey b WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
+     LIMIT BAYESFACTOR TO 1000) AS x";
+
+            var qs = Parse(sql);
+            var tts = qs.EnumerateSourceTables(false).ToArray();
+
+            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            Assert.IsNull(CodeGenerator.FindZoneIndex(coords));
+
+            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            Assert.IsNull(CodeGenerator.FindZoneIndex(coords));
+        }
+
+        #endregion
+        #region Output query tests
 
         [TestMethod]
         public void GetOutputSelectQuery_AllHints_Test()
@@ -351,6 +457,8 @@ WHERE [c].[ra] BETWEEN 1 AND 2";
             Assert.AreEqual(gt, res);
 
         }
+
+        #endregion
 
     }
 }

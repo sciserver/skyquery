@@ -140,6 +140,10 @@
       <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
       <Name>Jhu.SkyQuery</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Jhu.SkyQuery.Parser.Test\Jhu.SkyQuery.Parser.Test.csproj">
+      <Project>{0c317b62-c844-44be-bfc5-974f4c1166fc}</Project>
+      <Name>Jhu.SkyQuery.Parser.Test</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

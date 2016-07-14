@@ -52,6 +52,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Parser\SkyQueryNameResolverTest.cs" />
+    <Compile Include="Parser\SkyQueryParserTestBase.cs" />
     <Compile Include="Parser\SkyQueryValidatorTest.cs" />
     <Compile Include="Parser\XMatchTableListTest.cs" />
     <Compile Include="Parser\CoordinateHintTest.cs" />

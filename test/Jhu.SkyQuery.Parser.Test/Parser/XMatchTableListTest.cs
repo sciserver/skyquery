@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.ParserLib;
 using Jhu.SkyQuery.Parser;
 
-namespace Jhu.SkyQuery.Parser.Test
+namespace Jhu.SkyQuery.Parser
 {
     [TestClass]
     public class XMatchTableListTest

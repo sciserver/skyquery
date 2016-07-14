@@ -9,7 +9,7 @@ using Jhu.SkyQuery.Parser;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 
-namespace Jhu.SkyQuery.Parser.Test
+namespace Jhu.SkyQuery.Parser
 {
     [TestClass]
     public class SkyQueryValidatorTest

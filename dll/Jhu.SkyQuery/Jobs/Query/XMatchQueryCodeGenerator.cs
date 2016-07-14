@@ -114,7 +114,61 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw Error.NoCoordinateColumnFound(coords, "zoneid");
             }
         }
-        
+
+        public Index FindZoneIndex(TableCoordinates coords)
+        {
+            Index idx = null;
+
+            if (coords.IsZoneIdHintSpecified)
+            {
+                var cr = coords.ZoneIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                idx = FindIndexWithFirstKey(coords.Table, cr.ColumnName);
+            }
+            else if (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified)
+            {
+                // Coordinates might be overriden, do not use fallback
+            }
+            else if (FallBackToDefaultColumns && coords.IsZoneIdColumnAvailable)
+            {
+                idx = FindIndexWithFirstKey(coords.Table, TableCoordinates.ZoneIdColumnName);
+            }
+
+            return idx;
+        }
+
+        /// <summary>
+        /// Returns true if building a zone table on the fly is necessary
+        /// </summary>
+        /// <returns></returns>
+        public bool IsZoneTableNecessary(XMatchTableSpecification table)
+        {
+            // It might be worth building a zone table if:
+            // - the doesn't have a zoneID or it's not indexed
+            // - the region constraint is small
+            // - a region constraint is specified but the table has no HTMID
+
+            // Always build a zone table if not zoneid is available or it is
+            // not properly indexed
+
+            if (FindZoneIndex(table.Coordinates) == null)
+            {
+                return true;
+            }
+
+            // TODO: we could decide on omitting a zone table if the region is
+            // large but filtering for htmid and join by zoneid cannot be done
+            // at the same time
+            if (table.Region != null)
+            {
+                return true;
+            }
+
+            // TODO: compare statistics with total row count to find tables with strong
+            // where clause conditions and consider building a zone table for them
+
+            return false;
+        }
+
         protected string GetWeightExpressionString(string sigmaExpression)
         {
             return String.Format("POWER(CONVERT(float,{0}) / 3600.0 / 180.0 * PI(), -2)", sigmaExpression);
@@ -572,7 +626,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t1";
 
-                if (step.StepNumber == 0 && !table.IsZoneTableNecessary(FallBackToDefaultColumns))
+                if (step.StepNumber == 0 && !IsZoneTableNecessary(table))
                 {
                     // Partitioning constraints need to be applied on the very first MUST catalog only, as further
                     // matches might cross the partition boundary. On the other hand, in case of MAY catalogs,
@@ -600,7 +654,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t2";
 
-                if (!table.IsZoneTableNecessary(FallBackToDefaultColumns))
+                if (!IsZoneTableNecessary(table))
                 {
                     // Directly use a source table for pair table building
                     GenerateSourceQueryFromSourceTableForPopulatePairTable(step, false, alias, out query, out columnlist, out selectlist);

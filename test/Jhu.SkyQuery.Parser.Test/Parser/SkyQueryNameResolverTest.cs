@@ -10,20 +10,19 @@ using Jhu.SkyQuery.Parser;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 
-namespace Jhu.SkyQuery.Parser.Test
+namespace Jhu.SkyQuery.Parser
 {
     [TestClass]
-    public class SkyQueryNameResolverTest : SkyQueryParserTest
+    public class SkyQueryNameResolverTest : SkyQueryParserTestBase
     {
         private SchemaManager CreateSchemaManager()
         {
             return new SqlServerSchemaManager();
         }
 
-        private QuerySpecification Parse(string query)
+        protected override QuerySpecification Parse(string query)
         {
-            var p = new SkyQueryParser();
-            var ss = (SelectStatement)p.Execute(new SelectStatement(), query);
+            var ss = (SelectStatement)Parser.Execute(new SelectStatement(), query);
             var qs = (SkyQuery.Parser.QuerySpecification)ss.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
@@ -134,7 +133,7 @@ FROM XMATCH
 
 
         [TestMethod]
-        public void XMatchQueryWithHtmIndexTest()
+        public void XMatchQueryWithHtmIdHintTest()
         {
             var sql =
 @"SELECT a.objID, a.ra, a.dec,
@@ -154,49 +153,10 @@ FROM XMATCH
             Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
             Assert.AreEqual("[a].[htmId]", CodeGenerator.Execute(xts[0].Coordinates.HtmIdHintExpression));
             Assert.AreEqual("[b].[htmId]", CodeGenerator.Execute(xts[1].Coordinates.HtmIdHintExpression));
-
-            var tts = qs.EnumerateSourceTables(false).ToArray();
-
-            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNotNull(coords.FindHtmIndex(false));
-
-            coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNotNull(coords.FindHtmIndex(false));
         }
 
         [TestMethod]
-        public void XMatchQueryWithoutHtmIndexTest()
-        {
-            var sql =
-@"SELECT a.objID, a.ra, a.dec,
-         b.objID, b.ra, b.dec,
-         x.ra, x.dec
-FROM XMATCH
-    (MUST EXIST IN [CatalogWithNoPrimaryKey] a WITH(POINT(cx, cy, cz), HTMID(htmID)),
-     MUST EXIST IN [CatalogWithNoPrimaryKey] b WITH(POINT(cx, cy, cz), HTMID(htmID)),
-     LIMIT BAYESFACTOR TO 1000) AS x";
-
-            var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
-            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
-
-            Assert.AreEqual("[a].[cx]", CodeGenerator.Execute(xts[0].Coordinates.XHintExpression));
-            Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
-            Assert.AreEqual("[a].[htmId]", CodeGenerator.Execute(xts[0].Coordinates.HtmIdHintExpression));
-            Assert.AreEqual("[b].[htmId]", CodeGenerator.Execute(xts[1].Coordinates.HtmIdHintExpression));
-
-            var tts = qs.EnumerateSourceTables(false).ToArray();
-
-            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNull(coords.FindHtmIndex(false));
-
-            coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNull(coords.FindHtmIndex(false));
-        }
-
-        [TestMethod]
-        public void XMatchQueryWithZoneIndexTest()
+        public void XMatchQueryWithZoneIdHintTest()
         {
             var sql =
 @"SELECT a.objID, a.ra, a.dec,
@@ -216,48 +176,8 @@ FROM XMATCH
             Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
             Assert.AreEqual("[a].[zoneId]", CodeGenerator.Execute(xts[0].Coordinates.ZoneIdHintExpression));
             Assert.AreEqual("[b].[zoneId]", CodeGenerator.Execute(xts[1].Coordinates.ZoneIdHintExpression));
-
-            var tts = qs.EnumerateSourceTables(false).ToArray();
-
-            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNotNull(coords.FindZoneIndex(false));
-
-            coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNotNull(coords.FindZoneIndex(false));
         }
-
-        [TestMethod]
-        public void XMatchQueryWithoutZoneIndexTest()
-        {
-            var sql =
-@"SELECT a.objID, a.ra, a.dec,
-         b.objID, b.ra, b.dec,
-         x.ra, x.dec
-FROM XMATCH
-    (MUST EXIST IN CatalogWithNoPrimaryKey a WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
-     MUST EXIST IN CatalogWithNoPrimaryKey b WITH(POINT(cx, cy, cz), ZONEID(zoneID)),
-     LIMIT BAYESFACTOR TO 1000) AS x";
-
-            var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
-            var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
-            var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
-
-            Assert.AreEqual("[a].[cx]", CodeGenerator.Execute(xts[0].Coordinates.XHintExpression));
-            Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
-            Assert.AreEqual("[a].[zoneId]", CodeGenerator.Execute(xts[0].Coordinates.ZoneIdHintExpression));
-            Assert.AreEqual("[b].[zoneId]", CodeGenerator.Execute(xts[1].Coordinates.ZoneIdHintExpression));
-
-            var tts = qs.EnumerateSourceTables(false).ToArray();
-
-            var coords = new TableCoordinates((SimpleTableSource)tts[1]);
-            Assert.IsNull(coords.FindZoneIndex(false));
-
-            coords = new TableCoordinates((SimpleTableSource)tts[2]);
-            Assert.IsNull(coords.FindZoneIndex(false));
-        }
-
-
+        
         [TestMethod]
         public void InclusionMethodTest()
         {
