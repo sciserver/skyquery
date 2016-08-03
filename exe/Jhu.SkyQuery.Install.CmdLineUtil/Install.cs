@@ -12,8 +12,6 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
     class Install : Verb
     {
         private string domainName;
-        private string myDBServerVersionName;
-        private string codeDatabaseServerVersionName;
 
         [Parameter(Name = "Domain", Description = "Name of the domain", Required = true)]
         public string DomainName
@@ -34,6 +32,8 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
 
         public override void Run()
         {
+            base.Run();
+
             Console.Write("Creating federation for SkyQuery... ");
 
             using (Context context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.ManualCommit))
