@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.Graywulf.CommandLineParser;
-using Jhu.Graywulf.Install;
+using Jhu.Graywulf.Install.CmdLineUtil;
 
 namespace Jhu.SkyQuery.Install.CmdLineUtil
 {

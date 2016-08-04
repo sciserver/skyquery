@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Install;
+using Jhu.Graywulf.Install.CmdLineUtil;
 using Jhu.Graywulf.CommandLineParser;
 
 namespace Jhu.SkyQuery.Install.CmdLineUtil
 {
     [Verb(Name = "Install", Description = "Creates a new Federation for SkyQuery in the Graywulf registry")]
-    class Install : Verb
+    class Install : CreateRegistry
     {
         private string domainName;
 
@@ -32,8 +32,6 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
 
         public override void Run()
         {
-            base.Run();
-
             Console.Write("Creating federation for SkyQuery... ");
 
             using (Context context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.ManualCommit))

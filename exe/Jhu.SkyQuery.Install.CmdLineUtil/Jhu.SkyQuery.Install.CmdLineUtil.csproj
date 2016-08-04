@@ -112,6 +112,10 @@
       <Project>{E9D182CF-746E-4E40-B01C-74A32FB70749}</Project>
       <Name>Jhu.Graywulf.Web</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\exe\Jhu.Graywulf.Install.CmdLineUtil\Jhu.Graywulf.Install.CmdLineUtil.csproj">
+      <Project>{19966df7-6e7d-454c-b4d7-54ec77e220d2}</Project>
+      <Name>Jhu.Graywulf.Install.CmdLineUtil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
       <Project>{8D422C6A-5E21-48A0-9B05-1BCA4C71C6D5}</Project>
       <Name>Jhu.SkyQuery.Parser</Name>
