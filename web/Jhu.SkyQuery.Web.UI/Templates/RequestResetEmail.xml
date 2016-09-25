@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<messageTemplate>
+  <subject>[$Domain.ShortTitle] password reset request</subject>
+  <body>Dear [$FirstName] [$LastName],
+
+Your [$Domain.ShortTitle] user account information is below.
+
+User name: [$Name]
+
+To reset your password, please follow the link below.
+
+[$BaseUrl]ChangePassword.aspx?code=[$ActivationCode]
+
+
+     Sincerely,
+
+          The [$Domain.ShortTitle] Team
+          [$Email]
+
+
+
+-------------------------------------
+[$Domain.Copyright]</body>
+</messageTemplate>

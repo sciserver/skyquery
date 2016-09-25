@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<messageTemplate>
+  <subject>[$Domain.ShortTitle] user activation</subject>
+  <body>Dear [$FirstName] [$LastName],
+
+Your [$Domain.ShortTitle] user account has been created but has to be activated.
+
+Your account activation code is: [$ActivationCode]
+
+Please use this code on the web site, or follow the link below.
+
+[$BaseUrl]Activate.aspx?code=[$ActivationCode]
+
+
+     Sincerely,
+
+          The [$Domain.ShortTitle] Team
+          [$Domain.Email]
+
+
+
+-------------------------------------
+[$Domain.Copyright]</body>
+</messageTemplate>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<messageTemplate>
+  <subject>[$ShortTitle] user feedback: [$Subject]</subject>
+  <body>User feedback from [$ShortTitle] was received.
+  
+Sender:  [$Name]
+         [$Email]
+Subject: [$Subject]
+
+Comments:
+
+[$Comments]
+
+
+-------------------------------------
+[$Copyright]</body>
+</messageTemplate>
