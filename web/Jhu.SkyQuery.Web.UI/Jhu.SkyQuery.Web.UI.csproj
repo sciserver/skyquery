@@ -66,6 +66,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Docs\01_introduction\00_index.aspx" />
     <Content Include="Docs\02_schema\00_index.aspx" />
@@ -417,6 +418,13 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Check.aspx.cs">
+      <DependentUpon>Check.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Check.aspx.designer.cs">
+      <DependentUpon>Check.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
