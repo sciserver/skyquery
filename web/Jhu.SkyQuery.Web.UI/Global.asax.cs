@@ -15,6 +15,7 @@ namespace Jhu.SkyQuery.Web.UI
             base.RegisterApps();
 
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Common.App));
+            RegisterApp(typeof(Jhu.SkyQuery.Web.UI.Apps.XMatch.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Schema.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Query.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Jobs.App));

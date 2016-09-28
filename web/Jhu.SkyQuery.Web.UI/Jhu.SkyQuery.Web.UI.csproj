@@ -66,6 +66,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Apps\XMatch\CatalogForm.ascx" />
+    <Content Include="Apps\XMatch\CatalogList.ascx" />
+    <Content Include="Apps\XMatch\Default.aspx" />
     <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Docs\01_introduction\00_index.aspx" />
@@ -367,6 +370,9 @@
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.css.map" />
     <Content Include="Scripts\CodeMirror\mode\livescript\livescript.ls" />
     <Content Include="Docs\Web.config" />
+    <Content Include="App_Masters\Basic\Basic.master" />
+    <Content Include="App_Masters\Basic\UI.master" />
+    <Content Include="Apps\XMatch\Web.config" />
     <None Include="Web.original.config" />
   </ItemGroup>
   <ItemGroup>
@@ -415,9 +421,52 @@
     <Content Include="Scripts\SyntaxHighlighter\styles\shThemeMDUltra.css" />
     <Content Include="Scripts\SyntaxHighlighter\styles\shThemeMidnight.css" />
     <Content Include="Scripts\SyntaxHighlighter\styles\shThemeRDark.css" />
+    <Content Include="Templates\ActivationEmail.xml" />
+    <Content Include="Templates\ErrorFeedbackEmail.xml" />
+    <Content Include="Templates\FeedbackEmail.xml" />
+    <Content Include="Templates\RequestResetEmail.xml" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Apps\XMatch\App.cs" />
+    <Compile Include="Apps\XMatch\Catalog.cs" />
+    <Compile Include="Apps\XMatch\CatalogForm.ascx.cs">
+      <DependentUpon>CatalogForm.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Apps\XMatch\CatalogForm.ascx.designer.cs">
+      <DependentUpon>CatalogForm.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Apps\XMatch\CatalogList.ascx.cs">
+      <DependentUpon>CatalogList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Apps\XMatch\CatalogList.ascx.designer.cs">
+      <DependentUpon>CatalogList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Apps\XMatch\CoordinateMode.cs" />
+    <Compile Include="Apps\XMatch\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Apps\XMatch\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Content Include="App_Masters\Basic\Basic.master.cs">
+      <DependentUpon>Basic.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="App_Masters\Basic\Basic.master.designer.cs">
+      <DependentUpon>Basic.master</DependentUpon>
+    </Content>
+    <Content Include="App_Masters\Basic\UI.master.cs">
+      <DependentUpon>UI.master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="App_Masters\Basic\UI.master.designer.cs">
+      <DependentUpon>UI.master</DependentUpon>
+    </Content>
+    <Compile Include="Apps\XMatch\ErrorMode.cs" />
     <Compile Include="Check.aspx.cs">
       <DependentUpon>Check.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -439,10 +488,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Api\" />
-    <Folder Include="Apps\" />
-    <Folder Include="App_Masters\" />
     <Folder Include="App_Themes\" />
-    <Folder Include="Templates\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Keystone\Jhu.Graywulf.Keystone.csproj">

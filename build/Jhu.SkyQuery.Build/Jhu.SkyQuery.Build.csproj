@@ -54,7 +54,7 @@ xcopy $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.Auth $(SolutionDir)www\auth /E
 REM Copy SkyQuery user interface
 
 if not exist "$(SolutionDir)\www\skyquery" mkdir "$(SolutionDir)\www\skyquery"
-robocopy $(SolutionDir)skyquery\web\Jhu.SkyQuery.Web.UI $(SolutionDir)www\skyquery /e /xf</PostBuildEvent>
+robocopy $(SolutionDir)skyquery\web\Jhu.SkyQuery.Web.UI $(SolutionDir)www\skyquery /e /y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
