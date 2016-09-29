@@ -4,19 +4,20 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
     public partial class CatalogList : System.Web.UI.UserControl
     {
-        private List<Catalog> catalogs;
+        private CodeGen.XMatch xmatch;
 
-        public List<Catalog> Catalogs
+        public CodeGen.XMatch XMatch
         {
-            get { return catalogs; }
+            get { return xmatch; }
             set
             {
-                catalogs = value;
+                xmatch = value;
                 UpdateControl();
             }
         }
@@ -28,16 +29,11 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 foreach (ListViewDataItem li in catalogList.Items)
                 {
                     var control = (CatalogForm)li.FindControl("catalog");
-                    control.SaveForm(catalogs[li.DataItemIndex]);
+                    control.SaveForm(xmatch.Catalogs[li.DataItemIndex]);
                 }
             }
         }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-        }
-
+        
         protected void CatalogList_ItemDataBound(object sender, ListViewItemEventArgs e)
         {
             if (e.Item.ItemType == ListViewItemType.DataItem)
@@ -57,7 +53,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 switch (e.CommandName)
                 {
                     case "remove":
-                        catalogs.RemoveAt(item.DataItemIndex);
+                        xmatch.Catalogs.RemoveAt(item.DataItemIndex);
                         UpdateControl();
                         break;
                     default:
@@ -68,9 +64,9 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         public void UpdateControl()
         {
-            if (catalogs != null && catalogs.Count > 0)
+            if (xmatch.Catalogs != null && xmatch.Catalogs.Count > 0)
             {
-                catalogList.DataSource = catalogs;
+                catalogList.DataSource = xmatch.Catalogs;
                 catalogList.DataBind();
             }
             else

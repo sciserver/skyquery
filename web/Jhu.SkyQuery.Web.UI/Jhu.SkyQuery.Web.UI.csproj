@@ -1,7 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -44,10 +42,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.DynamicData" />
@@ -69,6 +63,7 @@
     <Content Include="Apps\XMatch\CatalogForm.ascx" />
     <Content Include="Apps\XMatch\CatalogList.ascx" />
     <Content Include="Apps\XMatch\Default.aspx" />
+    <Content Include="Apps\XMatch\XMatchForm.ascx" />
     <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Docs\01_introduction\00_index.aspx" />
@@ -357,6 +352,12 @@
     <Content Include="Scripts\CodeMirror\theme\vibrant-ink.css" />
     <Content Include="Scripts\CodeMirror\theme\xq-dark.css" />
     <Content Include="Scripts\CodeMirror\theme\xq-light.css" />
+    <Content Include="Scripts\jQuery-Validation-Unobtrusive\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jQuery-Validation-Unobtrusive\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jQuery-Validation\additional-methods.js" />
+    <Content Include="Scripts\jQuery-Validation\additional-methods.min.js" />
+    <Content Include="Scripts\jQuery-Validation\jquery.validate.js" />
+    <Content Include="Scripts\jQuery-Validation\jquery.validate.min.js" />
     <Content Include="Scripts\jQuery\jquery-2.2.4.js" />
     <Content Include="Scripts\jQuery\jquery-2.2.4.min.js" />
     <Content Include="Scripts\jQuery\jquery-2.2.4.min.map" />
@@ -429,7 +430,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Apps\XMatch\App.cs" />
-    <Compile Include="Apps\XMatch\Catalog.cs" />
     <Compile Include="Apps\XMatch\CatalogForm.ascx.cs">
       <DependentUpon>CatalogForm.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -444,7 +444,6 @@
     <Compile Include="Apps\XMatch\CatalogList.ascx.designer.cs">
       <DependentUpon>CatalogList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Apps\XMatch\CoordinateMode.cs" />
     <Compile Include="Apps\XMatch\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -466,7 +465,13 @@
     <Content Include="App_Masters\Basic\UI.master.designer.cs">
       <DependentUpon>UI.master</DependentUpon>
     </Content>
-    <Compile Include="Apps\XMatch\ErrorMode.cs" />
+    <Compile Include="Apps\XMatch\XMatchForm.ascx.cs">
+      <DependentUpon>XMatchForm.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Apps\XMatch\XMatchForm.ascx.designer.cs">
+      <DependentUpon>XMatchForm.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Check.aspx.cs">
       <DependentUpon>Check.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -583,6 +588,10 @@
       <Project>{1dcd8ac1-dcdd-4941-9e3f-d9ef60a078f9}</Project>
       <Name>Jhu.Spherical.Visualizer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\spherical\src\Jhu.Spherical.Web.Controls\Jhu.Spherical.Web.Controls.csproj">
+      <Project>{309a3646-0b42-4fe1-a011-d81b751ae658}</Project>
+      <Name>Jhu.Spherical.Web.Controls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\spherical\src\Jhu.Spherical\Jhu.Spherical.csproj">
       <Project>{93efa6ad-0c3f-4c7f-b1f7-d697d0ba49f7}</Project>
       <Name>Jhu.Spherical</Name>
@@ -625,13 +634,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
-  </Target>
   <PropertyGroup>
     <PreBuildEvent>if not exist $(ProjectDir)App_Masters\Basic mklink /D $(ProjectDir)App_Masters\Basic $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\App_Masters\Basic
 if not exist $(ProjectDir)App_Themes\Basic mklink /D $(ProjectDir)App_Themes\Basic $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\App_Themes\Basic

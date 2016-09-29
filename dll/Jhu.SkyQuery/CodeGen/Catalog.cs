@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
+namespace Jhu.SkyQuery.CodeGen
 {
     [Serializable]
     public class Catalog
     {
         private string datasetName;
         private string tableUniqueKey;
+        private string alias;
         private CoordinateMode coordinateMode;
         private string raColumn;
         private string decColumn;
@@ -31,6 +32,12 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         {
             get { return tableUniqueKey; }
             set { tableUniqueKey = value; }
+        }
+
+        public string Alias
+        {
+            get { return alias; }
+            set { alias = value; }
         }
 
         public CoordinateMode CoordinateMode
@@ -101,6 +108,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         {
             this.datasetName = null;
             this.tableUniqueKey = null;
+            this.alias = null;
             this.coordinateMode = CoordinateMode.Automatic;
             this.raColumn = "ra";
             this.decColumn = "dec";

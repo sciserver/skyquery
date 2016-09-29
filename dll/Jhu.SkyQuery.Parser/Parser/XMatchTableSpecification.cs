@@ -11,8 +11,6 @@ namespace Jhu.SkyQuery.Parser
     public partial class XMatchTableSpecification : ICloneable, IComparable<XMatchTableSpecification>
     {
         private XMatchInclusionMethod inclusionMethod;
-        private bool hasHtmIndex;
-        private bool hasZoneIndex;
 
         #region Properties
 
@@ -20,17 +18,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get { return inclusionMethod; }
         }
-
-        public bool HasHtmIndex
-        {
-            get { return hasHtmIndex; }
-        }
-
-        public bool HasZoneIndex
-        {
-            get { return hasZoneIndex; }
-        }
-
+        
         public TableReference TableReference
         {
             get { return TableSource.TableReference; }

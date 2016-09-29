@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Web.UI;
+using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
@@ -16,37 +17,31 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             return "~/Apps/XMatch/Default.aspx";
         }
 
-        protected List<Catalog> Catalogs
-        {
-            get
-            {
-                return (List<Catalog>)(Session["Jhu.SkyQuery.Web.UI.Apps.XMatch.Catalogs"] ?? new List<Catalog>());
-            }
-            set
-            {
-                Session["Jhu.SkyQuery.Web.UI.Apps.XMatch.Catalogs"] = value;
-            }   
-        }
+        private CodeGen.XMatch xmatch;
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            catalogList.Catalogs = Catalogs;
+            xmatch = (CodeGen.XMatch)(Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] ?? new CodeGen.XMatch());
+            catalogList.XMatch = xmatch;
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
+                xmatchForm.UpdateForm(xmatch);
                 RefreshDatasetList();
                 RefreshTableList();
+            }
+            else
+            {
+                xmatchForm.SaveForm(xmatch);
             }
         }
 
         protected void Page_PreRender(object sender, EventArgs e)
         {
-            Catalogs = catalogList.Catalogs;
-
-            if (catalogList.Catalogs.Count == 0)
+            if (xmatch.Catalogs.Count == 0)
             {
                 introForm.Visible = true;
                 catalogListPanel.Visible = false;
@@ -56,6 +51,8 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 introForm.Visible = false;
                 catalogListPanel.Visible = true;
             }
+
+            Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] = xmatch;
         }
 
         protected void DatasetList_SelectedIndexChanged(object sender, EventArgs e)
@@ -65,18 +62,35 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         protected void AddCatalog_Click(object sender, EventArgs e)
         {
-            // TODO: validate
-
-            var catalog = new Catalog()
+            if (!String.IsNullOrWhiteSpace(tableList.SelectedValue))
             {
-                DatasetName = datasetList.SelectedValue,
-                TableUniqueKey = tableList.SelectedValue
-            };
+                var catalog = new Catalog()
+                {
+                    DatasetName = datasetList.SelectedValue,
+                    TableUniqueKey = tableList.SelectedValue
+                };
 
-            catalogList.Catalogs.Add(catalog);
+                xmatch.Catalogs.Add(catalog);
+                catalogList.UpdateControl();
+            }
+        }
+
+        protected void Reset_Click(object sender, EventArgs e)
+        {
+            xmatch.Catalogs.Clear();
             catalogList.UpdateControl();
         }
-        
+
+        protected void GenerateQuery_Click(object sender, EventArgs e)
+        {
+            Validate();
+
+            if (IsValid)
+            {
+                // TODO
+            }
+        }
+
         private void RefreshDatasetList()
         {
             datasetList.Items.Clear();

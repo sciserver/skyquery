@@ -1,8 +1,7 @@
 ﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="Jhu.SkyQuery.Web.UI.Apps.XMatch.Default" MasterPageFile="~/App_Masters/Basic/UI.Master" %>
 
 <%@ Register Src="CatalogList.ascx" TagPrefix="uc1" TagName="CatalogList" %>
-
-
+<%@ Register Src="XMatchForm.ascx" TagPrefix="uc1" TagName="XMatchForm" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="toolbar">
     <script>
@@ -36,9 +35,10 @@
                         CssClass="ToolbarControl" Style="width: 100%; box-sizing: border-box;">
                     </asp:DropDownList>
                 </jgwc:ToolbarElement>
-                <jgwc:ToolbarButton runat="server" ID="addCatalog" Text="add catalog" OnClick="AddCatalog_Click" />
-                <jgwc:ToolbarButton runat="server" ID="generateQuery" Text="generate query" />
-                <jgwc:ToolbarButton runat="server" ID="submitJob" Text="submit as job" />
+                <jgwc:ToolbarButton runat="server" ID="addCatalog" Text="add catalog" CausesValidation="false" OnClick="AddCatalog_Click" />
+                <jgwc:ToolbarButton runat="server" ID="reset" Text="reset" CausesValidation="false" OnClick="Reset_Click" />
+                <jgwc:ToolbarButton runat="server" ID="generateQuery" Text="generate query" CausesValidation="true" OnClick="GenerateQuery_Click" />
+                <jgwc:ToolbarButton runat="server" ID="submitJob" Text="submit as job" CausesValidation="true" />
             </jgwc:Toolbar>
         </ContentTemplate>
     </asp:UpdatePanel>
@@ -61,44 +61,7 @@
                 </ButtonsTemplate>
             </jgwuc:Form>
             <asp:Panel runat="server" ID="catalogListPanel" Visible="false" CssClass="dock-fill dock-scroll">
-                <div class="Frame">
-                    <div class="FrameHeader">
-                        <asp:Label runat="server">Global parameters</asp:Label>
-                    </div>
-                    <div class="FrameBody">
-                        <table style="width: 100%">
-                            <tr>
-                                <td style="vertical-align: top; width: 420px">
-                                    <table class="FormTable">
-                                        <tr>
-                                            <td class="FormLabel">
-                                                <asp:Label ID="intoLabel" runat="server" Text="Target table:" /></td>
-                                            <td class="FormField">
-                                                <asp:TextBox ID="into" runat="server" Text="xmatchtable" /></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="FormLabel">
-                                                <asp:Label ID="bayesFactorLabel" runat="server" Text="Bayes factor cut:" /></td>
-                                            <td class="FormField">
-                                                <asp:TextBox ID="bayesFactor" runat="server" Text="1000" /></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td style="width: auto; vertical-align: top">
-                                    <table class="FormTable" style="width: 100%">
-                                        <tr>
-                                            <td class="FormLabel">
-                                                <asp:Label ID="regionLabel" runat="server" Text="Region constraint:" /></td>
-                                            <td class="FormField">
-                                                <asp:TextBox ID="region" runat="server"
-                                                    TextMode="MultiLine" Rows="3" Width="100%"></asp:TextBox></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+                <uc1:XMatchForm runat="server" ID="xmatchForm" />
                 <uc1:CatalogList runat="server" ID="catalogList" />
             </asp:Panel>
         </ContentTemplate>

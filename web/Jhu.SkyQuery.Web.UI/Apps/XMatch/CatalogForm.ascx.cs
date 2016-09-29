@@ -6,6 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Web.UI;
+using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
@@ -30,6 +31,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             RefreshColumnLists(catalog, t);
 
             table.Text = String.Format("{0}:{1}.{2}", ds.Name, t.SchemaName, t.ObjectName);
+            alias.Text = catalog.Alias;
             coordinateMode.SelectedValue = catalog.CoordinateMode.ToString();
             ra.SelectedValue = catalog.RaColumn;
             dec.SelectedValue = catalog.DecColumn;
@@ -46,6 +48,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         public void SaveForm(Catalog catalog)
         {
+            catalog.Alias = alias.Text;
             catalog.CoordinateMode = (CoordinateMode)Enum.Parse(typeof(CoordinateMode), coordinateMode.SelectedValue);
             switch (catalog.CoordinateMode)
             {

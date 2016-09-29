@@ -10,114 +10,123 @@
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
     
     
-    public partial class Default {
+    public partial class XMatchForm {
         
         /// <summary>
-        /// datasetListLabel control.
+        /// targetTableLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label datasetListLabel;
+        protected global::System.Web.UI.WebControls.Label targetTableLabel;
         
         /// <summary>
-        /// datasetList control.
+        /// targetTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList datasetList;
+        protected global::System.Web.UI.WebControls.TextBox targetTable;
         
         /// <summary>
-        /// tableListLabel control.
+        /// targetTableRequiredValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label tableListLabel;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator targetTableRequiredValidator;
         
         /// <summary>
-        /// tableList control.
+        /// targetTableFormatValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList tableList;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator targetTableFormatValidator;
         
         /// <summary>
-        /// addCatalog control.
+        /// bayesFactorLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton addCatalog;
+        protected global::System.Web.UI.WebControls.Label bayesFactorLabel;
         
         /// <summary>
-        /// reset control.
+        /// bayesFactor control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton reset;
+        protected global::System.Web.UI.WebControls.TextBox bayesFactor;
         
         /// <summary>
-        /// generateQuery control.
+        /// bayesFactorRequiredValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton generateQuery;
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator bayesFactorRequiredValidator;
         
         /// <summary>
-        /// submitJob control.
+        /// bayesFactorFormatValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton submitJob;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator bayesFactorFormatValidator;
         
         /// <summary>
-        /// introForm control.
+        /// regionLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.UI.Controls.Form introForm;
+        protected global::System.Web.UI.WebControls.Label regionLabel;
         
         /// <summary>
-        /// catalogListPanel control.
+        /// region control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel catalogListPanel;
+        protected global::System.Web.UI.WebControls.TextBox region;
         
         /// <summary>
-        /// xmatchForm control.
+        /// regionValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.SkyQuery.Web.UI.Apps.XMatch.XMatchForm xmatchForm;
+        protected global::System.Web.UI.WebControls.CustomValidator regionValidator;
         
         /// <summary>
-        /// catalogList control.
+        /// xmatchColumnListLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.SkyQuery.Web.UI.Apps.XMatch.CatalogList catalogList;
+        protected global::System.Web.UI.WebControls.Label xmatchColumnListLabel;
+        
+        /// <summary>
+        /// xmatchColumnList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.CheckBoxList xmatchColumnList;
     }
 }

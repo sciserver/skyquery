@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
+namespace Jhu.SkyQuery.CodeGen
 {
     public enum ErrorMode
     {

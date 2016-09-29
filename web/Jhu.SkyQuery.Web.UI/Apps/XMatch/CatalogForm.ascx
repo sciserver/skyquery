@@ -22,6 +22,14 @@
                     <table class="FormTable">
                         <tr>
                             <td class="FormLabel">
+                                <asp:Label runat="server" ID="aliasLabel" Text="Alias:" />
+                            </td>
+                            <td class="FormField">
+                                <asp:TextBox runat="server" ID="alias" CssClass="FormField" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="FormLabel">
                                 <asp:Label ID="coordinateModeLabel" runat="server" Text="Coordinate columns:"></asp:Label>
                             </td>
                             <td class="FormField">
@@ -95,6 +103,7 @@
                         </tr>
                     </table>
                 </td>
+                <td style="width: 4px; vertical-align: top"></td>
                 <td style="width: auto; vertical-align: top">
                     <table class="FormTable">
                         <tr>
@@ -103,8 +112,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="FormField" style="width: 100%">
-                                <div class="FormField" style="width: 100%">
+                            <td class="FormField" style="width: 100%;">
+                                <div class="FormField" style="width: 100%;">
                                     <asp:CheckBoxList ID="columnList" runat="server"
                                         RepeatLayout="UnorderedList"
                                         RepeatDirection="Vertical" CssClass="FormField" />
