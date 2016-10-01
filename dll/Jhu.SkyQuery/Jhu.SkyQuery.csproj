@@ -50,8 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeGen\Catalog.cs" />
+    <Compile Include="CodeGen\Constants.cs" />
     <Compile Include="CodeGen\CoordinateMode.cs" />
     <Compile Include="CodeGen\ErrorMode.cs" />
+    <Compile Include="CodeGen\SkyQueryCodeGenerator.cs" />
+    <Compile Include="CodeGen\SkyQueryColumnListGenerator.cs" />
     <Compile Include="CodeGen\XMatch.cs" />
     <Compile Include="Install\SkyQueryInstaller.cs">
       <SubType>Code</SubType>

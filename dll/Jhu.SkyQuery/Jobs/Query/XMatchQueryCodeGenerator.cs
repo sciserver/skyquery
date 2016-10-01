@@ -364,13 +364,13 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
             var table = Query.XMatchTables[step.XMatchTable];
-            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTableWithEscapedName);
+            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.CreateTableWithEscapedName);
 
             var sql = new StringBuilder(XMatchScripts.CreateZoneTable);
 
             sql.Replace("[$tablename]", GetResolvedTableName(zonetable));
             sql.Replace("[$indexname]", GeneratePrimaryKeyName(zonetable));
-            sql.Replace("[$columnlist]", columnlist.GetColumnListString());
+            sql.Replace("[$columnlist]", columnlist.Execute());
 
             return new SqlCommand(sql.ToString());
         }
@@ -445,16 +445,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             };
 
             // Generate primary key list for insert
-            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias)
+            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
-                LeadingComma = true
+                LeadingSeparator = true
             };
 
             var sql = new StringBuilder(XMatchScripts.PopulateZoneTable);
 
             sql.Replace("[$query]", GenerateAugmentedTableQuery(query).ToString());
             sql.Replace("[$zonetablename]", GetResolvedTableName(zonetable));
-            sql.Replace("[$selectcolumnlist]", columnlist.GetColumnListString());
+            sql.Replace("[$selectcolumnlist]", columnlist.Execute());
 
             var cmd = new SqlCommand(sql.ToString());
 
@@ -553,12 +553,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Primary key of source table or zone table
             // To be used in the pairs select
-            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForCreateTableWithEscapedName)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.CreateTableWithEscapedName)
             {
                 NullType = ColumnListNullType.NotNull,
             };
 
-            columnlist = clg.GetColumnListString();
+            columnlist = clg.Execute();
         }
 
         private void GenerateColumnListFromMatchTableForCreatePairTable(XMatchQueryStep step, out string columnlist)
@@ -685,16 +685,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             query = GenerateAugmentedTableQuery(tqoptions).ToString();
 
             // To be used in the pairs select
-            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = alias,
             };
 
-            columnlist = clg.GetColumnListString();
+            columnlist = clg.Execute();
 
             // To be used in the final select that goes into the insert
-            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias);
-            selectlist = slg.GetColumnListString();
+            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias);
+            selectlist = slg.Execute();
         }
 
         private void GenerateSourceQueryFromZoneTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
@@ -705,16 +705,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             query = GenerateSelectStarQuery(GetZoneTable(step), -1);
 
             // PK needs to be figured out from catalog table
-            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias)
+            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = alias,
             };
 
-            columnlist = clg.GetColumnListString();
+            columnlist = clg.Execute();
 
-            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.ForSelectWithEscapedNameNoAlias);
+            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias);
 
-            selectlist = slg.GetColumnListString();
+            selectlist = slg.Execute();
         }
 
         private void GenerateSourceQueryFromMatchTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
@@ -763,7 +763,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         public SqlCommand GetCreateMatchTableCommand(XMatchQueryStep step, Table matchtable)
         {
             var indexname = String.Format("[PK_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
-            var columnlist = GenerateMatchTableColumns(step, ColumnListType.ForCreateTableWithEscapedName, false);
+            var columnlist = GenerateMatchTableColumns(step, ColumnListType.CreateTableWithEscapedName, false);
 
             var sql = new StringBuilder(GetCreateMatchTableScript());
 
@@ -791,7 +791,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     var columns = new SqlServerColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference, ColumnContext.Default, listType)
                     {
-                        LeadingComma = true,
+                        LeadingSeparator = true,
                     };
 
                     if (useTableAlias)
@@ -806,7 +806,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                         }
                     }
 
-                    columnlist.AppendLine(columns.GetColumnListString());
+                    columnlist.AppendLine(columns.Execute());
                 }
             }
 
@@ -874,8 +874,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             // 2. Generate column lists, both must include propagated primary keys and
             // other referenced columns (default)
             // these are all referenced by escaped names, so generated names are unique by default
-            var columnlist1 = GenerateMatchTableColumns(step, ColumnListType.ForSelectWithEscapedNameNoAlias, true);
-            var columnlist2 = GenerateMatchTableColumns(step, ColumnListType.ForSelectWithEscapedNameNoAlias, false);
+            var columnlist1 = GenerateMatchTableColumns(step, ColumnListType.SelectWithEscapedNameNoAlias, true);
+            var columnlist2 = GenerateMatchTableColumns(step, ColumnListType.SelectWithEscapedNameNoAlias, false);
 
             // 3. Generate join conditions between the pair table and source tables
             // on primary keys
@@ -884,12 +884,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber == 1)
             {
                 // The first table is a source table.
-                var jlg1 = new SqlServerColumnListGenerator(table1.TableReference, ColumnContext.PrimaryKey)
+                var jlg1 = new SqlServerColumnListGenerator(table1.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinCondition)
                 {
                     TableAlias = "__t1",
-                    JoinedTableAlias = "__pair"
+                    JoinedTableAlias = "__pair",
                 };
-                tablejoin1 = jlg1.GetJoinString();
+                tablejoin1 = jlg1.Execute();
             }
             else
             {
@@ -898,12 +898,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // The second table is always the next source table
-            var jlg2 = new SqlServerColumnListGenerator(table2.TableReference, ColumnContext.PrimaryKey)
+            var jlg2 = new SqlServerColumnListGenerator(table2.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinCondition)
             {
                 TableAlias = "__t2",
                 JoinedTableAlias = "__pair",
             };
-            var tablejoin2 = jlg2.GetJoinString();
+            var tablejoin2 = jlg2.Execute();
 
             // Replace tokens in SQL script template
 
@@ -938,7 +938,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // The zone index has to contain the primary key columns of all previously
             // matched tables
-            var columnlist = GenerateMatchTableColumns(step, ColumnListType.ForSelectWithEscapedNameNoAlias, false);
+            var columnlist = GenerateMatchTableColumns(step, ColumnListType.SelectWithEscapedNameNoAlias, false);
 
             StringBuilder sql = new StringBuilder(GetBuildMatchTableIndexScript());
 

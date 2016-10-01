@@ -33,10 +33,6 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 RefreshDatasetList();
                 RefreshTableList();
             }
-            else
-            {
-                xmatchForm.SaveForm(xmatch);
-            }
         }
 
         protected void Page_PreRender(object sender, EventArgs e)
@@ -62,33 +58,51 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         protected void AddCatalog_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrWhiteSpace(tableList.SelectedValue))
+            if (Page.IsValid)
             {
-                var catalog = new Catalog()
-                {
-                    DatasetName = datasetList.SelectedValue,
-                    TableUniqueKey = tableList.SelectedValue
-                };
+                SaveForm();
 
-                xmatch.Catalogs.Add(catalog);
-                catalogList.UpdateControl();
+                if (!String.IsNullOrWhiteSpace(tableList.SelectedValue))
+                {
+                    var ds = FederationContext.SchemaManager.Datasets[datasetList.SelectedValue];
+                    var table = (TableOrView)ds.GetObject(tableList.SelectedValue);
+
+                    xmatch.AddCatalog(table);
+
+                    catalogList.UpdateForm();
+                }
             }
         }
 
         protected void Reset_Click(object sender, EventArgs e)
         {
             xmatch.Catalogs.Clear();
-            catalogList.UpdateControl();
+            catalogList.UpdateForm();
         }
 
         protected void GenerateQuery_Click(object sender, EventArgs e)
         {
-            Validate();
-
             if (IsValid)
             {
-                // TODO
+                SaveForm();
+
+                var cg = new SkyQueryCodeGenerator();
+                var sql = cg.GenerateXMatchQuery(xmatch, FederationContext.SchemaManager);
+
+
             }
+        }
+
+        private void UpdateForm()
+        {
+            xmatchForm.UpdateForm(xmatch);
+            catalogList.UpdateForm();
+        }
+
+        private void SaveForm()
+        {
+            xmatchForm.SaveForm(xmatch);
+            catalogList.SaveForm();
         }
 
         private void RefreshDatasetList()

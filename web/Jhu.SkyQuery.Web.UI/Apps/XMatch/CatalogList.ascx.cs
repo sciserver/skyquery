@@ -18,19 +18,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             set
             {
                 xmatch = value;
-                UpdateControl();
-            }
-        }
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (IsPostBack)
-            {
-                foreach (ListViewDataItem li in catalogList.Items)
-                {
-                    var control = (CatalogForm)li.FindControl("catalog");
-                    control.SaveForm(xmatch.Catalogs[li.DataItemIndex]);
-                }
+                UpdateForm();
             }
         }
         
@@ -54,7 +42,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 {
                     case "remove":
                         xmatch.Catalogs.RemoveAt(item.DataItemIndex);
-                        UpdateControl();
+                        UpdateForm();
                         break;
                     default:
                         throw new NotImplementedException();
@@ -62,7 +50,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             }
         }
 
-        public void UpdateControl()
+        public void UpdateForm()
         {
             if (xmatch.Catalogs != null && xmatch.Catalogs.Count > 0)
             {
@@ -73,6 +61,15 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             {
                 catalogList.DataSource = null;
                 catalogList.DataBind();
+            }
+        }
+
+        public void SaveForm()
+        {
+            foreach (ListViewDataItem li in catalogList.Items)
+            {
+                var control = (CatalogForm)li.FindControl("catalog");
+                control.SaveForm(xmatch.Catalogs[li.DataItemIndex]);
             }
         }
     }

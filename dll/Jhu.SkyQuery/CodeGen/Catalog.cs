@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.SqlCodeGen.SqlServer;
+using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.CodeGen
 {
     [Serializable]
     public class Catalog
     {
+        private int id;
+        private XMatchInclusionMethod inclusionMethod;
         private string datasetName;
         private string tableUniqueKey;
         private string alias;
@@ -21,6 +26,18 @@ namespace Jhu.SkyQuery.CodeGen
         private double errorMax;
         private string where;
         private List<string> columns;
+
+        public int ID
+        {
+            get { return id; }
+            set { id = value; }
+        }
+
+        public XMatchInclusionMethod InclusionMethod
+        {
+            get { return inclusionMethod; }
+            set { inclusionMethod = value; }
+        }
 
         public string DatasetName
         {
@@ -106,6 +123,8 @@ namespace Jhu.SkyQuery.CodeGen
 
         private void InitializeMembers()
         {
+            this.id = 0;
+            this.inclusionMethod = XMatchInclusionMethod.Must;
             this.datasetName = null;
             this.tableUniqueKey = null;
             this.alias = null;

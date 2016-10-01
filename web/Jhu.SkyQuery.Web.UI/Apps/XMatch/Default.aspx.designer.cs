@@ -55,7 +55,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton addCatalog;
+        protected global::System.Web.UI.WebControls.LinkButton addCatalog;
         
         /// <summary>
         /// reset control.
@@ -64,7 +64,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton reset;
+        protected global::System.Web.UI.WebControls.LinkButton reset;
         
         /// <summary>
         /// generateQuery control.
@@ -73,7 +73,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton generateQuery;
+        protected global::System.Web.UI.WebControls.LinkButton generateQuery;
         
         /// <summary>
         /// submitJob control.
@@ -82,7 +82,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Jhu.Graywulf.Web.Controls.ToolbarButton submitJob;
+        protected global::System.Web.UI.WebControls.LinkButton submitJob;
         
         /// <summary>
         /// introForm control.

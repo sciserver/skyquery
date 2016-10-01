@@ -59,12 +59,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 foreach (var ts in qs.EnumerateSourceTables(false))
                 {
-                    var columns = new SqlServerColumnListGenerator(ts.TableReference, context, ColumnListType.ForSelectWithEscapedNameNoAlias)
+                    var columns = new SqlServerColumnListGenerator(ts.TableReference.FilterColumnReferences(context))
                     {
+                        ListType = ColumnListType.SelectWithEscapedNameNoAlias,
                         TableAlias = "tablealias",
                     };
 
-                    res.Add(columns.GetColumnListString());
+                    res.Add(columns.Execute());
                 }
             }
 
@@ -334,7 +335,9 @@ FROM XMATCH
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_2] AS [__match]";
 
-            Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
+            var res = GetExecuteQueryTextTestHelper(sql);
+
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -357,9 +360,11 @@ CROSS JOIN TEST:CatalogC c";
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
-CROSS JOIN [SkyNode_Test].[dbo].[CatalogC] [c]";
+CROSS JOIN [SkyNode_TEST].[dbo].[CatalogC] [c]";
 
-            Assert.AreEqual(gt, GetExecuteQueryTextTestHelper(sql));
+            var res = GetExecuteQueryTextTestHelper(sql);
+
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
@@ -382,7 +387,7 @@ INNER JOIN TEST:CatalogC c ON c.objId = a.objId";
          [c].[objId] AS [c_objId], [c].[ra] AS [c_ra], [c].[dec] AS [c_dec],
          [__match].[RA] AS [x_RA], [__match].[Dec] AS [x_Dec]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match]
-INNER JOIN [SkyNode_Test].[dbo].[CatalogC] [c] ON [c].[objId] = [__match].[_TEST_dbo_CatalogA_a_objId]";
+INNER JOIN [SkyNode_TEST].[dbo].[CatalogC] [c] ON [c].[objId] = [__match].[_TEST_dbo_CatalogA_a_objId]";
 
             var res = GetExecuteQueryTextTestHelper(sql);
 
@@ -425,7 +430,7 @@ WHERE c.ra BETWEEN 1 AND 2";
             var gt =
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match],
-     [SkyNode_Test].[dbo].[CatalogC] [c]
+     [SkyNode_TEST].[dbo].[CatalogC] [c]
 WHERE [c].[ra] BETWEEN 1 AND 2";
 
             var res = GetExecuteQueryTextTestHelper(sql);
@@ -449,7 +454,7 @@ WHERE c.ra BETWEEN 1 AND 2";
             var gt =
 @"SELECT [__match].[_TEST_dbo_CatalogA_a_objId] AS [a_objId], [__match].[_TEST_dbo_CatalogB_b_objId] AS [b_objId], [c].[objId] AS [c_objId]
 FROM [Graywulf_Temp].[dbo].[skyquerytemp_0_Match_1] AS [__match],
-     (SELECT [SkyNode_Test].[dbo].[CatalogC].[objId], [SkyNode_Test].[dbo].[CatalogC].[ra], [SkyNode_Test].[dbo].[CatalogC].[dec], [SkyNode_Test].[dbo].[CatalogC].[astroErr], [SkyNode_Test].[dbo].[CatalogC].[cx], [SkyNode_Test].[dbo].[CatalogC].[cy], [SkyNode_Test].[dbo].[CatalogC].[cz], [SkyNode_Test].[dbo].[CatalogC].[htmId], [SkyNode_Test].[dbo].[CatalogC].[zoneId], [SkyNode_Test].[dbo].[CatalogC].[mag_1], [SkyNode_Test].[dbo].[CatalogC].[mag_2], [SkyNode_Test].[dbo].[CatalogC].[mag_3] FROM [SkyNode_Test].[dbo].[CatalogC]) [c]
+     (SELECT [SkyNode_TEST].[dbo].[CatalogC].[objId], [SkyNode_TEST].[dbo].[CatalogC].[ra], [SkyNode_TEST].[dbo].[CatalogC].[dec], [SkyNode_TEST].[dbo].[CatalogC].[astroErr], [SkyNode_TEST].[dbo].[CatalogC].[cx], [SkyNode_TEST].[dbo].[CatalogC].[cy], [SkyNode_TEST].[dbo].[CatalogC].[cz], [SkyNode_TEST].[dbo].[CatalogC].[htmId], [SkyNode_TEST].[dbo].[CatalogC].[zoneId], [SkyNode_TEST].[dbo].[CatalogC].[mag_1], [SkyNode_TEST].[dbo].[CatalogC].[mag_2], [SkyNode_TEST].[dbo].[CatalogC].[mag_3] FROM [SkyNode_TEST].[dbo].[CatalogC]) [c]
 WHERE [c].[ra] BETWEEN 1 AND 2";
 
             var res = GetExecuteQueryTextTestHelper(sql);

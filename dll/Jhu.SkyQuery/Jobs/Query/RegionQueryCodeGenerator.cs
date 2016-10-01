@@ -415,11 +415,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                 options.Table.TableReference,
                 options.ColumnContext,
                 options.EscapeColumnNames ?
-                    ColumnListType.ForSelectWithOriginalName :
-                    ColumnListType.ForSelectWithOriginalNameNoAlias)
+                    ColumnListType.SelectWithOriginalName :
+                    ColumnListType.SelectWithOriginalNameNoAlias)
             {
                 TableAlias = null,
-                LeadingComma = true,
+                LeadingSeparator = true,
             };
 
             // 2. Figure out where clause
@@ -500,7 +500,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             // Substitute additional tokens
             sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(tr));
-            sql.Replace("[$columnlist]", columnlist.GetColumnListString());
+            sql.Replace("[$columnlist]", columnlist.Execute());
 
             SubstituteAugmentedTableColumns(sql, options);
 

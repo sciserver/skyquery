@@ -58,6 +58,15 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         protected global::System.Web.UI.WebControls.TextBox alias;
         
         /// <summary>
+        /// aliasRequiredValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator aliasRequiredValidator;
+        
+        /// <summary>
         /// coordinateModeLabel control.
         /// </summary>
         /// <remarks>
@@ -157,6 +166,24 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         protected global::System.Web.UI.WebControls.TextBox errorValue;
         
         /// <summary>
+        /// errorValueRequiredValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator errorValueRequiredValidator;
+        
+        /// <summary>
+        /// errorValueFormatValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator errorValueFormatValidator;
+        
+        /// <summary>
         /// errorColumnRow control.
         /// </summary>
         /// <remarks>
@@ -218,6 +245,42 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox errorMax;
+        
+        /// <summary>
+        /// errorMinRequiredValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator errorMinRequiredValidator;
+        
+        /// <summary>
+        /// errorMinFormatValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator errorMinFormatValidator;
+        
+        /// <summary>
+        /// errorMaxRequiredValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RequiredFieldValidator errorMaxRequiredValidator;
+        
+        /// <summary>
+        /// errorMaxFormatValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator errorMaxFormatValidator;
         
         /// <summary>
         /// whereLabel control.

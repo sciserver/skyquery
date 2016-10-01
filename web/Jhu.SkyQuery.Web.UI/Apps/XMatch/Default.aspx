@@ -22,24 +22,33 @@
     </script>
     <asp:UpdatePanel runat="server">
         <ContentTemplate>
-            <jgwc:Toolbar runat="server">
-                <jgwc:ToolbarElement runat="server" Style="width: 140px">
-                    <asp:Label ID="datasetListLabel" runat="server" Text="Catalog:" /><br />
-                    <asp:DropDownList ID="datasetList" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DatasetList_SelectedIndexChanged"
-                        CssClass="ToolbarControl" Width="140px">
-                    </asp:DropDownList>
-                </jgwc:ToolbarElement>
-                <jgwc:ToolbarElement runat="server">
-                    <asp:Label ID="tableListLabel" runat="server" Text="Table:" /><br />
-                    <asp:DropDownList ID="tableList" runat="server"
-                        CssClass="ToolbarControl" Style="width: 100%; box-sizing: border-box;">
-                    </asp:DropDownList>
-                </jgwc:ToolbarElement>
-                <jgwc:ToolbarButton runat="server" ID="addCatalog" Text="add catalog" CausesValidation="false" OnClick="AddCatalog_Click" />
-                <jgwc:ToolbarButton runat="server" ID="reset" Text="reset" CausesValidation="false" OnClick="Reset_Click" />
-                <jgwc:ToolbarButton runat="server" ID="generateQuery" Text="generate query" CausesValidation="true" OnClick="GenerateQuery_Click" />
-                <jgwc:ToolbarButton runat="server" ID="submitJob" Text="submit as job" CausesValidation="true" />
-            </jgwc:Toolbar>
+            <div class="ToolbarFrame">
+                <div class="Toolbar">
+                    <div class="ToolbarElement" style="width: 140px">
+                        <asp:Label ID="datasetListLabel" runat="server" Text="Catalog:" /><br />
+                        <asp:DropDownList ID="datasetList" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DatasetList_SelectedIndexChanged"
+                            CssClass="ToolbarControl" Width="140px">
+                        </asp:DropDownList>
+                    </div>
+                    <div class="ToolbarElement" style="width: auto">
+                        <asp:Label ID="tableListLabel" runat="server" Text="Table:" /><br />
+                        <asp:DropDownList ID="tableList" runat="server"
+                            CssClass="ToolbarControl" Style="width: 100%; box-sizing: border-box;">
+                        </asp:DropDownList>
+                    </div>
+                    <asp:LinkButton runat="server" ID="addCatalog" Text="add catalog"
+                        CausesValidation="true" CssClass="ToolbarButton"
+                        OnClick="AddCatalog_Click" />
+                    <asp:LinkButton runat="server" ID="reset" Text="reset"
+                        CausesValidation="false" CssClass="ToolbarButton"
+                        OnClick="Reset_Click" />
+                    <asp:LinkButton runat="server" ID="generateQuery" Text="generate query"
+                        CausesValidation="true" CssClass="ToolbarButton"
+                        OnClick="GenerateQuery_Click" />
+                    <asp:LinkButton runat="server" ID="submitJob" Text="submit as job"
+                        CausesValidation="true" CssClass="ToolbarButton" />
+                </div>
+            </div>
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

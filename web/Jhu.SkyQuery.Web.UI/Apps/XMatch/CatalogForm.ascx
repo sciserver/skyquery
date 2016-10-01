@@ -26,6 +26,9 @@
                             </td>
                             <td class="FormField">
                                 <asp:TextBox runat="server" ID="alias" CssClass="FormField" />
+                                <asp:RequiredFieldValidator runat="server" ID="aliasRequiredValidator"
+                                    ControlToValidate="alias" Display="Dynamic"
+                                    ErrorMessage="&lt;br /&gt;Required field" />
                             </td>
                         </tr>
                         <tr>
@@ -71,6 +74,12 @@
                             </td>
                             <td class="FormField">
                                 <asp:TextBox ID="errorValue" runat="server" CssClass="FormField"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="errorValueRequiredValidator"
+                                    ControlToValidate="errorValue" Display="Dynamic"
+                                    ErrorMessage="&lt;br /&gt;Required field" />
+                                <asp:RegularExpressionValidator ID="errorValueFormatValidator" runat="server"
+                                    ControlToValidate="errorValue" Display="Dynamic" ErrorMessage="&lt;br /&gt;Invalid format"
+                                    ValidationExpression="[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?" />
                             </td>
                         </tr>
                         <tr runat="server" id="errorColumnRow" visible="false">
@@ -89,6 +98,18 @@
                             <td class="FormField">
                                 <asp:TextBox ID="errorMin" runat="server" CssClass="FormField" Width="98px"></asp:TextBox>
                                 <asp:TextBox ID="errorMax" runat="server" CssClass="FormField" Width="98px"></asp:TextBox>
+                                <asp:RequiredFieldValidator runat="server" ID="errorMinRequiredValidator"
+                                    ControlToValidate="errorMin" Display="Dynamic"
+                                    ErrorMessage="&lt;br /&gt;Required field" />
+                                <asp:RegularExpressionValidator ID="errorMinFormatValidator" runat="server"
+                                    ControlToValidate="errorMin" Display="Dynamic" ErrorMessage="&lt;br /&gt;Invalid format"
+                                    ValidationExpression="[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?" />
+                                <asp:RequiredFieldValidator runat="server" ID="errorMaxRequiredValidator"
+                                    ControlToValidate="errorMax" Display="Dynamic"
+                                    ErrorMessage="&lt;br /&gt;Required field" />
+                                <asp:RegularExpressionValidator ID="errorMaxFormatValidator" runat="server"
+                                    ControlToValidate="errorMax" Display="Dynamic" ErrorMessage="&lt;br /&gt;Invalid format"
+                                    ValidationExpression="[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?" />
                             </td>
                         </tr>
                         <tr>
