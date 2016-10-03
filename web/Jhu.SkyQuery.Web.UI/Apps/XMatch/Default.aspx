@@ -4,7 +4,7 @@
 <%@ Register Src="XMatchForm.ascx" TagPrefix="uc1" TagName="XMatchForm" %>
 
 <asp:Content runat="server" ContentPlaceHolderID="toolbar">
-    <script>
+    <script lang="javascript">
         function ShowRefreshing() {
             var datasetList = document.getElementById("<%= datasetList.ClientID %>");
             var tableList = document.getElementById("<%= tableList.ClientID %>");
@@ -49,6 +49,9 @@
                         CausesValidation="true" CssClass="ToolbarButton" />
                 </div>
             </div>
+            <asp:Panel runat="server" ID="errorMessagePanel" CssClass="ToolbarMessage" Visible="false">
+                <asp:Label runat="server" ID="errorMessage" />
+            </asp:Panel>
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

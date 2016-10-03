@@ -6,6 +6,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Web.UI;
+using Jhu.Graywulf.Web.Api.V1;
+using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
@@ -18,18 +20,21 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         }
 
         private CodeGen.XMatch xmatch;
+        private SqlQuery query;
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            xmatch = (CodeGen.XMatch)(Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] ?? new CodeGen.XMatch());
+            LoadSessionXMatch();
             catalogList.XMatch = xmatch;
+            xmatchForm.XMatch = xmatch;
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            errorMessagePanel.Visible = false;
+
             if (!IsPostBack)
             {
-                xmatchForm.UpdateForm(xmatch);
                 RefreshDatasetList();
                 RefreshTableList();
             }
@@ -47,8 +52,6 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 introForm.Visible = false;
                 catalogListPanel.Visible = true;
             }
-
-            Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] = xmatch;
         }
 
         protected void DatasetList_SelectedIndexChanged(object sender, EventArgs e)
@@ -86,23 +89,45 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             {
                 SaveForm();
 
-                var cg = new SkyQueryCodeGenerator();
-                var sql = cg.GenerateXMatchQuery(xmatch, FederationContext.SchemaManager);
+                if (ValidateQuery())
+                {
+                    string q;
+                    int[] s;
+                    bool selectionOnly = true;
 
+                    if (HasQueryInSession())
+                    {
+                        GetQueryFromSession(out q, out s, out selectionOnly);
+                    }
 
+                    SetQueryInSession(query.QueryString, null, selectionOnly);
+
+                    Response.Redirect(Jhu.Graywulf.Web.UI.Apps.Query.Default.GetUrl());
+                }
             }
+        }
+
+        private void LoadSessionXMatch()
+        {
+            xmatch = (CodeGen.XMatch)(Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] ?? new CodeGen.XMatch());
+        }
+
+        private void SaveSessionXMatch()
+        {
+            Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] = xmatch;
         }
 
         private void UpdateForm()
         {
-            xmatchForm.UpdateForm(xmatch);
+            xmatchForm.UpdateForm();
             catalogList.UpdateForm();
         }
 
         private void SaveForm()
         {
-            xmatchForm.SaveForm(xmatch);
+            xmatchForm.SaveForm();
             catalogList.SaveForm();
+            SaveSessionXMatch();
         }
 
         private void RefreshDatasetList()
@@ -162,6 +187,32 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
                 var li = new ListItem("(no items)", "");
                 tableList.Items.Add(li);
+            }
+        }
+
+        private void GenerateQuery()
+        {
+            xmatch.Validate(FederationContext.SchemaManager);
+
+            var cg = new SkyQueryCodeGenerator();
+            var sql = cg.GenerateXMatchQuery(xmatch, FederationContext.SchemaManager);
+            var queryJob = new QueryJob(sql, JobQueue.Long);
+            query = queryJob.CreateQuery(FederationContext);
+            query.Verify();
+        }
+
+        private bool ValidateQuery()
+        {
+            try
+            {
+                GenerateQuery();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage.Text = "Error: " + ex.Message;
+                errorMessagePanel.Visible = true;
+                return false;
             }
         }
     }

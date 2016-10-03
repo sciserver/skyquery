@@ -53,7 +53,10 @@ namespace Jhu.SkyQuery.CodeGen
             this.targetTable = "xmatchtable";
             this.bayesFactor = 1e3;
             this.region = null;
-            this.columns = new List<string>();
+            this.columns = new List<string>()
+            {
+                "MatchID", "RA", "Dec"
+            };
             this.catalogs = new List<Catalog>();
         }
 
@@ -66,6 +69,13 @@ namespace Jhu.SkyQuery.CodeGen
                 TableUniqueKey = table.UniqueKey
             };
 
+            if (table.PrimaryKey != null)
+            {
+                foreach (var ic in table.PrimaryKey.Columns.Values)
+                {
+                    catalog.Columns.Add(ic.Name);
+                }
+            }
 
             catalogs.Add(catalog);
 
@@ -97,9 +107,64 @@ namespace Jhu.SkyQuery.CodeGen
             return alias;
         }
 
-        public void Validate()
+        public void Validate(SchemaManager schemaManager)
         {
-            // TODO
+            if (catalogs.Count <= 1)
+            {
+                throw CreateException(ExceptionMessages.MoreCatalogsRequired);
+            }
+
+            if (columns.Count == 0)
+            {
+                throw CreateException(ExceptionMessages.XMatchColumnsRequired);
+            }
+
+            var alias = new HashSet<string>(SchemaManager.Comparer);
+            alias.Add("x");
+
+            foreach (var catalog in catalogs)
+            {
+                if (alias.Contains(catalog.Alias))
+                {
+                    throw CreateException(String.Format(ExceptionMessages.DuplicateAlias, catalog.Alias));
+                }
+
+                var ds = schemaManager.Datasets[catalog.DatasetName];
+                var t = (TableOrView)ds.GetObject(catalog.TableUniqueKey);
+
+                if (t.PrimaryKey == null)
+                {
+                    throw CreateException(String.Format(ExceptionMessages.PrimaryKeyRequired, catalog.Alias));
+                }
+
+                // TODO: modify this if coordinates are looked up by schema
+                if (catalog.CoordinateMode == CoordinateMode.Automatic)
+                {
+                    if (!t.Columns.ContainsKey(SkyQuery.Parser.TableCoordinates.RaColumnName))
+                    {
+                        throw CreateException(String.Format(ExceptionMessages.RaColumnNotFound, catalog.Alias));
+                    }
+
+                    if (!t.Columns.ContainsKey(SkyQuery.Parser.TableCoordinates.DecColumnName))
+                    {
+                        throw CreateException(String.Format(ExceptionMessages.DecColumnNotFound, catalog.Alias));
+                    }
+                }
+
+                alias.Add(catalog.Alias);
+            }
+        }
+
+        private SkyQueryCodeGeneratorException CreateException(string message)
+        {
+            return new SkyQueryCodeGeneratorException(message);
+        }
+
+        private SkyQueryCodeGeneratorException CreateException(string message, params object[] args)
+        {
+            var msg = String.Format(message, args);
+            var ex = new SkyQueryCodeGeneratorException(msg);
+            return ex;
         }
     }
 }

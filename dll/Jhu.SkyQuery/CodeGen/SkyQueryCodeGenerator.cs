@@ -27,7 +27,7 @@ namespace Jhu.SkyQuery.CodeGen
         {
             var columnlist = GenerateXMatchSelectColumnList(xmatch, schemaManager);
             var tablelist = GenerateXMatchCatalogTableList(xmatch, schemaManager);
-            var where = "";
+            var where = GenerateXMatchWhereClause(xmatch, schemaManager);
 
             var sql = new StringBuilder();
             sql.AppendFormat(@"SELECT {0}
@@ -53,7 +53,7 @@ FROM XMATCH (
                 sql.Append("'");
             }
 
-            return sql;
+            return sql.ToString();
         }
 
         private string GenerateXMatchSelectColumnList(XMatch xmatch, SchemaManager schemaManager)
@@ -167,9 +167,35 @@ FROM XMATCH (
             return sql;
         }
 
-        private string GenerateXMatchWhereClause(Catalog catalog, SchemaManager schemaManager)
+        private string GenerateXMatchWhereClause(XMatch xmatch, SchemaManager schemaManager)
         {
-            throw new NotImplementedException();
+            var sql = new StringBuilder();
+            var q = 0;
+
+            foreach (var catalog in xmatch.Catalogs)
+            {
+                if (String.IsNullOrWhiteSpace(catalog.Where))
+                {
+                    continue;
+                }
+
+                if (q == 0)
+                {
+                    sql.Append("WHERE ");
+                }
+                else
+                {
+                    sql.AppendLine(" AND");
+                }
+
+                sql.Append("(");
+                sql.Append(catalog.Where);
+                sql.Append(")");
+
+                q++;
+            }
+
+            return sql.ToString();
         }
     }
 }

@@ -10,13 +10,25 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
     public partial class XMatchForm : System.Web.UI.UserControl
     {
-        protected void Page_Load(object sender, EventArgs e)
+        private CodeGen.XMatch xmatch;
+
+        public CodeGen.XMatch XMatch
         {
-            if (!IsPostBack)
+            get { return xmatch; }
+            set
             {
-                RefreshXMatchColumnList();
+                xmatch = value;
+                UpdateForm();
             }
         }
+
+        //protected void Page_Load(object sender, EventArgs e)
+        //{
+        //    if (!IsPostBack)
+        //    {
+        //        RefreshXMatchColumnList();
+        //    }
+        //}
 
         protected void RegionValidator_ServerValidate(object source, ServerValidateEventArgs args)
         {
@@ -48,8 +60,10 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             }
         }
 
-        public void UpdateForm(CodeGen.XMatch xmatch)
+        public void UpdateForm()
         {
+            RefreshXMatchColumnList();
+
             targetTable.Text = xmatch.TargetTable;
             bayesFactor.Text = xmatch.BayesFactor.ToString();
             region.Text = xmatch.Region;
@@ -60,7 +74,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             }
         }
 
-        public void SaveForm(CodeGen.XMatch xmatch)
+        public void SaveForm()
         {
             xmatch.TargetTable = targetTable.Text;
             xmatch.BayesFactor = double.Parse(bayesFactor.Text);

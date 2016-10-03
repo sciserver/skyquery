@@ -53,7 +53,13 @@
     <Compile Include="CodeGen\Constants.cs" />
     <Compile Include="CodeGen\CoordinateMode.cs" />
     <Compile Include="CodeGen\ErrorMode.cs" />
+    <Compile Include="CodeGen\ExceptionMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.resx</DependentUpon>
+    </Compile>
     <Compile Include="CodeGen\SkyQueryCodeGenerator.cs" />
+    <Compile Include="CodeGen\SkyQueryCodeGeneratorException.cs" />
     <Compile Include="CodeGen\SkyQueryColumnListGenerator.cs" />
     <Compile Include="CodeGen\XMatch.cs" />
     <Compile Include="Install\SkyQueryInstaller.cs">
@@ -203,6 +209,10 @@
     <None Include="Jobs\Query\BayesFactorXMatchResources\PopulateMatchTable.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CodeGen\ExceptionMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\BayesFactorXMatchScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
