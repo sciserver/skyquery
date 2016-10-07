@@ -2,7 +2,7 @@
     CodeBehind="Default.aspx.cs" Inherits="Jhu.SkyQuery.Web.UI.Default" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="middle" runat="server">
-    <jgwuc:Form runat="server" ID="WelcomeForm" SkinID="Welcome">
+    <jgwuc:Form runat="server" ID="WelcomeForm" ImageUrl="~/Images/skyquery.png">
         <FormTemplate>
             <p>
                 You need to register and sign in before using this web site.

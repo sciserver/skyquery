@@ -87,6 +87,7 @@
     <Content Include="Docs\images\nsf.png" />
     <Content Include="Docs\images\vao.png" />
     <Content Include="Global.asax" />
+    <Content Include="Images\skyquery.png" />
     <Content Include="packages.config" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.css" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.min.css" />
