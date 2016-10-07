@@ -22,14 +22,6 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             }
         }
 
-        //protected void Page_Load(object sender, EventArgs e)
-        //{
-        //    if (!IsPostBack)
-        //    {
-        //        RefreshXMatchColumnList();
-        //    }
-        //}
-
         protected void RegionValidator_ServerValidate(object source, ServerValidateEventArgs args)
         {
             if (!String.IsNullOrWhiteSpace(region.Text))
@@ -55,7 +47,12 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
             foreach (var cr in tr.ColumnReferences)
             {
-                var li = new ListItem(cr.ColumnName, cr.ColumnName);
+                var li = new ListItem();
+                li.Value = cr.ColumnName;
+                li.Text = tr.TableOrView.Columns[cr.ColumnName].IsKey ?
+                    String.Format("<img src=\"{0}\" />&nbsp;{1}", Page.ResolveUrl("images/icon_key.png"), cr.ColumnName) :
+                    cr.ColumnName;
+
                 xmatchColumnList.Items.Add(li);
             }
         }

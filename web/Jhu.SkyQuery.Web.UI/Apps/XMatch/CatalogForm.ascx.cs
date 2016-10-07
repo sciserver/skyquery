@@ -103,7 +103,9 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
                 var li = new ListItem()
                 {
-                    Text = column.Name,
+                    Text = column.IsKey ?
+                        String.Format("<img src=\"{0}\" />&nbsp;{1}", Page.ResolveUrl("images/icon_key.png"), column.Name) :
+                        column.Name,
                     Value = column.Name
                 };
 

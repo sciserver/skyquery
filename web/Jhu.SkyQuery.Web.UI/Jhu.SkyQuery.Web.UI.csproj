@@ -63,6 +63,7 @@
     <Content Include="Apps\XMatch\CatalogForm.ascx" />
     <Content Include="Apps\XMatch\CatalogList.ascx" />
     <Content Include="Apps\XMatch\Default.aspx" />
+    <Content Include="Apps\XMatch\images\icon_key.png" />
     <Content Include="Apps\XMatch\XMatchForm.ascx" />
     <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
