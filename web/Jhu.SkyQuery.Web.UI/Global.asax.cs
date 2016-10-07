@@ -28,11 +28,9 @@ namespace Jhu.SkyQuery.Web.UI
         {
             base.RegisterServices();
 
-            RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.IAuthService));
             RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.ISchemaService));
             RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.IJobsService));
             RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.IDataService));
-            RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.ITestService));
         }
 
         protected override void RegisterButtons()

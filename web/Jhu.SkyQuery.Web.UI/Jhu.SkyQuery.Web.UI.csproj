@@ -60,6 +60,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Api\V1\Data.svc" />
+    <Content Include="Api\V1\Jobs.svc" />
+    <Content Include="Api\V1\Schema.svc" />
     <Content Include="Apps\XMatch\CatalogForm.ascx" />
     <Content Include="Apps\XMatch\CatalogList.ascx" />
     <Content Include="Apps\XMatch\Default.aspx" />
@@ -628,7 +631,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Api\" />
     <Folder Include="App_Themes\" />
   </ItemGroup>
   <ItemGroup>
