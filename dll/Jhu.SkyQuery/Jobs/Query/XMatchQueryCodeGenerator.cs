@@ -447,6 +447,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Generate primary key list for insert
             var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
+                TableAlias = "__t",
                 LeadingSeparator = true
             };
 
@@ -693,7 +694,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             columnlist = clg.Execute();
 
             // To be used in the final select that goes into the insert
-            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias);
+            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            {
+                TableAlias = ""
+            };
+
             selectlist = slg.Execute();
         }
 
@@ -712,7 +717,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             columnlist = clg.Execute();
 
-            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias);
+            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            {
+                TableAlias = ""
+            };
 
             selectlist = slg.Execute();
         }
@@ -805,6 +813,10 @@ namespace Jhu.SkyQuery.Jobs.Query
                             columns.TableAlias = "__t2";
                         }
                     }
+                    else
+                    {
+                        columns.TableAlias = "";
+                    }
 
                     columnlist.AppendLine(columns.Execute());
                 }
@@ -884,7 +896,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber == 1)
             {
                 // The first table is a source table.
-                var jlg1 = new SqlServerColumnListGenerator(table1.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinCondition)
+                var jlg1 = new SqlServerColumnListGenerator(table1.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinConditionWithEscapedName)
                 {
                     TableAlias = "__t1",
                     JoinedTableAlias = "__pair",
@@ -898,7 +910,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // The second table is always the next source table
-            var jlg2 = new SqlServerColumnListGenerator(table2.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinCondition)
+            var jlg2 = new SqlServerColumnListGenerator(table2.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinConditionWithEscapedName)
             {
                 TableAlias = "__t2",
                 JoinedTableAlias = "__pair",
