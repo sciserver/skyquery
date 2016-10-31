@@ -56,6 +56,7 @@ FROM XMATCH
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ValidatorException))]
         public void XMatchUnionQueryTest()
         {
             var sql =
@@ -71,17 +72,11 @@ FROM CatalogA a
 
             var ss = Parse(sql);
 
-            try
-            {
-                Validate(ss);
-                Assert.Fail();
-            }
-            catch (ValidatorException ex)
-            {
-            }
+            Validate(ss);
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ValidatorException))]
         public void XMatchSubqueryTest()
         {
             var sql =
@@ -98,17 +93,11 @@ SELECT * FROM
 
             var ss = Parse(sql);
 
-            try
-            {
-                Validate(ss);
-                Assert.Fail();
-            }
-            catch (ValidatorException ex)
-            {
-            }
+            Validate(ss);
         }
 
         [TestMethod]
+        [ExpectedException(typeof(ValidatorException))]
         public void CatalogWithNoPrimaryKeyTest()
         {
             var sql =
@@ -120,14 +109,7 @@ FROM XMATCH
 
             var ss = Parse(sql);
 
-            try
-            {
-                Validate(ss);
-                Assert.Fail();
-            }
-            catch (ValidatorException ex)
-            {
-            }
+            Validate(ss);
         }
     }
 }
