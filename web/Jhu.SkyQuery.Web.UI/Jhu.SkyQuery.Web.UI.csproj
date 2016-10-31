@@ -87,6 +87,7 @@
     <Content Include="Docs\images\nsf.png" />
     <Content Include="Docs\images\vao.png" />
     <Content Include="Global.asax" />
+    <Content Include="gwconfig.xml" />
     <Content Include="Images\skyquery.png" />
     <Content Include="packages.config" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.css" />
@@ -514,7 +515,7 @@
     <Content Include="App_Masters\Basic\Basic.master" />
     <Content Include="App_Masters\Basic\UI.master" />
     <Content Include="Apps\XMatch\Web.config" />
-    <None Include="Web.original.config" />
+    <Content Include="Base.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\SyntaxHighlighter\scripts\shAutoloader.js" />
@@ -748,6 +749,12 @@
       <Name>Jhu.SkyQuery</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="pre-build.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="post-build.ps1" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -763,7 +770,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>47736</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/skyquery</IISUrl>
+          <IISUrl>http://localhost/dobos/skyquery</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
@@ -774,18 +781,12 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>if not exist $(ProjectDir)App_Masters\Basic mklink /D $(ProjectDir)App_Masters\Basic $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\App_Masters\Basic
-if not exist $(ProjectDir)App_Themes\Basic mklink /D $(ProjectDir)App_Themes\Basic $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\App_Themes\Basic
-
-if not exist $(ProjectDir)Apps\Api mklink /D $(ProjectDir)Apps\Api $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\Api
-if not exist $(ProjectDir)Apps\Common mklink /D $(ProjectDir)Apps\Common $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\Common
-if not exist $(ProjectDir)Apps\Docs mklink /D $(ProjectDir)Apps\Docs $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\Docs
-if not exist $(ProjectDir)Apps\Jobs mklink /D $(ProjectDir)Apps\Jobs $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\Jobs
-if not exist $(ProjectDir)Apps\MyDB mklink /D $(ProjectDir)Apps\MyDB $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\MyDB
-if not exist $(ProjectDir)Apps\Query mklink /D $(ProjectDir)Apps\Query $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\Query
-if not exist $(ProjectDir)Apps\Schema mklink /D $(ProjectDir)Apps\Schema $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\Apps\Schema
-
-$(ProjectDir)..\..\..\graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj Jhu.SkyQuery.Web.UI</PreBuildEvent>
+    <PreBuildEvent>cd "$(ProjectDir)"
+powershell -file pre-build.ps1 $(SolutionDir) $(SolutionName) $(ProjectDir) $(ProjectName) $(OutDir) $(ConfigurationName) $(TargetName)</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd "$(ProjectDir)"
+powershell -file post-build.ps1 $(SolutionDir) $(SolutionName) $(ProjectDir) $(ProjectName) $(OutDir) $(ConfigurationName) $(TargetName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

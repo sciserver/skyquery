@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <includes>
+    <include path="\connectionStrings.config" />
+    <include path="\mailSettings.config" />
+    <include path="\registry.config" />
+    <include path="\domain.config" />
+    <include path="\federation.config" />
+    <include path="\web.config" />
+  </includes>
+</config>
