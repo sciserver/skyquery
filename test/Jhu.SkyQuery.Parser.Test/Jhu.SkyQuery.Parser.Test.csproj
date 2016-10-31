@@ -91,12 +91,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="App.original.config" />
+    <None Include="Base.config" />
+    <None Include="post-build.ps1" />
+    <None Include="pre-build.ps1" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="gwconfig.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)..\..\..\Graywulf\build\Jhu.Graywulf.ConfigUtil\bin\$(ConfigurationName)\gwconfig.exe configure -root $(SolutionDir) -config Config\Configurations.xml -proj Jhu.SkyQuery.Parser.Test</PreBuildEvent>
+    <PreBuildEvent>cd "$(ProjectDir)"
+powershell -file pre-build.ps1 $(SolutionDir) $(SolutionName) $(ProjectDir) $(ProjectName) $(OutDir) $(TargetName)</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd "$(ProjectDir)"
+powershell -file post-build.ps1 $(SolutionDir) $(SolutionName) $(ProjectDir) $(ProjectName) $(OutDir) $(TargetName)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
