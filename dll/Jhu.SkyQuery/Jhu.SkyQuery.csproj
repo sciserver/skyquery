@@ -123,6 +123,8 @@
       <DependentUpon>XMatchScripts.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="post-build.ps1" />
+    <None Include="pre-build.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Plugins\Jhu.Graywulf.Plugins.csproj">
@@ -252,15 +254,12 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)$(OutDir)
-copy $(TargetDir)$(TargetName).pdb $(SolutionDir)$(OutDir)
-
-copy $(TargetDir)Jhu.SharpFitsIO.* $(SolutionDir)$(OutDir)
-
-copy $(TargetDir)$(TargetName).dll $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\bin
-copy $(TargetDir)$(TargetName).pdb $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\bin
-
-copy $(TargetDir)Jhu.SharpFitsIO.* $(SolutionDir)graywulf\web\Jhu.Graywulf.Web.UI\bin</PostBuildEvent>
+    <PostBuildEvent>cd "$(ProjectDir)"
+powershell -file post-build.ps1 $(SolutionDir) $(SolutionName) $(ProjectDir) $(ProjectName) $(OutDir) $(TargetName)</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>cd "$(ProjectDir)"
+powershell -file pre-build.ps1 $(SolutionDir) $(SolutionName) $(ProjectDir) $(ProjectName) $(OutDir) $(TargetName)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

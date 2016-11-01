@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Data.Sql;
@@ -9,6 +9,6 @@ using System.Data.Sql;
 [assembly: AssemblyTitle("SkyQueryCLR")]
 [assembly: AssemblyDescription("")]
 
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("1.2.6148.3")]
 
 [assembly: ComVisible(false)]
