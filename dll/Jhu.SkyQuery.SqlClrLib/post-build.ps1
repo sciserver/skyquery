@@ -7,7 +7,7 @@
 	[string]$TargetName
 )
 
-& "${SolutionDir}${OutDir}gwsqlclrutil.exe" $ProjectDir$OutDir$TargetName.dll Unrestricted
+& "${SolutionDir}${OutDir}gwsqlclrutil.exe" $ProjectDir$OutDir$TargetName.dll Safe
 
 cp $ProjectDir$OutDir$TargetName.dll $SolutionDir$OutDir
 cp $ProjectDir$OutDir$TargetName.pdb $SolutionDir$OutDir
