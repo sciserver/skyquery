@@ -788,5 +788,22 @@ WHERE a.ra BETWEEN 0 AND 1 AND
 
             RunQuery(sql);
         }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void TimeOutXMatchQueryTest()
+        {
+            var sql = @"
+SELECT x.matchID
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN SDSSDR12:PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN WISE:PhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+";
+
+            RunQuery(sql, QueueType.Quick, JobExecutionState.TimedOut, 0, new TimeSpan(0, 2, 0), false);
+        }
     }
 }
