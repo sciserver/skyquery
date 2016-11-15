@@ -406,15 +406,15 @@ REGION 'CIRCLE J2000 10 10 10'";
 
             var gt2 = @"
 SELECT [__htm_t0].[objId] AS [objId]
-FROM ((SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+FROM ((SELECT [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
-INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
+ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
 UNION ALL
-(SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+(SELECT [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
-INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
+INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
+ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -435,15 +435,15 @@ REGION 'CIRCLE J2000 10 10 10'";
 
             var gt2 = @"
 SELECT [__htm_t0].[objId] AS [objId]
-FROM ((SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+FROM ((SELECT [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
-INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
-ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
+INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll] 
+ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 0)
 UNION ALL
-(SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].*
+(SELECT [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].*
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
-INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll] 
-ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
+INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll] 
+ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -463,9 +463,9 @@ REGION 'CIRCLE J2000 10 10 10'";
 ";
 
             var gt2 = @"
-SELECT [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[objId] AS [objId]
-FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
-WHERE @r0.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1
+SELECT [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[objId] AS [objId]
+FROM [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
+WHERE @r0.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -485,8 +485,8 @@ REGION 'CIRCLE J2000 10 10 10'";
 ";
 
             var gt2 = @"
-SELECT [SkyNode_Test].[dbo].[SampleData_PrimaryKey].[ID] AS [ID]
-FROM [SkyNode_Test].[dbo].[SampleData_PrimaryKey]
+SELECT [SkyNode_TEST].[dbo].[SampleData_PrimaryKey].[ID] AS [ID]
+FROM [SkyNode_TEST].[dbo].[SampleData_PrimaryKey]
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -510,17 +510,17 @@ WHERE ra > 2";
 
             var gt = @"SELECT 
 	FROM [$codedb].htm.Cover(@r) __htm
-	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
-	WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
+	INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
+		ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
+	WHERE [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
 
 	UNION ALL
 
 	SELECT 
 	FROM [$codedb].htm.Cover(@r) __htm
-	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
-	WHERE (@r.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
+	INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
+		ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
+	WHERE (@r.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1) AND ([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -539,17 +539,17 @@ WHERE ra > 2";
 
             var gt = @"SELECT 
 	FROM [$codedb].htm.Cover(@r) __htm
-	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
-	WHERE [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
+	INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
+		ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 0
+	WHERE [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2
 
 	UNION ALL
 
 	SELECT 
 	FROM [$codedb].htm.Cover(@r) __htm
-	INNER LOOP JOIN [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll]
-		ON [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
-	WHERE (@r.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
+	INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
+		ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN __htm.htmIDStart AND __htm.htmIDEnd AND __htm.partial = 1
+	WHERE (@r.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1) AND ([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
@@ -567,8 +567,8 @@ REGION 'CIRCLE J2000 0 0 10'
 WHERE ra > 2";
 
             var gt = @"SELECT 
-	FROM [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
-	WHERE (@r.ContainsXyz([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1) AND ([SkyNode_Test].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[ra] > 2)";
+	FROM [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
+	WHERE (@r.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1) AND ([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[ra] > 2)";
 
             var res = GetStatisticsQuery(sql);
             Assert.IsTrue(res.Contains(gt));
