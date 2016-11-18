@@ -62,6 +62,7 @@
   <ItemGroup>
     <Content Include="Api\V1\Data.svc" />
     <Content Include="Api\V1\Jobs.svc" />
+    <Content Include="Api\V1\Manage.svc" />
     <Content Include="Api\V1\Schema.svc" />
     <Content Include="Apps\XMatch\CatalogForm.ascx" />
     <Content Include="Apps\XMatch\CatalogList.ascx" />
