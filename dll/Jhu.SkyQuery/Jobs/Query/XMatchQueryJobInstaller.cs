@@ -6,7 +6,7 @@ using Jhu.Graywulf.Registry;
 
 namespace Jhu.Graywulf.Install
 {
-    public class XMatchQueryJobInstaller : Jhu.Graywulf.Install.SqlQueryJobInstaller
+    public class XMatchQueryJobInstaller : Jhu.Graywulf.Jobs.Query.SqlQueryJobInstaller
     {
         public XMatchQueryJobInstaller(Federation federation)
             : base(federation)

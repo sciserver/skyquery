@@ -65,7 +65,6 @@
     <Compile Include="Install\SkyQueryInstaller.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Install\XMatchQueryJobInstaller.cs" />
     <Compile Include="Jobs\Query\AppSettings.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
@@ -108,6 +107,7 @@
     <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryJobInstaller.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTable.sql" />
