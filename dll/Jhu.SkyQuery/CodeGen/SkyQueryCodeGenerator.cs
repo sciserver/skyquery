@@ -31,11 +31,12 @@ namespace Jhu.SkyQuery.CodeGen
 
             var sql = new StringBuilder();
             sql.AppendFormat(@"SELECT {0}
-INTO {1}
+INTO {1}:{2}
 FROM XMATCH (
-{2}    LIMIT BAYESFACTOR TO {3}) AS {4}
+{3}    LIMIT BAYESFACTOR TO {4}) AS {5}
 ",
                 columnlist,
+                xmatch.TargetDataset,
                 xmatch.TargetTable,
                 tablelist,
                 xmatch.BayesFactor.ToString(System.Globalization.CultureInfo.InvariantCulture),

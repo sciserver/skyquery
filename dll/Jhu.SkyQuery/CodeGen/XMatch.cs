@@ -9,11 +9,18 @@ namespace Jhu.SkyQuery.CodeGen
 {
     public class XMatch
     {
+        private string targetDataset;
         private string targetTable;
         private double bayesFactor;
         private string region;
         private List<string> columns;
         private List<Catalog> catalogs;
+
+        public string TargetDataset
+        {
+            get { return targetDataset; }
+            set { targetDataset = value; }
+        }
 
         public string TargetTable
         {
@@ -50,9 +57,10 @@ namespace Jhu.SkyQuery.CodeGen
 
         private void InitializeMembers()
         {
+            this.targetDataset = Jhu.Graywulf.Registry.Constants.UserDbName;
             this.targetTable = "xmatchtable";
             this.bayesFactor = 1e3;
-            this.region = null;
+            this.region = "CIRCLE J2000 0.0 0.0 10.0";
             this.columns = new List<string>()
             {
                 "MatchID", "RA", "Dec"

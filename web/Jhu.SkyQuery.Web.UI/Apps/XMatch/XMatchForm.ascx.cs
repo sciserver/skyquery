@@ -4,11 +4,13 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Web.UI;
 using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
-    public partial class XMatchForm : System.Web.UI.UserControl
+    public partial class XMatchForm : FederationUserControlBase
     {
         private CodeGen.XMatch xmatch;
 
@@ -57,10 +59,28 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             }
         }
 
+        private void RefreshTargetDatasetList()
+        {
+            targetDataset.Items.Clear();
+
+            // Add MyDB etc. to the beginning of the list
+            var uf = UserDatabaseFactory.Create(FederationContext.Federation);
+            var mydbds = uf.GetUserDatabases(FederationContext.RegistryUser);
+
+            foreach (var key in mydbds.Keys)
+            {
+                var mydbli = new ListItem(key, key);
+                mydbli.Attributes.Add("class", "ToolbarControlHighlight");
+                targetDataset.Items.Add(mydbli);
+            }
+        }
+
         public void UpdateForm()
         {
+            RefreshTargetDatasetList();
             RefreshXMatchColumnList();
 
+            targetDataset.SelectedValue = xmatch.TargetDataset;
             targetTable.Text = xmatch.TargetTable;
             bayesFactor.Text = xmatch.BayesFactor.ToString();
             region.Text = xmatch.Region;
@@ -73,6 +93,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         public void SaveForm()
         {
+            xmatch.TargetDataset = targetDataset.SelectedValue;
             xmatch.TargetTable = targetTable.Text;
             xmatch.BayesFactor = double.Parse(bayesFactor.Text);
             xmatch.Region = region.Text;

@@ -11,6 +11,13 @@
                     <table class="FormTable">
                         <tr>
                             <td class="FormLabel">
+                                <asp:Label ID="targetDatasetLabel" runat="server" Text="Target dataset:" /></td>
+                            <td class="FormField">
+                                <asp:DropDownList ID="targetDataset" runat="server" CssClass="FormField" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="FormLabel">
                                 <asp:Label ID="targetTableLabel" runat="server" Text="Target table:" /></td>
                             <td class="FormField">
                                 <asp:TextBox ID="targetTable" runat="server" Text="xmatchtable" CssClass="FormField" />

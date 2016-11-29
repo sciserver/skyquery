@@ -13,6 +13,24 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
     public partial class XMatchForm {
         
         /// <summary>
+        /// targetDatasetLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label targetDatasetLabel;
+        
+        /// <summary>
+        /// targetDataset control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList targetDataset;
+        
+        /// <summary>
         /// targetTableLabel control.
         /// </summary>
         /// <remarks>

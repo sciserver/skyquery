@@ -134,13 +134,18 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         {
             datasetList.Items.Clear();
 
-            // Add MyDB as the first item
-            // TODO: extend this in case of multiple user databases
+            // Add MyDB etc. to the beginning of the list
             if (FederationContext.RegistryUser != null)
             {
-                var mydbli = new ListItem(FederationContext.MyDBDataset.Name, FederationContext.MyDBDataset.Name);
-                mydbli.Attributes.Add("class", "ToolbarControlHighlight");
-                datasetList.Items.Add(mydbli);
+                var uf = UserDatabaseFactory.Create(RegistryContext.Federation);
+                var mydbds = uf.GetUserDatabases(RegistryUser);
+
+                foreach (var key in mydbds.Keys)
+                {
+                    var mydbli = new ListItem(key, key);
+                    mydbli.Attributes.Add("class", "ToolbarControlHighlight");
+                    datasetList.Items.Add(mydbli);
+                }
             }
 
             // Add other registered catalogs     
