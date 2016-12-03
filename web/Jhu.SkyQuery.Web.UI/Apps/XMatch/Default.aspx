@@ -46,9 +46,7 @@
                 <asp:LinkButton runat="server" ID="submitJob" Text="submit as job"
                     CausesValidation="true" />
             </div>
-            <asp:Panel runat="server" ID="errorMessagePanel" CssClass="ToolbarMessage" Visible="false">
-                <asp:Label runat="server" ID="errorMessage" />
-            </asp:Panel>
+            <jgwc:MessageBar runat="server" ID="messageBar" Visible="false" />
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

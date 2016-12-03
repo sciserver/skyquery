@@ -83,24 +83,8 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton submitJob;
-        
-        /// <summary>
-        /// errorMessagePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel errorMessagePanel;
-        
-        /// <summary>
-        /// errorMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label errorMessage;
+
+        protected global::Jhu.Graywulf.Web.Controls.MessageBar messageBar;
         
         /// <summary>
         /// introForm control.

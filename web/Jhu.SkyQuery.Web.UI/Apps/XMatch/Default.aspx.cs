@@ -31,7 +31,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            errorMessagePanel.Visible = false;
+            messageBar.Visible = false;
 
             if (!IsPostBack)
             {
@@ -215,8 +215,8 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             }
             catch (Exception ex)
             {
-                errorMessage.Text = "Error: " + ex.Message;
-                errorMessagePanel.Visible = true;
+                messageBar.Text = "Error: " + ex.Message;
+                messageBar.Visible = true;
                 return false;
             }
         }
