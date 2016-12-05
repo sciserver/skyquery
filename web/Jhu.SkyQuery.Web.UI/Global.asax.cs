@@ -18,8 +18,8 @@ namespace Jhu.SkyQuery.Web.UI
             RegisterApp(typeof(Jhu.SkyQuery.Web.UI.Apps.XMatch.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Schema.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Query.App));
-            RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Jobs.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.MyDB.App));
+            RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Jobs.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Api.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Docs.App));
         }
