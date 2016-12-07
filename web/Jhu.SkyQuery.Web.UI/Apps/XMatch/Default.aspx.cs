@@ -12,7 +12,7 @@ using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
-    public partial class Default : FederationPageBase
+    public partial class Default : Jhu.Graywulf.Web.UI.Apps.Query.QueryPageBase
     {
         public static string GetUrl()
         {
@@ -42,15 +42,23 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         protected void Page_PreRender(object sender, EventArgs e)
         {
-            if (xmatch.Catalogs.Count == 0)
+            if (!jobResultsForm.Visible)
             {
-                introForm.Visible = true;
-                catalogListPanel.Visible = false;
+                if (xmatch.Catalogs.Count == 0)
+                {
+                    introForm.Visible = true;
+                    catalogListPanel.Visible = false;
+                }
+                else
+                {
+                    introForm.Visible = false;
+                    catalogListPanel.Visible = true;
+                }
             }
             else
             {
                 introForm.Visible = false;
-                catalogListPanel.Visible = true;
+                catalogListPanel.Visible = false;
             }
         }
 
@@ -91,20 +99,39 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
                 if (ValidateQuery())
                 {
-                    string q;
-                    int[] s;
-                    bool selectionOnly = true;
-
-                    if (HasQueryInSession())
-                    {
-                        GetQueryFromSession(out q, out s, out selectionOnly);
-                    }
-
-                    SetQueryInSession(query.QueryString, null, selectionOnly);
-
+                    SaveSessiongQuery();
                     Response.Redirect(Jhu.Graywulf.Web.UI.Apps.Query.Default.GetUrl());
                 }
             }
+        }
+
+        protected void SubmitJob_Click(object sender, EventArgs e)
+        {
+            if (IsValid)
+            {
+                SaveForm();
+
+                if (ValidateQuery())
+                {
+                    SaveSessiongQuery();
+
+                    var q = CreateQueryJob(query.QueryString, JobQueue.Long);
+
+                    if (q != null)
+                    {
+                        ScheduleQuery(q);
+                        introForm.Visible = false;
+                        catalogListPanel.Visible = false;
+                        toolbar.Visible = false;
+                        jobResultsForm.Visible = true;
+                    }
+                }
+            }
+        }
+
+        protected void Back_Click(object sender, EventArgs e)
+        {
+            Response.Redirect(Jhu.Graywulf.Web.UI.Apps.Jobs.Default.GetUrl("query"));
         }
 
         private void LoadSessionXMatch()
@@ -115,6 +142,20 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         private void SaveSessionXMatch()
         {
             Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] = xmatch;
+        }
+
+        private void SaveSessiongQuery()
+        {
+            string q;
+            int[] s;
+            bool selectionOnly = true;
+
+            if (HasQueryInSession())
+            {
+                GetQueryFromSession(out q, out s, out selectionOnly);
+            }
+
+            SetQueryInSession(query.QueryString, null, selectionOnly);
         }
 
         private void UpdateForm()

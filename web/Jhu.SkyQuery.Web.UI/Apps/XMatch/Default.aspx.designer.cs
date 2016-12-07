@@ -13,6 +13,15 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
     public partial class Default {
         
         /// <summary>
+        /// toolbar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl toolbar;
+        
+        /// <summary>
         /// datasetListLabel control.
         /// </summary>
         /// <remarks>
@@ -83,7 +92,14 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton submitJob;
-
+        
+        /// <summary>
+        /// messageBar control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
         protected global::Jhu.Graywulf.Web.Controls.MessageBar messageBar;
         
         /// <summary>
@@ -121,5 +137,23 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::Jhu.SkyQuery.Web.UI.Apps.XMatch.CatalogList catalogList;
+        
+        /// <summary>
+        /// jobResultsForm control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::Jhu.Graywulf.Web.UI.Controls.Form jobResultsForm;
+        
+        /// <summary>
+        /// Back control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Back;
     }
 }

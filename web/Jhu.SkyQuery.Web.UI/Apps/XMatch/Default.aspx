@@ -22,7 +22,7 @@
     </script>
     <asp:UpdatePanel runat="server">
         <ContentTemplate>
-            <div class="toolbar">
+            <div runat="server" id="toolbar" class="toolbar">
                 <div style="min-width: 140px">
                     <asp:Label ID="datasetListLabel" runat="server" Text="Catalog:" /><br />
                     <asp:DropDownList ID="datasetList" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DatasetList_SelectedIndexChanged">
@@ -44,7 +44,8 @@
                     CausesValidation="true"
                     OnClick="GenerateQuery_Click" />
                 <asp:LinkButton runat="server" ID="submitJob" Text="submit as job"
-                    CausesValidation="true" />
+                    CausesValidation="true"
+                    OnClick="SubmitJob_Click" />
             </div>
             <jgwc:MessageBar runat="server" ID="messageBar" Visible="false" />
         </ContentTemplate>
@@ -71,6 +72,17 @@
                 <uc1:XMatchForm runat="server" ID="xmatchForm" />
                 <uc1:CatalogList runat="server" ID="catalogList" />
             </asp:Panel>
+            <jgwuc:Form ID="jobResultsForm" runat="server" Text="XMatch job scheduled" SkinID="QueryJobDetails"
+                Visible="false">
+                <FormTemplate>
+                    <p>
+                        The xmatch job has been scheduled and will be executed shortly.
+                    </p>
+                </FormTemplate>
+                <ButtonsTemplate>
+                    <asp:Button ID="Back" runat="server" Text="OK" OnClick="Back_Click" CssClass="FormButton" />&nbsp;
+                </ButtonsTemplate>
+            </jgwuc:Form>
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>
