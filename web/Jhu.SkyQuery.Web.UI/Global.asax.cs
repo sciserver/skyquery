@@ -15,8 +15,8 @@ namespace Jhu.SkyQuery.Web.UI
             base.RegisterApps();
 
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Common.App));
-            RegisterApp(typeof(Jhu.SkyQuery.Web.UI.Apps.XMatch.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Schema.App));
+            RegisterApp(typeof(Jhu.SkyQuery.Web.UI.Apps.XMatch.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Query.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.MyDB.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Jobs.App));
@@ -40,13 +40,13 @@ namespace Jhu.SkyQuery.Web.UI
             RegisterFooterButton(new Graywulf.Web.UI.Controls.MenuButton()
             {
                 Text="copyright",
-                NavigateUrl = "~/Docs/99_info/03_copyright.aspx"
+                NavigateUrl = "~/Docs/99_info/01_index.aspx"
             });
 
             RegisterFooterButton(new Graywulf.Web.UI.Controls.MenuButton()
             {
                 Text = "personnel",
-                NavigateUrl = "~/Docs/99_info/01_personnel.aspx"
+                NavigateUrl = "~/Docs/99_info/01_index.aspx"
             });
         }
     }

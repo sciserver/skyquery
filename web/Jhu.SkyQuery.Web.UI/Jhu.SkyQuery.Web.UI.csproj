@@ -71,15 +71,22 @@
     <Content Include="Apps\XMatch\XMatchForm.ascx" />
     <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="Docs\00_index.aspx" />
     <Content Include="Docs\01_introduction\00_index.aspx" />
+    <Content Include="Docs\01_introduction\01_quickstart.aspx" />
+    <Content Include="Docs\01_introduction\02_glossary.aspx" />
     <Content Include="Docs\02_schema\00_index.aspx" />
-    <Content Include="Docs\03_query\00_index.aspx" />
-    <Content Include="Docs\04_jobs\00_index.aspx" />
+    <Content Include="Docs\03_xmatch\02_algorithm.aspx" />
+    <Content Include="Docs\03_xmatch\01_form.aspx" />
+    <Content Include="Docs\03_xmatch\00_index.aspx" />
+    <Content Include="Docs\04_query\04_functions.aspx" />
+    <Content Include="Docs\04_query\03_region.aspx" />
+    <Content Include="Docs\04_query\02_xmatch.aspx" />
+    <Content Include="Docs\04_query\01_simple.aspx" />
+    <Content Include="Docs\04_query\00_index.aspx" />
     <Content Include="Docs\05_mydb\00_index.aspx" />
-    <Content Include="Docs\06_glossary\00_index.aspx" />
+    <Content Include="Docs\06_jobs\00_index.aspx" />
     <Content Include="Docs\99_info\00_index.aspx" />
-    <Content Include="Docs\99_info\01_personnel.aspx" />
-    <Content Include="Docs\99_info\03_copyright.aspx" />
     <Content Include="Docs\images\elte.png" />
     <Content Include="Docs\images\hvo.png" />
     <Content Include="Docs\images\idies.png" />
@@ -635,6 +642,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Themes\" />
+    <Folder Include="Docs\07_api\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Keystone\Jhu.Graywulf.Keystone.csproj">
