@@ -116,7 +116,7 @@ namespace Jhu.SkyQuery.Parser
             }
 
             // Order tables by cardinality
-            return Math.Sign(other.TableReference.Statistics.RowCount - this.TableReference.Statistics.RowCount);
+            return Math.Sign(this.TableReference.Statistics.RowCount - other.TableReference.Statistics.RowCount);
         }
     }
 }

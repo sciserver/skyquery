@@ -701,6 +701,42 @@ FROM XMATCH(
 
         [TestMethod]
         [TestCategory("Query")]
+        public void XMatchWithMyDBTest2()
+        {
+            // Full catalog xmatch with mydb table
+
+            var sql =
+@"SELECT x.MatchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN MYDB:MyCatalog AS m WITH(POINT(ra, dec), ERROR(0.1)),    
+    MUST EXIST IN SDSSDR12:PhotoObjAll AS s WITH(ERROR(0.1)),
+    LIMIT BAYESFACTOR TO 1e3) AS x
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithMyDBTest3()
+        {
+            // Full catalog xmatch with mydb table
+
+            var sql =
+@"SELECT x.MatchID, x.ra, x.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN SDSSDR12:PhotoObjAll AS s WITH(ERROR(0.1)),    
+    MUST EXIST IN MYDB:MyCatalog AS m WITH(POINT(ra, dec), ERROR(0.1)),    
+    LIMIT BAYESFACTOR TO 1e3) AS x
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void MyDBSelfXMatchQueryTest()
         {
             var sql =

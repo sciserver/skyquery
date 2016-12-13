@@ -160,6 +160,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
+        private IEnumerable<XMatchTableSpecification> SortXMatchTables(IEnumerable<XMatchTableSpecification> tables)
+        {
+            // Use the comparer defined on SortXMatchTables to sort tables by increasing cardinality
+            return xmatchTables.Values.OrderBy(i => i);
+        }
+
         protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat)
         {
             // XmathTables might be reinitialized, so copy statistics
@@ -178,7 +184,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // Order tables based on incusion method and statistics
-            var tables = xmatchTables.Values.OrderBy(i => i).ToArray();
+            var tables = SortXMatchTables(xmatchTables.Values).ToArray();
 
             // Find stat histogram with most bins, that will be used to generate partitions
             // instead of the very first table
