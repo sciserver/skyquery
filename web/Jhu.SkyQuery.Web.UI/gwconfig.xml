@@ -3,6 +3,7 @@
   <includes>
     <include path="\connectionStrings.config" />
     <include path="\mailSettings.config" />
+    <include path="\remoteService.config" />
     <include path="\registry.config" />
     <include path="\domain.config" />
     <include path="\federation.config" />
