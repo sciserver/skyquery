@@ -183,7 +183,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
                 foreach (var key in mydbds.Keys)
                 {
-                    var mydbli = new ListItem(key, key);
+                    var mydbli = CreateDatasetListItem(mydbds[key]);
                     mydbli.Attributes.Add("class", "ToolbarControlHighlight");
                     datasetList.Items.Add(mydbli);
                 }
@@ -198,40 +198,62 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 k.Name != Graywulf.Registry.Constants.CodeDbName &&
                 k.Name != Graywulf.Registry.Constants.TempDbName).OrderBy(k => k.Name))
             {
-                datasetList.Items.Add(dsd.Name);
+                var li = CreateDatasetListItem(dsd);
+                datasetList.Items.Add(li);
             }
+        }
+
+        private ListItem CreateDatasetListItem(DatasetBase ds)
+        {
+            var li = new ListItem(ds.Name, ds.Name);
+
+            if (ds.IsInError)
+            {
+                li.Text += " (not available)";
+            }
+
+            return li;
         }
 
         private void RefreshTableList()
         {
             tableList.Items.Clear();
 
-            if (FederationContext.SchemaManager.Datasets.ContainsKey(datasetList.SelectedValue))
+            try
             {
-                var li = new ListItem("(select item)", "");
-                tableList.Items.Add(li);
-
-                var dataset = FederationContext.SchemaManager.Datasets[datasetList.SelectedValue];
-
-                dataset.Tables.LoadAll(dataset.IsMutable);
-                dataset.Views.LoadAll(dataset.IsMutable);
-
-                var tables =
-                    dataset.Tables.Values.Cast<TableOrView>().Concat(
-                    dataset.Views.Values).OrderBy(i => i.DisplayName);
-
-                foreach (var t in tables)
+                if (FederationContext.SchemaManager.Datasets.ContainsKey(datasetList.SelectedValue))
                 {
-                    li = new ListItem(t.DisplayName, t.UniqueKey);
+                    var li = new ListItem("(select item)", "");
+                    tableList.Items.Add(li);
+
+                    var dataset = FederationContext.SchemaManager.Datasets[datasetList.SelectedValue];
+
+                    dataset.Tables.LoadAll(dataset.IsMutable);
+                    dataset.Views.LoadAll(dataset.IsMutable);
+
+                    var tables =
+                        dataset.Tables.Values.Cast<TableOrView>().Concat(
+                        dataset.Views.Values).OrderBy(i => i.DisplayName);
+
+                    foreach (var t in tables)
+                    {
+                        li = new ListItem(t.DisplayName, t.UniqueKey);
+                        tableList.Items.Add(li);
+                    }
+                }
+
+                if (tableList.Items.Count <= 1)
+                {
+                    tableList.Items.Clear();
+
+                    var li = new ListItem("(no items)", "");
                     tableList.Items.Add(li);
                 }
             }
-
-            if (tableList.Items.Count <= 1)
+            catch (Exception ex)
             {
                 tableList.Items.Clear();
-
-                var li = new ListItem("(no items)", "");
+                var li = new ListItem("(not available)", "");
                 tableList.Items.Add(li);
             }
         }
