@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark(Jhu.SkyQuery.Copyright.InfoTrademark)]
 [assembly: AssemblyCulture(Jhu.SkyQuery.Copyright.InfoCulture)]
 
-[assembly: AssemblyVersion("1.2.6148.3")]
+[assembly: AssemblyVersion("1.2.6207.1")]
 
 [assembly: ComVisible(false)]
 [assembly: Guid("9970a95b-de76-42aa-a5c2-d8e64c98aace")]
