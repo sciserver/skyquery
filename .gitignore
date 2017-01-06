@@ -1,5 +1,7 @@
 ## Project specific ignores
 
+AssemblyInfo.cs
+
 dll/Jhu.SkyQuery.Parser/Parser/SkyQueryParser.cs
 dll/Jhu.SkyQuery.Xmd/app.config
 dll/Jhu.SkyQuery/app.config
