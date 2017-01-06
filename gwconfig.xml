@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <assemblySettings
+    version="1.2.6207.1"
+    description="SkyQuery Astronomical Cross-Match Engine"
+    company="JHU IDIES / ELTE"
+    product="SkyQuery"
+    copyright="(c) 2008-2017 JHU IDIES / ELTE" />
+</config>
