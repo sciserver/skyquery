@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Install
 
             Federation.ShortTitle = "SkyQuery";
             Federation.LongTitle = "SkyQuery Astronomical Cross-Match Engine";
-            Federation.Copyright = Copyright.InfoCopyright;
+            Federation.Copyright = Jhu.Graywulf.Util.AssemblyReflector.GetCopyright(GetType().Assembly);
             Federation.Disclaimer = Domain.Disclaimer;
             Federation.Email = Domain.Email;
         }

@@ -48,7 +48,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
         private static void PrintHeader()
         {
             Console.WriteLine("SkyQuery Command Line Utility");
-            Console.WriteLine(Copyright.InfoCopyright);
+            Console.WriteLine(Jhu.Graywulf.Util.AssemblyReflector.GetCopyright());
         }
        
     }

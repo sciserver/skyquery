@@ -97,15 +97,6 @@
     <None Include="app.config" />
     <None Include="post-build.ps1" />
     <None Include="pre-build.ps1" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

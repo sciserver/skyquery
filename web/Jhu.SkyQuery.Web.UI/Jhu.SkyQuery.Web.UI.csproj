@@ -95,7 +95,6 @@
     <Content Include="Docs\images\nsf.png" />
     <Content Include="Docs\images\vao.png" />
     <Content Include="Global.asax" />
-    <Content Include="gwconfig.xml" />
     <Content Include="Images\skyquery.png" />
     <Content Include="packages.config" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.css" />
@@ -763,6 +762,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="post-build.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="build.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
