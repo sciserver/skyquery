@@ -22,24 +22,20 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         public void ImportSdssSpecTest()
         {
             var path = GetTestFilePath(@"skyquery/test/files/sdssdr10_specsdss.fits");
-            var table = "ImportFitsTest_ImportSdssSpecTest";
-            var it = GetImportTableTask(path, table, false);
-
-            it.Execute();
-
-            it.Destination.GetTable().Drop();
+            var it = GetImportTableTask(path, false, false);
+            var t = ExecuteImportTableTask(it);
+            Assert.AreEqual(8, t.Columns.Count);
+            DropTable(t);
         }
 
         [TestMethod]
         public void ImportBossSpecTest()
         {
             var path = GetTestFilePath(@"skyquery/test/files/sdssdr10_specboss.fits");
-            var table = "ImportFitsTest_ImportBossSpecTest";
-            var it = GetImportTableTask(path, table, false);
-
-            it.Execute();
-
-            it.Destination.GetTable().Drop();
+            var it = GetImportTableTask(path, false, false);
+            var t = ExecuteImportTableTask(it);
+            Assert.AreEqual(8, t.Columns.Count);
+            DropTable(t);
         }
 
     }
