@@ -120,10 +120,14 @@ namespace Jhu.SkyQuery.Format.Fits
             var metadata = new VariableMetadata()
             {
                 Format = column.Format,
-                Unit = Unit.Parse(column.Unit),
-                // *** TODO: user unit converter function!
                 //Summary TODO: figure out how to get comment from table column
             };
+
+            if (!String.IsNullOrWhiteSpace(column.Unit))
+            {
+                // *** TODO: user unit converter function!
+                metadata.Unit = Unit.Parse(column.Unit);
+            }
 
             return metadata;
         }
