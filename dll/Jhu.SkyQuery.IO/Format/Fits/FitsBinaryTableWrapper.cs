@@ -120,7 +120,8 @@ namespace Jhu.SkyQuery.Format.Fits
             var metadata = new VariableMetadata()
             {
                 Format = column.Format,
-                Unit = column.Unit,
+                Unit = Unit.Parse(column.Unit),
+                // *** TODO: user unit converter function!
                 //Summary TODO: figure out how to get comment from table column
             };
 
@@ -260,7 +261,8 @@ namespace Jhu.SkyQuery.Format.Fits
             fitsColumn = FitsTableColumn.Create(databaseColumn.Name, fitstype);
 
             fitsColumn.Name = databaseColumn.Name;
-            fitsColumn.Unit = databaseColumn.Metadata.Unit;
+            fitsColumn.Unit = databaseColumn.Metadata.Unit.ToString();
+            // *** TODO: use unit converter function
             //fitsColumn.Format          // TODO: convert formats
         }
 
