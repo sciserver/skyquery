@@ -60,6 +60,5 @@
     <None Include="pre-build.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\build\Jhu.Graywulf.Build.targets" />
   <Import Project="$(SolutionDir)\build\Jhu.Graywulf.Build.SqlClr.targets" />
 </Project>
