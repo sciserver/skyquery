@@ -64,7 +64,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             targetDataset.Items.Clear();
 
             // Add MyDB etc. to the beginning of the list
-            var uf = UserDatabaseFactory.Create(FederationContext.Federation);
+            var uf = UserDatabaseFactory.Create(FederationContext);
             var mydbds = uf.GetUserDatabases(FederationContext.RegistryUser);
 
             foreach (var key in mydbds.Keys)

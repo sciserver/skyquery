@@ -16,11 +16,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 {
     public class SkyQueryTestBase : SqlQueryTestBase
     {
-        protected override UserDatabaseFactory CreateUserDatabaseFactory(Context context)
+        protected override UserDatabaseFactory CreateUserDatabaseFactory(FederationContext context)
         {
             return UserDatabaseFactory.Create(
                 typeof(Jhu.Graywulf.CasJobs.CasJobsUserDatabaseFactory).AssemblyQualifiedName,
-                context.Federation);
+                context);
         }
 
         protected override QueryFactory CreateQueryFactory(Context context)

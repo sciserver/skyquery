@@ -76,7 +76,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
             {
-                var sm = new GraywulfSchemaManager(context.Federation);
+                var sm = new GraywulfSchemaManager(new FederationContext(context, null));
 
                 var xmq = CreateQuery(sql);
                 xmq.ExecutionMode = ExecutionMode.SingleServer;

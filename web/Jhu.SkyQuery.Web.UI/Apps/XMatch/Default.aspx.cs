@@ -178,7 +178,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             // Add MyDB etc. to the beginning of the list
             if (FederationContext.RegistryUser != null)
             {
-                var uf = UserDatabaseFactory.Create(RegistryContext.Federation);
+                var uf = UserDatabaseFactory.Create(FederationContext);
                 var mydbds = uf.GetUserDatabases(RegistryUser);
 
                 foreach (var key in mydbds.Keys)
