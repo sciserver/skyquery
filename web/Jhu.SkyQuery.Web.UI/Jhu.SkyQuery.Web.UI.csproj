@@ -70,6 +70,8 @@
     <Content Include="Apps\XMatch\Default.aspx" />
     <Content Include="Apps\XMatch\images\icon_key.png" />
     <Content Include="Apps\XMatch\XMatchForm.ascx" />
+    <Content Include="Assets\Datasets\Pages\Images\test_coverage.png" />
+    <Content Include="Assets\Datasets\Pages\test.html" />
     <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="Docs\00_index.aspx" />
@@ -98,6 +100,10 @@
     <Content Include="Global.asax" />
     <Content Include="Images\skyquery.png" />
     <Content Include="packages.config" />
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.css" />
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.js" />
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.min.css" />
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.min.js" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.css" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.min.css" />
     <Content Include="Scripts\Bootstrap\css\bootstrap.css" />
@@ -642,6 +648,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Themes\" />
+    <Folder Include="Assets\Datasets\Icons\" />
     <Folder Include="Docs\07_api\" />
   </ItemGroup>
   <ItemGroup>
@@ -766,6 +773,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="build.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.js.map" />
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.min.css.map" />
+    <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.min.js.map" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

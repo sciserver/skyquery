@@ -14,6 +14,7 @@ Add-App Query
 Add-App Schema
 
 Add-Script "Bootstrap.Nuget.3.3.6" "Bootstrap"
+Add-Script "Bootstrap-Lightbox.Nuget.5.1.1" "Bootstrap-Lightbox"
 Add-Script "CodeMirror.Nuget.5.19.0" "CodeMirror"
 Add-Script "JQuery.Nuget.2.2.4" "jQuery"
 Add-Script "JQuery-Validation.Nuget.1.15.1" "jQuery-Validation"
