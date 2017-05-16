@@ -70,33 +70,39 @@
     <Content Include="Apps\XMatch\Default.aspx" />
     <Content Include="Apps\XMatch\images\icon_key.png" />
     <Content Include="Apps\XMatch\XMatchForm.ascx" />
-    <Content Include="Assets\Datasets\Pages\Images\test_coverage.png" />
-    <Content Include="Assets\Datasets\Pages\test.html" />
+    <Content Include="Assets\Docs\00_index.aspx" />
+    <Content Include="Assets\Docs\01_introduction\00_index.aspx" />
+    <Content Include="Assets\Docs\01_introduction\01_quickstart.aspx" />
+    <Content Include="Assets\Docs\01_introduction\02_glossary.aspx" />
+    <Content Include="Assets\Docs\02_schema\00_index.aspx" />
+    <Content Include="Assets\Docs\03_xmatch\00_index.aspx" />
+    <Content Include="Assets\Docs\03_xmatch\01_form.aspx" />
+    <Content Include="Assets\Docs\03_xmatch\02_algorithm.aspx" />
+    <Content Include="Assets\Docs\04_query\00_index.aspx" />
+    <Content Include="Assets\Docs\04_query\01_simple.aspx" />
+    <Content Include="Assets\Docs\04_query\02_xmatch.aspx" />
+    <Content Include="Assets\Docs\04_query\03_region.aspx" />
+    <Content Include="Assets\Docs\04_query\04_functions.aspx" />
+    <Content Include="Assets\Docs\05_mydb\00_index.aspx" />
+    <Content Include="Assets\Docs\06_jobs\00_index.aspx" />
+    <Content Include="Assets\Docs\99_info\00_index.aspx" />
+    <Content Include="Assets\Docs\images\elte.png" />
+    <Content Include="Assets\Docs\images\hvo.png" />
+    <Content Include="Assets\Docs\images\idies.png" />
+    <Content Include="Assets\Docs\images\ivoa.png" />
+    <Content Include="Assets\Docs\images\jhu.png" />
+    <Content Include="Assets\Docs\images\nsf.png" />
+    <Content Include="Assets\Docs\images\vao.png" />
+    <Content Include="Assets\Schema\Icons\test.png" />
+    <Content Include="Assets\Schema\Pages\Images\sdssdr13_img1.png" />
+    <Content Include="Assets\Schema\Pages\Images\sdssdr13_img2.png" />
+    <Content Include="Assets\Schema\Pages\Images\sdssdr13_img3.png" />
+    <Content Include="Assets\Schema\Pages\Images\sdssdr13_img4.png" />
+    <Content Include="Assets\Schema\Pages\Images\test_coverage.png" />
+    <Content Include="Assets\Schema\Pages\sdssdr13.html" />
+    <Content Include="Assets\Schema\Pages\test.html" />
     <Content Include="Check.aspx" />
     <Content Include="Default.aspx" />
-    <Content Include="Docs\00_index.aspx" />
-    <Content Include="Docs\01_introduction\00_index.aspx" />
-    <Content Include="Docs\01_introduction\01_quickstart.aspx" />
-    <Content Include="Docs\01_introduction\02_glossary.aspx" />
-    <Content Include="Docs\02_schema\00_index.aspx" />
-    <Content Include="Docs\03_xmatch\02_algorithm.aspx" />
-    <Content Include="Docs\03_xmatch\01_form.aspx" />
-    <Content Include="Docs\03_xmatch\00_index.aspx" />
-    <Content Include="Docs\04_query\04_functions.aspx" />
-    <Content Include="Docs\04_query\03_region.aspx" />
-    <Content Include="Docs\04_query\02_xmatch.aspx" />
-    <Content Include="Docs\04_query\01_simple.aspx" />
-    <Content Include="Docs\04_query\00_index.aspx" />
-    <Content Include="Docs\05_mydb\00_index.aspx" />
-    <Content Include="Docs\06_jobs\00_index.aspx" />
-    <Content Include="Docs\99_info\00_index.aspx" />
-    <Content Include="Docs\images\elte.png" />
-    <Content Include="Docs\images\hvo.png" />
-    <Content Include="Docs\images\idies.png" />
-    <Content Include="Docs\images\ivoa.png" />
-    <Content Include="Docs\images\jhu.png" />
-    <Content Include="Docs\images\nsf.png" />
-    <Content Include="Docs\images\vao.png" />
     <Content Include="Global.asax" />
     <Content Include="Images\skyquery.png" />
     <Content Include="packages.config" />
@@ -525,7 +531,6 @@
     <Content Include="Scripts\Bootstrap\css\bootstrap.css.map" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.min.css.map" />
     <Content Include="Scripts\Bootstrap\css\bootstrap-theme.css.map" />
-    <Content Include="Docs\Web.config" />
     <Content Include="App_Masters\Basic\Basic.master" />
     <Content Include="App_Masters\Basic\UI.master" />
     <Content Include="Apps\XMatch\Web.config" />
@@ -648,8 +653,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Themes\" />
-    <Folder Include="Assets\Datasets\Icons\" />
-    <Folder Include="Docs\07_api\" />
+    <Folder Include="Assets\Docs\07_api\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Keystone\Jhu.Graywulf.Keystone.csproj">
@@ -778,6 +782,9 @@
     <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.js.map" />
     <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.min.css.map" />
     <Content Include="Scripts\Bootstrap-Lightbox\ekko-lightbox.min.js.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Docs\Web.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
