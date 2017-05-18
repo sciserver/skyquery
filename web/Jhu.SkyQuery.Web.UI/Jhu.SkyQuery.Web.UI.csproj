@@ -94,6 +94,12 @@
     <Content Include="Assets\Docs\images\nsf.png" />
     <Content Include="Assets\Docs\images\vao.png" />
     <Content Include="Assets\Schema\Icons\test.png" />
+    <Content Include="Assets\Schema\Pages\acvs.html" />
+    <Content Include="Assets\Schema\Pages\akari.html" />
+    <Content Include="Assets\Schema\Pages\Images\acvs_img1.png" />
+    <Content Include="Assets\Schema\Pages\Images\agc_img1.png" />
+    <Content Include="Assets\Schema\Pages\Images\akari_img1.png" />
+    <Content Include="Assets\Schema\Pages\Images\akari_img2.png" />
     <Content Include="Assets\Schema\Pages\Images\sdssdr13_img1.png" />
     <Content Include="Assets\Schema\Pages\Images\sdssdr13_img2.png" />
     <Content Include="Assets\Schema\Pages\Images\sdssdr13_img3.png" />
@@ -801,7 +807,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>47736</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/dobos/skyquery</IISUrl>
+          <IISUrl>http://localhost/ebanyai/skyquery</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
