@@ -97,6 +97,9 @@
     <Content Include="Assets\Schema\Pages\acvs.html" />
     <Content Include="Assets\Schema\Pages\akari.html" />
     <Content Include="Assets\Schema\Pages\cnoc2.html" />
+    <Content Include="Assets\Schema\Pages\combo17.html" />
+    <Content Include="Assets\Schema\Pages\csdr2.html" />
+    <Content Include="Assets\Schema\Pages\deep2dr4.html" />
     <Content Include="Assets\Schema\Pages\Images\acvs_img1.png" />
     <Content Include="Assets\Schema\Pages\agc.html" />
     <Content Include="Assets\Schema\Pages\Images\agc_img1.png" />
