@@ -102,6 +102,9 @@
     <Content Include="Assets\Schema\Pages\deep2dr4.html" />
     <Content Include="Assets\Schema\Pages\des.html" />
     <Content Include="Assets\Schema\Pages\dls.html" />
+    <Content Include="Assets\Schema\Pages\first.html" />
+    <Content Include="Assets\Schema\Pages\fors.html" />
+    <Content Include="Assets\Schema\Pages\fuse.html" />
     <Content Include="Assets\Schema\Pages\Images\acvs_img1.png" />
     <Content Include="Assets\Schema\Pages\agc.html" />
     <Content Include="Assets\Schema\Pages\Images\agc_img1.png" />
