@@ -105,6 +105,11 @@
     <Content Include="Assets\Schema\Pages\first.html" />
     <Content Include="Assets\Schema\Pages\fors.html" />
     <Content Include="Assets\Schema\Pages\fuse.html" />
+    <Content Include="Assets\Schema\Pages\gaiadr1.html" />
+    <Content Include="Assets\Schema\Pages\galexgr6.html" />
+    <Content Include="Assets\Schema\Pages\gdds.html" />
+    <Content Include="Assets\Schema\Pages\hdf.html" />
+    <Content Include="Assets\Schema\Pages\herschel.html" />
     <Content Include="Assets\Schema\Pages\Images\acvs_img1.png" />
     <Content Include="Assets\Schema\Pages\agc.html" />
     <Content Include="Assets\Schema\Pages\Images\agc_img1.png" />
@@ -116,6 +121,9 @@
     <Content Include="Assets\Schema\Pages\Images\sdssdr13_img3.png" />
     <Content Include="Assets\Schema\Pages\Images\sdssdr13_img4.png" />
     <Content Include="Assets\Schema\Pages\Images\test_coverage.png" />
+    <Content Include="Assets\Schema\Pages\iras.html" />
+    <Content Include="Assets\Schema\Pages\k20.html" />
+    <Content Include="Assets\Schema\Pages\kepler.html" />
     <Content Include="Assets\Schema\Pages\sdssdr13.html" />
     <Content Include="Assets\Schema\Pages\test.html" />
     <Content Include="Check.aspx" />
