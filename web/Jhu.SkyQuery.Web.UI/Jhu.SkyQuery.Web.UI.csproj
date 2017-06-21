@@ -191,6 +191,7 @@
     <Content Include="Assets\Schema\Pages\pscz.html" />
     <Content Include="Assets\Schema\Pages\rc3.html" />
     <Content Include="Assets\Schema\Pages\rosat2rxs.html" />
+    <Content Include="Assets\Schema\Pages\sdssdr12.html" />
     <Content Include="Assets\Schema\Pages\sdssdr13.html" />
     <Content Include="Assets\Schema\Pages\spitzer.html" />
     <Content Include="Assets\Schema\Pages\ssrs.html" />
