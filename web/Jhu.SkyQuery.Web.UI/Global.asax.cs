@@ -1,15 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
+using System.Reflection;
 using Jhu.Graywulf.Web.UI;
 
 namespace Jhu.SkyQuery.Web.UI
 {
     public class Global : FederationApplicationBase
     {
+        protected override void Application_Start(object sender, EventArgs e)
+        {
+            base.Application_Start(sender, e);
+
+            var a = Assembly.GetAssembly(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQuery));
+            var v = a.GetName().Version.ToString();
+            Application[Jhu.Graywulf.Web.UI.Constants.ApplicationVersion] = v;
+        }
+
         protected override void RegisterApps()
         {
             base.RegisterApps();
