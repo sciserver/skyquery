@@ -12,9 +12,7 @@ namespace Jhu.SkyQuery.Jobs.Query
     public class ComputeSearchRadius : GraywulfAsyncCodeActivity, IGraywulfActivity
     {
         [RequiredArgument]
-        public InArgument<Guid> JobGuid { get; set; }
-        [RequiredArgument]
-        public InArgument<Guid> UserGuid { get; set; }
+        public InArgument<JobContext> JobContext { get; set; }
 
         [RequiredArgument]
         public InArgument<XMatchQueryStep> XMatchStep { get; set; }

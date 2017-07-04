@@ -29,8 +29,7 @@
  xmlns:st="clr-namespace:System.Text;assembly=mscorlib"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property Name="JobGuid" Type="InArgument(s:Guid)" />
-    <x:Property Name="UserGuid" Type="InArgument(s:Guid)" />
+    <x:Property Name="JobContext" Type="InArgument(jga:JobContext)" />
     <x:Property Name="Query" Type="InOutArgument(jgjq:SqlQuery)" />
   </x:Members>
   <sap:VirtualizedContainerService.HintSize>451,3033</sap:VirtualizedContainerService.HintSize>
@@ -42,26 +41,26 @@
           <x:Boolean x:Key="IsExpanded">True</x:Boolean>
         </scg3:Dictionary>
       </sap:WorkflowViewStateService.ViewState>
-      <jgjq:InitializeQuery EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
-      <jgjq:CheckDestinationTable sap:VirtualizedContainerService.HintSize="353,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
-      <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobGuid="[JobGuid]" QueryObject="[Query]" UserGuid="[UserGuid]" />
+      <jgjq:InitializeQuery EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobContext="[JobContext]" Query="[Query]" />
+      <jgjq:CheckDestinationTable sap:VirtualizedContainerService.HintSize="353,22" JobContext="[JobContext]" Query="[Query]" />
+      <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobContext="[JobContext]" QueryObject="[Query]" />
       <ParallelForEach x:TypeArguments="jgs:ITableSource" DisplayName="ParallelForEach&lt;ITableSource&gt;" sap:VirtualizedContainerService.HintSize="353,276" Values="[Query.TableSourceStatistics]">
         <ActivityAction x:TypeArguments="jgs:ITableSource">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="jgs:ITableSource" Name="tableSource" />
           </ActivityAction.Argument>
-          <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="214,128" JobGuid="[JobGuid]" MaxRetries="3" UserGuid="[UserGuid]">
-            <jgjq:ComputeTableStatistics sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" Query="[Query]" TableSource="[tableSource]" UserGuid="[UserGuid]" />
+          <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="214,128" JobContext="[JobContext]" MaxRetries="3">
+            <jgjq:ComputeTableStatistics sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" Query="[Query]" TableSource="[tableSource]" />
           </jga:Retry>
         </ActivityAction>
       </ParallelForEach>
-      <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
+      <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobContext="[JobContext]" Query="[Query]" />
       <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap:VirtualizedContainerService.HintSize="353,1540" Values="[Query.Partitions]">
         <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
-          <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="323,1392" JobGuid="[JobGuid]" MaxRetries="3" UserGuid="[UserGuid]">
+          <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="323,1392" JobContext="[JobContext]" MaxRetries="3">
             <Sequence sap:VirtualizedContainerService.HintSize="309,1286">
               <Sequence.Variables>
                 <Variable x:TypeArguments="scg3:List(x:String)" Name="remoteTableReferences" />
@@ -71,14 +70,14 @@
                   <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                 </scg3:Dictionary>
               </sap:WorkflowViewStateService.ViewState>
-              <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="287,22" JobGuid="[JobGuid]" QueryObject="[queryPartition]" UserGuid="[UserGuid]" />
-              <jgjq:FindRemoteTables sap:VirtualizedContainerService.HintSize="287,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" UserGuid="[UserGuid]" />
+              <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="287,22" JobContext="[JobContext]" QueryObject="[queryPartition]" />
+              <jgjq:FindRemoteTables sap:VirtualizedContainerService.HintSize="287,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" />
               <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap:VirtualizedContainerService.HintSize="287,208" Values="[queryPartition.RemoteTableReferences.Keys]">
                 <ActivityAction x:TypeArguments="x:String">
                   <ActivityAction.Argument>
                     <DelegateInArgument x:TypeArguments="x:String" Name="tableReference" />
                   </ActivityAction.Argument>
-                  <jgjq:CopyRemoteTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" RemoteTable="[tableReference]" UserGuid="[UserGuid]" />
+                  <jgjq:CopyRemoteTable sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" RemoteTable="[tableReference]" />
                 </ActivityAction>
               </ParallelForEach>
               <ForEach x:TypeArguments="local:XMatchQueryStep" sap:VirtualizedContainerService.HintSize="287,604" Values="[DirectCast(queryPartition, Jhu.SkyQuery.Jobs.Query.XMatchQueryPartition).Steps]">
@@ -92,29 +91,29 @@
                         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                       </scg3:Dictionary>
                     </sap:WorkflowViewStateService.ViewState>
-                    <local:ComputeSearchRadius sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
-                    <local:CreateZoneTable DisplayName="CreateZoneTable" sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
-                    <local:CreateZoneDefTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
-                    <local:CreateLinkTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
-                    <local:CreatePairTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
-                    <local:CreateMatchTable sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" UserGuid="[UserGuid]" XMatchStep="[queryStep]" />
+                    <local:ComputeSearchRadius sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" XMatchStep="[queryStep]" />
+                    <local:CreateZoneTable DisplayName="CreateZoneTable" sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" XMatchStep="[queryStep]" />
+                    <local:CreateZoneDefTable sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" XMatchStep="[queryStep]" />
+                    <local:CreateLinkTable sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" XMatchStep="[queryStep]" />
+                    <local:CreatePairTable sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" XMatchStep="[queryStep]" />
+                    <local:CreateMatchTable sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" XMatchStep="[queryStep]" />
                   </Sequence>
                 </ActivityAction>
               </ForEach>
-              <jgjq:ExecuteQuery sap:VirtualizedContainerService.HintSize="287,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" UserGuid="[UserGuid]" />
-              <jgjq:PrepareDestinationTable sap:VirtualizedContainerService.HintSize="287,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" UserGuid="[UserGuid]" />
-              <jgjq:CopyResultset sap:VirtualizedContainerService.HintSize="287,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" UserGuid="[UserGuid]" />
+              <jgjq:ExecuteQuery sap:VirtualizedContainerService.HintSize="287,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" />
+              <jgjq:PrepareDestinationTable sap:VirtualizedContainerService.HintSize="287,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" />
+              <jgjq:CopyResultset sap:VirtualizedContainerService.HintSize="287,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" />
             </Sequence>
           </jga:Retry>
         </ActivityAction>
       </ParallelForEach>
-      <jgjq:CreateDestinationTablePrimaryKey sap:VirtualizedContainerService.HintSize="353,22" JobGuid="[JobGuid]" Query="[Query]" UserGuid="[UserGuid]" />
+      <jgjq:CreateDestinationTablePrimaryKey sap:VirtualizedContainerService.HintSize="353,22" JobContext="[JobContext]" Query="[Query]" />
       <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap:VirtualizedContainerService.HintSize="353,208" Values="[Query.Partitions]">
         <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
-          <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" SuppressErrors="False" UserGuid="[UserGuid]" />
+          <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" SuppressErrors="False" />
         </ActivityAction>
       </ParallelForEach>
     </Sequence>
@@ -124,7 +123,7 @@
           <ActivityAction.Argument>
             <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
-          <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobGuid="[JobGuid]" QueryPartition="[queryPartition]" SuppressErrors="True" UserGuid="[UserGuid]" />
+          <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobContext="[JobContext]" QueryPartition="[queryPartition]" SuppressErrors="True" />
         </ActivityAction>
       </ParallelForEach>
     </CancellationScope.CancellationHandler>

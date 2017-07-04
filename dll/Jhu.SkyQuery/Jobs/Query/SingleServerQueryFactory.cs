@@ -14,7 +14,7 @@ using Jhu.Graywulf.Jobs.Query;
 namespace Jhu.SkyQuery.Jobs.Query
 {
     /// <summary>
-    /// Implements function to initialize a query that runs in 
+    /// Implements functions to initialize a query that runs in 
     /// single server mode.
     /// </summary>
     [Serializable]
@@ -176,8 +176,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return new Dictionary<string, object>()
             {
                 { Jhu.Graywulf.Jobs.Constants.JobParameterQuery, query },
-                { Jhu.Graywulf.Jobs.Constants.JobParameterUserGuid, Guid.Empty },
-                { Jhu.Graywulf.Jobs.Constants.JobParameterJobGuid, Guid.Empty },
+                { Jhu.Graywulf.Activities.Constants.ActivityParameterJobContext, null },
             };
         }
     }
