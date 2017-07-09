@@ -13,12 +13,9 @@ namespace Jhu.SkyQuery.Jobs.Query
     public class CreatePairTable : GraywulfAsyncCodeActivity, IGraywulfActivity
     {
         [RequiredArgument]
-        public InArgument<JobContext> JobContext { get; set; }
-
-        [RequiredArgument]
         public InArgument<XMatchQueryStep> XMatchStep { get; set; }
 
-        protected override IAsyncResult BeginExecute(AsyncCodeActivityContext activityContext, AsyncCallback callback, object state)
+        protected override AsyncActivityWorker OnBeginExecute(AsyncCodeActivityContext activityContext)
         {
             XMatchQueryStep xmatchstep = XMatchStep.Get(activityContext);
             XMatchQueryPartition xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
@@ -38,17 +35,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                     throw new NotImplementedException();
             }
 
-            Guid workflowInstanceGuid = activityContext.WorkflowInstanceId;
-            string activityInstanceId = activityContext.ActivityInstanceId;
-            return EnqueueAsync(_ => OnAsyncExecute(workflowInstanceGuid, activityInstanceId, xmatchstep), callback, state);
-        }
-
-        private void OnAsyncExecute(Guid workflowInstanceGuid, string activityInstanceId, XMatchQueryStep xmatchstep)
-        {
-            XMatchQueryPartition xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
-            RegisterCancelable(workflowInstanceGuid, activityInstanceId, xmqp);
-            xmqp.CreatePairTable(xmatchstep);
-            UnregisterCancelable(workflowInstanceGuid, activityInstanceId, xmqp);
+            return delegate (AsyncJobContext asyncContext)
+            {
+                asyncContext.RegisterCancelable(xmqp);
+                xmqp.CreatePairTable(xmatchstep);
+                asyncContext.UnregisterCancelable(xmqp);
+            };
         }
     }
 }
