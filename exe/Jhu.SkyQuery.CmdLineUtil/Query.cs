@@ -104,10 +104,10 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var par = f.GetWorkflowParameters(q);
 
             // Submit for execution
-            var wfhost = new WorkflowApplicationHost();
-            wfhost.WorkflowEvent += new EventHandler<HostEventArgs>(wfhost_WorkflowEvent);
+            var wfhost = new StandaloneWorkflowApplicationHost();
+            wfhost.WorkflowEvent += new EventHandler<WorkflowApplicationHostEventArgs>(wfhost_WorkflowEvent);
 
-            wfhost.Start();
+            wfhost.Start(true);
 
             var guid = wfhost.PrepareStartWorkflow(wf, par);
             wfhost.RunWorkflow(guid);
@@ -116,7 +116,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             workflowCompleted.WaitOne();
         }
 
-        void wfhost_WorkflowEvent(object sender, HostEventArgs e)
+        void wfhost_WorkflowEvent(object sender, WorkflowApplicationHostEventArgs e)
         {
             switch (e.EventType)
             {
