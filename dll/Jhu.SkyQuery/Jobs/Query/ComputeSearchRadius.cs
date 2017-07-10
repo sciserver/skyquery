@@ -9,7 +9,7 @@ using Jhu.Graywulf.Activities;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-    public class ComputeSearchRadius : GraywulfAsyncCodeActivity, IGraywulfActivity
+    public class ComputeSearchRadius : JobAsyncCodeActivity, IJobActivity
     {
         [RequiredArgument]
         public InArgument<XMatchQueryStep> XMatchStep { get; set; }
@@ -35,7 +35,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     throw new NotImplementedException();
             }
 
-            return delegate (AsyncJobContext asyncContext)
+            return delegate (JobContext asyncContext)
             {
                 asyncContext.RegisterCancelable(xmqp);
                 xmqp.ComputeSearchRadius(xmatchstep);

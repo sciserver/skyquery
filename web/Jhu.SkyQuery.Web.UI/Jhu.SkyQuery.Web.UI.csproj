@@ -840,10 +840,6 @@
       <Project>{e9d182cf-746e-4e40-b01c-74a32fb70749}</Project>
       <Name>Jhu.Graywulf.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\exe\Jhu.Graywulf.Scheduler\Jhu.Graywulf.Scheduler.csproj">
-      <Project>{94ab6a2e-6877-4fed-87e2-1f9f17622f43}</Project>
-      <Name>Jhu.Graywulf.Scheduler</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\web\Jhu.Graywulf.Web.UI\Jhu.Graywulf.Web.UI.csproj">
       <Project>{c2f9863f-3d23-4185-bdbc-2dde39acbdea}</Project>
       <Name>Jhu.Graywulf.Web.UI</Name>

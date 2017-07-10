@@ -8,8 +8,7 @@ using System.Data.SqlClient;
 using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Activities;
 using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Scheduler;
 using Jhu.SkyQuery.Jobs.Query;
 
 namespace Jhu.SkyQuery.CmdLineUtil

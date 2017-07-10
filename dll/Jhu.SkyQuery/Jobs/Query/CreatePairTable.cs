@@ -10,7 +10,7 @@ using Jhu.Graywulf.Jobs.Query;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-    public class CreatePairTable : GraywulfAsyncCodeActivity, IGraywulfActivity
+    public class CreatePairTable : JobAsyncCodeActivity, IJobActivity
     {
         [RequiredArgument]
         public InArgument<XMatchQueryStep> XMatchStep { get; set; }
@@ -35,7 +35,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     throw new NotImplementedException();
             }
 
-            return delegate (AsyncJobContext asyncContext)
+            return delegate (JobContext asyncContext)
             {
                 asyncContext.RegisterCancelable(xmqp);
                 xmqp.CreatePairTable(xmatchstep);
