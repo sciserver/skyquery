@@ -23,7 +23,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                 context);
         }
 
-        protected override QueryFactory CreateQueryFactory(Context context)
+        protected override QueryFactory CreateQueryFactory(RegistryContext context)
         {
             return QueryFactory.Create(
                 typeof(SkyQueryQueryFactory).AssemblyQualifiedName,

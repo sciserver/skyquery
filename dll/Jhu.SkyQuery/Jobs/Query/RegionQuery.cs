@@ -42,7 +42,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
         }
 
-        public RegionQuery(Context context)
+        public RegionQuery(RegistryContext context)
             : base(context)
         {
         }

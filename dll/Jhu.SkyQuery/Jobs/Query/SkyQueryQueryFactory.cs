@@ -25,7 +25,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
-        public SkyQueryQueryFactory(Context context)
+        public SkyQueryQueryFactory(RegistryContext context)
             : base(context)
         {
             InitializeMembers(new StreamingContext());
@@ -51,15 +51,15 @@ namespace Jhu.SkyQuery.Jobs.Query
             SqlQuery res;
             if (root is XMatchSelectStatement)
             {
-                res = new BayesFactorXMatchQuery(Context);
+                res = new BayesFactorXMatchQuery(RegistryContext);
             }
             else if (root is RegionSelectStatement)
             {
-                res = new RegionQuery(Context);
+                res = new RegionQuery(RegistryContext);
             }
             else if (root is SelectStatement)
             {
-                res = new SqlQuery(Context);
+                res = new SqlQuery(RegistryContext);
             }
             else
             {
@@ -92,7 +92,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             else
             {
-                var ef = new EntityFactory(Context);
+                var ef = new EntityFactory(RegistryContext);
 
                 var job = CreateJobInstance(
                     jobName,

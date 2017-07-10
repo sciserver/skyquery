@@ -29,7 +29,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
-        public BayesFactorXMatchQuery(gw.Context context)
+        public BayesFactorXMatchQuery(gw.RegistryContext context)
             : base(context)
         {
             InitializeMembers(new StreamingContext());

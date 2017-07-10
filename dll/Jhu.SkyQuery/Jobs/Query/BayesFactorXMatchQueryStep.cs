@@ -18,7 +18,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
-        public BayesFactorXMatchQueryStep(XMatchQueryPartition queryPartition, gw.Context context)
+        public BayesFactorXMatchQueryStep(XMatchQueryPartition queryPartition, gw.RegistryContext context)
             : base(queryPartition, context)
         {
             InitializeMembers(new StreamingContext());

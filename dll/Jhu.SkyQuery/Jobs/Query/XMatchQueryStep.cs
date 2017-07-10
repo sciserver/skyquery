@@ -48,7 +48,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
-        public XMatchQueryStep(XMatchQueryPartition queryPartition, gw.Context context)
+        public XMatchQueryStep(XMatchQueryPartition queryPartition, gw.RegistryContext context)
         {
             InitializeMembers(new StreamingContext());
 

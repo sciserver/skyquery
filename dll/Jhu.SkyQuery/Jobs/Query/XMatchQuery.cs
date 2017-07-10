@@ -73,7 +73,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
-        public XMatchQuery(gw::Context context)
+        public XMatchQuery(gw::RegistryContext context)
             : base(context)
         {
             InitializeMembers(new StreamingContext());
