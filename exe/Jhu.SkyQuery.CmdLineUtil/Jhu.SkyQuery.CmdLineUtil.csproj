@@ -101,10 +101,6 @@
     <Compile Include="Verb.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Activities\Jhu.Graywulf.Activities.csproj">
-      <Project>{57392DA3-E280-48EE-80C8-64E09FD8AFB5}</Project>
-      <Name>Jhu.Graywulf.Activities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>

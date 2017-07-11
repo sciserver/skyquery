@@ -176,7 +176,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return new Dictionary<string, object>()
             {
                 { Jhu.Graywulf.Jobs.Constants.JobParameterQuery, query },
-                { Jhu.Graywulf.Activities.Constants.ActivityParameterJobContext, null },
+                { Jhu.Graywulf.Activities.Constants.ActivityParameterJobInfo, null },
             };
         }
     }

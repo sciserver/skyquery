@@ -14,7 +14,7 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
             // Initialize logger
-            Jhu.Graywulf.Logging.Logger.Instance.Writers.Add(new Jhu.Graywulf.Logging.SqlLogWriter());
+            Jhu.Graywulf.Logging.Logger.Instance.Start(Jhu.Graywulf.Logging.EventSource.CommandLineTool, true);
 
             List<Type> verbs = new List<Type>() { typeof(Install) };
 

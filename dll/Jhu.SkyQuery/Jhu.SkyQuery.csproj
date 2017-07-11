@@ -133,7 +133,7 @@
       <Name>Jhu.Graywulf.Plugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Activities\Jhu.Graywulf.Activities.csproj">
-      <Project>{57392DA3-E280-48EE-80C8-64E09FD8AFB5}</Project>
+      <Project>{57392da3-e280-48ee-80c8-64e09fd8afb5}</Project>
       <Name>Jhu.Graywulf.Activities</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
