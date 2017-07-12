@@ -18,6 +18,18 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     [TestClass]
     public class RegionQueryCodeGeneratorTest : SkyQueryTestBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            StartLogger();
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            StopLogger();
+        }
+
         private RegionQueryCodeGenerator CodeGenerator
         {
             get
@@ -92,6 +104,8 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         protected string GetStatisticsQuery(string sql)
         {
             var q = CreateQuery(sql);
+            q.ExecutionMode = ExecutionMode.SingleServer;
+
             var cg = new RegionQueryCodeGenerator(q);
             var ts = q.SelectStatement.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
 

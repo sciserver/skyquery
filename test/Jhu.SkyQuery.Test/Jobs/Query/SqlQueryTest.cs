@@ -10,6 +10,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
+            StartLogger();
             InitializeJobTests();
         }
 
@@ -17,6 +18,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         public static void CleanUp()
         {
             CleanupJobTests();
+            StopLogger();
         }
 
         [TestMethod]
