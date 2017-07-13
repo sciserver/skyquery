@@ -841,7 +841,7 @@ FROM XMATCH(
 ) AS x
 ";
 
-            RunQuery(sql, QueueType.Quick, JobExecutionState.TimedOut, 0, new TimeSpan(0, 2, 0), false);
+            RunQuery(sql, QueueType.Quick, JobExecutionState.TimedOut, 0, new TimeSpan(0, 5, 0), false);
         }
     }
 }
