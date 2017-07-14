@@ -17,6 +17,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override AsyncActivityWorker OnBeginExecute(AsyncCodeActivityContext activityContext)
         {
+            var workflowInstanceId = activityContext.WorkflowInstanceId;
+            var activityInstanceId = activityContext.ActivityInstanceId;
             XMatchQueryStep xmatchstep = XMatchStep.Get(activityContext);
             XMatchQueryPartition xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
 
@@ -35,11 +37,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                     throw new NotImplementedException();
             }
 
-            return delegate (JobContext asyncContext)
+            return delegate ()
             {
-                asyncContext.RegisterCancelable(xmqp);
+                RegisterCancelable(workflowInstanceId, activityInstanceId, xmqp);
                 xmqp.CreateZoneDefTable(xmatchstep);
-                asyncContext.UnregisterCancelable(xmqp);
+                UnregisterCancelable(workflowInstanceId, activityInstanceId, xmqp);
             };
         }
     }
