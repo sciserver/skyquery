@@ -4,10 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Jhu.Graywulf.Web.UI;
 
 namespace Jhu.SkyQuery.Web.UI
 {
-    public partial class Default : System.Web.UI.Page
+    public partial class Default : PageBase
     {
         public static string GetUrl()
         {
