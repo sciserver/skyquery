@@ -43,13 +43,13 @@ namespace Jhu.SkyQuery.Web.UI
         {
             base.RegisterButtons();
 
-            RegisterFooterButton(new Graywulf.Web.UI.Controls.MenuButton()
+            RegisterFooterButton(new Graywulf.Web.UI.MenuButton()
             {
                 Text="copyright",
                 NavigateUrl = "~/Docs/99_info/01_index.aspx"
             });
 
-            RegisterFooterButton(new Graywulf.Web.UI.Controls.MenuButton()
+            RegisterFooterButton(new Graywulf.Web.UI.MenuButton()
             {
                 Text = "personnel",
                 NavigateUrl = "~/Docs/99_info/01_index.aspx"
