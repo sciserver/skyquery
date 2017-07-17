@@ -264,7 +264,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
             var cg = new SkyQueryCodeGenerator();
             var sql = cg.GenerateXMatchQuery(xmatch, FederationContext.SchemaManager);
-            var queryJob = new QueryJob(sql, JobQueue.Long);
+            var queryJob = new QueryJob(sql);
             query = queryJob.CreateQuery(FederationContext);
             query.Verify();
         }
