@@ -13,6 +13,18 @@ namespace Jhu.SkyQuery.Format.Fits.Test
     [TestClass]
     public class ImportFitsTest : Jhu.Graywulf.IO.Tasks.ImportTableTest
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            StartLogger();
+        }
+
+        [ClassCleanup]
+        public static void Cleanup()
+        {
+            StopLogger();
+        }
+
         protected override FileFormatFactory CreateFileFormatFactory()
         {
             return FileFormatFactory.Create(typeof(SkyQueryFileFormatFactory).AssemblyQualifiedName);
