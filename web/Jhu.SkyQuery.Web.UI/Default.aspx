@@ -68,77 +68,86 @@
         </ButtonsTemplate>
     </jgwuc:Form>--%>
 
-    <div id="myCarousel" class="carousel slide dock-hfill" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-            <!--<li data-target="#myCarousel" data-slide-to="3"></li>-->
-        </ol>
+    <div class="dock-hfill">
+        <div style="width: 100%">
+            <div style="width: 960px; margin-left: auto; margin-right: auto; text-align: right; padding-bottom: 4px;">
+                <a href="https://twitter.com/xmatchthesky" target="_blank"><img src="Assets/Home/social-twitter.png" /></a>&nbsp;&nbsp;
+                <a href="https://www.facebook.com/skyquery/" target="_blank"><img src="Assets/Home/social-facebook.png" /></a>
+            </div>
+        </div>
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+                <!--<li data-target="#myCarousel" data-slide-to="3"></li>-->
+            </ol>
 
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            <div class="item active">
-                <div style="background-image: url('Assets/Home/home_1.jpg')">
-                    <h1>Welcome to SkyQuery</h1>
-                    <p>
-                        SkyQuery is a scalable database system for cross-matching astronomical source catalogs
-                    </p>
-                    <ul>
-                        <li>Cross-match multiple catalogs</li>
-                        <li>Access a growing list of surveys</li>
-                        <li>Access your own data in SkyServer MyDB</li>
-                        <li>Write SQL to filter and process data</li>
-                        <li>Do efficient spatial filtering</li>
-                        <li>Run full-catalog cross-matches</li>
-                    </ul>
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <div style="background-image: url('Assets/Home/home_1.jpg')">
+                        <h1>Welcome to SkyQuery</h1>
+                        <p>
+                            SkyQuery is a scalable database system for cross-matching astronomical source catalogs
+                        </p>
+                        <ul>
+                            <li>Cross-match multiple catalogs</li>
+                            <li>Access a growing list of surveys</li>
+                            <li>Access your own data in SkyServer MyDB</li>
+                            <li>Write SQL to filter and process data</li>
+                            <li>Do efficient spatial filtering</li>
+                            <li>Run full-catalog cross-matches</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="item">
-                <div style="background-image: url('Assets/Home/home_2.jpg')">
-                    <h1>Integrated with SciServer</h1>
-                    <p>SkyQuery is integrated with SciServer, the collaborative data analysis platform
+                <div class="item">
+                    <div style="background-image: url('Assets/Home/home_2.jpg')">
+                        <h1>Integrated with SciServer</h1>
+                        <p>
+                            SkyQuery is integrated with SciServer, the collaborative data analysis platform
                         for big data
-                    </p>
-                    <ul>
-                        <li>MyDB shared with SkyServer CasJobs</li>
-                        <li>Access terabytes of scratch space from MyScratch DB</li>
-                        <li>Access your files in SciDrive</li>
-                        <li>Run your python scripts from SciServer Compute</li>
-                        <li>Use the RESTful API to integrate with you scripts</li>
-                    </ul>
+                        </p>
+                        <ul>
+                            <li>Single sign-on to all services</li>
+                            <li>MyDB shared with SkyServer CasJobs</li>
+                            <li>Access terabytes of scratch space from MyScratch DB</li>
+                            <li>Access your files in SciDrive</li>
+                            <li>Run your python scripts from SciServer Compute</li>
+                            <li>Use the RESTful API to integrate with you scripts</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <div class="item">
-                <div style="background-image: url('Assets/Home/home_3.jpg')">
-                    <h1>High-performance, scalable platform</h1>
-                    <p>SkyQuery runs on a cluster of state-of-the art, all-solid state servers</p>
-                    <ul>
-                        <li>Scalability allows full catalog cross-matching in reasonable time</li>
-                        <li>All solid-state background storage for fast data access</li>
-                        <li>NVMe drives for temporary storage</li>
-                        <li>Cluster setup offers parallel execution and high availablity</li>
-                        <li>Cross match jobs are written in extended SQL</li>
-                    </ul>
+                <div class="item">
+                    <div style="background-image: url('Assets/Home/home_3.jpg')">
+                        <h1>High-performance, scalable platform</h1>
+                        <p>SkyQuery runs on a cluster of state-of-the art, all-solid state servers</p>
+                        <ul>
+                            <li>Scalability allows full catalog cross-matching in reasonable time</li>
+                            <li>All solid-state background storage for fast data access</li>
+                            <li>NVMe drives for temporary storage</li>
+                            <li>Cluster setup offers parallel execution and high availablity</li>
+                            <li>Cross match jobs are written in extended SQL</li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-            <!--<div class="item">
+                <!--<div class="item">
                 <div>
                     <h1>Access your own data in SkyServer MyDB</h1>
                 </div>
             </div>-->
+            </div>
+
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
-
-        <!-- Left and right controls -->
-        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#myCarousel" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right"></span>
-            <span class="sr-only">Next</span>
-        </a>
     </div>
-
 </asp:Content>
