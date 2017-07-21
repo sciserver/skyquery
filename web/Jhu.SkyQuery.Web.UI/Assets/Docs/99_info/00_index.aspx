@@ -3,8 +3,8 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="Text" runat="server">
     <h3>Personnel</h3>
     <ul>
-        <li>László Dobos<sup>1</sup>, system architect, developer</li>
-        <li>Tamás Budavári<sup>2</sup>, spatial library, cross-match engine SQL, concept</li>
+        <li>László Dobos<sup>1</sup>, system architecture, software development, concept</li>
+        <li>Tamás Budavári<sup>2</sup>, spatial library, cross-match algorithm, concept</li>
         <li>Alex Szalay<sup>3,4</sup>, concept</li>
         <li>Evelin Bányai<sup>1</sup>, database developer</li>
         <li>Lance Joseph<sup>3</sup>, system administrator</li>
