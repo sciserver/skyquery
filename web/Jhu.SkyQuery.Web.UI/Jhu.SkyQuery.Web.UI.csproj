@@ -766,6 +766,7 @@
   <ItemGroup>
     <Folder Include="App_Themes\" />
     <Folder Include="Assets\Docs\07_api\" />
+    <Folder Include="Assets\Home\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Keystone\Jhu.Graywulf.Keystone.csproj">
