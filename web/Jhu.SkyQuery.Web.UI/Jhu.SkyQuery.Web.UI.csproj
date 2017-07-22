@@ -93,6 +93,13 @@
     <Content Include="Assets\Docs\images\jhu.png" />
     <Content Include="Assets\Docs\images\nsf.png" />
     <Content Include="Assets\Docs\images\vao.png" />
+    <Content Include="Assets\Home\home_1.jpg" />
+    <Content Include="Assets\Home\home_2.jpg" />
+    <Content Include="Assets\Home\home_3.jpg" />
+    <Content Include="Assets\Home\skyquery.png" />
+    <Content Include="Assets\Home\social-facebook.png" />
+    <Content Include="Assets\Home\social-twitter.png" />
+    <Content Include="Assets\Home\social-youtube.png" />
     <Content Include="Assets\Schema\Icons\test.png" />
     <Content Include="Assets\Schema\Pages\acvs.html" />
     <Content Include="Assets\Schema\Pages\akari.html" />
@@ -766,7 +773,6 @@
   <ItemGroup>
     <Folder Include="App_Themes\" />
     <Folder Include="Assets\Docs\07_api\" />
-    <Folder Include="Assets\Home\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Keystone\Jhu.Graywulf.Keystone.csproj">
