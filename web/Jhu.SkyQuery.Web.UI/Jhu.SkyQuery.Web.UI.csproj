@@ -79,10 +79,9 @@
     <Content Include="Assets\Docs\03_xmatch\01_form.aspx" />
     <Content Include="Assets\Docs\03_xmatch\02_algorithm.aspx" />
     <Content Include="Assets\Docs\04_query\00_index.aspx" />
-    <Content Include="Assets\Docs\04_query\01_simple.aspx" />
-    <Content Include="Assets\Docs\04_query\02_xmatch.aspx" />
-    <Content Include="Assets\Docs\04_query\03_region.aspx" />
-    <Content Include="Assets\Docs\04_query\04_functions.aspx" />
+    <Content Include="Assets\Docs\04_query\01_sql.aspx" />
+    <Content Include="Assets\Docs\04_query\02_region.aspx" />
+    <Content Include="Assets\Docs\04_query\03_functions.aspx" />
     <Content Include="Assets\Docs\05_mydb\00_index.aspx" />
     <Content Include="Assets\Docs\06_jobs\00_index.aspx" />
     <Content Include="Assets\Docs\99_info\00_index.aspx" />
