@@ -826,6 +826,10 @@
       <Project>{5460db30-cfd9-4edb-a1e8-161a7cc505c5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Scheduler\Jhu.Graywulf.Scheduler.csproj">
+      <Project>{94ab6a2e-6877-4fed-87e2-1f9f17622f43}</Project>
+      <Name>Jhu.Graywulf.Scheduler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
       <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
       <Name>Jhu.Graywulf.Schema</Name>
