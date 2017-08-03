@@ -114,6 +114,7 @@
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTable.sql" />
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTableHtm.sql" />
     <Content Include="Jobs\Query\XMatchResources\ComputeMinMaxError.sql" />
+    <None Include="app.config" />
     <None Include="Jobs\Query\XMatchResources\CreateZoneTable.sql" />
     <Content Include="Jobs\Query\XMatchResources\PopulateLinkTable.sql" />
     <None Include="Jobs\Query\XMatchResources\PopulateZoneTable.sql" />
