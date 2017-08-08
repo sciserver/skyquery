@@ -124,7 +124,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
                     break;
                 case WorkflowEventType.Failed:
                     Console.WriteLine("Query failed.");
-                    Console.WriteLine(e.ExceptionMessage);
+                    Console.WriteLine(e.Exception.Message);
                     break;
                 case WorkflowEventType.Cancelled:
                     Console.WriteLine("Workflow cancelled.");
