@@ -95,6 +95,8 @@ WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
         public void SuspendXMatchQueryTest()
         {
             // TODO: this test can reproduce the NullException problems in the scheduler.
+            // cause: QueryPartition collection is not populated after the job is resumed
+            // from the persistence store.
 
             using (SchedulerTester.Instance.GetExclusiveToken())
             {
