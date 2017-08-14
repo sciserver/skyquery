@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <messageTemplate>
-  <subject>[$Domain.ShortTitle] user activation</subject>
+  <subject>[[$Domain.ShortTitle]] User activation</subject>
   <body>Dear [$FirstName] [$LastName],
 
 Your [$Domain.ShortTitle] user account has been created but has to be activated.

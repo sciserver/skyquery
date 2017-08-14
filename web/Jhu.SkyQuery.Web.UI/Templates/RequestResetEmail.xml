@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <messageTemplate>
-  <subject>[$Domain.ShortTitle] password reset request</subject>
+  <subject>[[$Domain.ShortTitle]] Password reset request</subject>
   <body>Dear [$FirstName] [$LastName],
 
 Your [$Domain.ShortTitle] user account information is below.
