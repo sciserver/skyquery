@@ -28,7 +28,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     xmqp.InitializeQueryObject(null);
                     break;
                 case Jhu.Graywulf.Jobs.Query.ExecutionMode.Graywulf:
-                    using (RegistryContext context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
+                    using (RegistryContext context = ContextManager.Instance.CreateReadOnlyContext())
                     {
                         xmqp.InitializeQueryObject(context);
                     }

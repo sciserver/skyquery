@@ -74,7 +74,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         private string GetExecuteQueryTextTestHelper(string sql)
         {
-            using (var context = ContextManager.Instance.CreateContext(ConnectionMode.AutoOpen, TransactionMode.AutoCommit))
+            using (var context = ContextManager.Instance.CreateReadOnlyContext())
             {
                 var sm = new GraywulfSchemaManager(new FederationContext(context, null));
 
