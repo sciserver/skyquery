@@ -1,7 +1,8 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Title="Info" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" Title="About" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="Text" runat="server">
-    <h3>Personnel</h3>
+    <h1>About SkyQuery</h1>
+    <h2>Personnel</h2>
     <ul>
         <li>László Dobos<sup>1</sup>, system architecture, software development, concept</li>
         <li>Tamás Budavári<sup>2</sup>, spatial library, cross-match algorithm, concept</li>
@@ -18,7 +19,7 @@
         <li><a href="http://idies.jhu.edu/">Institute of Data Intensive Science and Engineering</a> (IDIES), <a href="https://www.jhu.edu/">The Johns Hopkins University</a>, Baltimore, USA</li>
         <li><a href="http://physics-astronomy.jhu.edu/">Department of Physics & Astronomy</a>, <a href="https://www.jhu.edu/">The Johns Hopkins University</a>, Baltimore, USA</li>
     </ol>
-    <h3>References</h3>
+    <h2>References</h2>
     <p>
         If you use SkyQuery for preparing your publication, please reference us by citing
         one the following papers.
@@ -43,7 +44,7 @@
             [<a href="http://adsabs.harvard.edu/abs/2013arXiv1308.1440D">ads</a>] [<a href="https://arxiv.org/abs/1308.1440">arxiv</a>] [<a href="http://dl.acm.org/citation.cfm?doid=2484838.2484863">proceedings</a>]
         </li>
     </ul>
-    <h3>Copyright info</h3>
+    <h2>Copyright info</h2>
     <ul>
         <li>Graywulf: (c) 2016 László Dobos, IDIES, The Johns Hopkins University, Eötvös University</li>
     </ul>
