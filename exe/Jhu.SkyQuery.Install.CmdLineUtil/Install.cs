@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Install.CmdLineUtil
         {
             Console.Write("Creating federation for SkyQuery... ");
 
-            using (RegistryContext context = ContextManager.Instance.CreateContext(TransactionMode.ManualCommit))
+            using (RegistryContext context = ContextManager.Instance.CreateReadWriteContext())
             {
                 var ef = new EntityFactory(context);
                 var domain = ef.LoadEntity<Domain>(domainName);
