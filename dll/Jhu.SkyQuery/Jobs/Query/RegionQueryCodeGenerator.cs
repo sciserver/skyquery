@@ -304,7 +304,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="ts"></param>
         /// <param name="htmTable"></param>
         /// <returns></returns>
-        protected Jhu.Graywulf.SqlParser.SearchCondition GenerateHtmJoinCondition(SkyQuery.Parser.SimpleTableSource ts, TableReference htmTable, bool partial, int qsi)
+        protected Jhu.Graywulf.SqlParser.BooleanExpression GenerateHtmJoinCondition(SkyQuery.Parser.SimpleTableSource ts, TableReference htmTable, bool partial, int qsi)
         {
             var coords = ts.Coordinates;
 
@@ -315,15 +315,15 @@ namespace Jhu.SkyQuery.Jobs.Query
                 GetHtmIdExpression(coords),
                 Expression.Create(ColumnIdentifier.Create(htmidstart)),
                 Expression.Create(ColumnIdentifier.Create(htmidend)));
-            var limitssc = Jhu.Graywulf.SqlParser.SearchCondition.Create(false, limitsp);
+            var limitssc = Jhu.Graywulf.SqlParser.BooleanExpression.Create(false, limitsp);
 
             var htmpartial = new ColumnReference(htmTable, "Partial", DataTypes.SqlBit);
             var partialp = Jhu.Graywulf.SqlParser.Predicate.CreateEquals(
                 Expression.Create(htmpartial),
                 Expression.CreateNumber(partial ? "1" : "0"));
-            var partialsc = Jhu.Graywulf.SqlParser.SearchCondition.Create(false, partialp);
+            var partialsc = Jhu.Graywulf.SqlParser.BooleanExpression.Create(false, partialp);
 
-            var sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(limitssc, partialsc, LogicalOperator.CreateAnd());
+            var sc = Jhu.Graywulf.SqlParser.BooleanExpression.Create(limitssc, partialsc, LogicalOperator.CreateAnd());
 
             // Add precise filtering if necessary
             if (partial && 
@@ -332,13 +332,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable))
             {
                 var rcc = GenerateRegionContainsCondition(ts, qsi);
-                sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(sc, rcc, LogicalOperator.CreateAnd());
+                sc = Jhu.Graywulf.SqlParser.BooleanExpression.Create(sc, rcc, LogicalOperator.CreateAnd());
             }
 
             return sc;
         }
 
-        protected Jhu.Graywulf.SqlParser.SearchCondition GenerateRegionContainsCondition(SkyQuery.Parser.SimpleTableSource ts, int qsi)
+        protected Jhu.Graywulf.SqlParser.BooleanExpression GenerateRegionContainsCondition(SkyQuery.Parser.SimpleTableSource ts, int qsi)
         {
             string udt;
             var coords = ts.Coordinates;
@@ -377,7 +377,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             var p = Jhu.Graywulf.SqlParser.Predicate.CreateEquals(Expression.Create(udtf), Expression.CreateNumber("1"));
-            var sc = Jhu.Graywulf.SqlParser.SearchCondition.Create(false, p);
+            var sc = Jhu.Graywulf.SqlParser.BooleanExpression.Create(false, p);
 
             return sc;
         }

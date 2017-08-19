@@ -65,7 +65,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var ss = Parse(sql);
             var ts = ss.EnumerateSourceTables(false).First();
 
-            var sc = (Jhu.Graywulf.SqlParser.SearchCondition)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
+            var sc = (Jhu.Graywulf.SqlParser.BooleanExpression)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
 
             return CodeGenerator.Execute(sc);
         }
@@ -117,7 +117,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 BinCount = 200,
                 KeyColumn = Graywulf.SqlParser.Expression.Create(keycol),
-                KeyColumnDataType = DataTypes.SqlFloat
+                KeyColumnDataType = Jhu.Graywulf.Schema.DataTypes.SqlFloat
             };
 
             var cmd = cg.GetTableStatisticsCommand(ts, null);

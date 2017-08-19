@@ -36,7 +36,7 @@ namespace Jhu.SkyQuery.Parser
             AddColumn("LogBF", DataTypes.SqlFloat);
         }
 
-        private Column AddColumn(string name, DataType type)
+        private Column AddColumn(string name, Jhu.Graywulf.Schema.DataType type)
         {
             var col = new Column();
             col.Name = name;
