@@ -45,7 +45,7 @@ namespace Jhu.SkyQuery.Parser.Generator
 #endif
 
                     var g = new Jhu.Graywulf.ParserLib.ParserGenerator();
-                    g.Execute(outfile, new GrammarInfo(typeof(SkyQueryGrammar)));
+                    g.Execute(outfile, typeof(SkyQueryGrammar));
 
 #if !DEBUG
                 }

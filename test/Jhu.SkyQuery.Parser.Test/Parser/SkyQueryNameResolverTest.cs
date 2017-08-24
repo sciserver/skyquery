@@ -20,10 +20,10 @@ namespace Jhu.SkyQuery.Parser
             return new SqlServerSchemaManager();
         }
 
-        protected override QuerySpecification Parse(string query)
+        protected XMatchQuerySpecification Parse(string query)
         {
-            var ss = (SelectStatement)Parser.Execute(new SelectStatement(), query);
-            var qs = (SkyQuery.Parser.QuerySpecification)ss.EnumerateQuerySpecifications().First();
+            var ss = Parser.Execute<XMatchSelectStatement>(query);
+            var qs = (XMatchQuerySpecification)ss.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;

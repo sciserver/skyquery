@@ -6,7 +6,7 @@ using Jhu.Graywulf.ParserLib;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class XMatchSelectStatement : RegionSelectStatement
+    public partial class XMatchSelectStatement
     {
         public override bool IsPartitioned
         {
@@ -17,25 +17,11 @@ namespace Jhu.SkyQuery.Parser
         {
             get { return (XMatchQuerySpecification)QueryExpression.FindDescendant<QuerySpecification>(); }
         }
-
-        public XMatchSelectStatement()
-            : base()
-        {
-        }
-
-        public XMatchSelectStatement(XMatchSelectStatement old)
-            : base(old)
-        {
-        }
-
+        
         public XMatchSelectStatement(SelectStatement old)
             : base(old)
         {
         }
-
-        public override object Clone()
-        {
-            return new XMatchSelectStatement(this);
-        }
+        
     }
 }

@@ -19,12 +19,12 @@ namespace Jhu.SkyQuery.Parser
             return new SqlServerSchemaManager();
         }
 
-        private SelectStatement Parse(string query)
+        private XMatchSelectStatement Parse(string query)
         {
             var p = new SkyQueryParser();
-            var ss = (SelectStatement)p.Execute(query);
+            var ss = p.Execute<XMatchSelectStatement>(query);
 
-            var qs = (SkyQuery.Parser.QuerySpecification)ss.EnumerateQuerySpecifications().First();
+            var qs = ss.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
@@ -56,7 +56,7 @@ FROM XMATCH
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ValidatorException))]
+        [ExpectedException(typeof(ParserException))]
         public void XMatchUnionQueryTest()
         {
             var sql =
@@ -76,7 +76,7 @@ FROM CatalogA a
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ValidatorException))]
+        [ExpectedException(typeof(ParserException))]
         public void XMatchSubqueryTest()
         {
             var sql =

@@ -86,19 +86,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
-    <Compile Include="Parser\SimpleTableSource.cs" />
-    <Compile Include="Parser\TableCoordinates.cs" />
     <Compile Include="Parser\QuerySpecification.cs" />
     <Compile Include="Parser\RegionClause.cs" />
     <Compile Include="Parser\RegionQuerySpecification.cs" />
+    <Compile Include="Parser\RegionSelectStatement.cs" />
     <Compile Include="Parser\SelectStatement.cs" />
+    <Compile Include="Parser\SimpleTableSource.cs" />
     <Compile Include="Parser\SkyQueryNameResolver.cs" />
     <Compile Include="Parser\SkyQueryParser.cs" />
     <Compile Include="Parser\SkyQueryValidator.cs" />
+    <Compile Include="Parser\TableCoordinates.cs" />
     <Compile Include="Parser\TableSource.cs" />
     <Compile Include="Parser\XMatchQuerySpecification.cs" />
     <Compile Include="Parser\XMatchSelectStatement.cs" />
-    <Compile Include="Parser\RegionSelectStatement.cs" />
     <Compile Include="Parser\XMatchTableSource.cs" />
     <Compile Include="Parser\XMatchTableSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

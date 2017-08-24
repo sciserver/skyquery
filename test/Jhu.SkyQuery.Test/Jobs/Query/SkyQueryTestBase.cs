@@ -35,10 +35,10 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             return new SqlServerSchemaManager();
         }
 
-        protected virtual SelectStatement Parse(string sql)
+        protected XMatchSelectStatement Parse(string sql)
         {
             var p = new SkyQueryParser();
-            var ss = (SelectStatement)p.Execute(new SelectStatement(), sql);
+            var ss = p.Execute<XMatchSelectStatement>(sql);
             return ss;
         }
 

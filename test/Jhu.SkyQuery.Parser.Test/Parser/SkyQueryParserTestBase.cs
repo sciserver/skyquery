@@ -25,9 +25,9 @@ namespace Jhu.SkyQuery.Parser
             get { return new SkyQueryParser(); }
         }
 
-        protected virtual QuerySpecification Parse(string query)
+        protected XMatchQuerySpecification Parse(string query)
         {
-            return (QuerySpecification)((SelectStatement)Parser.Execute(query)).EnumerateQuerySpecifications().First(); ;
+            return (XMatchQuerySpecification)(Parser.Execute<XMatchSelectStatement>(query)).EnumerateQuerySpecifications().First(); ;
         }
 
         protected Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator CodeGenerator

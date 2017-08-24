@@ -6,7 +6,7 @@ using Jhu.Graywulf.ParserLib;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class RegionSelectStatement : SelectStatement
+    public partial class RegionSelectStatement
     {
         #region Constructors and initializers
 
@@ -14,17 +14,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get { return FindDescendantRecursive<RegionClause>(); }
         }
-
-        public RegionSelectStatement()
-            : base()
-        {
-        }
-
-        public RegionSelectStatement(RegionSelectStatement old)
-            : base(old)
-        {
-        }
-
+        
         public RegionSelectStatement(SelectStatement old)
             : base(old)
         {
@@ -34,12 +24,7 @@ namespace Jhu.SkyQuery.Parser
             : base(old)
         {
         }
-
-        public override object Clone()
-        {
-            return new RegionSelectStatement(this);
-        }
-
+        
         #endregion
     }
 }

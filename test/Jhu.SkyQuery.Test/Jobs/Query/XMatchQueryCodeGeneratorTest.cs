@@ -32,11 +32,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        protected override SkyQuery.Parser.SelectStatement Parse(string sql)
+        protected XMatchSelectStatement Parse(string sql)
         {
             var p = new SkyQueryParser();
-            var ss = (SkyQuery.Parser.SelectStatement)p.Execute(new SkyQuery.Parser.SelectStatement(), sql);
-            var qs = (SkyQuery.Parser.QuerySpecification)ss.EnumerateQuerySpecifications().First();
+            var ss = p.Execute<XMatchSelectStatement>(sql);
+            var qs = (XMatchQuerySpecification)ss.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
