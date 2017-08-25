@@ -67,7 +67,7 @@ namespace Jhu.SkyQuery.Parser
         {
             int qsi = 0;    // counts query specifications
             int xmi = 0;    // counts xmatch constructs
-            foreach (var qs in selectStatement.EnumerateQuerySpecifications())
+            foreach (var qs in selectStatement.QueryExpression.EnumerateQuerySpecifications())
             {
                 if (qsi > 0)
                 {

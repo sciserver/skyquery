@@ -15,13 +15,8 @@ namespace Jhu.SkyQuery.Parser
 
         public XMatchQuerySpecification XMatchQuerySpecification
         {
-            get { return (XMatchQuerySpecification)QueryExpression.FindDescendant<QuerySpecification>(); }
+            get { return QueryExpression.FindDescendant<XMatchQuerySpecification>(); }
         }
-        
-        public XMatchSelectStatement(SelectStatement old)
-            : base(old)
-        {
-        }
-        
+
     }
 }

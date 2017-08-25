@@ -6,7 +6,7 @@ using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public partial class SimpleTableSource : ITableSource
+    public partial class CoordinatesTableSource : SimpleTableSource
     {
         #region Private member variables
 
@@ -21,8 +21,12 @@ namespace Jhu.SkyQuery.Parser
         }
 
         #endregion
-
         #region Constructors and initializers
+
+        public CoordinatesTableSource(SimpleTableSource other)
+            :base(other)
+        {
+        }
 
         protected override void OnInitializeMembers()
         {
@@ -39,7 +43,12 @@ namespace Jhu.SkyQuery.Parser
 
             this.coordinates = new TableCoordinates(this);
         }
-        
+
+        public override object Clone()
+        {
+            return new CoordinatesTableSource(this);
+        }
+
         #endregion
 
         public override void Interpret()

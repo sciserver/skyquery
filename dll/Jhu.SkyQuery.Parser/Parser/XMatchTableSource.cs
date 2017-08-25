@@ -8,14 +8,19 @@ using Jhu.Graywulf.SqlParser;
 namespace Jhu.SkyQuery.Parser
 {
 
-    public partial class XMatchTableSource : ITableSource
+    public partial class XMatchTableSource : ITableReference, ITableSource
     {
         private TableReference tableReference;
 
-        public virtual TableReference TableReference
+        public override TableReference TableReference
         {
             get { return tableReference; }
             set { tableReference = value; }
+        }
+
+        public override ITableSource SpecificTableSource
+        {
+            get { return this; }
         }
 
         public bool IsSubquery
@@ -62,18 +67,6 @@ namespace Jhu.SkyQuery.Parser
             if (old != null)
             {
                 this.tableReference = old.tableReference;
-            }
-        }
-        
-        public override Node Exchange()
-        {
-            switch (XMatchAlgorithm.ToUpper())
-            {
-                case Constants.AlgorithmBayesFactor:
-                    var xts = new BayesFactorXMatchTableSource(this);
-                    return xts;
-                default:
-                    throw new NotImplementedException();
             }
         }
         

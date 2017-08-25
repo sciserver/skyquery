@@ -2,11 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.ParserLib;
 using Jhu.Graywulf.SqlParser;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.SqlCodeGen.SqlServer;
 
 namespace Jhu.SkyQuery.Parser
 {
@@ -223,7 +219,7 @@ namespace Jhu.SkyQuery.Parser
                 return htmIdHintArguments[0];
             }
         }
-        
+
         #endregion
         #region ZoneID column and hint accessors
 
@@ -258,7 +254,7 @@ namespace Jhu.SkyQuery.Parser
                 return zoneIdHintArguments[0];
             }
         }
-        
+
         #endregion
         #region Coordinate error hint accessors
 
@@ -467,12 +463,12 @@ namespace Jhu.SkyQuery.Parser
             return hint.FindDescendant<FunctionArguments>()
                        .FindDescendant<ArgumentList>()
                        .EnumerateDescendants<Argument>()
-                       .Select(a => a.Expression)
+                       .Select(a => (Expression)a.Expression)
                        .ToArray();
         }
 
         #endregion
-        
+
         private Expression CreateColumnExpression(string column)
         {
             var cr = new ColumnReference(table.TableReference, table.TableReference.TableOrView.Columns[column]);

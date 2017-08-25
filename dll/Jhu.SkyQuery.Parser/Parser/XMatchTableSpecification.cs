@@ -24,9 +24,9 @@ namespace Jhu.SkyQuery.Parser
             get { return TableSource.TableReference; }
         }
 
-        public SimpleTableSource TableSource
+        public CoordinatesTableSource TableSource
         {
-            get { return FindDescendant<SimpleTableSource>(); }
+            get { return FindDescendant<CoordinatesTableSource>(); }
         }
 
         public TableCoordinates Coordinates
@@ -39,8 +39,8 @@ namespace Jhu.SkyQuery.Parser
         {
             get
             {
-                var qs = (XMatchQuerySpecification)FindAscendant<SkyQuery.Parser.QuerySpecification>();
-                return qs.Region;
+                var ss = FindAscendant<XMatchSelectStatement>();
+                return ss.Region;
             }
         }
 

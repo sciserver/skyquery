@@ -16,11 +16,6 @@ namespace Jhu.SkyQuery.Parser
         {
         }
 
-        public BayesFactorXMatchQuerySpecification(QuerySpecification qs)
-            :base(qs)
-        {
-        }
-
         public BayesFactorXMatchQuerySpecification(XMatchQuerySpecification xqs)
             :base(xqs)
         {
