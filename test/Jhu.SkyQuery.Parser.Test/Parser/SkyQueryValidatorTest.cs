@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.SqlParser;
 using Jhu.SkyQuery.Parser;
 using Jhu.Graywulf.Schema;
@@ -21,18 +21,18 @@ namespace Jhu.SkyQuery.Parser
 
         private XMatchSelectStatement Parse(string query)
         {
-            var p = new SkyQueryParser();
-            var ss = p.Execute<XMatchSelectStatement>(query);
-
-            var qs = ss.EnumerateQuerySpecifications().First();
+            var script = new SkyQueryParser().Execute<StatementBlock>(query);
+            var statement = script.FindDescendantRecursive<Statement>();
+            var select = statement.FindDescendant<XMatchSelectStatement>();
+            var qs = select.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
             nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
-            nr.Execute(ss);
+            nr.Execute(select);
 
-            return ss;
+            return select;
         }
 
         private void Validate(SelectStatement ss)
@@ -49,8 +49,7 @@ namespace Jhu.SkyQuery.Parser
 FROM XMATCH
     (MUST EXIST IN CatalogA a WITH(POINT(a.ra, a.dec), ERROR(0.1)),
      MUST EXIST IN CatalogB b WITH (POINT(b.ra, b.dec), ERROR(0.2)),
-     LIMIT BAYESFACTOR TO 1000) AS x
-";
+     LIMIT BAYESFACTOR TO 1000) AS x";
 
             var ss = Parse(sql);
         }

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.SqlParser;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
@@ -36,7 +36,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         {
             var p = new SkyQueryParser();
             var ss = p.Execute<XMatchSelectStatement>(sql);
-            var qs = (XMatchQuerySpecification)ss.EnumerateQuerySpecifications().First();
+            var qs = (XMatchQuerySpecification)ss.QueryExpression.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
@@ -55,7 +55,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var q = CreateQuery(sql);
             var cg = new XMatchQueryCodeGenerator(q);
 
-            foreach (var qs in q.SelectStatement.EnumerateQuerySpecifications())
+            foreach (var qs in q.SelectStatement.QueryExpression.EnumerateQuerySpecifications())
             {
                 foreach (var ts in qs.EnumerateSourceTables(false))
                 {
@@ -94,7 +94,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                     DatabaseName = "Graywulf_Temp"
                 };
 
-                var qs = xmqp.Query.SelectStatement.EnumerateQuerySpecifications().First();
+                var qs = xmqp.Query.SelectStatement.QueryExpression.EnumerateQuerySpecifications().First();
                 var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
                 var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
                 xmqp.GenerateSteps(xmtables);
@@ -194,12 +194,12 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var tts = qs.EnumerateSourceTables(false).ToArray();
+            var tts = qs.QueryExpression.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            var coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[1]);
             Assert.IsNotNull(CodeGenerator.FindHtmIndex(coords));
 
-            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[2]);
             Assert.IsNotNull(CodeGenerator.FindHtmIndex(coords));
         }
 
@@ -216,12 +216,12 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var tts = qs.EnumerateSourceTables(false).ToArray();
+            var tts = qs.QueryExpression.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            var coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[1]);
             Assert.IsNull(CodeGenerator.FindHtmIndex(coords));
 
-            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[2]);
             Assert.IsNull(CodeGenerator.FindHtmIndex(coords));
         }
 
@@ -238,12 +238,12 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var tts = qs.EnumerateSourceTables(false).ToArray();
+            var tts = qs.QueryExpression.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            var coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[1]);
             Assert.IsNotNull(CodeGenerator.FindZoneIndex(coords));
 
-            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[2]);
             Assert.IsNotNull(CodeGenerator.FindZoneIndex(coords));
         }
 
@@ -260,12 +260,12 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var tts = qs.EnumerateSourceTables(false).ToArray();
+            var tts = qs.QueryExpression.EnumerateSourceTables(false).ToArray();
 
-            var coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[1]);
+            var coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[1]);
             Assert.IsNull(CodeGenerator.FindZoneIndex(coords));
 
-            coords = new TableCoordinates((SkyQuery.Parser.SimpleTableSource)tts[2]);
+            coords = new TableCoordinates((SkyQuery.Parser.CoordinatesTableSource)tts[2]);
             Assert.IsNull(CodeGenerator.FindZoneIndex(coords));
         }
 

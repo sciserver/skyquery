@@ -810,10 +810,6 @@
       <Project>{129e1b6f-b0b3-4c7c-8fe2-4b1b8556b96d}</Project>
       <Name>Jhu.Graywulf.Metadata</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.ParserLib\Jhu.Graywulf.ParserLib.csproj">
-      <Project>{4039b7d0-f8e5-49d8-a770-133dbed2ea75}</Project>
-      <Name>Jhu.Graywulf.ParserLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry.Enum\Jhu.Graywulf.Registry.Enum.csproj">
       <Project>{f163a859-0fe2-4099-bd85-f61c9c05426a}</Project>
       <Name>Jhu.Graywulf.Registry.Enum</Name>

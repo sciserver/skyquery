@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.SqlParser;
 using Jhu.SkyQuery.Parser;
 using Jhu.Graywulf.Schema;
@@ -20,16 +20,18 @@ namespace Jhu.SkyQuery.Parser
             return new SqlServerSchemaManager();
         }
 
-        protected XMatchQuerySpecification Parse(string query)
+        protected QuerySpecification Parse(string query)
         {
-            var ss = Parser.Execute<XMatchSelectStatement>(query);
-            var qs = (XMatchQuerySpecification)ss.EnumerateQuerySpecifications().First();
+            var script = new SkyQueryParser().Execute<StatementBlock>(query);
+            var statement = script.FindDescendantRecursive<Statement>();
+            var select = statement.FindDescendant<SelectStatement>();
+            var qs = select.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
             nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
-            nr.Execute(ss);
+            nr.Execute(select);
 
             return qs;
         }
@@ -188,8 +190,7 @@ FROM XMATCH
      MUST EXIST IN CatalogB b WITH(POINT(b.cx, b.cy, b.cz)),
      MAY EXIST IN CatalogC c WITH(POINT(c.cx, c.cy, c.cz)),
      NOT EXIST IN CatalogD d WITH(POINT(d.cx, d.cy, d.cz)),
-     LIMIT BAYESFACTOR TO 1e3) AS x
-";
+     LIMIT BAYESFACTOR TO 1e3) AS x";
 
             var qs = Parse(sql);
             var ts = qs.SourceTableReferences.Values.ToArray();

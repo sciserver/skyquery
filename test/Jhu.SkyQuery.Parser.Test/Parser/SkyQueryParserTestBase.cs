@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.SqlParser;
 using Jhu.SkyQuery.Parser;
@@ -25,9 +25,14 @@ namespace Jhu.SkyQuery.Parser
             get { return new SkyQueryParser(); }
         }
 
-        protected XMatchQuerySpecification Parse(string query)
+        protected QuerySpecification Parse(string query)
         {
-            return (XMatchQuerySpecification)(Parser.Execute<XMatchSelectStatement>(query)).EnumerateQuerySpecifications().First(); ;
+            var script = Parser.Execute<StatementBlock>(query);
+            var statement = script.FindDescendantRecursive<Statement>();
+            var select = statement.FindDescendant<SelectStatement>();
+            var qs = select.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
+
+            return qs;
         }
 
         protected Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator CodeGenerator

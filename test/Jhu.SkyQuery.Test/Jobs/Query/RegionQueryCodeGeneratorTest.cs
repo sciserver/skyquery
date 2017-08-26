@@ -63,7 +63,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         private string GenerateRegionContainsConditionTestHelper(string sql)
         {
             var ss = Parse(sql);
-            var ts = ss.EnumerateSourceTables(false).First();
+            var ts = ss.QueryExpression.EnumerateSourceTables(false).First();
 
             var sc = (Jhu.Graywulf.SqlParser.BooleanExpression)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
 
@@ -107,7 +107,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             q.ExecutionMode = ExecutionMode.SingleServer;
 
             var cg = new RegionQueryCodeGenerator(q);
-            var ts = q.SelectStatement.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
+            var ts = q.SelectStatement.QueryExpression.EnumerateQuerySpecifications().First().EnumerateSourceTables(false).First();
 
             // Fake that dec is used as a partitioning key
             var keycol = ts.TableReference.ColumnReferences.First(c => c.ColumnName == "dec");
@@ -136,7 +136,7 @@ SELECT *
 FROM table WITH (HTMID(htmid))";
 
             var ss = Parse(sql);
-            var ts = ss.EnumerateSourceTables(false).First();
+            var ts = ss.QueryExpression.EnumerateSourceTables(false).First();
 
             var sc = CallMethod(CodeGenerator, "GenerateHtmJoinCondition", ts, HtmTable, true, 0);
             Assert.AreEqual("htmid BETWEEN __htm.HtmIDStart AND __htm.HtmIDEnd AND __htm.Partial = 1", sc.ToString());

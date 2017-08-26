@@ -6,7 +6,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.SqlParser;
 using Jhu.Graywulf.SqlCodeGen;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
@@ -119,7 +119,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="qs"></param>
         protected override void RemoveNonStandardTokens(Graywulf.SqlParser.QuerySpecification qs)
         {
-            foreach (var ts in qs.EnumerateDescendantsRecursive<SkyQuery.Parser.SimpleTableSource>())
+            foreach (var ts in qs.EnumerateDescendantsRecursive<SkyQuery.Parser.CoordinatesTableSource>())
             {
                 // TODO: update this to leave standard SQL Server hints?
                 var hint = ts.FindDescendant<Jhu.Graywulf.SqlParser.TableHintClause>();
@@ -214,9 +214,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 AppendRegionJoinsAndConditions(rts, qsi, ref tsi);
             }
 
-            if (tableSource.SpecificTableSource is SkyQuery.Parser.SimpleTableSource)
+            if (tableSource.SpecificTableSource is SkyQuery.Parser.CoordinatesTableSource)
             {
-                var ts = (SkyQuery.Parser.SimpleTableSource)tableSource.SpecificTableSource;
+                var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource.SpecificTableSource;
                 var coords = ts.Coordinates;
 
                 if (coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
@@ -260,7 +260,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
         }
 
-        private Jhu.Graywulf.SqlParser.QuerySpecification GenerateHtmJoinTableQuerySpecification(SkyQuery.Parser.SimpleTableSource ts, int qsi, bool partial)
+        private Jhu.Graywulf.SqlParser.QuerySpecification GenerateHtmJoinTableQuerySpecification(SkyQuery.Parser.CoordinatesTableSource ts, int qsi, bool partial)
         {
             var coords = ts.Coordinates;
 
@@ -304,7 +304,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="ts"></param>
         /// <param name="htmTable"></param>
         /// <returns></returns>
-        protected Jhu.Graywulf.SqlParser.BooleanExpression GenerateHtmJoinCondition(SkyQuery.Parser.SimpleTableSource ts, TableReference htmTable, bool partial, int qsi)
+        protected Jhu.Graywulf.SqlParser.BooleanExpression GenerateHtmJoinCondition(SkyQuery.Parser.CoordinatesTableSource ts, TableReference htmTable, bool partial, int qsi)
         {
             var coords = ts.Coordinates;
 
@@ -338,7 +338,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return sc;
         }
 
-        protected Jhu.Graywulf.SqlParser.BooleanExpression GenerateRegionContainsCondition(SkyQuery.Parser.SimpleTableSource ts, int qsi)
+        protected Jhu.Graywulf.SqlParser.BooleanExpression GenerateRegionContainsCondition(SkyQuery.Parser.CoordinatesTableSource ts, int qsi)
         {
             string udt;
             var coords = ts.Coordinates;
@@ -762,7 +762,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
-            var ts = (SkyQuery.Parser.SimpleTableSource)tableSource;
+            var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource;
             var coords = ts.Coordinates;
             var qs = ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
 
@@ -794,7 +794,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new ArgumentException();
             }
 
-            var ts = (SkyQuery.Parser.SimpleTableSource)tableSource;
+            var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource;
             var qs = (RegionQuerySpecification)ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
             var region = qs.Region;
 
@@ -804,7 +804,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // 3. the region constraint doesn't apply to the table
 
             var table = (TableOrView)tableSource.TableReference.DatabaseObject;
-            var coords = ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates;
+            var coords = ((SkyQuery.Parser.CoordinatesTableSource)tableSource).Coordinates;
 
             if (coords == null || coords.IsNoRegion)
             {
@@ -812,7 +812,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 return base.GetTableStatisticsCommand(tableSource, statisticsDataset);
             }
 
-            var options = new AugmentedTableQueryOptions((SkyQuery.Parser.SimpleTableSource)tableSource, region)
+            var options = new AugmentedTableQueryOptions((SkyQuery.Parser.CoordinatesTableSource)tableSource, region)
             {
                 UseHtm = coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable,
                 UsePartitioning = false,
@@ -845,17 +845,17 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected Jhu.Graywulf.SqlParser.WhereClause GetTableSpecificWhereClause(ITableSource tableSource, bool useRegion)
         {
-            var ts = (SkyQuery.Parser.SimpleTableSource)tableSource;
+            var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource;
             var qs = (RegionQuerySpecification)ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
             var region = qs.Region;
             var where = base.GetTableSpecificWhereClause(tableSource);
 
-            if (region == null || !(tableSource is SkyQuery.Parser.SimpleTableSource))
+            if (region == null || !(tableSource is SkyQuery.Parser.CoordinatesTableSource))
             {
                 return where;
             }
 
-            var coords = ((SkyQuery.Parser.SimpleTableSource)tableSource).Coordinates;
+            var coords = ((SkyQuery.Parser.CoordinatesTableSource)tableSource).Coordinates;
 
             if (useRegion && coords != null && !coords.IsNoRegion && !coords.IsHtmIdHintSpecified)
             {
@@ -865,7 +865,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // In this case, no HTM ID columns is specified so we have to use coordinates
                 // and function calls to apply region filter
 
-                var sc = GenerateRegionContainsCondition((SkyQuery.Parser.SimpleTableSource)tableSource, -1);
+                var sc = GenerateRegionContainsCondition((SkyQuery.Parser.CoordinatesTableSource)tableSource, -1);
 
                 if (where == null)
                 {

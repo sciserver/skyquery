@@ -2,74 +2,72 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 
 namespace Jhu.SkyQuery.Parser.Generator
 {
     [Grammar(Namespace = "Jhu.SkyQuery.Parser", ParserName = "SkyQueryParser",
-        Comparer = "StringComparer.InvariantCultureIgnoreCase", RootToken = "Jhu.Graywulf.SqlParser.StatementBlock")]
+        Comparer = "StringComparer.InvariantCultureIgnoreCase", RootToken = "Jhu.SkyQuery.Parser.StatementBlock")]
     class SkyQueryGrammar : Jhu.Graywulf.SqlParser.Generator.SqlGrammar
     {
-        // This doesn't change the original rule but creates an overload in the
-        // SkyQuery parser that further can be extended
-        public static new Expression<Rule> SimpleTableSource = () => Inherit();
+        public static new Expression<Rule> Statement = () =>
+            Override
+            (
+                Must
+                (
+                    Label,
+                    GotoStatement,
+                    BeginEndStatement,
+                    WhileStatement,
+                    BreakStatement,
+                    ContinueStatement,
+                    ReturnStatement,
+                    IfStatement,
+                    TryCatchStatement,
+                    ThrowStatement,
+
+                    DeclareCursorStatement,
+                    SetCursorStatement,
+                    CursorOperationStatement,
+                    FetchStatement,
+
+                    DeclareVariableStatement,
+                    SetVariableStatement,
+
+                    DeclareTableStatement,
+
+                    CreateTableStatement,
+                    DropTableStatement,
+                    TruncateTableStatement,
+
+                    CreateIndexStatement,
+                    DropIndexStatement,
+
+                    XMatchSelectStatement,      //
+                    RegionSelectStatement,      //
+
+                    SelectStatement,
+                    InsertStatement,
+                    UpdateStatement,
+                    DeleteStatement
+                )
+            );
 
         #region Region grammar
 
         public static Expression<Rule> RegionSelectStatement = () => 
-            Override
+            Inherit
             (
                 SelectStatement,
                 Sequence
                 (
-                    May(CommonTableExpression),
-                    May(CommentOrWhitespace),
-                    RegionQueryExpression,
+                    QueryExpression,
+                    May(Sequence(May(CommentOrWhitespace), RegionClause)),
                     May(Sequence(May(CommentOrWhitespace), OrderByClause)),
                     May(Sequence(May(CommentOrWhitespace), QueryHintClause))
                 )
             );
-
-        public static Expression<Rule> RegionQueryExpression = () =>
-            Override
-            (
-                QueryExpression,
-                Sequence
-                (
-                    Must
-                    (
-                        RegionQueryExpressionBrackets,
-                        RegionQuerySpecification
-                    ),
-                    May(Sequence(May(CommentOrWhitespace), QueryOperator, May(CommentOrWhitespace), RegionQueryExpression))
-                )
-            );
-
-        public static Expression<Rule> RegionQueryExpressionBrackets = () =>
-            Override
-            (
-                QueryExpressionBrackets,
-                QuerySpecification
-            );
-
-        public static new Expression<Rule> RegionQuerySpecification = () =>
-            Override
-            (
-                Sequence
-                (
-                    Keyword("SELECT"),
-                    May(Sequence(CommentOrWhitespace, Must(Keyword("ALL"), CommentOrWhitespace, Keyword("DISTINCT")))),
-                    May(Sequence(CommentOrWhitespace, TopExpression)),
-                    CommentOrWhitespace, SelectList,
-                    May(Sequence(CommentOrWhitespace, IntoClause)),
-                    May(Sequence(CommentOrWhitespace, FromClause)),
-                    May(Sequence(CommentOrWhitespace, RegionClause)),       //
-                    May(Sequence(CommentOrWhitespace, WhereClause)),
-                    May(Sequence(CommentOrWhitespace, GroupByClause)),
-                    May(Sequence(CommentOrWhitespace, HavingClause))
-                )
-            );
-
+        
         public static Expression<Rule> RegionClause = () =>
             Sequence
             (
@@ -137,26 +135,25 @@ namespace Jhu.SkyQuery.Parser.Generator
         #region XMatch grammar
 
         public static Expression<Rule> XMatchSelectStatement = () =>
-            Override
+            Inherit
             (
                 RegionSelectStatement,
                 Sequence
                 (
                     XMatchQueryExpression,
-                    May(Sequence(May(CommentOrWhitespace), OrderByClause)),
-                    May(Sequence(May(CommentOrWhitespace), QueryHintClause))
+                    May(Sequence(May(CommentOrWhitespace), RegionClause))
                 )
             );
 
         public static Expression<Rule> XMatchQueryExpression = () =>
-            Override
+            Inherit
             (
                 QueryExpression,
                 XMatchQuerySpecification
             );
 
         public static Expression<Rule> XMatchQuerySpecification = () =>
-            Override
+            Inherit
             (
                 QuerySpecification,
                 Sequence
@@ -165,25 +162,25 @@ namespace Jhu.SkyQuery.Parser.Generator
                     May(CommentOrWhitespace),
                     SelectList,
                     May(Sequence(May(CommentOrWhitespace), IntoClause)),
-                    May(Sequence(May(CommentOrWhitespace), XMatchFromClause)),
-                    May(Sequence(May(CommentOrWhitespace), RegionClause)),
+                    May(CommentOrWhitespace), XMatchFromClause,
                     May(Sequence(May(CommentOrWhitespace), WhereClause))
                 )
             );
 
         public static Expression<Rule> XMatchFromClause = () =>
-            Override
+            Inherit
             (
                 FromClause,
                 Sequence
                 (
+                    Keyword("FROM"),
                     May(CommentOrWhitespace),
                     XMatchTableSourceExpression
                 )
             );
 
         public static Expression<Rule> XMatchTableSourceExpression = () =>
-            Override
+            Inherit
             (
                 TableSourceExpression,
                 Sequence
@@ -192,19 +189,23 @@ namespace Jhu.SkyQuery.Parser.Generator
                     May(Sequence(May(CommentOrWhitespace), JoinedTable))
                 )
             );
-
+        
         public static Expression<Rule> XMatchTableSource = () =>
-            Sequence
+            Inherit
             (
-                Keyword("XMATCH"),
-                May(CommentOrWhitespace), BracketOpen,
-                May(CommentOrWhitespace), XMatchTableList,
-                May(CommentOrWhitespace), Comma,
-                May(CommentOrWhitespace), XMatchConstraint,
-                May(CommentOrWhitespace), BracketClose,
-                May(CommentOrWhitespace),
-                May(Sequence(Keyword("AS"), CommentOrWhitespace)),
-                TableAlias
+                TableSource,
+                Sequence
+                (
+                    Keyword("XMATCH"),
+                    May(CommentOrWhitespace), BracketOpen,
+                    May(CommentOrWhitespace), XMatchTableList,
+                    May(CommentOrWhitespace), Comma,
+                    May(CommentOrWhitespace), XMatchConstraint,
+                    May(CommentOrWhitespace), BracketClose,
+                    May(CommentOrWhitespace),
+                    May(Sequence(Keyword("AS"), May(CommentOrWhitespace))),
+                    TableAlias
+                )
             );
 
         public static Expression<Rule> XMatchTableList = () =>
@@ -239,14 +240,14 @@ namespace Jhu.SkyQuery.Parser.Generator
         public static Expression<Rule> XMatchConstraint = () =>
             Sequence
             (
-                Keyword("LIMIT"),
+                Literal("LIMIT"),
                 CommentOrWhitespace, XMatchAlgorithm,
-                CommentOrWhitespace, Keyword("TO"),
+                CommentOrWhitespace, Literal("TO"),
                 CommentOrWhitespace, Number
             );
 
         public static Expression<Rule> XMatchAlgorithm = () =>
-            Must(Keyword("BAYESFACTOR"), Keyword("DISTANCE"));
+            Must(Literal("BAYESFACTOR"), Literal("DISTANCE"));
 
         #endregion
     }

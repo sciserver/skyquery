@@ -65,10 +65,6 @@
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.ParserLib\Jhu.Graywulf.ParserLib.csproj">
-      <Project>{4039B7D0-F8E5-49D8-A770-133DBED2EA75}</Project>
-      <Name>Jhu.Graywulf.ParserLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
       <Project>{5868B518-CBFC-43FB-B9C8-C617A65121C4}</Project>
       <Name>Jhu.Graywulf.Schema</Name>

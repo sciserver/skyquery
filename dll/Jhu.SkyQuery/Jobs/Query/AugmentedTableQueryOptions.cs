@@ -10,7 +10,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 {
     public class AugmentedTableQueryOptions
     {
-        private SkyQuery.Parser.SimpleTableSource table;
+        private SkyQuery.Parser.CoordinatesTableSource table;
         private Region region;
         private bool useRegion;
         private bool useConditions;
@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         private ColumnContext columnContext;
         private bool escapeColumnNames;
 
-        public SkyQuery.Parser.SimpleTableSource Table
+        public SkyQuery.Parser.CoordinatesTableSource Table
         {
             get { return table; }
             set { table = value; }
@@ -71,7 +71,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers();
         }
 
-        public AugmentedTableQueryOptions(SkyQuery.Parser.SimpleTableSource table, Region region)
+        public AugmentedTableQueryOptions(SkyQuery.Parser.CoordinatesTableSource table, Region region)
         {
             InitializeMembers();
 

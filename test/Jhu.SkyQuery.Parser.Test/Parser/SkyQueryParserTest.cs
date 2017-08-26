@@ -61,8 +61,8 @@ INNER JOIN SDSSDR7:PhotoObj p
         [TestMethod]
         public void CrossJoinXMatchTest()
         {
-            var sql = @"
-SELECT m.ra, m.dec, x.ra, x.dec
+            var sql = 
+@"SELECT m.ra, m.dec, x.ra, x.dec
 INTO [$targettable]
 FROM XMATCH
      (MUST EXIST IN SDSSDR7:PhotoObjAll AS s WITH(POINT(s.ra, s.dec), ERROR(s.raErr, 0.05, 0.1)),
@@ -82,8 +82,7 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
             var sql =
         @"SELECT TOP 100 a.objid, a.ra, a.dec
 INTO PartitionedSqlQueryTest_SimpleQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid
-";
+FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid";
 
             var qs = Parse(sql);
 
@@ -98,8 +97,7 @@ FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid
         @"SELECT TOP 100 a.objid, a.ra, a.dec
 INTO PartitionedSqlQueryTest_SimpleQueryTest
 FROM SDSSDR7:PhotoObjAll a
-REGION CIRCLE(20, 30, 10)
-";
+REGION CIRCLE(20, 30, 10)";
             var qs = Parse(sql);
 
             Assert.IsTrue(qs.FindAscendant<XMatchSelectStatement>() == null);

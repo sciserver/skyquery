@@ -6,7 +6,7 @@ using System.IO;
 using System.Configuration;
 using System.Text.RegularExpressions;
 using Jhu.Graywulf.CommandLineParser;
-using Jhu.Graywulf.ParserLib;
+using Jhu.Graywulf.Parsing;
 
 namespace Jhu.SkyQuery.Parser.Generator
 {
