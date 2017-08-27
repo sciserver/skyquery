@@ -69,7 +69,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return res;
         }
 
-        public override Jhu.Graywulf.ParserLib.Parser CreateParser()
+        public override Jhu.Graywulf.Parsing.Parser CreateParser()
         {
             return new SkyQueryParser();
         }
