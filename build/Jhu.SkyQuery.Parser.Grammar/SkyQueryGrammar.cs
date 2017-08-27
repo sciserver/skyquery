@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using Jhu.Graywulf.Parsing;
+using Jhu.Graywulf.Parsing.Generator;
 
-namespace Jhu.SkyQuery.Parser.Generator
+namespace Jhu.SkyQuery.Parser.Grammar
 {
     [Grammar(Namespace = "Jhu.SkyQuery.Parser", ParserName = "SkyQueryParser",
         Comparer = "StringComparer.InvariantCultureIgnoreCase", RootToken = "Jhu.SkyQuery.Parser.StatementBlock")]
-    class SkyQueryGrammar : Jhu.Graywulf.SqlParser.Generator.SqlGrammar
+    public class SkyQueryGrammar : Jhu.Graywulf.Sql.Parser.Grammar.SqlGrammar
     {
         public static new Expression<Rule> Statement = () =>
             Override

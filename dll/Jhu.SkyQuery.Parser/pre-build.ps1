@@ -1,6 +1,1 @@
-﻿$ErrorActionPreference = "Stop"
-
-cd "${ProjectDir}..\..\build\Jhu.SkyQuery.Parser.Generator\${OutDir}"
-.\sqpgen.exe generate -o ..\..\..\..\dll\Jhu.SkyQuery.Parser\Parser\SkyQueryParser.g.cs
-
-exit $LASTEXITCODE
+﻿& "${SolutionDir}${OutDir}gwpgen.exe" generate -a ..\..\build\Jhu.SkyQuery.Parser.Grammar\$OutDir\Jhu.SkyQuery.Parser.Grammar.dll -t Jhu.SkyQuery.Parser.Grammar.SkyQueryGrammar -o Parser\SkyQueryParser.g.cs

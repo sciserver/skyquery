@@ -111,6 +111,10 @@
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Parsing\Jhu.Graywulf.Parsing.csproj">
+      <Project>{6215a919-1626-4f32-8c16-5764243b2748}</Project>
+      <Name>Jhu.Graywulf.Parsing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
       <Project>{5868B518-CBFC-43FB-B9C8-C617A65121C4}</Project>
       <Name>Jhu.Graywulf.Schema</Name>

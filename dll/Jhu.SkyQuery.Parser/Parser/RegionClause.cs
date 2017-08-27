@@ -7,7 +7,7 @@ using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public partial class RegionClause : Jhu.Graywulf.ParserLib.Node, ICloneable
+    public partial class RegionClause : Jhu.Graywulf.Parsing.Node, ICloneable
     {
         #region Properties
 
