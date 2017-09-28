@@ -26,11 +26,11 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         {
             var sm = FederationContext.SchemaManager;
             var ds = sm.Datasets[catalog.DatasetName];
-            var t = (TableOrView)ds.GetObject(catalog.TableUniqueKey);
+            var t = (TableOrView)ds.GetObject(catalog.TableReference.TableOrView.UniqueKey);
 
             RefreshColumnLists(catalog, t);
-
-            table.Text = String.Format("{0}:{1}.{2}", ds.Name, t.SchemaName, t.ObjectName);
+            
+            table.Text = t.DisplayName; // String.Format("{0}:{1}.{2}", ds.Name, t.SchemaName, t.ObjectName);
             alias.Text = catalog.Alias;
             coordinateMode.SelectedValue = catalog.CoordinateMode.ToString();
             ra.SelectedValue = catalog.RaColumn;

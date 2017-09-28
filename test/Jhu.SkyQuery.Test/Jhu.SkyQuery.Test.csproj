@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppSettings.cs" />
+    <Compile Include="CodeGen\SkyQueryCodeGeneratorTest.cs" />
     <Compile Include="Format\Fits\FitsWriterTest.cs" />
     <Compile Include="Format\Fits\FitsReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGeneratorTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryTest.cs" />
-    <Compile Include="Jobs\Query\SkyQueryTestBase.cs" />
     <Compile Include="Jobs\Query\SqlQueryTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGeneratorTest.cs">
       <SubType>Code</SubType>
@@ -68,6 +68,7 @@
     <Compile Include="Jobs\Query\XMatchQueryFactoryTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryOperationsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SkyQueryTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Plugins\Jhu.Graywulf.Plugins.csproj">

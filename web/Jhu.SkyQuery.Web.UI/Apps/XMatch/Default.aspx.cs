@@ -75,10 +75,10 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
                 if (!String.IsNullOrWhiteSpace(tableList.SelectedValue))
                 {
-                    var ds = FederationContext.SchemaManager.Datasets[datasetList.SelectedValue];
-                    var table = (TableOrView)ds.GetObject(tableList.SelectedValue);
+                    var cg = new SkyQueryCodeGenerator(FederationContext.SchemaManager);
+                    var catalog = cg.CreateCatalog(datasetList.SelectedValue, tableList.SelectedValue);
 
-                    xmatch.AddCatalog(table);
+                    xmatch.AddCatalog(catalog);
 
                     catalogList.UpdateForm();
                 }
@@ -237,7 +237,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
                     foreach (var t in tables)
                     {
-                        li = new ListItem(t.DisplayName, t.UniqueKey);
+                        li = new ListItem(t.DisplayName, t.ObjectNameWithSchema);
                         tableList.Items.Add(li);
                     }
                 }
@@ -262,8 +262,9 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
         {
             xmatch.Validate(FederationContext.SchemaManager);
 
-            var cg = new SkyQueryCodeGenerator();
-            var sql = cg.GenerateXMatchQuery(xmatch, FederationContext.SchemaManager);
+            var cg = new SkyQueryCodeGenerator(FederationContext.SchemaManager);
+            
+            var sql = cg.GenerateXMatchQuery(xmatch);
             var queryJob = new QueryJob(sql);
             query = queryJob.CreateQuery(FederationContext);
             query.Verify();

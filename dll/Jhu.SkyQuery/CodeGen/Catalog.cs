@@ -4,18 +4,20 @@ using System.Linq;
 using System.Web;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.SqlCodeGen.SqlServer;
+using Jhu.Graywulf.SqlParser;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.CodeGen
 {
     [Serializable]
-    public class Catalog
+    public class Catalog : ITableReference
     {
         private int id;
         private XMatchInclusionMethod inclusionMethod;
         private string datasetName;
-        private string tableUniqueKey;
+        private string tableOrViewName;
         private string alias;
+        private TableReference tableReference;
         private CoordinateMode coordinateMode;
         private string raColumn;
         private string decColumn;
@@ -25,6 +27,7 @@ namespace Jhu.SkyQuery.CodeGen
         private double errorMin;
         private double errorMax;
         private string where;
+        private SkyQuery.Parser.SearchCondition searchCondition;
         private List<string> columns;
 
         public int ID
@@ -45,16 +48,22 @@ namespace Jhu.SkyQuery.CodeGen
             set { datasetName = value; }
         }
 
-        public string TableUniqueKey
+        public string TableOrViewName
         {
-            get { return tableUniqueKey; }
-            set { tableUniqueKey = value; }
+            get { return tableOrViewName; }
+            set { tableOrViewName = value; }
         }
 
         public string Alias
         {
             get { return alias; }
             set { alias = value; }
+        }
+
+        public TableReference TableReference
+        {
+            get { return tableReference; }
+            set { tableReference = value; }
         }
 
         public CoordinateMode CoordinateMode
@@ -111,6 +120,12 @@ namespace Jhu.SkyQuery.CodeGen
             set { where = value; }
         }
 
+        public SkyQuery.Parser.SearchCondition SearchCondition
+        {
+            get { return searchCondition; }
+            set { searchCondition = value; }
+        }
+
         public List<string> Columns
         {
             get { return columns; }
@@ -126,8 +141,9 @@ namespace Jhu.SkyQuery.CodeGen
             this.id = 0;
             this.inclusionMethod = XMatchInclusionMethod.Must;
             this.datasetName = null;
-            this.tableUniqueKey = null;
+            this.tableOrViewName = null;
             this.alias = null;
+            this.tableReference = null;
             this.coordinateMode = CoordinateMode.Automatic;
             this.raColumn = "ra";
             this.decColumn = "dec";
@@ -137,6 +153,7 @@ namespace Jhu.SkyQuery.CodeGen
             this.errorMin = 0.1;
             this.errorMax = 0.1;
             this.where = null;
+            this.searchCondition = null;
             this.columns = new List<string>();
         }
     }

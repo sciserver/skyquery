@@ -28,6 +28,9 @@ namespace Jhu.SkyQuery.CodeGen
             set { targetTable = value; }
         }
 
+        /// <summary>
+        /// TODO: inherit and move this to subclass
+        /// </summary>
         public double BayesFactor
         {
             get { return bayesFactor; }
@@ -68,29 +71,14 @@ namespace Jhu.SkyQuery.CodeGen
             this.catalogs = new List<Catalog>();
         }
 
-        public Catalog AddCatalog(TableOrView table)
+        public void AddCatalog(Catalog catalog)
         {
-            var catalog = new Catalog()
-            {
-                Alias = GenerateAlias(table),
-                DatasetName = table.Dataset.Name,
-                TableUniqueKey = table.UniqueKey
-            };
-
-            if (table.PrimaryKey != null)
-            {
-                foreach (var ic in table.PrimaryKey.Columns.Values)
-                {
-                    catalog.Columns.Add(ic.Name);
-                }
-            }
-
+            var alias = GenerateCatalogAlias(catalog.TableReference.TableOrView);
+            catalog.Alias = alias;
             catalogs.Add(catalog);
-
-            return catalog;
         }
 
-        private string GenerateAlias(TableOrView table)
+        public string GenerateCatalogAlias(TableOrView table)
         {
             var c = 0;
             var a = table.DatasetName.Substring(0, 1).ToLowerInvariant();
@@ -138,7 +126,7 @@ namespace Jhu.SkyQuery.CodeGen
                 }
 
                 var ds = schemaManager.Datasets[catalog.DatasetName];
-                var t = (TableOrView)ds.GetObject(catalog.TableUniqueKey);
+                var t = (TableOrView)ds.GetObject(catalog.TableReference.TableOrView.UniqueKey);
 
                 if (t.PrimaryKey == null)
                 {

@@ -34,7 +34,7 @@
                         Style="width: 100%; box-sizing: border-box;">
                     </asp:DropDownList>
                 </div>
-                <asp:LinkButton runat="server" ID="addCatalog" Text="add catalog"
+                <asp:LinkButton runat="server" ID="addCatalog" Text="add selected"
                     CausesValidation="true"
                     OnClick="AddCatalog_Click" />
                 <asp:LinkButton runat="server" ID="reset" Text="reset"
