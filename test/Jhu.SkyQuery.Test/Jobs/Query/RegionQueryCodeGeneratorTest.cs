@@ -519,8 +519,8 @@ FROM [SkyNode_TEST].[dbo].[SampleData_PrimaryKey]
             var sql = @"
 SELECT objID
 FROM TEST:SDSSDR7PhotoObjAll
-REGION 'CIRCLE J2000 0 0 10'
-WHERE ra > 2";
+WHERE ra > 2
+REGION 'CIRCLE J2000 0 0 10'";
 
             var gt = @"SELECT 
 	FROM [$codedb].htm.Cover(@r) __htm
@@ -548,8 +548,8 @@ WHERE ra > 2";
             var sql = @"
 SELECT objID
 FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec, cx, cy, cz), HTMID(htmId))
-REGION 'CIRCLE J2000 0 0 10'
-WHERE ra > 2";
+WHERE ra > 2
+REGION 'CIRCLE J2000 0 0 10'";
 
             var gt = @"SELECT 
 	FROM [$codedb].htm.Cover(@r) __htm
@@ -577,8 +577,8 @@ WHERE ra > 2";
             var sql = @"
 SELECT objID
 FROM TEST:SDSSDR7PhotoObjAll_NoHtm
-REGION 'CIRCLE J2000 0 0 10'
-WHERE ra > 2";
+WHERE ra > 2
+REGION 'CIRCLE J2000 0 0 10'";
 
             var gt = @"SELECT 
 	FROM [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM]

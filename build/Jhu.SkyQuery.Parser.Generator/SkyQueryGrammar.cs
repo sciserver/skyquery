@@ -19,10 +19,10 @@ namespace Jhu.SkyQuery.Parser.Generator
                 CommentOrWhitespace, SelectList,
                 May(Sequence(CommentOrWhitespace, IntoClause)),
                 May(Sequence(CommentOrWhitespace, FromClause)),
-                May(Sequence(CommentOrWhitespace, RegionClause)),       //
                 May(Sequence(CommentOrWhitespace, WhereClause)),
                 May(Sequence(CommentOrWhitespace, GroupByClause)),
-                May(Sequence(CommentOrWhitespace, HavingClause))
+                May(Sequence(CommentOrWhitespace, HavingClause)),
+                May(Sequence(CommentOrWhitespace, RegionClause))
             );
 
         public static new Expression<Rule> TableSource = () =>
