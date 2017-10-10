@@ -42,7 +42,7 @@ namespace Jhu.SkyQuery.Web.UI
         protected override void RegisterButtons()
         {
             base.RegisterButtons();
-
+            
             RegisterFooterButton(new Graywulf.Web.UI.MenuButton()
             {
                 Text = "status",
