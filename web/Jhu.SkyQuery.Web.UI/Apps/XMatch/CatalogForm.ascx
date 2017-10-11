@@ -1,4 +1,5 @@
-﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CatalogForm.ascx.cs" Inherits="Jhu.SkyQuery.Web.UI.Apps.XMatch.CatalogForm" %>
+﻿<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="CatalogForm.ascx.cs"
+    Inherits="Jhu.SkyQuery.Web.UI.Apps.XMatch.CatalogForm" %>
 
 <div class="gw-box-frame-top">
     <div class="gw-box-header">
@@ -12,7 +13,7 @@
 <div class="gw-box-frame">
     <div class="gw-box-item">
         <div class="gw-box-row">
-            <table>
+            <table style="width: 100%">
                 <tr>
                     <td style="vertical-align: top; width: 420px">
                         <table class="FormTable">
