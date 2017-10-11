@@ -30,7 +30,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
             RefreshColumnLists(catalog, t);
             
-            table.Text = t.DisplayName; // String.Format("{0}:{1}.{2}", ds.Name, t.SchemaName, t.ObjectName);
+            table.Text = String.Format("{0}:{1}", ds.Name, t.DisplayName);
             alias.Text = catalog.Alias;
             coordinateMode.SelectedValue = catalog.CoordinateMode.ToString();
             ra.SelectedValue = catalog.RaColumn;
