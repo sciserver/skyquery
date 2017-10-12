@@ -6,7 +6,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
@@ -74,12 +74,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             return new SkyQueryParser();
         }
 
-        public override Graywulf.SqlParser.SqlValidator CreateValidator()
+        public override Graywulf.Sql.Validation.SqlValidator CreateValidator()
         {
             return new SkyQueryValidator();
         }
 
-        public override Graywulf.SqlParser.SqlNameResolver CreateNameResolver()
+        public override Graywulf.Sql.NameResolution.SqlNameResolver CreateNameResolver()
         {
             return new SkyQueryNameResolver();
         }

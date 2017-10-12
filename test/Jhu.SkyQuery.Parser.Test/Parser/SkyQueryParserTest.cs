@@ -36,7 +36,7 @@ FROM dbo.fHtmCoverCircleEq(100) AS htm
 
             var qs = Parse(sql);
 
-            var ts = qs.EnumerateSourceTables(false).Cast<Jhu.Graywulf.SqlParser.FunctionTableSource>().ToArray();
+            var ts = qs.EnumerateSourceTables(false).Cast<Jhu.Graywulf.Sql.Parsing.FunctionTableSource>().ToArray();
 
             Assert.AreEqual(1, ts.Length);
         }

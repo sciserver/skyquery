@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Parsing;
-using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.Sql.Validation;
+using Jhu.Graywulf.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Parser
 {
@@ -26,12 +27,15 @@ namespace Jhu.SkyQuery.Parser
 
         #endregion
 
-        public override void Execute(Graywulf.SqlParser.SelectStatement selectStatement)
+        public override void Execute(Graywulf.Sql.Parsing.StatementBlock parsingTree)
         {
-            ValidateSelectStatement(selectStatement, 0);
+            throw new NotImplementedException();
+            // TODO: validate entire script, not just the select
+            // and make sure xmatch queries are single-statement scripts
+            // ValidateSelectStatement(selectStatement, 0);
         }
-
-        private void ValidateSelectStatement(Graywulf.SqlParser.SelectStatement selectStatement, int depth)
+        
+        private void ValidateSelectStatement(Graywulf.Sql.Parsing.SelectStatement selectStatement, int depth)
         {
             if (selectStatement is XMatchSelectStatement)
             {
@@ -43,7 +47,9 @@ namespace Jhu.SkyQuery.Parser
             }
             else
             {
-                base.Execute(selectStatement);
+                throw new NotImplementedException();
+                // TODO
+                //base.Execute(selectStatement);
             }
         }
 

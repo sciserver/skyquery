@@ -1,6 +1,6 @@
 ﻿$ErrorActionPreference='Stop'
 
-. ${SolutionDir}graywulf/web/web-build.ps1
+. ${SolutionDir}modules/graywulf/web/web-build.ps1
 
 Add-Master Basic
 Add-Theme Basic

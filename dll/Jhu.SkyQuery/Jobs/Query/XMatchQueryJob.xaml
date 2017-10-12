@@ -5,7 +5,7 @@
  xmlns:jgjq="clr-namespace:Jhu.Graywulf.Jobs.Query;assembly=Jhu.Graywulf.Jobs"
  xmlns:jgr="clr-namespace:Jhu.Graywulf.Registry;assembly=Jhu.Graywulf.Registry"
  xmlns:jgr1="clr-namespace:Jhu.Graywulf.Registry;assembly=Jhu.Graywulf.Registry.Enum"
- xmlns:jgs="clr-namespace:Jhu.Graywulf.SqlParser;assembly=Jhu.Graywulf.Sql"
+ xmlns:jgsp="clr-namespace:Jhu.Graywulf.Sql.Parsing;assembly=Jhu.Graywulf.Sql"
  xmlns:jgt="clr-namespace:Jhu.Graywulf.Tasks;assembly=Jhu.Graywulf.RemoteService"
  xmlns:local="clr-namespace:Jhu.SkyQuery.Jobs.Query"
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -44,10 +44,10 @@
       <jgjq:InitializeQuery EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" Query="[Query]" />
       <jgjq:CheckDestinationTable sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" Query="[Query]" />
       <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" QueryObject="[Query]" />
-      <ParallelForEach x:TypeArguments="jgs:ITableSource" DisplayName="ParallelForEach&lt;ITableSource&gt;" sap:VirtualizedContainerService.HintSize="353,276" Values="[Query.TableSourceStatistics]">
-        <ActivityAction x:TypeArguments="jgs:ITableSource">
+      <ParallelForEach x:TypeArguments="jgsp:ITableSource" DisplayName="ParallelForEach&lt;ITableSource&gt;" sap:VirtualizedContainerService.HintSize="353,276" Values="[Query.TableStatistics.Keys]">
+        <ActivityAction x:TypeArguments="jgsp:ITableSource">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgs:ITableSource" Name="tableSource" />
+            <DelegateInArgument x:TypeArguments="jgsp:ITableSource" Name="tableSource" />
           </ActivityAction.Argument>
           <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="214,128" JobInfo="[JobInfo]" MaxRetries="3">
             <jgjq:ComputeTableStatistics sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" Query="[Query]" TableSource="[tableSource]" />

@@ -3,9 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.Parsing;
-using Jhu.Graywulf.SqlParser;
-using Jhu.SkyQuery.Parser;
+using Jhu.Graywulf.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Parser
 {

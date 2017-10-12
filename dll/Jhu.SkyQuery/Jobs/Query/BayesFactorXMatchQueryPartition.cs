@@ -11,8 +11,7 @@ using Jhu.Graywulf.Activities;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.SqlParser;
-using Jhu.Graywulf.SqlCodeGen.SqlServer;
+using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 

@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Jhu.Graywulf.Parsing;
+using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.SqlParser;
-using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Parser
 {
@@ -35,11 +33,11 @@ namespace Jhu.SkyQuery.Parser
             return qs;
         }
 
-        protected Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator CodeGenerator
+        protected Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator CodeGenerator
         {
             get
             {
-                return new Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator()
+                return new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator()
                 {
                     ResolveNames = true
                 };

@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Parsing;
-using Jhu.Graywulf.SqlParser;
-using Jhu.SkyQuery.Parser;
+using Jhu.Graywulf.Sql.Parsing;
+using Jhu.Graywulf.Sql.Validation;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 
@@ -21,6 +21,11 @@ namespace Jhu.SkyQuery.Parser
 
         private XMatchSelectStatement Parse(string query)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             var script = new SkyQueryParser().Execute<StatementBlock>(query);
             var statement = script.FindDescendantRecursive<Statement>();
             var select = statement.FindDescendant<XMatchSelectStatement>();
@@ -33,12 +38,19 @@ namespace Jhu.SkyQuery.Parser
             nr.Execute(select);
 
             return select;
+            */
         }
 
         private void Validate(SelectStatement ss)
         {
+            // TODO: Use ScriptBlock
+
+            throw new NotImplementedException();
+
+            /*
             var v = new SkyQueryValidator();
             v.Execute(ss);
+            */
         }
 
         [TestMethod]

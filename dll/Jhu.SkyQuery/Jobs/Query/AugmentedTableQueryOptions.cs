@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.SqlParser;
-using Jhu.SkyQuery.Parser;
+using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Spherical;
 
 namespace Jhu.SkyQuery.Jobs.Query

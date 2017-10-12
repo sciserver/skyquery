@@ -46,11 +46,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
         }
 
-        private Jhu.Graywulf.SqlParser.TableReference HtmTable
+        private Jhu.Graywulf.Sql.NameResolution.TableReference HtmTable
         {
             get
             {
-                return new Jhu.Graywulf.SqlParser.TableReference()
+                return new Jhu.Graywulf.Sql.NameResolution.TableReference()
                 {
                     DatabaseObjectName = "htmtable",
                     Alias = "__htm"
@@ -65,7 +65,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var ss = Parse(sql);
             var ts = ss.QueryExpression.EnumerateSourceTables(false).First();
 
-            var sc = (Jhu.Graywulf.SqlParser.BooleanExpression)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
+            var sc = (Jhu.Graywulf.Sql.Parsing.BooleanExpression)CallMethod(CodeGenerator, "GenerateRegionContainsCondition", ts, -1);
 
             return CodeGenerator.Execute(sc);
         }
@@ -73,7 +73,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
         private string AppendRegionJoinsAndConditionsTestHelper(string sql, bool partial)
         {
             var ss = Parse(sql);
-            var qs = ss.FindDescendantRecursive<Graywulf.SqlParser.QuerySpecification>();
+            var qs = ss.FindDescendantRecursive<Graywulf.Sql.Parsing.QuerySpecification>();
             var regions = new List<Spherical.Region>();
 
             CallMethod(CodeGenerator, "AppendRegionJoinsAndConditions", ss, regions);
@@ -95,14 +95,25 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         private Graywulf.IO.Tasks.SourceTableQuery GetExecuteQueryTestHelper(string sql)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             var q = CreateQuery(sql);
             var sq = CodeGenerator.GetExecuteQuery(q.SelectStatement);
             return sq;
+            */
         }
 
         // TODO: propagate up to test base class
         protected string GetStatisticsQuery(string sql)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             var q = CreateQuery(sql);
             q.ExecutionMode = ExecutionMode.SingleServer;
 
@@ -123,6 +134,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var cmd = cg.GetTableStatisticsCommand(ts, null);
 
             return cmd.CommandText;
+            */
         }
 
         #endregion

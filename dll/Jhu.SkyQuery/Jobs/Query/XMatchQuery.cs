@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Jobs.Query;
 using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.Sql.Parsing;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -99,12 +99,18 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override void FinishInterpret(bool forceReinitialize)
         {
+            // TODO: Fix, SelectStatement is likely parsingTree now.
+
+            throw new NotImplementedException();
+
+            /*
             if (xmatchTables == null || forceReinitialize)
             {
                 InterpretXMatchQuery((XMatchSelectStatement)SelectStatement);
             }
 
             base.FinishInterpret(forceReinitialize);
+            */
         }
 
         private void InterpretXMatchQuery(XMatchSelectStatement selectStatement)
@@ -136,6 +142,11 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override void CollectTablesForStatistics()
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             TableSourceStatistics.Clear();
 
             // Only collect statistics for xmatch tables
@@ -158,6 +169,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     TableSourceStatistics.Add(table.TableSource);
                 }
             }
+            */
         }
 
         private IEnumerable<XMatchTableSpecification> SortXMatchTables(IEnumerable<XMatchTableSpecification> tables)
@@ -166,8 +178,13 @@ namespace Jhu.SkyQuery.Jobs.Query
             return xmatchTables.Values.OrderBy(i => i);
         }
 
-        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.SqlParser.TableStatistics stat)
+        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Jobs.Query.TableStatistics stat)
         {
+            throw new NotImplementedException();
+
+            // TODO: update this similar to inherited class
+            /*
+
             // XmathTables might be reinitialized, so copy statistics
             foreach (var st in TableSourceStatistics)
             {
@@ -207,6 +224,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 ((XMatchQueryPartition)qp).GenerateSteps(tables);
             }
+
+            */
         }
     }
 }

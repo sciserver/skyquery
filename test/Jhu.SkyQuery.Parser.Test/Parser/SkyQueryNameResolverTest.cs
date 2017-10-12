@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.Parsing;
-using Jhu.Graywulf.SqlParser;
-using Jhu.SkyQuery.Parser;
+using Jhu.Graywulf.Sql.Parsing;
+using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 
@@ -22,6 +21,11 @@ namespace Jhu.SkyQuery.Parser
 
         protected QuerySpecification Parse(string query)
         {
+            // TODO: upgrade to ScriptBlock
+
+            throw new NotImplementedException();
+
+            /*
             var script = new SkyQueryParser().Execute<StatementBlock>(query);
             var statement = script.FindDescendantRecursive<Statement>();
             var select = statement.FindDescendant<SelectStatement>();
@@ -34,11 +38,12 @@ namespace Jhu.SkyQuery.Parser
             nr.Execute(select);
 
             return qs;
+            */
         }
 
         private string GenerateCode(QuerySpecification qs)
         {
-            var cg = new Jhu.Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator();
+            var cg = new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator();
             cg.ResolveNames = true;
 
             var sw = new StringWriter();

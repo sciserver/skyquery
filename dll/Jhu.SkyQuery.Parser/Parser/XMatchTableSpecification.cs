@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.Parsing;
-using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.Sql.NameResolution;
 
 namespace Jhu.SkyQuery.Parser
 {
+    // TODO: Remove IComparable<XMatchTableSpecification>
     public partial class XMatchTableSpecification : ICloneable, IComparable<XMatchTableSpecification>
     {
         private XMatchInclusionMethod inclusionMethod;
@@ -108,8 +107,14 @@ namespace Jhu.SkyQuery.Parser
 
         public int CompareTo(XMatchTableSpecification other)
         {
-            // Inclusion method ordering always preceeds table statistics
+            throw new NotImplementedException();
 
+            // TODO: sorting tables by statistics is not general enough to be
+            // implemented here. Move this logic to an IComparer class instead
+            // under Jobs.Query
+
+            /*
+            // Inclusion method ordering always preceeds table statistics
             if (other.InclusionMethod != this.InclusionMethod)
             {
                 return other.InclusionMethod - this.InclusionMethod;
@@ -117,6 +122,7 @@ namespace Jhu.SkyQuery.Parser
 
             // Order tables by cardinality
             return Math.Sign(this.TableReference.Statistics.RowCount - other.TableReference.Statistics.RowCount);
+            */
         }
     }
 }

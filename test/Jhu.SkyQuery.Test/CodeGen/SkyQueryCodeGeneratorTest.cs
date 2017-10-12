@@ -26,7 +26,7 @@ namespace Jhu.SkyQuery.CodeGen
                 ID = 0,
                 InclusionMethod = Parser.XMatchInclusionMethod.Must,
                 DatasetName = "SDSSDR12",
-                TableOrViewName = "dbo.PhotoObjAll",
+                TableUniqueKey = "dbo.PhotoObjAll",     // TODO
                 Alias = "s",
                 CoordinateMode = CoordinateMode.Automatic,
                 ErrorMode = ErrorMode.Constant,
@@ -41,7 +41,7 @@ namespace Jhu.SkyQuery.CodeGen
                 ID = 0,
                 InclusionMethod = Parser.XMatchInclusionMethod.Must,
                 DatasetName = "TwoMASS",
-                TableOrViewName = "dbo.PhotoPSC",
+                TableUniqueKey = "dbo.PhotoPSC",    // TODO
                 Alias = "t",
                 CoordinateMode = CoordinateMode.Automatic,
                 ErrorMode = ErrorMode.Constant,
@@ -51,8 +51,8 @@ namespace Jhu.SkyQuery.CodeGen
             c2.Columns.AddRange(new[] { "objID", "ra", "dec" });
             xmatch.Catalogs.Add(c2);
 
-            var cg = new SkyQueryCodeGenerator(CreateSchemaManager());
-            var q = cg.GenerateXMatchQuery(xmatch);
+            var cg = new SkyQueryCodeGenerator();
+            var q = cg.GenerateXMatchQuery(xmatch, CreateSchemaManager());
 
             var gt =
 @"SELECT [x].[MatchID], [x].[RA], [x].[Dec], [s].[objID], [s].[ra], [s].[dec], [t].[objID], [t].[ra], [t].[dec]

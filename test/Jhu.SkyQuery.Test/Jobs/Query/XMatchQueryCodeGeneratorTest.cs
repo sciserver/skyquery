@@ -3,11 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Parsing;
-using Jhu.Graywulf.SqlParser;
+using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.SqlCodeGen;
-using Jhu.Graywulf.SqlCodeGen.SqlServer;
+using Jhu.Graywulf.Sql.NameResolution;
+using Jhu.Graywulf.Sql.CodeGeneration;
+using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
@@ -34,6 +35,11 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         protected XMatchSelectStatement Parse(string sql)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             var p = new SkyQueryParser();
             var ss = p.Execute<XMatchSelectStatement>(sql);
             var qs = (XMatchQuerySpecification)ss.QueryExpression.EnumerateQuerySpecifications().First();
@@ -45,12 +51,18 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             nr.Execute(ss);
 
             return ss;
+            */
         }
 
         #region Helper functions
 
         private string[] GeneratePropagatedColumnListTestHelper(string sql, ColumnContext context)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             var res = new List<string>();
             var q = CreateQuery(sql);
             var cg = new XMatchQueryCodeGenerator(q);
@@ -70,10 +82,16 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
 
             return res.ToArray();
+            */
         }
 
         private string GetExecuteQueryTextTestHelper(string sql)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             using (var context = ContextManager.Instance.CreateReadOnlyContext())
             {
                 var sm = new GraywulfSchemaManager(new FederationContext(context, null));
@@ -105,6 +123,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
                 return res.Query;
             }
+            */
         }
 
         #endregion

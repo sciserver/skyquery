@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.CodeGen

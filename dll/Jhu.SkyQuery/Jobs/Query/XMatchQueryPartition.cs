@@ -6,13 +6,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
-using System.IO;
-using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
-using Jhu.Graywulf.SqlParser;
-using Jhu.Graywulf.SqlCodeGen.SqlServer;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query

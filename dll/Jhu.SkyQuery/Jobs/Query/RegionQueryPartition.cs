@@ -4,10 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Jobs.Query;
-using Jhu.Graywulf.SqlParser;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
@@ -48,7 +45,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override Graywulf.SqlCodeGen.SqlServer.SqlServerCodeGenerator CreateCodeGenerator()
+        protected override Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator CreateCodeGenerator()
         {
             return new RegionQueryCodeGenerator(this);
         }

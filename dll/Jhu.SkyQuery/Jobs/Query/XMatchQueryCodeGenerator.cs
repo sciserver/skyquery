@@ -6,9 +6,10 @@ using System.Data;
 using System.Data.SqlClient;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
-using Jhu.Graywulf.SqlParser;
-using Jhu.Graywulf.SqlCodeGen;
-using Jhu.Graywulf.SqlCodeGen.SqlServer;
+using Jhu.Graywulf.Sql.Parsing;
+using Jhu.Graywulf.Sql.NameResolution;
+using Jhu.Graywulf.Sql.CodeGeneration;
+using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
@@ -65,7 +66,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected Expression CreateZoneHeightParameter()
         {
-            return Expression.Create(Jhu.Graywulf.SqlParser.Variable.Create("@H"));
+            return Expression.Create(Jhu.Graywulf.Sql.Parsing.Variable.Create("@H"));
         }
 
         public Expression GetCoordinateErrorExpression(TableCoordinates coords)
@@ -207,7 +208,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             else if (where == null)
             {
-                where = Graywulf.SqlParser.WhereClause.Create(sc);
+                where = Graywulf.Sql.Parsing.WhereClause.Create(sc);
             }
 
             sql.Replace("[$tablename]", GetResolvedTableName(table.TableReference));
@@ -326,7 +327,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (sc != null)
             {
-                var where = Graywulf.SqlParser.WhereClause.Create(sc);
+                var where = Graywulf.Sql.Parsing.WhereClause.Create(sc);
                 sql.Replace("[$where]", Execute(where));
             }
             else
@@ -965,14 +966,20 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Final query execution
 
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.SqlParser.SelectStatement selectStatement)
+        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.Sql.Parsing.SelectStatement selectStatement)
         {
+            // TODO: upgrade
+
+            throw new NotImplementedException();
+
+            /*
             // Collect tables that are part of the XMatch operation
             var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
 
             ReplaceXMatchClause(qs);
 
             return base.OnGetExecuteQuery(selectStatement);
+            */
         }
 
         protected void ReplaceXMatchClause(XMatchQuerySpecification qs)
@@ -985,16 +992,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             
             SubstituteMatchTableName(qs, xmtstr, mtr);
 
-            var nts = Jhu.Graywulf.SqlParser.SimpleTableSource.Create(mtr);
+            var nts = Jhu.Graywulf.Sql.Parsing.SimpleTableSource.Create(mtr);
             xmts.ExchangeWith(nts);
         }
 
-        private void SubstituteMatchTableName(Jhu.Graywulf.SqlParser.QuerySpecification qs, List<TableReference> xmtstr, TableReference matchtr)
+        private void SubstituteMatchTableName(Jhu.Graywulf.Sql.Parsing.QuerySpecification qs, List<TableReference> xmtstr, TableReference matchtr)
         {
             var cg = new SqlServerColumnListGenerator();
 
             // Replace table references and substitute column names with escaped version
-            foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Jhu.Graywulf.SqlParser.Subquery)))
+            foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Jhu.Graywulf.Sql.Parsing.Subquery)))
             {
                 var cr = ci.ColumnReference;
 
