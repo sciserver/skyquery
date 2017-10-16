@@ -72,8 +72,8 @@ REGION 'CIRCLE J2000 20 30 10'";
 @"SELECT s.objid
 INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), HTMID(htmid))
-REGION 'CIRCLE J2000 0 0 60'
-WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5";
+WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
+REGION 'CIRCLE J2000 0 0 60'";
 
             RunQuery(sql);
         }
@@ -88,9 +88,9 @@ INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), HTMID(htmid))
 INNER JOIN TEST:SDSSDR7PhotoObjAll_NoZone AS g
     ON s.objID = g.objID
-REGION 'CIRCLE J2000 0 0 60'
 WHERE s.ra BETWEEN 0 AND 5 AND s.dec BETWEEN 0 AND 5
-    AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5";
+    AND g.ra BETWEEN 0 AND 5 AND g.dec BETWEEN 0 AND 5
+REGION 'CIRCLE J2000 0 0 60'";
 
             RunQuery(sql);
         }

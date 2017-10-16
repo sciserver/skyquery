@@ -99,9 +99,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -120,9 +120,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 300'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 300'";
 
             RunQuery(sql);
         }
@@ -141,9 +141,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -763,8 +763,8 @@ FROM XMATCH
     (MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS s WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1)),
      MUST EXIST IN TEST:SDSSDR7PhotoObjAll_NoZone AS g WITH(POINT(ra, dec), ERROR(0.2, 0.2, 0.2)),
      LIMIT BAYESFACTOR TO 1e3) AS x
-REGION 'CIRCLE J2000 0 0 60'
-WHERE s.ra BETWEEN 0 AND 1";
+WHERE s.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 60'";
 
             RunQuery(sql);
         }

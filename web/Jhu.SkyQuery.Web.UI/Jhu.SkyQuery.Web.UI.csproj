@@ -84,6 +84,7 @@
     <Content Include="Assets\Docs\04_query\03_functions.aspx" />
     <Content Include="Assets\Docs\05_mydb\00_index.aspx" />
     <Content Include="Assets\Docs\06_jobs\00_index.aspx" />
+    <Content Include="Assets\Docs\07_api\00_index.aspx" />
     <Content Include="Assets\Docs\99_info\00_index.aspx" />
     <Content Include="Assets\Docs\images\elte.png" />
     <Content Include="Assets\Docs\images\hvo.png" />
@@ -99,6 +100,8 @@
     <Content Include="Assets\Home\social-facebook.png" />
     <Content Include="Assets\Home\social-twitter.png" />
     <Content Include="Assets\Home\social-youtube.png" />
+    <Content Include="Assets\Query\Examples\01_xmatch.aspx" />
+    <Content Include="Assets\Query\Examples\00_index.aspx" />
     <Content Include="Assets\Schema\Icons\test.png" />
     <Content Include="Assets\Schema\Pages\acvs.html" />
     <Content Include="Assets\Schema\Pages\akari.html" />
@@ -771,7 +774,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Themes\" />
-    <Folder Include="Assets\Docs\07_api\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Keystone\Jhu.Graywulf.Keystone.csproj">
@@ -903,6 +905,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Docs\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\Query\Examples\Web.config" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
