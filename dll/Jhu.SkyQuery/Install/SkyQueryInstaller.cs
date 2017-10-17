@@ -20,6 +20,71 @@ namespace Jhu.SkyQuery.Install
             return base.Install("SkyQuery");
         }
 
+        protected override void GenerateCluster()
+        {
+            base.GenerateCluster();
+
+            // Create SkyNode and UserDBHost roles
+
+            MachineRole skynodeMachineRole = new MachineRole(Cluster)
+            {
+                Name = Constants.SkyNodeMachineRoleName,
+                MachineRoleType = MachineRoleType.MirroredSet
+            };
+            skynodeMachineRole.Save();
+
+            ServerVersion skynodeServerVersion = new ServerVersion(skynodeMachineRole)
+            {
+                Name = Constants.SkyNodeServerVersionName,
+
+            };
+            skynodeServerVersion.Save();
+        }
+
+        protected override DatabaseVersion GetTempDatabaseVersion()
+        {
+            Cluster.LoadMachineRoles(true);
+
+            Cluster.LoadDomains(true);
+            var shareddomain = Cluster.Domains[Jhu.Graywulf.Registry.Constants.SystemDomainName];
+
+            shareddomain.LoadFederations(false);
+            var sharedfederation = shareddomain.Federations[Jhu.Graywulf.Registry.Constants.SystemFederationName];
+
+            sharedfederation.LoadDatabaseDefinitions(false);
+
+            var tempdbdd = sharedfederation.DatabaseDefinitions[Jhu.Graywulf.Registry.Constants.TempDbName];
+            tempdbdd.LoadDatabaseVersions(false);
+
+            DatabaseVersion tempDatabaseVersion;
+
+            if (tempdbdd.DatabaseVersions.ContainsKey(Jhu.Graywulf.Registry.Constants.TempDbName))
+            {
+                tempDatabaseVersion = tempdbdd.DatabaseVersions[Jhu.Graywulf.Registry.Constants.TempDbName];
+            }
+            else
+            {
+                tempDatabaseVersion = new DatabaseVersion(tempdbdd)
+                {
+                    Name = Jhu.Graywulf.Registry.Constants.TempDbName,
+                };
+            }
+
+            tempDatabaseVersion.ServerVersion = GetNodeServerVersion();
+            tempDatabaseVersion.Save();
+
+            return tempDatabaseVersion;
+        }
+
+        protected override ServerVersion GetNodeServerVersion()
+        {
+            Cluster.LoadMachineRoles(true);
+            var nodeRole = Cluster.MachineRoles[Constants.SkyNodeMachineRoleName];
+            nodeRole.LoadServerVersions(true);
+            var nodeServerVersion = nodeRole.ServerVersions[Constants.SkyNodeServerVersionName];
+            return nodeServerVersion;
+        }
+
         public override void GenerateDefaultSettings()
         {
             Federation.System = true;

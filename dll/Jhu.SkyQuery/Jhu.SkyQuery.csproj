@@ -81,6 +81,7 @@
     <Compile Include="CodeGen\SkyQueryCodeGeneratorException.cs" />
     <Compile Include="CodeGen\SkyQueryColumnListGenerator.cs" />
     <Compile Include="CodeGen\XMatch.cs" />
+    <Compile Include="Install\Constants.cs" />
     <Compile Include="Install\SkyQueryInstaller.cs">
       <SubType>Code</SubType>
     </Compile>
