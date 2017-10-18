@@ -43,8 +43,6 @@ namespace Jhu.SkyQuery.Install
 
         protected override DatabaseVersion GetTempDatabaseVersion()
         {
-            Cluster.LoadMachineRoles(true);
-
             Cluster.LoadDomains(true);
             var shareddomain = Cluster.Domains[Jhu.Graywulf.Registry.Constants.SystemDomainName];
 
@@ -57,20 +55,18 @@ namespace Jhu.SkyQuery.Install
             tempdbdd.LoadDatabaseVersions(false);
 
             DatabaseVersion tempDatabaseVersion;
+            var skynodeServerVersion = GetNodeServerVersion();
 
-            if (tempdbdd.DatabaseVersions.ContainsKey(Jhu.Graywulf.Registry.Constants.TempDbName))
+            if (!tempdbdd.DatabaseVersions.ContainsKey(Jhu.Graywulf.Registry.Constants.TempDbName))
             {
-                tempDatabaseVersion = tempdbdd.DatabaseVersions[Jhu.Graywulf.Registry.Constants.TempDbName];
-            }
-            else
-            {
-                tempDatabaseVersion = new DatabaseVersion(tempdbdd)
-                {
-                    Name = Jhu.Graywulf.Registry.Constants.TempDbName,
-                };
+                var tempddi = new DatabaseDefinitionInstaller(tempdbdd);
+                tempddi.GenerateDefaultChildren(skynodeServerVersion, Jhu.Graywulf.Registry.Constants.TempDbName);
+                tempdbdd.LoadDatabaseVersions(true);
             }
 
-            tempDatabaseVersion.ServerVersion = GetNodeServerVersion();
+            tempDatabaseVersion = tempdbdd.DatabaseVersions[Jhu.Graywulf.Registry.Constants.TempDbName];
+
+            tempDatabaseVersion.ServerVersion = skynodeServerVersion;
             tempDatabaseVersion.Save();
 
             return tempDatabaseVersion;
