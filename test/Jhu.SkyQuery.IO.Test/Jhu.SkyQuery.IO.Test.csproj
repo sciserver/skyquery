@@ -57,6 +57,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -73,8 +74,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Format\Fits\FitsReaderTest.cs" />
+    <Compile Include="Format\Fits\FitsWriterTest.cs" />
     <Compile Include="Format\Fits\ImportFitsTest.cs" />
     <Compile Include="Format\Fits\ExportFitsTest.cs" />
+    <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
+    <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
     <Compile Include="IO\ImportFromSciDriveTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -82,6 +87,10 @@
     <ProjectReference Include="..\..\..\graywulf-plugins\test\Jhu.Graywulf.Plugins.Test\Jhu.Graywulf.Plugins.Test.csproj">
       <Project>{2fc14e50-1f26-4be2-8b95-0bb82f13def3}</Project>
       <Name>Jhu.Graywulf.Plugins.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{abb4c403-720a-47e1-9485-cfaadd696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
       <Project>{6797ed88-1d8c-491b-a036-4c42c4bf2eaf}</Project>

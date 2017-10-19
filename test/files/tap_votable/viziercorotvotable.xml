@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xmlns="http://www.ivoa.net/xml/VOTable/v1.2"
+xmlns:stc="http://www.ivoa.net/xml/STC/v1.30" >
+	<RESOURCE type="results">
+		<INFO name="QUERY_STATUS" value="OK" />
+		<INFO name="PROVIDER" value="TAPVizieR">VizieR TAP service.</INFO>
+		<INFO name="QUERY"><![CDATA[-- output format : csv
+SELECT TOP 10 "B/corot/Bright_star".CoRoT
+FROM "B/corot/Bright_star"]]></INFO>
+		<COOSYS ID='coosys_FK5' system='eq_FK5' equinox='2000.0'/>
+		<TABLE>
+			<FIELD ID="CoRoT" name="CoRoT" datatype="short" ucd="meta.id;meta.main">
+<DESCRIPTION>[1/21960] (corotid) ID of the CoRoT target</DESCRIPTION>
+</FIELD>
+			<DATA>
+				<TABLEDATA>
+<TR><TD>20</TD></TR>
+<TR><TD>116</TD></TR>
+<TR><TD>214</TD></TR>
+<TR><TD>223</TD></TR>
+<TR><TD>83</TD></TR>
+<TR><TD>123</TD></TR>
+<TR><TD>156</TD></TR>
+<TR><TD>187</TD></TR>
+<TR><TD>263</TD></TR>
+<TR><TD>400</TD></TR>
+				</TABLEDATA>
+
+			</DATA>
+		</TABLE>
+	</RESOURCE>
+</VOTABLE>
