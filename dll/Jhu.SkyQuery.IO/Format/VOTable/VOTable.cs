@@ -8,6 +8,7 @@ using System.Xml;
 using System.Collections;
 using System.Data;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
@@ -166,16 +167,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </summary>
         protected override void OnReadHeader()
         {
-            XmlReader.ReadStartElement(Constants.VOTableKeywordVOTable);
-
-            // consume info tags in the header before the first resource
-            if (XmlReader.NodeType != XmlNodeType.Element ||
-                Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordResource) != 0)
-            {
-                XmlReader.Read();
-            }
-
-            // Reader is positioned on the first RESOURCE tag now
+            ReadVOTableElement();
         }
 
         /// <summary>
@@ -191,27 +183,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </remarks>
         protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
         {
-            // Reader must now be positioned on a RESOUCE tag
-            if (XmlReader.NodeType == XmlNodeType.Element &&
-                VOTable.Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordResource) == 0)
-            {
-                // Read next tag
-                if (XmlReader.Read())
-                {
-                    if (XmlReader.NodeType == XmlNodeType.Element &&
-                        Comparer.Compare(XmlReader.Name, Constants.VOTableKeywordTable) == 0)
-                    {
-
-                        return block ?? new VOTableResource(this);
-                    }
-                    else
-                    {
-                        throw new FileFormatException();    //  *** TODO
-                    }
-                }
-            }
-
-            return null;
+            return ReadResourceElement(block);
         }
 
         /// <summary>
@@ -230,8 +202,8 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </remarks>
         protected override void OnWriteHeader()
         {
-            XmlWriter.WriteStartElement(Constants.VOTableKeywordVOTable);
-            XmlWriter.WriteAttributeString(Constants.VOTableKeywordVersion, Constants.VOTableVersion);
+            XmlWriter.WriteStartElement(Constants.TagVOTable);
+            XmlWriter.WriteAttributeString(Constants.AttributeVersion, Constants.VOTableVersion);
 
             // *** TODO: how to add these?
             //XmlWriter.WriteAttributeString("xmlns", Constants.VOTableXsi);
@@ -260,6 +232,90 @@ namespace Jhu.SkyQuery.Format.VOTable
         {
             XmlWriter.WriteEndElement();
         }
+
+        #region VOTable reader implementation
+
+        private void ReadVOTableElement()
+        {
+            // Skip initial declarations
+            XmlReader.MoveToContent();
+
+            // Reader now should be positioned on the VOTABLE tag
+            // Read attributes
+
+            var id = XmlReader.GetAttribute(Constants.AttributeID);
+            var version = XmlReader.GetAttribute(Constants.AttributeVersion);
+
+            // Finish reading tag and move to next content
+            XmlReader.ReadStartElement(Constants.TagVOTable);
+            XmlReader.MoveToContent();
+
+            // Read all tags inside VOTABLE but stop at any RESOURCE tag
+            // because they are handled outside of this function
+            while (XmlReader.NodeType == XmlNodeType.Element &&
+                   Comparer.Compare(XmlReader.Name, Constants.TagResource) != 0)
+            {
+                switch (XmlReader.Name)
+                {
+                    case Constants.TagDescription:
+                        var d = Deserialize<Description>();
+                        break;
+                    case Constants.TagDefinitions:
+                    case Constants.TagCoosys:
+                    case Constants.TagGroup:
+                    case Constants.TagParam:
+                    case Constants.TagInfo:
+                        // TODO: implement deserializets,
+                        // now just skip the tag
+                        XmlReader.Skip();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                XmlReader.MoveToContent();
+            }
+
+            // TODO: implement parsers for header info including these tags:
+            // * DESCRIPTION
+            // * DEFINITIONS -- just ignore because it's deprecated
+            // * COOSYS -- just ignore because it's deprecated
+            // * GROUP
+            // * PARAM
+            // * INFO -- also parse TAP query status
+
+            // Reader is positioned on the first RESOURCE tag now
+            // Header is read completely, now wait for framework to call OnReadNextBlock
+
+            // TODO: make sure XSD validation fails when no RESOURCE tag found
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="block"></param>
+        private DataFileBlockBase ReadResourceElement(DataFileBlockBase block)
+        {
+            // Check if the current tag is a RESOURCE. If so, create a new VOTableResource object
+            // and return it. Subsequent handling of tags until the closing RESOURCE tag will
+            // be done inside the VOTableResource class
+
+            if (XmlReader.NodeType == XmlNodeType.Element &&
+                VOTable.Comparer.Compare(XmlReader.Name, Constants.TagResource) == 0)
+            {
+                // We found a RESOURCE tag here, so return the preallocated DataFileBlock
+                // or create a new one.
+                // The framework will call VOTableResource.OnReadHeader to continue
+
+                return block ?? new VOTableResource(this);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        #endregion
 
 #if false
         

@@ -10,28 +10,17 @@ using Jhu.Graywulf.Test;
 using Jhu.Graywulf.Util;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
-using Jhu.SkyQuery.Format.VOTable;
 
-namespace Jhu.SkyQuery.Format.VOTable.Test
+namespace Jhu.SkyQuery.Format.VOTable
 {
     [TestClass]
-    public class VOTableReaderTest : TestClassBase
+    public class VOTableReaderTest : VOTableTestBase
     {
-        FileDataReader OpenSimpleReader(string path)
+        [TestMethod]
+        public void ValidationTest()
         {
-            path = Path.Combine(GetTestFilePath(@"modules\skyquery\test\files"), path);
-
-            var f = new VOTable(
-                UriConverter.FromFilePath(path),
-                DataFileMode.Read
-                )
-            {
-                GenerateIdentityColumn = false
-            };
-
-            var cmd = new FileCommand(f);
-
-            return cmd.ExecuteReader();
+            var xml = File.ReadAllText(GetTestFilePath(@"modules\skyquery\test\files\votable_everything.xml"));
+            ValidateVOTable(xml);
         }
 
         [TestMethod]
@@ -162,6 +151,25 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
 
             Assert.AreEqual(3, q);
             Assert.AreEqual(1, r);
+        }
+
+        [TestMethod]
+        public void EverythingTest()
+        {
+            var dr = OpenSimpleReader("votable_everything.xml");
+
+            int q = 0;
+            int r = 0;
+
+            do
+            {
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
+            }
+            while (dr.NextResult());
         }
 
         [TestMethod]

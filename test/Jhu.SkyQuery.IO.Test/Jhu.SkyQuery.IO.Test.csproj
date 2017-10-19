@@ -7,7 +7,7 @@
     <ProjectGuid>{20858FCC-4BD6-4E89-9D3F-BCEB7ABA9A92}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jhu.SkyQuery.IO.Test</RootNamespace>
+    <RootNamespace>Jhu.SkyQuery</RootNamespace>
     <AssemblyName>Jhu.SkyQuery.IO.Test</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -78,7 +78,9 @@
     <Compile Include="Format\Fits\FitsWriterTest.cs" />
     <Compile Include="Format\Fits\ImportFitsTest.cs" />
     <Compile Include="Format\Fits\ExportFitsTest.cs" />
+    <Compile Include="Format\VOTable\VOTableElementsTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
+    <Compile Include="Format\VOTable\VOTableTestBase.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
     <Compile Include="IO\ImportFromSciDriveTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

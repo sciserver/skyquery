@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VOTABLE
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.ivoa.net/xml/VOTable/v1.3"
+    
+    ID=""
+    version="1.3">
+  
+  <!-- DESCRIPTION can contain anyTEXT -->
+  <DESCRIPTION>This is just simple text or can contain <b>embeded HTML</b></DESCRIPTION>
+  
+  <!-- DEFINITIONS is deprecated but we should be able to read it -->
+  
+  <DEFINITIONS>
+    <COOSYS></COOSYS>
+    <COOSYS></COOSYS>
+  </DEFINITIONS>
+  
+  <DEFINITIONS>
+    <PARAM></PARAM>
+    <PARAM></PARAM>
+  </DEFINITIONS>
+  
+  <!-- COOSYS, GROUP, PARAM and INFO can come in any order, any number -->
+  
+  <!-- COOSYS is deprecated but we should be able to read it -->
+  <COOSYS>
+    <!-- contents are complex so we'll just skip it for now -->
+  </COOSYS>
+  
+  <GROUP></GROUP>
+  <GROUP></GROUP>
+  
+  <PARAM></PARAM>
+  
+  <INFO name="QUERY_STATUS" value="OK"/>
+  
+  <GROUP></GROUP>
+  <PARAM></PARAM>
+  <INFO></INFO>
+  <INFO></INFO>
+  <COOSYS></COOSYS>
+  
+  <!-- One or more RESOURCE tags -->
+  
+  <!-- This is a RESOURCE tag with all the bells and hinges -->
+  <RESOURCE
+    name="resource_name"
+    ID="resource_1" 
+    type="legal">
+    <DESCRIPTION>This is just simple text or can contain <b>embeded HTML</b></DESCRIPTION>
+    
+    <!-- INFO based on a PARAM tag -->
+    <INFO></INFO>
+    <!-- INFO with full definition -->
+    <INFO
+      name="info_tag"
+      value="600"
+      ID="info_1"
+      unit="km.s-1"
+      xtype="whatever"
+      ref="???"
+      ucd="vel"
+      utype="spec.disp.vel">
+      <DESCRIPTION>Just the usual description</DESCRIPTION>
+      <VALUES>
+        <MIN value="200" inclusive="yes" />
+        <MAX value="800" inclusive="yes" />
+        <!-- Arbitrary number of recursively embeded OPTION tags -->
+        <OPTION name="name" value="value">
+          <OPTION name="name2" value="value2" />
+          <OPTION name="name3" value="value3" />
+        </OPTION>
+        <OPTION />
+        <OPTION />
+      </VALUES>
+      <LINK 
+        ID="link1"
+        content-role="location"
+        content-type="text/plain"
+        title="Another representation"
+        value="whatever value"
+        href="http://voservices.net/skyquery"
+        gref="???"
+        action="http://voservices.net/skyquery"
+      />
+      <LINK />
+    </INFO>
+    <INFO></INFO>
+    <COOSYS></COOSYS>
+    <COOSYS></COOSYS>
+    <!-- This a complete GROUP tag -->
+    <GROUP ID="1" name="group_name" ref="???" ucd="em.phot" utype="???">
+        <DESCRIPTION>Can contain <html />tags.</DESCRIPTION>
+        <FIELDref
+          ref="field_1"
+          ucd="em.phot.flux"
+          utype="any.thing1" />
+        <FIELDref
+          ref="field_2"
+          ucd="em.phot.mag"
+          utype="any.thing2" />
+        <PARAMref />
+        <PARAM />
+        <GROUP>
+          <PARAM />
+          <PARAM />
+        </GROUP>
+        <PARAM />
+        <PARAM />
+    </GROUP>
+    <!-- A group can be empty -->
+    <GROUP></GROUP>
+    <GROUP />
+    <!-- COOSYS, GROUP and PARAM can be in any order -->
+    <PARAM />
+    <PARAM></PARAM>
+    <GROUP></GROUP>
+    <!-- Arbitrary number of LINK tags -->
+    <LINK></LINK>
+    <LINK />
+    
+    <!-- A single TABLE or and embeded RESOURCE tag -->
+    <TABLE
+      ID="table_1"
+      name="output_table"
+      ref="???"
+      ucd="em.phot"
+      utype="phot"
+      nrows="3">
+      <!-- A single DESCRIPTION tag -->
+      <DESCRIPTION></DESCRIPTION>
+      <!-- An arbitrary number of INFO tags -->
+      <INFO />
+      <INFO />
+      
+      <!-- Arbitrary number of PARAM, FIELD and GROUP tags in any order -->
+      <PARAM />
+      <PARAM />
+      <FIELD />
+      <FIELD />
+      <FIELD />
+      <GROUP></GROUP>
+      <GROUP></GROUP>
+      
+      <!-- Any number of LINK tags -->
+      <LINK />
+      <LINK />
+      
+      <!-- A single DATA tag -->
+      <DATA>
+        <TABLEDATA>
+          <TR>
+            <TD></TD>
+            <TD></TD>
+            <TD encoding="base64"></TD>
+          </TR>
+          <TR>
+            <TD></TD>
+            <TD></TD>
+            <TD encoding="base64"></TD>
+          </TR>
+          <TR>
+            <TD></TD>
+            <TD></TD>
+            <TD encoding="base64"></TD>
+          </TR>
+        </TABLEDATA>
+        
+        <!-- Any number of INFO tags -->
+        <INFO />
+        <INFO />
+      </DATA>
+      
+      <!-- Any number of INFO tags -->
+    </TABLE>
+    
+    <!-- Arbitrary number of INFO tags -->
+    <INFO></INFO>
+    <INFO />
+  </RESOURCE>
+  
+  <!-- This is a base64-encoded binary table -->
+  <RESOURCE>
+    <DATA>
+      <BINARY>
+        <STREAM encoding="base64">
+            add some binary data here
+        </STREAM>
+      </BINARY>
+    </DATA>
+  </RESOURCE>
+  
+  <!-- This is a stream that's only referenced -->
+  <RESOURCE>
+    <DATA>
+      <BINARY>
+        <STREAM
+          type="locator"
+          href="http://voservices.net/skyquery"
+          actuate="onLoad"
+          encoding="gzip"
+          expires="???"
+          rights="???">
+        </STREAM>
+      </BINARY>
+    </DATA>
+  </RESOURCE>
+
+  <RESOURCE>
+    <DATA>
+      <BINARY2>
+        <STREAM></STREAM>
+      </BINARY2>
+    </DATA>
+  </RESOURCE>
+  
+  <RESOURCE>
+    <DATA>
+      <FITS></FITS>
+    </DATA>
+  </RESOURCE>
+  
+  <!-- This is an empty RESOURCE tag -->
+  <RESOURCE></RESOURCE>
+  
+  <!-- This is a RESOURCE with an embeded RESOURCE tag -->
+  <RESOURCE>
+    <RESOURCE></RESOURCE>
+  </RESOURCE>
+  
+  <RESOURCE>
+    <DESCRIPTION />
+    <TABLE>
+      <FIELD datatype="long" name="objid"/>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <FIELD datatype="float" name="u"/>
+      <FIELD datatype="float" name="g"/>
+      <FIELD datatype="float" name="r"/>
+      <FIELD datatype="float" name="i"/>
+      <FIELD datatype="float" name="z"/>
+      <DATA>
+	  <TABLEDATA test="test" />
+         
+		</DATA>
+    </TABLE>
+  </RESOURCE>
+  
+  <RESOURCE>
+    <DESCRIPTION></DESCRIPTION>
+    <TABLE>
+      <FIELD datatype="double" name="ra"/>
+      <FIELD datatype="double" name="dec"/>
+      <DATA>
+	  
+        <TABLEDATA test="test">
+        </TABLEDATA>
+      </DATA>
+    </TABLE>
+  </RESOURCE>
+  
+  <!-- There can be any number of INFO tags at the very end -->
+  <INFO></INFO>
+  <INFO></INFO>
+  
+</VOTABLE>

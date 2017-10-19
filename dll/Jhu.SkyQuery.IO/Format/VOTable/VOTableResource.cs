@@ -55,6 +55,228 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         #endregion
+        #region Framework reader functions
+
+        /// <summary>
+        /// Reads the header of VOTable resource, from the TABLE tag to the TABLEDATA tag.
+        /// </summary>
+        protected override void OnReadHeader()
+        {
+            ReadResourceElement();
+        }
+
+        protected override void OnSetMetadata(int blockCounter)
+        {
+            base.OnSetMetadata(blockCounter);
+
+            // TODO: do nothing here, this will be refactored
+        }
+
+        protected override bool OnReadNextRow(object[] values)
+        {
+            // TODO: Implement this
+
+            // If the RESOURCE contains a DATATABLE then the string contents
+            // of the TD tags can be returned and the XmlDataFileBlock class will
+            // take care of the data conversion, so simply call
+            return base.OnReadNextRow(values);
+
+            // If the RESOURCE is binary then implement this function, parse
+            // columns from byte stream and return them
+        }
+
+        /// <summary>
+        /// Completes reading of a resource by reading its closing tag.
+        /// </summary>
+        protected override void OnReadFooter()
+        {
+            // TODO: make sure the ending RESOURCE tag is read and the reader
+            // is positioned at the next tag
+
+            // TODO: the TABLE element and the RESOURCE element can contain
+            // trailing INFO tags (what are these for?)
+            // make sure that they are read and position the reader after the
+            // closing RESOURCE element, whatever it is.
+        }
+
+        /// <summary>
+        /// Completes reading of a table and stops on the last tag.
+        /// </summary>
+        /// <remarks>
+        /// This function is called by the infrastructure to read all possible data
+        /// rows that the client didn't consume.
+        /// </remarks>
+        protected override void OnReadToFinish()
+        {
+            // TODO: This can be called by the framework anywhere within a RESOURCE tag,
+            // and it has to make sure that the reader is position right after the
+            // closing RESOURCE tag. This is for skipping or otherwise finishing the
+            // file block
+
+            /* OLD CODE, REUSE OR DELETE
+            // If the current element is not a /TABLE, read until the next one
+            while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) != 0)
+            {
+                File.XmlReader.Read();
+            }
+
+            // Consume closeing tag
+            File.XmlReader.ReadEndElement();
+            */
+        }
+
+        /// <summary>
+        /// Returns an array of strings containing data from the next data row.
+        /// </summary>
+        /// <param name="parts"></param>
+        /// <param name="skipComments"></param>
+        /// <returns></returns>
+        protected override bool OnReadNextRowParts(out string[] parts, bool skipComments)
+        {
+            throw new NotImplementedException();
+
+            /* OLD CODE, REUSE OR DELETE
+            parts = new string[Columns.Count];
+
+            if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0 ||
+                 VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0))
+            {
+                File.XmlReader.ReadEndElement();
+
+                // End of table
+                return false;
+            }
+            else
+            {
+                // Consume TR tag
+                File.XmlReader.ReadStartElement(Constants.TagTR);
+
+                // Read the TD tags
+                int q = 0;
+                while (true)
+                {
+                    if (File.XmlReader.NodeType == XmlNodeType.Element &&
+                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTD) == 0)
+                    {
+                        if (!File.XmlReader.IsEmptyElement)
+                        {
+                            // A cell found
+                            parts[q] = File.XmlReader.ReadString();
+
+                            // Consume closing tag
+                            File.XmlReader.ReadEndElement();
+                        }
+                        else
+                        {
+                            parts[q] = null;
+
+                            File.XmlReader.Read();
+                        }
+
+                        q++;
+                    }
+                    else if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTR) == 0)
+                    {
+                        // End of a row found
+                        File.XmlReader.ReadEndElement();
+
+                        break;
+                    }
+                    else
+                    {
+                        throw new FileFormatException();    // *** TODO
+                    }
+                }
+
+                return true;
+            }
+            */
+        }
+
+        #endregion
+        #region VOTable reader functions
+
+        private void ReadResourceElement()
+        {
+            // The reader is now positioned on the RESOURCE tag
+
+            // TODO: read all possible tags here similary to VOTable.ReadVOTableElement
+            // * DESCRIPTION
+            // * INFO
+            // * COOSYS
+            // * GROUP
+            // * PARAM
+            // * LINK
+            // * TABLE
+            // * RESOURCE
+
+            // TODO: while processing the above tags, collect info on columns
+
+            // Reader must now be positioned on a TABLE tag or an embeded RESOURCE tag
+            // TODO: process table
+            // TODO: throw exception on embeded resource
+
+            // Consume beginning tags: Data and TableData
+            File.XmlReader.ReadStartElement(Constants.TagData);
+            File.XmlReader.ReadStartElement(Constants.TagTableData);
+
+            // Reader is positioned on the first TR tag now
+        }
+
+        private void ReadTableElement()
+        {
+            // TODO: this works very similarly to the RESOURCE tag and
+            // can contain these tags:
+            // * DESCRIPTION
+            // * INFO
+            // * FIELS
+            // * PARAM
+            // * GROUP
+
+            // TODO: while processing the above tags, collect info on columns
+
+            // TODO: at this point we have all info on columns, so
+            // call CreateColumns on base class
+
+            // The reader is now positioned on a LINK or a DATA tag
+            // we do not support LINK tags, so throw on error
+            // If a data tag is found, process further
+        }
+
+        private void ReadDataElement()
+        {
+            // TODO: The DATA tag can contain one of the following
+            // * TABLEDATA
+            // * BINARY
+            // * BINARY2
+        }
+
+        private void ReadTableDataElement()
+        {
+            // TODO: position reader on the very first TR tag
+            // subsequent processing will be done when OnReadNextRow is called
+            // by the framework
+        }
+
+        private void ReadBinaryElement()
+        {
+            // TODO: figure out binary type and make sure that OnReadNextRow
+            // reads contents accordingly
+        }
+
+        private void ReadBinary2Element()
+        {
+            // TODO: similar to ReadBinaryElement
+        }
+
+        #endregion
+
+        // THIS IS OLD CODE, REUSE OR DELETE
+#if false
+
         #region Column functions
 
         /// <summary>
@@ -69,13 +291,13 @@ namespace Jhu.SkyQuery.Format.VOTable
             while (true)
             {
                 if (File.XmlReader.NodeType == XmlNodeType.Element &&
-                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordField) == 0)
+                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagField) == 0)
                 {
                     // Column found
 
                     var col = new Column()
                     {
-                        Name = File.XmlReader.GetAttribute(Constants.VOTableKeywordName),
+                        Name = File.XmlReader.GetAttribute(Constants.AttributeName),
                         DataType = GetVOTableDataType(),
                         Metadata = GetVOTableMetaData(),
                     };
@@ -84,7 +306,7 @@ namespace Jhu.SkyQuery.Format.VOTable
 
                     File.XmlReader.Read();
                 }
-                else if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordData) == 0)
+                else if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0)
                 {
                     // A DATA tag is detected
                     // End of header reached, return
@@ -108,8 +330,8 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <returns></returns>
         private DataType GetVOTableDataType()
         {
-            var datatype = File.XmlReader.GetAttribute(Constants.VOTableKeywordDataType);
-            var arraysize = File.XmlReader.GetAttribute(Constants.VOTableKeywordArraySize);
+            var datatype = File.XmlReader.GetAttribute(Constants.AttributeDataType);
+            var arraysize = File.XmlReader.GetAttribute(Constants.AttributeArraySize);
 
             int arraySize;
             bool arrayVariable;
@@ -121,13 +343,13 @@ namespace Jhu.SkyQuery.Format.VOTable
 
             switch (datatype.ToLowerInvariant())
             {
-                case Constants.VOTableTypeBoolean:
+                case Constants.TypeBoolean:
                     dt = DataTypes.Boolean;
                     break;
-                case Constants.VOTableTypeBit:
+                case Constants.TypeBit:
                     dt = DataTypes.Boolean;    // This is union bit
                     break;
-                case Constants.VOTableTypeByte:
+                case Constants.TypeByte:
                     if (arraySize == -1)
                     {
                         dt = DataTypes.SqlVarBinaryMax;
@@ -143,16 +365,16 @@ namespace Jhu.SkyQuery.Format.VOTable
                         dt.Length = arraySize;
                     }
                     break;
-                case Constants.VOTableTypeShort:
+                case Constants.TypeShort:
                     dt = DataTypes.SqlSmallInt;
                     break;
-                case Constants.VOTableTypeInt:
+                case Constants.TypeInt:
                     dt = DataTypes.SqlInt;
                     break;
-                case Constants.VOTableTypeLong:
+                case Constants.TypeLong:
                     dt = DataTypes.SqlBigInt;
                     break;
-                case Constants.VOTableTypeChar:
+                case Constants.TypeChar:
                     if (arraySize == -1)
                     {
                         dt = DataTypes.SqlVarCharMax;
@@ -168,7 +390,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                         dt.Length = arraySize;
                     }
                     break;
-                case Constants.VOTableTypeUnicodeChar:
+                case Constants.TypeUnicodeChar:
                     if (arraySize == -1)
                     {
                         dt = DataTypes.SqlNVarCharMax;
@@ -184,14 +406,14 @@ namespace Jhu.SkyQuery.Format.VOTable
                         dt.Length = arraySize;
                     }
                     break;
-                case Constants.VOTableTypeFloat:
+                case Constants.TypeFloat:
                     dt = DataTypes.SqlReal;
                     break;
-                case Constants.VOTableTypeDouble:
+                case Constants.TypeDouble:
                     dt = DataTypes.SqlFloat;
                     break;
-                case Constants.VOTableTypeFloatComplex:
-                case Constants.VOTableTypeDoubleComplex:
+                case Constants.TypeFloatComplex:
+                case Constants.TypeDoubleComplex:
                 default:
                     throw new NotImplementedException();
             }
@@ -253,133 +475,16 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         #endregion
-
-        /// <summary>
-        /// Reads the header of VOTable resource, from the TABLE tag to the TABLEDATA tag.
-        /// </summary>
-        protected override void OnReadHeader()
-        {
-            // Reader must now be positioned on a TABLE tag
-            File.XmlReader.ReadStartElement(Constants.VOTableKeywordTable);
-
-            DetectColumns();
-            
-            // Consume beginning tags: Data and TableData
-            File.XmlReader.ReadStartElement(Constants.VOTableKeywordData);
-            File.XmlReader.ReadStartElement(Constants.VOTableKeywordTableData);
-            
-            // Reader is positioned on the first TR tag now
-        }
-
-        protected override void OnSetMetadata(int blockCounter)
-        {
-            base.OnSetMetadata(blockCounter);
-
-            // TODO
-        }
-
-        /// <summary>
-        /// Returns an array of strings containing data from the next data row.
-        /// </summary>
-        /// <param name="parts"></param>
-        /// <param name="skipComments"></param>
-        /// <returns></returns>
-        protected override bool ReadNextRowParts(out string[] parts, bool skipComments)
-        {
-            parts = new string[Columns.Count];
-
-            if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
-                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTableData) == 0 ||
-                 VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordData) == 0))
-            {
-                File.XmlReader.ReadEndElement();
-
-                // End of table
-                return false;
-            }
-            else
-            {
-                // Consume TR tag
-                File.XmlReader.ReadStartElement(Constants.VOTableKeywordTR);
-
-                // Read the TD tags
-                int q = 0;
-                while (true)
-                {
-                    if (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTD) == 0)
-                    {
-                        if (!File.XmlReader.IsEmptyElement)
-                        {
-                            // A cell found
-                            parts[q] = File.XmlReader.ReadString();
-
-                            // Consume closing tag
-                            File.XmlReader.ReadEndElement();
-                        }
-                        else
-                        {
-                            parts[q] = null;
-
-                            File.XmlReader.Read();
-                        }
-
-                        q++;
-                    }
-                    else if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTR) == 0)
-                    {
-                        // End of a row found
-                        File.XmlReader.ReadEndElement();
-
-                        break;
-                    }
-                    else
-                    {
-                        throw new FileFormatException();    // *** TODO
-                    }
-                }
-
-                return true;
-            }
-        }
-
-        /// <summary>
-        /// Completes reading of a table and stops on the last tag.
-        /// </summary>
-        /// <remarks>
-        /// This function is called by the infrastructure to read all possible data
-        /// rows that the client didn't consume.
-        /// </remarks>
-        protected override void OnReadToFinish()
-        {
-            // If the current element is not a /TABLE, read until the next one
-            while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
-                VOTable.Comparer.Compare(File.XmlReader.Name, Constants.VOTableKeywordTable) != 0)
-            {
-                File.XmlReader.Read();
-            }
-
-            // Consume closeing tag
-            File.XmlReader.ReadEndElement();
-        }
-
-        /// <summary>
-        /// Completes reading of a resource by reading its closing tag.
-        /// </summary>
-        protected override void OnReadFooter()
-        {
-            // Tags to consume: /RESOURCE
-            File.XmlReader.ReadEndElement();
-        }
+#endif
+        #region Framework writer functions
 
         /// <summary>
         /// Writes the resource header into the stream.
         /// </summary>
         protected override void OnWriteHeader()
         {
-            File.XmlWriter.WriteStartElement(Constants.VOTableKeywordResource);
-            File.XmlWriter.WriteStartElement(Constants.VOTableKeywordTable);
+            File.XmlWriter.WriteStartElement(Constants.TagResource);
+            File.XmlWriter.WriteStartElement(Constants.TagTable);
 
             // Write columns
             for (int i = 0; i < Columns.Count; i++)
@@ -387,15 +492,15 @@ namespace Jhu.SkyQuery.Format.VOTable
                 WriteColumn(Columns[i]);
             }
 
-            File.XmlWriter.WriteStartElement(Constants.VOTableKeywordData);
-            File.XmlWriter.WriteStartElement(Constants.VOTableKeywordTableData);
+            File.XmlWriter.WriteStartElement(Constants.TagData);
+            File.XmlWriter.WriteStartElement(Constants.TagTableData);
         }
 
         private void WriteColumn(Column column)
         {
-            File.XmlWriter.WriteStartElement(Constants.VOTableKeywordField);
+            File.XmlWriter.WriteStartElement(Constants.TagField);
 
-            File.XmlWriter.WriteAttributeString(Constants.VOTableKeywordName, column.Name);
+            File.XmlWriter.WriteAttributeString(Constants.AttributeName, column.Name);
             // *** TODO: write other column properties
 
             File.XmlWriter.WriteEndElement();
@@ -407,8 +512,8 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="values"></param>
         protected override void OnWriteNextRow(object[] values)
         {
-            File.XmlWriter.WriteStartElement(Constants.VOTableKeywordTR);
-            
+            File.XmlWriter.WriteStartElement(Constants.TagTR);
+
             for (int i = 0; i < Columns.Count; i++)
             {
                 // TODO: Do not use format here, or use standard votable formatting
@@ -419,10 +524,10 @@ namespace Jhu.SkyQuery.Format.VOTable
                 }
                 else
                 {
-                    File.XmlWriter.WriteElementString(Constants.VOTableKeywordTD, ColumnFormatters[i](values[i], "{0}"));
+                    File.XmlWriter.WriteElementString(Constants.TagTD, ColumnFormatters[i](values[i], "{0}"));
                 }
             }
-            
+
             File.XmlWriter.WriteEndElement();
         }
 
@@ -436,5 +541,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             File.XmlWriter.WriteEndElement();
             File.XmlWriter.WriteEndElement();
         }
+
+        #endregion
     }
 }

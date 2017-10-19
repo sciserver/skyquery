@@ -68,6 +68,25 @@
     <Compile Include="Format\Fits\FitsFileWrapper.cs" />
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Format\VOTable\Constants.cs" />
+    <Compile Include="Format\VOTable\Coosys.cs" />
+    <Compile Include="Format\VOTable\Definitions.cs" />
+    <Compile Include="Format\VOTable\Description.cs" />
+    <Compile Include="Format\VOTable\Field.cs" />
+    <Compile Include="Format\VOTable\FieldRef.cs" />
+    <Compile Include="Format\VOTable\Group.cs" />
+    <Compile Include="Format\VOTable\Info.cs" />
+    <Compile Include="Format\VOTable\Link.cs" />
+    <Compile Include="Format\VOTable\Max.cs" />
+    <Compile Include="Format\VOTable\Min.cs" />
+    <Compile Include="Format\VOTable\Option.cs" />
+    <Compile Include="Format\VOTable\Param.cs" />
+    <Compile Include="Format\VOTable\ParamRef.cs" />
+    <Compile Include="Format\VOTable\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Format\VOTable\Values.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />
     <Compile Include="IO\SkyQueryStreamFactory.cs" />
@@ -75,6 +94,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Format\FileFormatNames.resx" />
+    <EmbeddedResource Include="Format\VOTable\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
@@ -95,6 +119,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Format\VOTable\Resources\votable-v1.3.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="post-build.ps1" />
     <None Include="pre-build.ps1" />
   </ItemGroup>
