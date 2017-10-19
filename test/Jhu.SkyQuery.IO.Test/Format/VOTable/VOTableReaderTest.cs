@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
     {
         FileDataReader OpenSimpleReader(string path)
         {
-            path = Path.Combine(GetTestFilePath(@"skyquery\test\files"), path);
+            path = Path.Combine(GetTestFilePath(@"modules\skyquery\test\files"), path);
 
             var f = new VOTable(
                 UriConverter.FromFilePath(path),
@@ -150,6 +150,27 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
             int q = 0;
             int r = 0;
 
+            do
+            {
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
+            }
+            while (dr.NextResult());
+
+            Assert.AreEqual(3, q);
+            Assert.AreEqual(1, r);
+        }
+
+        [TestMethod]
+        public void ReadTap_VOTableTest()
+        {
+            //var dr = OpenSimpleReader(@"tap_votable\viziercorotvotable.xml");
+            var dr = OpenSimpleReader(@"tap_votable\votable_ivoa.xml");
+            int q = 0;
+            int r = 0;
             do
             {
                 while (dr.Read())

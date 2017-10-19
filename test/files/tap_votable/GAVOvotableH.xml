@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='utf-8'?>
+<VOTABLE version="1.3" xmlns="http://www.ivoa.net/xml/VOTable/v1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://vo.ari.uni-heidelberg.de/docs/schemata/VOTable-1.3.xsd"><RESOURCE><INFO name="server" value="http://dc.zah.uni-heidelberg.de"></INFO><INFO name="query" value="SELECT target_name, accref, hubtyp, magg FROM califadr3.cubes NATURAL JOIN califadr3.objects  WHERE hubtyp IN ( 'S d' , 'S cd' , 'S c' ) AND magg &lt; 13 LIMIT 100"></INFO><INFO name="src_res" value="Contains traces from resource califa/q3"> The Calar Alto Legacy Integral Field Area (CALIFA) survey provides
+spatially resolved spectroscopic information for 667 galaxies, mainly
+within the local universe (0.005 &lt; z &lt; 0.03).
+
+CALIFA data was obtained using the PPAK integral field unit (IFU),
+with a hexagonal field-of-view of 1.3 square arcmin, with a 100%
+covering factor by adopting a three-pointing dithering scheme. has
+been taken in two setups: V500 (6 Å bin size, 646 galaxies) and V1200
+(2.3 Å bin size, 484 galaxies). A final product ("COMBO") combining
+both data sets, covering 3700-7500 Å at 6 Å bin size, is made availble
+for 484 galaxies.
+
+CALIFA is a legacy survey, intended for the community. This is the
+(final) Data Release 3.</INFO><INFO name="copyright" value="califa/q3 copyright or license"> CALIFA asks you to acknowledge:
+
+"This study uses data provided by the Calar Alto Legacy Integral Field
+Area (CALIFA) survey (http://califa.caha.es/)."
+
+"Based on observations collected at the Centro Astronómico Hispano
+Alemán (CAHA) at Calar Alto, operated jointly by the
+Max-Planck-Institut fűr Astronomie and the Instituto de Astrofísica de
+Andalucía (CSIC)."
+
+and to cite both of :bibcode:`2014A&amp;A...569A...1W` and
+:bibcode:`2012A&amp;A...538A...8S`</INFO><INFO name="src_table" value="Contains traces from table califadr3.cubes"> Metadata for the CALIFA data cubes as delivered by the project.</INFO><INFO name="src_res" value="Contains traces from resource califa/q3"> The Calar Alto Legacy Integral Field Area (CALIFA) survey provides
+spatially resolved spectroscopic information for 667 galaxies, mainly
+within the local universe (0.005 &lt; z &lt; 0.03).
+
+CALIFA data was obtained using the PPAK integral field unit (IFU),
+with a hexagonal field-of-view of 1.3 square arcmin, with a 100%
+covering factor by adopting a three-pointing dithering scheme. has
+been taken in two setups: V500 (6 Å bin size, 646 galaxies) and V1200
+(2.3 Å bin size, 484 galaxies). A final product ("COMBO") combining
+both data sets, covering 3700-7500 Å at 6 Å bin size, is made availble
+for 484 galaxies.
+
+CALIFA is a legacy survey, intended for the community. This is the
+(final) Data Release 3.</INFO><INFO name="copyright" value="califa/q3 copyright or license"> CALIFA asks you to acknowledge:
+
+"This study uses data provided by the Calar Alto Legacy Integral Field
+Area (CALIFA) survey (http://califa.caha.es/)."
+
+"Based on observations collected at the Centro Astronómico Hispano
+Alemán (CAHA) at Calar Alto, operated jointly by the
+Max-Planck-Institut fűr Astronomie and the Instituto de Astrofísica de
+Andalucía (CSIC)."
+
+and to cite both of :bibcode:`2014A&amp;A...569A...1W` and
+:bibcode:`2012A&amp;A...538A...8S`</INFO><INFO name="src_table" value="Contains traces from table califadr3.objects"> Object data for DR3 sample.
+
+The photometric and derived quantities are from growth curve analysis
+of the SDSS images for galaxies from the mother sample
+(califaid&lt;1000), from SDSS DR7/12 photometry otherwise.</INFO><INFO name="citation" ucd="meta.bib" value="http://dc.zah.uni-heidelberg.de/tableinfo/califadr3.cubes">For advice on how to cite the resource(s) that contributed to this result, see http://dc.zah.uni-heidelberg.de/tableinfo/califadr3.cubes</INFO><INFO name="citation" ucd="meta.bib" value="http://dc.zah.uni-heidelberg.de/tableinfo/califadr3.objects">For advice on how to cite the resource(s) that contributed to this result, see http://dc.zah.uni-heidelberg.de/tableinfo/califadr3.objects</INFO><TABLE name="cubes_objects"><FIELD ID="target_name" arraysize="*" datatype="char" name="target_name" ucd="meta.id;src" utype="obscore:Target.Name"><DESCRIPTION>Object a targeted observation targeted</DESCRIPTION></FIELD><FIELD ID="accref" arraysize="*" datatype="char" name="accref" utype="Access.Reference"><DESCRIPTION>Access key for the data</DESCRIPTION></FIELD><FIELD ID="hubtyp" arraysize="*" datatype="char" name="hubtyp" ucd="src.morph.type"><DESCRIPTION>Morphological type from CALIFA's own visual classification (see 2014A&amp;A...569A...1W for details). (M) indicates definite merging going on, (m) indicates likely merging, (i) indicates signs of interaction.</DESCRIPTION></FIELD><FIELD ID="magg" datatype="float" name="magg" ucd="phot.mag;em.opt;V"><DESCRIPTION>Magnitude in the g band. This is from a growth curve analysis of the SDSS imagery for galaxies in the mother sample (id&lt;1000). Otherwiese, it is the SDSS DR7/12 petrosian magnitude.</DESCRIPTION></FIELD><DATA><BINARY><STREAM encoding="base64">AAAAB05HQzAyNTcAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9kdWN0
+L2NhbGlmYS9kYXRhZHIzL0NPTUIvTkdDMDI1Ny5DT01CLnJzY3ViZS5maXRzAAAAA1MgY0FPy5IA
+AAAHTkdDMDMwOQAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHByb2R1Y3Qv
+Y2FsaWZhL2RhdGFkcjMvQ09NQi9OR0MwMzA5LkNPTUIucnNjdWJlLmZpdHMAAAAEUyBjZEFE1JUA
+AAAHTkdDMDc1NQAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHByb2R1Y3Qv
+Y2FsaWZhL2RhdGFkcjMvQ09NQi9OR0MwNzU1LkNPTUIucnNjdWJlLmZpdHMAAAAEUyBjZEFMPXEA
+AAAHTkdDMDIzNAAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHByb2R1Y3Qv
+Y2FsaWZhL2RhdGFkcjMvQ09NQi9OR0MwMjM0LkNPTUIucnNjdWJlLmZpdHMAAAADUyBjQU8MSgAA
+AAdOR0MwODczAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVjdC9j
+YWxpZmEvZGF0YWRyMy9DT01CL05HQzA4NzMuQ09NQi5yc2N1YmUuZml0cwAAAARTIGNkQUuc4AAA
+AAdOR0MwOTQxAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVjdC9j
+YWxpZmEvZGF0YWRyMy9DT01CL05HQzA5NDEuQ09NQi5yc2N1YmUuZml0cwAAAARTIGNkQUxx3gAA
+AAdOR0MwOTkxAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVjdC9j
+YWxpZmEvZGF0YWRyMy9DT01CL05HQzA5OTEuQ09NQi5yc2N1YmUuZml0cwAAAARTIGNkQUXCJwAA
+AAdOR0MyNTk1AAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVjdC9j
+YWxpZmEvZGF0YWRyMy9DT01CL05HQzI1OTUuQ09NQi5yc2N1YmUuZml0cwAAAANTIGNBQ8uSAAAA
+B05HQzI2MDQAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9kdWN0L2Nh
+bGlmYS9kYXRhZHIzL0NPTUIvTkdDMjYwNC5DT01CLnJzY3ViZS5maXRzAAAAA1MgZEFNy/sAAAAH
+TkdDMjgwNQAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHByb2R1Y3QvY2Fs
+aWZhL2RhdGFkcjMvQ09NQi9OR0MyODA1LkNPTUIucnNjdWJlLmZpdHMAAAADUyBjQT/99AAAAAdO
+R0MzMzgxAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVjdC9jYWxp
+ZmEvZGF0YWRyMy9DT01CL05HQzMzODEuQ09NQi5yc2N1YmUuZml0cwAAAANTIGRBS+niAAAAB05H
+QzU0ODAAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9kdWN0L2NhbGlm
+YS9kYXRhZHIzL0NPTUIvTkdDNTQ4MC5DT01CLnJzY3ViZS5maXRzAAAABFMgY2RBR9DlAAAAB05H
+QzYxNTUAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9kdWN0L2NhbGlm
+YS9kYXRhZHIzL0NPTUIvTkdDNjE1NS5DT01CLnJzY3ViZS5maXRzAAAAA1MgY0FOsVsAAAAHTkdD
+MDIzNAAAAFlodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHByb2R1Y3QvY2FsaWZh
+L2RhdGFkcjMvVjEyMDAvTkdDMDIzNC5WMTIwMC5yc2N1YmUuZml0cwAAAANTIGNBTwxKAAAAB05H
+QzAyNTcAAABZaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9kdWN0L2NhbGlm
+YS9kYXRhZHIzL1YxMjAwL05HQzAyNTcuVjEyMDAucnNjdWJlLmZpdHMAAAADUyBjQU/LkgAAAAdO
+R0MwMzA5AAAAWWh0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVjdC9jYWxp
+ZmEvZGF0YWRyMy9WMTIwMC9OR0MwMzA5LlYxMjAwLnJzY3ViZS5maXRzAAAABFMgY2RBRNSVAAAA
+B05HQzA3NTUAAABZaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9kdWN0L2Nh
+bGlmYS9kYXRhZHIzL1YxMjAwL05HQzA3NTUuVjEyMDAucnNjdWJlLmZpdHMAAAAEUyBjZEFMPXEA
+AAAHTkdDMDg3MwAAAFlodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHByb2R1Y3Qv
+Y2FsaWZhL2RhdGFkcjMvVjEyMDAvTkdDMDg3My5WMTIwMC5yc2N1YmUuZml0cwAAAARTIGNkQUuc
+4AAAAAdOR0MwOTQxAAAAWWh0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJvZHVj
+dC9jYWxpZmEvZGF0YWRyMy9WMTIwMC9OR0MwOTQxLlYxMjAwLnJzY3ViZS5maXRzAAAABFMgY2RB
+THHeAAAAB05HQzA5OTEAAABZaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRwcm9k
+dWN0L2NhbGlmYS9kYXRhZHIzL1YxMjAwL05HQzA5OTEuVjEyMDAucnNjdWJlLmZpdHMAAAAEUyBj
+ZEFFwicAAAAHTkdDMjU5NQAAAFlodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHBy
+b2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjEyMDAvTkdDMjU5NS5WMTIwMC5yc2N1YmUuZml0cwAAAANT
+IGNBQ8uSAAAAB05HQzI2MDQAAABZaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRw
+cm9kdWN0L2NhbGlmYS9kYXRhZHIzL1YxMjAwL05HQzI2MDQuVjEyMDAucnNjdWJlLmZpdHMAAAAD
+UyBkQU3L+wAAAAdOR0MyODA1AAAAWWh0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0
+cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WMTIwMC9OR0MyODA1LlYxMjAwLnJzY3ViZS5maXRzAAAA
+A1MgY0E//fQAAAAHTkdDMzM4MQAAAFlodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dl
+dHByb2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjEyMDAvTkdDMzM4MS5WMTIwMC5yc2N1YmUuZml0cwAA
+AANTIGRBS+niAAAAB05HQzU0ODAAAABZaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9n
+ZXRwcm9kdWN0L2NhbGlmYS9kYXRhZHIzL1YxMjAwL05HQzU0ODAuVjEyMDAucnNjdWJlLmZpdHMA
+AAAEUyBjZEFH0OUAAAAHTkdDNjE1NQAAAFlodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRl
+L2dldHByb2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjEyMDAvTkdDNjE1NS5WMTIwMC5yc2N1YmUuZml0
+cwAAAANTIGNBTrFbAAAAB05HQzAyMzQAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5k
+ZS9nZXRwcm9kdWN0L2NhbGlmYS9kYXRhZHIzL1Y1MDAvTkdDMDIzNC5WNTAwLnJzY3ViZS5maXRz
+AAAAA1MgY0FPDEoAAAAHTkdDMDI1NwAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRl
+L2dldHByb2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjUwMC9OR0MwMjU3LlY1MDAucnNjdWJlLmZpdHMA
+AAADUyBjQU/LkgAAAAdOR0MwMzA5AAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUv
+Z2V0cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzAzMDkuVjUwMC5yc2N1YmUuZml0cwAA
+AARTIGNkQUTUlQAAAAdOR0MwNzU1AAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUv
+Z2V0cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzA3NTUuVjUwMC5yc2N1YmUuZml0cwAA
+AARTIGNkQUw9cQAAAAdOR0MwODczAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUv
+Z2V0cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzA4NzMuVjUwMC5yc2N1YmUuZml0cwAA
+AARTIGNkQUuc4AAAAAdOR0MwOTQxAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUv
+Z2V0cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzA5NDEuVjUwMC5yc2N1YmUuZml0cwAA
+AARTIGNkQUxx3gAAAAdOR0MwOTkxAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUv
+Z2V0cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzA5OTEuVjUwMC5yc2N1YmUuZml0cwAA
+AARTIGNkQUXCJwAAAAdOR0MyNTk1AAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUv
+Z2V0cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzI1OTUuVjUwMC5yc2N1YmUuZml0cwAA
+AANTIGNBQ8uSAAAAB05HQzI2MDQAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9n
+ZXRwcm9kdWN0L2NhbGlmYS9kYXRhZHIzL1Y1MDAvTkdDMjYwNC5WNTAwLnJzY3ViZS5maXRzAAAA
+A1MgZEFNy/sAAAAHTkdDMjgwNQAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dl
+dHByb2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjUwMC9OR0MyODA1LlY1MDAucnNjdWJlLmZpdHMAAAAD
+UyBjQT/99AAAAAdOR0MzMzgxAAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0
+cHJvZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzMzODEuVjUwMC5yc2N1YmUuZml0cwAAAANT
+IGRBS+niAAAAB05HQzQ0NzAAAABXaHR0cDovL2RjLnphaC51bmktaGVpZGVsYmVyZy5kZS9nZXRw
+cm9kdWN0L2NhbGlmYS9kYXRhZHIzL1Y1MDAvTkdDNDQ3MC5WNTAwLnJzY3ViZS5maXRzAAAAA1Mg
+Y0FMmF8AAAAHTkdDNTQ4MAAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHBy
+b2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjUwMC9OR0M1NDgwLlY1MDAucnNjdWJlLmZpdHMAAAAEUyBj
+ZEFH0OUAAAAHTkdDNTY2NQAAAFdodHRwOi8vZGMuemFoLnVuaS1oZWlkZWxiZXJnLmRlL2dldHBy
+b2R1Y3QvY2FsaWZhL2RhdGFkcjMvVjUwMC9OR0M1NjY1LlY1MDAucnNjdWJlLmZpdHMAAAADUyBj
+QUaLrAAAAAdOR0M2MTU1AAAAV2h0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJv
+ZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL05HQzYxNTUuVjUwMC5yc2N1YmUuZml0cwAAAANTIGNB
+TrFbAAAACFVHQzA0MzA4AAAAWGh0dHA6Ly9kYy56YWgudW5pLWhlaWRlbGJlcmcuZGUvZ2V0cHJv
+ZHVjdC9jYWxpZmEvZGF0YWRyMy9WNTAwL1VHQzA0MzA4LlY1MDAucnNjdWJlLmZpdHMAAAADUyBj
+QU6DEg==
+</STREAM></BINARY></DATA></TABLE></RESOURCE></VOTABLE>
