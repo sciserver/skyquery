@@ -14,6 +14,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         protected void ValidateVOTable(string xml)
         {
             // Read an XML file and validate against the xsd schema
+            var schema = XmlReader.Create(new StringReader(Resources.Schema_VoTable_v1_3));
 
             var settings = new XmlReaderSettings();
             settings.ValidationType = ValidationType.Schema;
@@ -21,6 +22,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
             settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
             settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
+            settings.Schemas.Add(Constants.VOTableNamespace, schema);
 
             // Create the XmlReader object.
             XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
@@ -38,7 +40,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             }
             else
             {
-                throw new Exception(args.Message);
+                throw args.Exception;
             }
         }
 
