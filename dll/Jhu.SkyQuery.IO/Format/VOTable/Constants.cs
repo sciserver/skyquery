@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
-    class Constants
+    public class Constants
     {
         public const string FileExtensionVOTable = ".votable";
         public const string MimeTypeVOTable = "application/x-votable+xml";

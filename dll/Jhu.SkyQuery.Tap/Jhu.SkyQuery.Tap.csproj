@@ -42,13 +42,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Tap\Client\Error.cs" />
+    <Compile Include="Tap\Client\ExceptionMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessages.resx</DependentUpon>
+    </Compile>
     <Compile Include="Tap\Client\TapCommand.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Tap\Client\TapConnection.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Tap\Client\TapConnectionStringBuilder.cs" />
     <Compile Include="Tap\Client\TapDataReader.cs" />
+    <Compile Include="Tap\Client\TapException.cs" />
+    <Compile Include="Tap\Client\TapFactory.cs" />
+    <Compile Include="Tap\Client\TapParameter.cs" />
+    <Compile Include="Tap\Client\TapParameterCollection.cs" />
+    <Compile Include="Tap\Client\TapTransaction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -62,6 +74,12 @@
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>
       <Name>Jhu.SkyQuery.IO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tap\Client\ExceptionMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\build\Jhu.Graywulf.Build.targets" />
