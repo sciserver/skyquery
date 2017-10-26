@@ -61,6 +61,15 @@ namespace Jhu.SkyQuery.Tap.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connection is not in the open state..
+        /// </summary>
+        internal static string ConnectionNotOpen {
+            get {
+                return ResourceManager.GetString("ConnectionNotOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid command type. Only CommandType.Text supported..
         /// </summary>
         internal static string InvalidTapCommandType {

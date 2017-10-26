@@ -17,5 +17,10 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             return new KeyNotFoundException(String.Format(ExceptionMessages.ParameterNotFound, key));
         }
+
+        public static InvalidOperationException ConnectionNotOpen()
+        {
+            return new InvalidOperationException(ExceptionMessages.ConnectionNotOpen);
+        }
     }
 }

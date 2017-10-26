@@ -13,6 +13,10 @@ namespace Jhu.SkyQuery.Tap.Client
         #region Private member variables
 
         private string connectionString;
+        private int connectionTimeout;
+        private string dataSource;
+        private string serverVersion;
+
         private ConnectionState state;
 
         #endregion
@@ -21,7 +25,16 @@ namespace Jhu.SkyQuery.Tap.Client
         public override string ConnectionString
         {
             get { return connectionString; }
-            set { connectionString = value; }
+            set
+            {
+                EnsureConnectionClosed();
+                SetConnectionString(connectionString);
+            }
+        }
+
+        public override int ConnectionTimeout
+        {
+            get { return connectionTimeout; }
         }
 
         public override string Database
@@ -31,12 +44,12 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public override string DataSource
         {
-            get { throw new NotImplementedException(); }
+            get { return dataSource; }
         }
 
         public override string ServerVersion
         {
-            get { throw new NotImplementedException(); }
+            get { return serverVersion; }
         }
 
         public override ConnectionState State
@@ -49,19 +62,56 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public TapConnection()
         {
+            InitializeMembers();
         }
 
         public TapConnection(string connectionString)
         {
+            InitializeMembers();
+
+            SetConnectionString(connectionString);
         }
 
         private void InitializeMembers()
         {
             this.connectionString = null;
+            this.connectionTimeout = Constants.DefaultConnectionTimeout;
+            this.dataSource = null;
+            this.serverVersion = null;
+
             this.state = ConnectionState.Closed;
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (state != ConnectionState.Closed)
+            {
+                Close();
+            }
+        }
+
         #endregion
+
+        private void EnsureConnectionClosed()
+        {
+            // TODO: throw exception if not closed
+        }
+
+        private void EnsureConnectionOpen()
+        {
+            // TODO: throw exception if not open
+        }
+
+        private void SetConnectionString(string connectionString)
+        {
+            var csb = new TapConnectionStringBuilder(connectionString);
+
+            this.connectionString = connectionString;
+            dataSource = csb.DataSource;
+            connectionTimeout = csb.ConnectTimeout;
+        }
 
         public override void Open()
         {
@@ -89,7 +139,7 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             throw new NotImplementedException();
         }
-        
+
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
             // TAP doesn't support any kind of transactions but
