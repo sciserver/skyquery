@@ -126,4 +126,10 @@
   <data name="ParameterNotFound" xml:space="preserve">
     <value>Parameter '{0}' not found.</value>
   </data>
+  <data name="UnexpectedHttpResponse" xml:space="preserve">
+    <value>Unexpected HTTP status code: {0} {1}.</value>
+  </data>
+  <data name="UnexpectedPhase" xml:space="preserve">
+    <value>Unexpected TAP job phase: {0}.</value>
+  </data>
 </root>

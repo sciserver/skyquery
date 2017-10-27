@@ -86,5 +86,23 @@ namespace Jhu.SkyQuery.Tap.Client {
                 return ResourceManager.GetString("ParameterNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected HTTP status code: {0} {1}..
+        /// </summary>
+        internal static string UnexpectedHttpResponse {
+            get {
+                return ResourceManager.GetString("UnexpectedHttpResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected TAP job phase: {0}..
+        /// </summary>
+        internal static string UnexpectedPhase {
+            get {
+                return ResourceManager.GetString("UnexpectedPhase", resourceCulture);
+            }
+        }
     }
 }

@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.Common;
-using System.Net.Http;
 using System.Threading;
 
 namespace Jhu.SkyQuery.Tap.Client
@@ -16,6 +15,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private TapConnection connection;
         private TapTransaction transaction;
+        private TapParameterCollection parameters;
         private TapQueryLanguage queryLanguage;
         private string commandText;
         private int commandTimeout;
@@ -24,8 +24,6 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private bool designTimeVisible;
         private UpdateRowSource updateRowSource;
-
-        private HttpClient httpClient;
 
         #endregion
         #region Properties
@@ -52,6 +50,23 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             get { return transaction; }
             set { transaction = value; }
+        }
+
+        public new TapParameterCollection Parameters
+        {
+            get { return parameters; }
+            set { parameters = value; }
+        }
+
+        protected override DbParameterCollection DbParameterCollection
+        {
+            get { return parameters; }
+        }
+
+        public TapQueryLanguage QueryLanguage
+        {
+            get { return queryLanguage; }
+            set { queryLanguage = value; }
         }
 
         public override string CommandText
@@ -85,12 +100,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 commandType = value;
             }
         }
-
-        protected override DbParameterCollection DbParameterCollection
-        {
-            get { throw new NotImplementedException(); }
-        }
-
+        
         public override bool DesignTimeVisible
         {
             get { return designTimeVisible; }
@@ -109,6 +119,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public TapCommand()
         {
+            InitializeMembers();
         }
 
         private void InitializeMembers()
@@ -122,19 +133,6 @@ namespace Jhu.SkyQuery.Tap.Client
 
             this.designTimeVisible = false;
             this.updateRowSource = UpdateRowSource.None;
-
-            this.httpClient = null;
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (httpClient != null)
-            {
-                httpClient.Dispose();
-                httpClient = null;
-            }
         }
 
         #endregion
@@ -167,7 +165,7 @@ namespace Jhu.SkyQuery.Tap.Client
             // TODO: send async request and yield until response arrives. Then yield and
             // start polling thread. Once results start streaming, return datareader and
             // stream back data.
-
+            
             return base.ExecuteDbDataReaderAsync(behavior, cancellationToken);
         }
 
@@ -184,14 +182,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         #region TAP HTTP implementation
 
-        private void CreateHttpClient()
-        {
-            httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri(connection.DataSource, UriKind.Absolute),
-                Timeout = TimeSpan.FromSeconds(connection.ConnectionTimeout)
-            };
-        }
+        
 
         private async Task<string> SendTapRequest()
         {

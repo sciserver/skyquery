@@ -8,5 +8,18 @@ namespace Jhu.SkyQuery.Tap.Client
 {
     public class TapException : System.Data.Common.DbException
     {
+        public TapException()
+        {
+        }
+
+        public TapException(string message)
+            : base(message)
+        {
+        }
+
+        public TapException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
 }
