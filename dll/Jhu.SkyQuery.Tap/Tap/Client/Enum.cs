@@ -22,10 +22,15 @@ namespace Jhu.SkyQuery.Tap.Client
         Text
     }
 
-    public enum TapJobPhase
+    public enum TapJobAction
     {
         Run,
-        Abort,
+        Abort
+    }
+
+    public enum TapJobPhase
+    {
+        Unknown,
         Queued,
         Executing,
         Completed,

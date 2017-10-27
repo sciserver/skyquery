@@ -61,6 +61,51 @@ namespace Jhu.SkyQuery.Tap.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The TAP command has been aborted..
+        /// </summary>
+        internal static string CommandCancelled {
+            get {
+                return ResourceManager.GetString("CommandCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation is invalid when command is executing..
+        /// </summary>
+        internal static string CommandExecuting {
+            get {
+                return ResourceManager.GetString("CommandExecuting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operation is invalid when command is not executing..
+        /// </summary>
+        internal static string CommandNotExecuting {
+            get {
+                return ResourceManager.GetString("CommandNotExecuting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The TAP command has timed out..
+        /// </summary>
+        internal static string CommandTimeout {
+            get {
+                return ResourceManager.GetString("CommandTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A TAP communication exception has occured..
+        /// </summary>
+        internal static string CommunicationException {
+            get {
+                return ResourceManager.GetString("CommunicationException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connection is not in the open state..
         /// </summary>
         internal static string ConnectionNotOpen {
@@ -102,6 +147,15 @@ namespace Jhu.SkyQuery.Tap.Client {
         internal static string UnexpectedPhase {
             get {
                 return ResourceManager.GetString("UnexpectedPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported query language: {0}..
+        /// </summary>
+        internal static string UnsupportedQueryLanguage {
+            get {
+                return ResourceManager.GetString("UnsupportedQueryLanguage", resourceCulture);
             }
         }
     }

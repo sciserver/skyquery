@@ -24,10 +24,10 @@ namespace Jhu.SkyQuery.Tap.Client
                     Query = testQuery,
                 };
 
-                tap.SubmitAsync(job).Wait();
-                tap.PollAsync(job, new[] { TapJobPhase.Completed }).Wait();
+                tap.SubmitAsync(job, CancellationToken.None).Wait();
+                tap.PollAsync(job, new[] { TapJobPhase.Completed }, null, CancellationToken.None).Wait();
 
-                var stream = tap.GetResultsAsync(job).Result;
+                var stream = tap.GetResultsAsync(job, CancellationToken.None).Result;
                 var reader = new System.IO.StreamReader(stream);
                 var data = reader.ReadToEnd();
             }

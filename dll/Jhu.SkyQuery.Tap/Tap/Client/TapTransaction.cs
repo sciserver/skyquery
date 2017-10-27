@@ -10,10 +10,18 @@ namespace Jhu.SkyQuery.Tap.Client
 {
     public class TapTransaction : DbTransaction
     {
-        #region Private member variables
+        enum TapTransactionState
+        {
+            Open,
+            Commited,
+            RolledBack,
+        }
 
+        #region Private member variables
+        
         private TapConnection connection;
         private IsolationLevel isolationLevel;
+        private TapTransactionState state;
 
         #endregion
         #region Properties
@@ -35,18 +43,19 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             this.connection = connection;
             this.isolationLevel = isolationLevel;
+            this.state = TapTransactionState.Open;
         }
 
         #endregion
 
         public override void Commit()
         {
-            // Nothing to do here
+            state = TapTransactionState.Commited;
         }
 
         public override void Rollback()
         {
-            // Nothing to do here
+            state = TapTransactionState.RolledBack;
         }
     }
 }

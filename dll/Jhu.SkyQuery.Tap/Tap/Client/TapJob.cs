@@ -11,6 +11,8 @@ namespace Jhu.SkyQuery.Tap.Client
         private string query;
         private TapQueryLanguage language;
         private TapResultsFormat format;
+        private int maxRec;
+        private string runId;
         private TapJobPhase phase;
         private TimeSpan quote;
         private TimeSpan duration;
@@ -34,6 +36,18 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             get { return format; }
             set { format = value; }
+        }
+
+        public int MaxRec
+        {
+            get { return maxRec; }
+            set { maxRec = value; }
+        }
+
+        private string RunId
+        {
+            get { return RunId; }
+            set { runId = value; }
         }
 
         public TapJobPhase Phase
@@ -87,7 +101,9 @@ namespace Jhu.SkyQuery.Tap.Client
             this.query = null;
             this.language = TapQueryLanguage.Adql;
             this.format = TapResultsFormat.VOTable;
-            this.phase = TapJobPhase.Run;
+            this.maxRec = -1;
+            this.runId = null;
+            this.phase = TapJobPhase.Unknown;
             this.quote = TimeSpan.Zero;
             this.duration = TimeSpan.Zero;
             this.destruction = DateTime.MinValue;
@@ -101,6 +117,8 @@ namespace Jhu.SkyQuery.Tap.Client
             this.query = old.query;
             this.language = old.language;
             this.format = old.format;
+            this.maxRec = old.maxRec;
+            this.runId = old.runId;
             this.phase = old.phase;
             this.quote = old.quote;
             this.duration = old.duration;
@@ -117,7 +135,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 { Constants.TapParamLang, language.ToString().ToUpperInvariant() },
                 { Constants.TapParamFormat, format.ToString().ToUpperInvariant() },
                 { Constants.TapParamQuery, query },
-                { Constants.TapParamPhase, phase.ToString().ToUpperInvariant() }
+                { Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
             };
 
             if (duration != TimeSpan.Zero)

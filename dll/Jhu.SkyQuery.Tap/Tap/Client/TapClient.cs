@@ -17,12 +17,23 @@ namespace Jhu.SkyQuery.Tap.Client
         private TimeSpan pollTimeout;
 
         private HttpClient httpClient;
-        private CancellationToken cancellationToken;
 
         public Uri BaseAddress
         {
             get { return baseAddress; }
             set { baseAddress = value; }
+        }
+
+        public TimeSpan HttpTimeout
+        {
+            get { return httpTimeout; }
+            set { httpTimeout = value; }
+        }
+
+        public TimeSpan PollTimeout
+        {
+            get { return pollTimeout; }
+            set { pollTimeout = value; }
         }
 
         public TapClient()
@@ -35,16 +46,13 @@ namespace Jhu.SkyQuery.Tap.Client
             InitializeMembers();
 
             this.baseAddress = baseAddress;
-            this.httpTimeout = TimeSpan.FromSeconds(Constants.DefaultHttpTimeout);
-            this.pollTimeout = TimeSpan.FromSeconds(Constants.DefaultPollTimeout);
-
-            this.httpClient = null;
-            this.cancellationToken = CancellationToken.None;
         }
 
         private void InitializeMembers()
         {
             this.baseAddress = null;
+            this.httpTimeout = TimeSpan.FromSeconds(Constants.DefaultHttpTimeout);
+            this.pollTimeout = TimeSpan.FromSeconds(Constants.DefaultPollTimeout);
 
             this.httpClient = null;
         }
@@ -78,7 +86,7 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
-        private async Task<HttpResponseMessage> HttpPostAsync(Uri address, HttpContent content, HttpStatusCode expectedStatus)
+        private async Task<HttpResponseMessage> HttpPostAsync(Uri address, HttpContent content, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
@@ -92,7 +100,7 @@ namespace Jhu.SkyQuery.Tap.Client
             return result;
         }
 
-        private async Task<string> HttpGetAsync(Uri address, HttpStatusCode expectedStatus = HttpStatusCode.OK)
+        private async Task<string> HttpGetAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
@@ -106,7 +114,7 @@ namespace Jhu.SkyQuery.Tap.Client
             return await result.Content.ReadAsStringAsync();
         }
 
-        private async Task<System.IO.Stream> HttpGetStreamAsync(Uri address, HttpStatusCode expectedStatus = HttpStatusCode.OK)
+        private async Task<System.IO.Stream> HttpGetStreamAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
@@ -120,22 +128,32 @@ namespace Jhu.SkyQuery.Tap.Client
             return await result.Content.ReadAsStreamAsync();
         }
 
-        public async Task SubmitAsync(TapJob job)
+        private async Task<string> GetParameterAsync(TapJob job, string action, string parameter, CancellationToken cancellationToken)
+        {
+            var address = UriConverter.Combine(job.Uri, action);
+            return await HttpGetAsync(address, HttpStatusCode.OK, cancellationToken);
+        }
+
+        private async Task SetParameterAsync(TapJob job, string action, string parameter, string value, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task SubmitAsync(TapJob job, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
             var parameters = job.GetSubmitRequestParameters();
             var content = new FormUrlEncodedContent(parameters);
             var address = UriConverter.Combine(baseAddress, Constants.TapActionAsync);
-            var result = await HttpPostAsync(address, content, HttpStatusCode.RedirectMethod);
+            var result = await HttpPostAsync(address, content, HttpStatusCode.RedirectMethod, cancellationToken);
 
             job.Uri = result.Headers.Location;
         }
 
-        public async Task GetPhaseAsync(TapJob job)
+        private async Task GetPhaseAsync(TapJob job, CancellationToken cancellationToken)
         {
-            var address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncPhase);
-            var phasestr = await HttpGetAsync(address);
+            var phasestr = await GetParameterAsync(job, Constants.TapActionAsyncPhase, Constants.TapParamPhase, cancellationToken);
 
             TapJobPhase phase;
             if (!Enum.TryParse(phasestr, true, out phase))
@@ -146,48 +164,51 @@ namespace Jhu.SkyQuery.Tap.Client
             job.Phase = phase;
         }
 
-        public async Task SetPhaseAsync(TapJob job)
+        
+        public async Task SetPhaseAsync(TapJob job, CancellationToken cancellationToken)
+        {
+            await SetParameterAsync(job, Constants.TapActionAsyncPhase, Constants.TapParamPhase, job.Phase.ToString().ToUpperInvariant(), cancellationToken);
+        }
+
+        public async Task GetQuoteAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task GetQuoteAsync(TapJob job)
+
+        public async Task GetExecutionDurationAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task GetExecutionDurationAsync(TapJob job)
+        public async Task SetExecutionDurationAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task SetExecutionDurationAsync(TapJob job)
+        public async Task GetDestructionAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task GetDesctructionAsync()
+        public async Task SetDestructionAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task SetDescrtructionAsync(TapJob job)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task GetErrorAsync(TapJob job)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<System.IO.Stream> GetResultsAsync(TapJob job)
+        public async Task<System.IO.Stream> GetResultsAsync(TapJob job, CancellationToken cancellationToken)
         {
             var address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncResults);
-            return await HttpGetStreamAsync(address);
+            return await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
         }
 
-        public async Task PollAsync(TapJob job, IList<TapJobPhase> expectedPhase, IList<TapJobPhase> errorPhase = null)
+        public async Task<System.IO.Stream> GetErrorAsync(TapJob job, CancellationToken cancellationToken)
+        {
+            var address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncError);
+            return await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
+        }
+
+        public async Task PollAsync(TapJob job, IList<TapJobPhase> expectedPhase, IList<TapJobPhase> errorPhase, CancellationToken cancellationToken)
         {
             var limit = DateTime.Now + pollTimeout;
             var interval = 1000; // start from one second polling interval
@@ -195,7 +216,7 @@ namespace Jhu.SkyQuery.Tap.Client
             // Poll job until status is the expected
             while (DateTime.Now < limit)
             {
-                await GetPhaseAsync(job);
+                await GetPhaseAsync(job, cancellationToken);
 
                 if (expectedPhase.Contains(job.Phase))
                 {
@@ -215,6 +236,8 @@ namespace Jhu.SkyQuery.Tap.Client
                     interval = (int)Math.Floor(1.4142 * interval);
                 }
             }
+
+
         }
     }
 }
