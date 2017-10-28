@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Format;
+using System.Threading.Tasks;
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
@@ -60,9 +61,11 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <summary>
         /// Reads the header of VOTable resource, from the TABLE tag to the TABLEDATA tag.
         /// </summary>
-        protected override void OnReadHeader()
+        protected override Task OnReadHeaderAsync()
         {
             ReadResourceElement();
+
+            return Task.CompletedTask;
         }
 
         protected override void OnSetMetadata(int blockCounter)
@@ -72,14 +75,14 @@ namespace Jhu.SkyQuery.Format.VOTable
             // TODO: do nothing here, this will be refactored
         }
 
-        protected override bool OnReadNextRow(object[] values)
+        protected override Task<bool> OnReadNextRowAsync(object[] values)
         {
             // TODO: Implement this
 
             // If the RESOURCE contains a DATATABLE then the string contents
             // of the TD tags can be returned and the XmlDataFileBlock class will
             // take care of the data conversion, so simply call
-            return base.OnReadNextRow(values);
+            return base.OnReadNextRowAsync(values);
 
             // If the RESOURCE is binary then implement this function, parse
             // columns from byte stream and return them
@@ -88,7 +91,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <summary>
         /// Completes reading of a resource by reading its closing tag.
         /// </summary>
-        protected override void OnReadFooter()
+        protected override Task OnReadFooterAsync()
         {
             // TODO: make sure the ending RESOURCE tag is read and the reader
             // is positioned at the next tag
@@ -97,6 +100,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             // trailing INFO tags (what are these for?)
             // make sure that they are read and position the reader after the
             // closing RESOURCE element, whatever it is.
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -106,7 +111,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// This function is called by the infrastructure to read all possible data
         /// rows that the client didn't consume.
         /// </remarks>
-        protected override void OnReadToFinish()
+        protected override Task OnReadToFinishAsync()
         {
             // TODO: This can be called by the framework anywhere within a RESOURCE tag,
             // and it has to make sure that the reader is position right after the
@@ -124,6 +129,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Consume closeing tag
             File.XmlReader.ReadEndElement();
             */
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -132,7 +139,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="parts"></param>
         /// <param name="skipComments"></param>
         /// <returns></returns>
-        protected override bool OnReadNextRowParts(out string[] parts, bool skipComments)
+        protected override Task<bool> OnReadNextRowPartsAsync(IList<string> parts, bool skipComments)
         {
             throw new NotImplementedException();
 

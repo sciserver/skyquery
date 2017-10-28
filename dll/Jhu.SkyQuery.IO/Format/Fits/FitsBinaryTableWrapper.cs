@@ -6,6 +6,7 @@ using Jhu.SharpFitsIO;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
+using System.Threading.Tasks;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
@@ -329,11 +330,11 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        protected override void OnReadHeader()
+        protected override Task OnReadHeaderAsync()
         {
             ConvertColumnsToDatabase();
-
             RecordCount = hdu.GetAxisLength(2);
+            return Task.CompletedTask;
         }
 
         protected override void OnSetMetadata(int blockCounter)
@@ -344,20 +345,24 @@ namespace Jhu.SkyQuery.Format.Fits
             // TODO: Metadata = ...
         }
 
-        protected override bool OnReadNextRow(object[] values)
+        protected override Task<bool> OnReadNextRowAsync(object[] values)
         {
-            return this.hdu.ReadNextRow(values, File.GenerateIdentityColumn ? 1 : 0);
+            // TODO: convert to async
+            return Task.Factory.StartNew(() => this.hdu.ReadNextRow(values, File.GenerateIdentityColumn ? 1 : 0));
         }
 
-        protected override void OnReadFooter()
+        protected override Task OnReadFooterAsync()
         {
             // No footers in HDUs
+            return Task.CompletedTask;
         }
 
-        protected override void OnReadToFinish()
+        protected override Task OnReadToFinishAsync()
         {
             // HDUs skip to the end automatically
             // TODO: this needs to be tested by partially reading the file!
+
+            return Task.CompletedTask;
         }
 
         protected override void OnWriteHeader()
