@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Diagnostics;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
+using System.Threading.Tasks;
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
@@ -165,9 +166,11 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <summary>
         /// Reads the file header but stops at the block (resource) header.
         /// </summary>
-        protected override void OnReadHeader()
+        protected override Task OnReadHeaderAsync()
         {
+            // TODO: make it async
             ReadVOTableElement();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -181,17 +184,19 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// the supplied block object has to be reused. This usually happens when the user passes a
         /// predefined block that has some column mapping defined.
         /// </remarks>
-        protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
+        protected override Task<DataFileBlockBase> OnReadNextBlockAsync(DataFileBlockBase block)
         {
-            return ReadResourceElement(block);
+            // TODO: make it async
+            return Task.FromResult(ReadResourceElement(block));
         }
 
         /// <summary>
         /// Reads the file footer
         /// </summary>
-        protected override void OnReadFooter()
+        protected override Task OnReadFooterAsync()
         {
             // Not important, do nothing
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -200,10 +205,10 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <remarks>
         /// Writes from VOTABLE until the RESOURCE tag.
         /// </remarks>
-        protected override void OnWriteHeader()
+        protected override async Task OnWriteHeaderAsync()
         {
-            XmlWriter.WriteStartElement(Constants.TagVOTable);
-            XmlWriter.WriteAttributeString(Constants.AttributeVersion, Constants.VOTableVersion);
+            await XmlWriter.WriteStartElementAsync(null, Constants.TagVOTable, null);
+            await XmlWriter.WriteAttributeStringAsync(null, Constants.AttributeVersion, null, Constants.VOTableVersion);
 
             // *** TODO: how to add these?
             //XmlWriter.WriteAttributeString("xmlns", Constants.VOTableXsi);
@@ -217,9 +222,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="block"></param>
         /// <param name="dr"></param>
         /// <returns></returns>
-        protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
+        protected override Task<DataFileBlockBase> OnCreateNextBlockAsync(DataFileBlockBase block)
         {
-            return block ?? new VOTableResource(this);
+            return Task.FromResult(block ?? new VOTableResource(this));
         }
 
         /// <summary>
@@ -228,9 +233,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <remarks>
         /// Writes tags after the last RESOURCE tag till the closing VOTABLE
         /// </remarks>
-        protected override void OnWriteFooter()
+        protected override async Task OnWriteFooterAsync()
         {
-            XmlWriter.WriteEndElement();
+            await XmlWriter.WriteEndElementAsync();
         }
 
         #region VOTable reader implementation

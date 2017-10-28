@@ -32,7 +32,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
 
                         using (var dr = cmd.ExecuteReader())
                         {
-                            nat.WriteFromDataReader(dr);
+                            nat.WriteFromDataReaderAsync(dr).Wait();
                         }
                     }
                 }
@@ -54,7 +54,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
 
                         using (var dr = cmd.ExecuteReader())
                         {
-                            nat.WriteFromDataReader(dr);
+                            nat.WriteFromDataReaderAsync(dr).Wait();
                         }
                     }
                 }
@@ -76,7 +76,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
 
                         using (var dr = cmd.ExecuteReader())
                         {
-                            nat.WriteFromDataReader(dr);
+                            nat.WriteFromDataReaderAsync(dr).Wait();
                         }
                     }
                 }
@@ -98,7 +98,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
 
                         using (var dr = cmd.ExecuteReader())
                         {
-                            nat.WriteFromDataReader(dr);
+                            nat.WriteFromDataReaderAsync(dr).Wait();
                         }
                     }
                 }

@@ -488,38 +488,38 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <summary>
         /// Writes the resource header into the stream.
         /// </summary>
-        protected override void OnWriteHeader()
+        protected override async Task OnWriteHeaderAsync()
         {
-            File.XmlWriter.WriteStartElement(Constants.TagResource);
-            File.XmlWriter.WriteStartElement(Constants.TagTable);
+            await File.XmlWriter.WriteStartElementAsync(null, Constants.TagResource, null);
+            await File.XmlWriter.WriteStartElementAsync(null, Constants.TagTable, null);
 
             // Write columns
             for (int i = 0; i < Columns.Count; i++)
             {
-                WriteColumn(Columns[i]);
+                await WriteColumnAsync(Columns[i]);
             }
 
-            File.XmlWriter.WriteStartElement(Constants.TagData);
-            File.XmlWriter.WriteStartElement(Constants.TagTableData);
+            await File.XmlWriter.WriteStartElementAsync(null, Constants.TagData, null);
+            await File.XmlWriter.WriteStartElementAsync(null, Constants.TagTableData, null);
         }
 
-        private void WriteColumn(Column column)
+        private async Task WriteColumnAsync(Column column)
         {
-            File.XmlWriter.WriteStartElement(Constants.TagField);
+            await File.XmlWriter.WriteStartElementAsync(null, Constants.TagField, null);
 
-            File.XmlWriter.WriteAttributeString(Constants.AttributeName, column.Name);
+            await File.XmlWriter.WriteAttributeStringAsync(null,Constants.AttributeName, null, column.Name);
             // *** TODO: write other column properties
 
-            File.XmlWriter.WriteEndElement();
+            await File.XmlWriter.WriteEndElementAsync();
         }
 
         /// <summary>
         /// Writes the next row into the stream.
         /// </summary>
         /// <param name="values"></param>
-        protected override void OnWriteNextRow(object[] values)
+        protected override async Task OnWriteNextRowAsync(object[] values)
         {
-            File.XmlWriter.WriteStartElement(Constants.TagTR);
+            await File.XmlWriter.WriteStartElementAsync(null, Constants.TagTR, null);
 
             for (int i = 0; i < Columns.Count; i++)
             {
@@ -531,22 +531,22 @@ namespace Jhu.SkyQuery.Format.VOTable
                 }
                 else
                 {
-                    File.XmlWriter.WriteElementString(Constants.TagTD, ColumnFormatters[i](values[i], "{0}"));
+                    await File.XmlWriter.WriteElementStringAsync(null, Constants.TagTD, null, ColumnFormatters[i](values[i], "{0}"));
                 }
             }
 
-            File.XmlWriter.WriteEndElement();
+            await File.XmlWriter.WriteEndElementAsync();
         }
 
         /// <summary>
         /// Writers the resource footer into the stream.
         /// </summary>
-        protected override void OnWriteFooter()
+        protected override async Task OnWriteFooterAsync()
         {
-            File.XmlWriter.WriteEndElement();
-            File.XmlWriter.WriteEndElement();
-            File.XmlWriter.WriteEndElement();
-            File.XmlWriter.WriteEndElement();
+            await File.XmlWriter.WriteEndElementAsync();
+            await File.XmlWriter.WriteEndElementAsync();
+            await File.XmlWriter.WriteEndElementAsync();
+            await File.XmlWriter.WriteEndElementAsync();
         }
 
         #endregion

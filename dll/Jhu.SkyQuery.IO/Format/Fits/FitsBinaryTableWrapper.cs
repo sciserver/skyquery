@@ -365,8 +365,10 @@ namespace Jhu.SkyQuery.Format.Fits
             return Task.CompletedTask;
         }
 
-        protected override void OnWriteHeader()
+        protected override Task OnWriteHeaderAsync()
         {
+            // TODO make it async
+
             if (RecordCount > int.MaxValue)
             {
                 throw new FitsException("Too big file");    //**** TODO
@@ -377,10 +379,14 @@ namespace Jhu.SkyQuery.Format.Fits
             // TODO: what else to be set here before writing the header?
 
             hdu.WriteHeader();
+
+            return Task.CompletedTask;
         }
 
-        protected override void OnWriteNextRow(object[] values)
+        protected override Task OnWriteNextRowAsync(object[] values)
         {
+            // TODO make it async
+
             // Replace DBNulls with object nulls, as required by the FITS library
             for (int i = 0; i < values.Length; i++)
             {
@@ -391,12 +397,18 @@ namespace Jhu.SkyQuery.Format.Fits
             }
 
             hdu.WriteNextRow(values);
+
+            return Task.CompletedTask;
         }
 
-        protected override void OnWriteFooter()
+        protected override Task OnWriteFooterAsync()
         {
+            // TODO make it async
+
             // FITS HDUs have no footers
             hdu.MarkEnd();
+
+            return Task.CompletedTask;
         }
     }
 }

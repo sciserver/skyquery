@@ -31,7 +31,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
                         
                         using (var dr = cmd.ExecuteReader())
                         {
-                            fits.WriteFromDataReader(dr);
+                            fits.WriteFromDataReaderAsync(dr).Wait();
                         }
                     }
                 }

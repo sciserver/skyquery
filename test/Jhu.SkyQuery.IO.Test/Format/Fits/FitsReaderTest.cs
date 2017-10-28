@@ -16,7 +16,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
     {
         private FitsFileWrapper OpenFits(string path)
         {
-            var filename = GetTestFilePath("skyquery/test/files", path);
+            var filename = GetTestFilePath("modules/skyquery/test/files", path);
             var f = new FitsFileWrapper(UriConverter.FromFilePath(filename), DataFileMode.Read)
             {
                 GenerateIdentityColumn = false

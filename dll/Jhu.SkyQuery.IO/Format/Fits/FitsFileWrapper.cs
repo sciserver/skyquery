@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using Jhu.SharpFitsIO;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
+using System.Threading.Tasks;
 
 namespace Jhu.SkyQuery.Format.Fits
 {
@@ -191,8 +192,9 @@ namespace Jhu.SkyQuery.Format.Fits
         #endregion
         #region HDU read and write functions
 
-        protected override DataFileBlockBase OnReadNextBlock(DataFileBlockBase block)
+        protected override Task<DataFileBlockBase> OnReadNextBlockAsync(DataFileBlockBase block)
         {
+            // TODO: rewrite FITS io to async
             // Read until the next binary table extension is found
             SimpleHdu hdu;
             while ((hdu = Fits.ReadNextHdu()) != null && !(hdu is BinaryTableHdu))
@@ -205,13 +207,13 @@ namespace Jhu.SkyQuery.Format.Fits
             }
             else
             {
-                return block ?? new FitsBinaryTableWrapper(this, (BinaryTableHdu)hdu);
+                return Task.FromResult(block ?? new FitsBinaryTableWrapper(this, (BinaryTableHdu)hdu));
             }
         }
 
-        protected override DataFileBlockBase OnCreateNextBlock(DataFileBlockBase block)
+        protected override Task<DataFileBlockBase> OnCreateNextBlockAsync(DataFileBlockBase block)
         {
-            return block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(fits, true));
+            return Task.FromResult(block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(fits, true)));
         }
 
         protected override void OnBlockAppended(DataFileBlockBase block)
@@ -219,28 +221,35 @@ namespace Jhu.SkyQuery.Format.Fits
             // Nothing to do here
         }
 
-        protected override void OnReadHeader()
+        protected override Task OnReadHeaderAsync()
         {
             // FITS files don't have a separate header, they start with the first HDU
+            return Task.CompletedTask;
         }
 
-        protected override void OnReadFooter()
+        protected override Task OnReadFooterAsync()
         {
             // FITS files don't have footers
+            return Task.CompletedTask;
         }
 
-        protected override void OnWriteHeader()
+        protected override Task OnWriteHeaderAsync()
         {
             // As a header, we write the first HDU now,
             // because bintables are all just extensions
 
+            // TODO: rewrite to async FITS
+
             var hdu = SimpleHdu.Create(fits, true, true, true);
             hdu.WriteHeader();
+
+            return Task.CompletedTask;
         }
 
-        protected override void OnWriteFooter()
+        protected override Task OnWriteFooterAsync()
         {
             // FITS files don't have footers
+            return Task.CompletedTask;
         }
 
         #endregion

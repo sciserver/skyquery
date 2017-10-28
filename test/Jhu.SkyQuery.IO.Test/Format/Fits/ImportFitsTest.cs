@@ -33,7 +33,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         [TestMethod]
         public void ImportSdssSpecTest()
         {
-            var path = GetTestFilePath(@"skyquery/test/files/sdssdr10_specsdss.fits");
+            var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specsdss.fits");
             var it = GetImportTableTask(path, false, false);
             var t = ExecuteImportTableTask(it);
             Assert.AreEqual(8, t.Columns.Count);
@@ -43,7 +43,7 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         [TestMethod]
         public void ImportBossSpecTest()
         {
-            var path = GetTestFilePath(@"skyquery/test/files/sdssdr10_specboss.fits");
+            var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specboss.fits");
             var it = GetImportTableTask(path, false, false);
             var t = ExecuteImportTableTask(it);
             Assert.AreEqual(8, t.Columns.Count);
