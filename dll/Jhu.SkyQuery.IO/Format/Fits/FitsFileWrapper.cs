@@ -192,12 +192,12 @@ namespace Jhu.SkyQuery.Format.Fits
         #endregion
         #region HDU read and write functions
 
-        protected override Task<DataFileBlockBase> OnReadNextBlockAsync(DataFileBlockBase block)
+        protected override async Task<DataFileBlockBase> OnReadNextBlockAsync(DataFileBlockBase block)
         {
             // TODO: rewrite FITS io to async
             // Read until the next binary table extension is found
             SimpleHdu hdu;
-            while ((hdu = Fits.ReadNextHdu()) != null && !(hdu is BinaryTableHdu))
+            while ((hdu = await Fits.ReadNextHduAsync()) != null && !(hdu is BinaryTableHdu))
             {
             }
 
@@ -207,7 +207,7 @@ namespace Jhu.SkyQuery.Format.Fits
             }
             else
             {
-                return Task.FromResult(block ?? new FitsBinaryTableWrapper(this, (BinaryTableHdu)hdu));
+                return block ?? new FitsBinaryTableWrapper(this, (BinaryTableHdu)hdu);
             }
         }
 
@@ -233,7 +233,7 @@ namespace Jhu.SkyQuery.Format.Fits
             return Task.CompletedTask;
         }
 
-        protected override Task OnWriteHeaderAsync()
+        protected override async Task OnWriteHeaderAsync()
         {
             // As a header, we write the first HDU now,
             // because bintables are all just extensions
@@ -241,9 +241,7 @@ namespace Jhu.SkyQuery.Format.Fits
             // TODO: rewrite to async FITS
 
             var hdu = SimpleHdu.Create(fits, true, true, true);
-            hdu.WriteHeader();
-
-            return Task.CompletedTask;
+            await hdu.WriteHeaderAsync();
         }
 
         protected override Task OnWriteFooterAsync()
