@@ -71,6 +71,12 @@
     <Compile Include="Format\VOTable\Coosys.cs" />
     <Compile Include="Format\VOTable\Definitions.cs" />
     <Compile Include="Format\VOTable\Description.cs" />
+    <Compile Include="Format\VOTable\Error.cs" />
+    <Compile Include="Format\VOTable\ExceptionMessage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ExceptionMessage.resx</DependentUpon>
+    </Compile>
     <Compile Include="Format\VOTable\Field.cs" />
     <Compile Include="Format\VOTable\FieldRef.cs" />
     <Compile Include="Format\VOTable\Group.cs" />
@@ -88,12 +94,17 @@
     </Compile>
     <Compile Include="Format\VOTable\Values.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
+    <Compile Include="Format\VOTable\VOTableException.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />
     <Compile Include="IO\SkyQueryStreamFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Format\FileFormatNames.resx" />
+    <EmbeddedResource Include="Format\VOTable\ExceptionMessage.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ExceptionMessage.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Format\VOTable\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -101,6 +112,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{abb4c403-720a-47e1-9485-cfaadd696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
       <Project>{6797ED88-1D8C-491B-A036-4C42C4BF2EAF}</Project>
       <Name>Jhu.Graywulf.IO</Name>

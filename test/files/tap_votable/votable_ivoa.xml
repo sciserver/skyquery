@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VOTABLE version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://www.ivoa.net/xml/VOTable/v1.2"
+xmlns="http://www.ivoa.net/xml/VOTable/v1.3"
 xmlns:stc="http://www.ivoa.net/xml/STC/v1.30" >
   <RESOURCE name="myFavouriteGalaxies">
     <TABLE name="results">
@@ -38,9 +38,6 @@ xmlns:stc="http://www.ivoa.net/xml/STC/v1.30" >
             <TD>-297</TD>
             <TD>5</TD>
             <TD>0.7</TD>
-          </TR>
-          <TR>
-            <TD>287.43</TD><TD>-63.85</TD><TD>N 6744</TD><TD>839</TD><TD>6</TD><TD>10.4</TD>
           </TR>
           <TR>
             <TD>023.48</TD>

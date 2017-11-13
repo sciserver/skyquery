@@ -22,6 +22,9 @@ namespace Jhu.SkyQuery.Format.VOTable
             settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
             settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
 
+            // TODO: add the XSD
+            //Resources.Schema_VoTable_v1_3
+
             // Create the XmlReader object.
             XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
 

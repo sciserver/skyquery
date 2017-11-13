@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data;
+using Jhu.Graywulf.Components;
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
@@ -29,6 +31,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         public const string TagGroup = "GROUP";
         public const string TagParam = "PARAM";
         public const string TagInfo = "INFO";
+        public const string TagValues = "VALUES";
+        public const string TagMin = "MIN";
+        public const string TagMax = "MAX";
         public const string TagResource = "RESOURCE";
         public const string TagTable = "TABLE";
         public const string TagField = "FIELD";
@@ -36,6 +41,11 @@ namespace Jhu.SkyQuery.Format.VOTable
         public const string TagData = "DATA";
         public const string TagTR = "TR";
         public const string TagTD = "TD";
+        public const string TagLink = "LINK";
+        public const string TagOption = "OPTION";
+
+        public const string TagFieldRef = "FIELDref";
+        public const string TagParamRef = "PARAMref";
 
         public const string AttributeID = "ID";
         public const string AttributeVersion = "version";
@@ -51,6 +61,23 @@ namespace Jhu.SkyQuery.Format.VOTable
         public const string AttributePrecision = "precision";
         public const string AttributeWidth = "width";
         public const string AttributeArraySize = "arraysize";
+        public const string AttributeInclusive = "inclusive";
+        public const string AttributeContentRole = "content-role";
+        public const string AttributeContentType = "content-type";
+        public const string AttributeTitle = "title";
+        public const string AttributeHref = "href";
+        public const string AttributeGref = "gref";
+        public const string AttributeAction = "action";
+
+        public const string AttributeType = "type";
+        public const string AttributeDatatype = "datatype";
+        public const string AttributeNull = "null";
+
+        public const string AttributeSystem = "system";
+        public const string AttributeEquinox = "equinox";
+
+
+
 
         public const string TypeBoolean = "boolean";
         public const string TypeBit = "bit";
