@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
 using System.Runtime.Serialization;
 using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Tasks;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -40,30 +37,35 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override Type[] LoadQueryTypes()
         {
-            return new Type[] { 
-                typeof(SqlQuery), 
-                typeof(BayesFactorXMatchQuery) 
+            return new Type[] {
+                typeof(SqlQuery),
+                typeof(BayesFactorXMatchQuery)
             };
         }
 
         protected override SqlQuery CreateQueryBase(Node root)
         {
             SqlQuery res;
-            if (root is XMatchSelectStatement)
+
+            // TODO: do we need the cancellation context here?
+            using (var cancellationContext = new CancellationContext())
             {
-                res = new BayesFactorXMatchQuery(RegistryContext);
-            }
-            else if (root is RegionSelectStatement)
-            {
-                res = new RegionQuery(RegistryContext);
-            }
-            else if (root is SelectStatement)
-            {
-                res = new SqlQuery(RegistryContext);
-            }
-            else
-            {
-                throw new NotImplementedException();
+                if (root is XMatchSelectStatement)
+                {
+                    res = new BayesFactorXMatchQuery(cancellationContext, RegistryContext);
+                }
+                else if (root is RegionSelectStatement)
+                {
+                    res = new RegionQuery(cancellationContext, RegistryContext);
+                }
+                else if (root is SelectStatement)
+                {
+                    res = new SqlQuery(cancellationContext, RegistryContext);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
             }
 
             return res;

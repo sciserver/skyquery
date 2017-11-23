@@ -7,8 +7,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Runtime.Serialization;
 using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Parsing;
+using Jhu.Graywulf.Tasks;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
@@ -23,14 +22,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             get { return (BayesFactorXMatchQueryCodeGenerator)CreateCodeGenerator(); }
         }
 
-        protected BayesFactorXMatchQuery()
-            : base()
+        protected BayesFactorXMatchQuery(CancellationContext cancellationContext)
+            : base(cancellationContext)
         {
             InitializeMembers(new StreamingContext());
         }
 
-        public BayesFactorXMatchQuery(gw.RegistryContext context)
-            : base(context)
+        public BayesFactorXMatchQuery(CancellationContext cancellationContext, gw.RegistryContext context)
+            : base(cancellationContext, context)
         {
             InitializeMembers(new StreamingContext());
         }

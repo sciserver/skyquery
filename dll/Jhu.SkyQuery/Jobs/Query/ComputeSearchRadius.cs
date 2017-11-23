@@ -6,6 +6,7 @@ using System.Activities;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Activities;
+using Jhu.Graywulf.Tasks;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
@@ -14,7 +15,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         [RequiredArgument]
         public InArgument<XMatchQueryStep> XMatchStep { get; set; }
 
-        protected override AsyncActivityWorker OnBeginExecute(AsyncCodeActivityContext activityContext)
+        protected override async Task OnExecuteAsync(AsyncCodeActivityContext activityContext, CancellationContext cancellationContext)
         {
             var workflowInstanceId = activityContext.WorkflowInstanceId;
             var activityInstanceId = activityContext.ActivityInstanceId;
@@ -25,24 +26,19 @@ namespace Jhu.SkyQuery.Jobs.Query
             switch (xmqp.Query.ExecutionMode)
             {
                 case Jhu.Graywulf.Jobs.Query.ExecutionMode.SingleServer:
-                    xmqp.InitializeQueryObject(null);
+                    xmqp.InitializeQueryObject(cancellationContext, null);
                     break;
                 case Jhu.Graywulf.Jobs.Query.ExecutionMode.Graywulf:
-                    using (RegistryContext context = ContextManager.Instance.CreateReadOnlyContext())
+                    using (RegistryContext registryContext = ContextManager.Instance.CreateReadOnlyContext())
                     {
-                        xmqp.InitializeQueryObject(context);
+                        xmqp.InitializeQueryObject(cancellationContext, registryContext);
                     }
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-            return delegate ()
-            {
-                RegisterCancelable(workflowInstanceId, activityInstanceId, xmqp);
-                xmqp.ComputeSearchRadius(xmatchstep);
-                UnregisterCancelable(workflowInstanceId, activityInstanceId, xmqp);
-            };
+            await xmqp.ComputeSearchRadiusAsync(xmatchstep);
         }
     }
 }

@@ -1,16 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Activities;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.IO;
-using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
@@ -120,7 +112,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// catalog into account.
         /// </summary>
         /// <param name="step"></param>
-        public override void ComputeSearchRadius(XMatchQueryStep step)
+        public override async Task ComputeSearchRadiusAsync(XMatchQueryStep step)
         {
             if (step.StepNumber > 0)
             {
@@ -130,7 +122,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 
                 using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand(pstep))
                 {
-                    var res = ExecuteSqlOnAssignedServerScalar(cmd, CommandTarget.Code);
+                    var res = await ExecuteSqlOnAssignedServerScalarAsync(cmd, CommandTarget.Code);
                     var theta = res != DBNull.Value ? (double)res : 0;
                     step.SearchRadius = Math.Sqrt(theta) * 180.0 / Math.PI;
                 }
