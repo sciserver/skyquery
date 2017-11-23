@@ -55,5 +55,5 @@ namespace Jhu.SkyQuery.Format.Fits.Test
                 DropTable(t);
             }
         }
+        }
     }
-}
