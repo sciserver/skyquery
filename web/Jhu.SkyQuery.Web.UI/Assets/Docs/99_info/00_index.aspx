@@ -21,7 +21,8 @@
     </ol>
     <h2>References</h2>
     <p>
-        If you use SkyQuery for preparing your publication, please reference us by citing
+        If you use SkyQuery 
+        for your research, please reference us by citing
         one the following papers.
     </p>
     <ul>
