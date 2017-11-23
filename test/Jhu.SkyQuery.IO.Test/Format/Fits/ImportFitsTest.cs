@@ -5,8 +5,8 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
+using Jhu.Graywulf.Tasks;
 using Jhu.SkyQuery.Format.Fits;
-using Jhu.Graywulf.Test;
 
 namespace Jhu.SkyQuery.Format.Fits.Test
 {
@@ -33,22 +33,28 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         [TestMethod]
         public void ImportSdssSpecTest()
         {
-            var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specsdss.fits");
-            var it = GetImportTableTask(path, false, false);
-            var t = ExecuteImportTableTask(it);
-            Assert.AreEqual(8, t.Columns.Count);
-            DropTable(t);
+            using (var cc = new CancellationContext())
+            {
+                var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specsdss.fits");
+                var it = GetImportTableTask(cc, path, false, false);
+                var t = ExecuteImportTableTask(it);
+                Assert.AreEqual(8, t.Columns.Count);
+                DropTable(t);
+            }
         }
 
         [TestMethod]
         public void ImportBossSpecTest()
         {
-            var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specboss.fits");
-            var it = GetImportTableTask(path, false, false);
-            var t = ExecuteImportTableTask(it);
-            Assert.AreEqual(8, t.Columns.Count);
-            DropTable(t);
+            using (var cc = new CancellationContext())
+            {
+                var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specboss.fits");
+                var it = GetImportTableTask(cc, path, false, false);
+                var t = ExecuteImportTableTask(it);
+                Assert.AreEqual(8, t.Columns.Count);
+                DropTable(t);
+            }
         }
 
+        }
     }
-}

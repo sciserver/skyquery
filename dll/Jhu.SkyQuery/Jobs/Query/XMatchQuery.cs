@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Jobs.Query;
 using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Sql.Parsing;
+using Jhu.Graywulf.Tasks;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -67,14 +67,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Constructors and initializers
 
-        public XMatchQuery()
-            : base()
+        public XMatchQuery(CancellationContext cancellationContext)
+            : base(cancellationContext)
         {
             InitializeMembers(new StreamingContext());
         }
 
-        public XMatchQuery(gw::RegistryContext context)
-            : base(context)
+        public XMatchQuery(CancellationContext cancellationContext, gw::RegistryContext context)
+            : base(cancellationContext, context)
         {
             InitializeMembers(new StreamingContext());
         }

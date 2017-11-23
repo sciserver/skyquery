@@ -39,7 +39,7 @@ namespace Jhu.SkyQuery.Format.Fits
                     using (var dr = cmd.ExecuteReader())
                     {
                         var fits = new FitsFileWrapper(ms, DataFileMode.Write);
-                        fits.WriteFromDataReaderAsync(dr).Wait();
+                        fits.WriteFromDataReader(dr);
                     }
                 }
             }

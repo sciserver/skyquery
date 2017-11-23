@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Configuration;
-using System.Data;
-using System.Data.SqlClient;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Jhu.Graywulf.Jobs.Query;
 using Jhu.SkyQuery.Parser;
@@ -91,15 +88,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Compute search radius
 
-        public void ComputeMinMaxError(XMatchQueryStep step)
+        public async Task ComputeMinMaxError(XMatchQueryStep step)
         {
+            // TODO: implement min/max compute if no error is specified
+
             double min, max;
 
             using (var cmd = CodeGenerator.GetComputeMinMaxErrorCommand(step))
             {
-                ExecuteSqlOnAssignedServerReader(cmd, CommandTarget.Temp, dr =>
+                await ExecuteSqlOnAssignedServerReaderAsync(cmd, CommandTarget.Temp,
+                    async (dr, ct) =>
                     {
-                        if (dr.Read())
+                        if (await dr.ReadAsync(ct))
                         {
                             min = dr.GetDouble(0);
                             max = dr.GetDouble(1);
@@ -110,12 +110,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             // TODO: propagate these results to the table
         }
 
-        public abstract void ComputeSearchRadius(XMatchQueryStep step);
+        public abstract Task ComputeSearchRadiusAsync(XMatchQueryStep step);
 
         #endregion
         #region ZoneDef table function
 
-        public void CreateZoneDefTable(XMatchQueryStep step)
+        public async Task CreateZoneDefTableAsync(XMatchQueryStep step)
         {
             if (step.StepNumber > 0)
             {
@@ -126,12 +126,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateZoneDefTableCommand(step, zonedeftable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateZoneDefTableCommand(step, zonedeftable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(zonedeftable.TableName, zonedeftable);
@@ -141,7 +141,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Link table functions
 
-        public void CreateLinkTable(XMatchQueryStep step)
+        public async Task CreateLinkTableAsync(XMatchQueryStep step)
         {
             if (step.StepNumber > 0)
             {
@@ -153,12 +153,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateLinkTableCommand(step, linktable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateLinkTableCommand(step, zonedeftable, linktable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(linktable.TableName, linktable);
@@ -179,7 +179,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Graywulf context.
         /// Call <see cref="PrepareCreateZoneTable"/> before this.
         /// </remarks>
-        public void CreateZoneTable(XMatchQueryStep step)
+        public async Task CreateZoneTableAsync(XMatchQueryStep step)
         {
             var table = Query.XMatchTables[step.XMatchTable];
 
@@ -192,12 +192,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateZoneTableCommand(step, zonetable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateZoneTableCommand(step, zonetable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(zonetable.TableName, zonetable);
@@ -216,7 +216,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Function calls <see cref="PopulatePairTable"/> to populate
         /// pair table form a link table.
         /// </remarks>
-        public void CreatePairTable(XMatchQueryStep step)
+        public async Task CreatePairTableAsync(XMatchQueryStep step)
         {
             if (step.StepNumber > 0)
             {
@@ -227,14 +227,9 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 pairtable.Drop();
 
-                /*using (var cmd = CodeGenerator.GetCreatePairTableCommand(step, pairtable))
-                {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
-                }*/
-
                 using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, linktable, pairtable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.TryAdd(pairtable.TableName, pairtable);
@@ -259,7 +254,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// 08/27/2010: Modified not to create a view in the 0th iteration as
         ///             the non-indexes view caused wrong query plan (non-parallel)
         /// </remarks>
-        public void CreateMatchTable(XMatchQueryStep step)
+        public async Task CreateMatchTableAsync(XMatchQueryStep step)
         {
             if (step.StepNumber > 0)
             {
@@ -271,17 +266,17 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetCreateMatchTableCommand(step, matchtable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
                 }
 
                 using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, pairtable, matchtable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
                 using (var cmd = CodeGenerator.GetBuildMatchTableIndexCommand(step, matchtable))
                 {
-                    ExecuteSqlOnAssignedServer(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
                 }
 
                 TemporaryTables.TryAdd(matchtable.TableName, matchtable);

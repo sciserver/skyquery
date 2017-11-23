@@ -7,9 +7,9 @@ namespace Jhu.SkyQuery.Web.UI
 {
     public class Global : FederationApplicationBase
     {
-        protected override void Application_Start(object sender, EventArgs e)
+        protected override void OnApplicationStart()
         {
-            base.Application_Start(sender, e);
+            base.OnApplicationStart();
 
             var a = Assembly.GetAssembly(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQuery));
             var v = a.GetName().Version.ToString();

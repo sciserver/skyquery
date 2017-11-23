@@ -151,22 +151,24 @@ namespace Jhu.SkyQuery.Format.Fits
             }
         }
 
-        protected override void OpenForRead()
+        protected override async Task OpenForReadAsync()
         {
             if (fits == null)
             {
-                base.OpenForRead();
+                await base.OpenForReadAsync();
 
+                // TODO: make it async if necessary
                 fits = new FitsFile(BaseStream, FitsFileMode.Read, endianness);
             }
         }
 
-        protected override void OpenForWrite()
+        protected override async Task OpenForWriteAsync()
         {
             if (fits == null)
             {
-                base.OpenForWrite();
+                await base.OpenForWriteAsync();
 
+                // TODO: make it async if necessary
                 fits = new FitsFile(BaseStream, FitsFileMode.Write, endianness);
             }
         }
