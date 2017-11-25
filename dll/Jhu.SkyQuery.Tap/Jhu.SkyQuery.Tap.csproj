@@ -88,12 +88,8 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Tap\Client\TapClient.cs" />
-    <Compile Include="Tap\Client\TapCommand.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Tap\Client\TapConnection.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Tap\Client\TapCommand.cs" />
+    <Compile Include="Tap\Client\TapConnection.cs" />
     <Compile Include="Tap\Client\TapConnectionStringBuilder.cs" />
     <Compile Include="Tap\Client\TapDataReader.cs" />
     <Compile Include="Tap\Client\TapException.cs" />
