@@ -137,6 +137,10 @@
       <Project>{ecc46a31-4d61-4c1e-b9f6-6f1b97809fb1}</Project>
       <Name>Jhu.Graywulf.Jobs.Test</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Logging.Test\Jhu.Graywulf.Logging.Test.csproj">
+      <Project>{d152dc9a-004c-4851-b0e7-b81a4325c9b7}</Project>
+      <Name>Jhu.Graywulf.Logging.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\GrayWulf\Test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
       <Name>Jhu.Graywulf.Test</Name>
