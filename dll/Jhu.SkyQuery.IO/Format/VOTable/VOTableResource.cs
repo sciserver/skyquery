@@ -140,6 +140,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                 //{
                     File.XmlReader.ReadEndElement();
                 //}
+
+                return Task.CompletedTask;
             }
             else
             {
@@ -181,6 +183,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                 }
             }
             File.XmlReader.ReadEndElement();
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -191,11 +195,6 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <returns></returns>
         protected override Task<bool> OnReadNextRowPartsAsync(IList<string> parts, bool skipComments)
         {
-
-            // OLD CODE, REUSED 
-            parts = new string[Columns.Count];
-
-
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0 ||
                  VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0))
@@ -203,7 +202,7 @@ namespace Jhu.SkyQuery.Format.VOTable
              //   File.XmlReader.ReadEndElement();
 
                 // End of table
-                return false;
+                return Task.FromResult(false);
             }
             else
             {
@@ -251,7 +250,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     }
                 }
 
-                return true;
+                return Task.FromResult(true);
             }
         }
 

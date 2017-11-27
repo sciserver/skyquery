@@ -63,7 +63,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             var xml = "";
             var e = ReadElementHelper<Definitions>(xml);
 
-            //To do...
+            // TODO
         }
 
 
