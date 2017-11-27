@@ -105,13 +105,13 @@ namespace Jhu.SkyQuery.Format.VOTable
             // closing RESOURCE element, whatever it is.
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0 ||
-                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0)))
+                 VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0))
             {
                 File.XmlReader.ReadEndElement();
                 //Info in DATA
                 //Just skip
-                while(File.XmlReader.NodeType == XmlNodeType.Element && 
-                    VOTable.Comparer.Compare(File.XmlReader.Name,Constants.TagInfo) == 0)
+                while (File.XmlReader.NodeType == XmlNodeType.Element &&
+                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
                 {
                     File.XmlReader.ReadStartElement(Constants.TagInfo);
                     File.XmlReader.Skip();
@@ -123,7 +123,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                 //if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 //    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0)
                 //{
-                    File.XmlReader.ReadEndElement();
+                File.XmlReader.ReadEndElement();
                 //}
                 //Info on RESOURCE
                 //Just skip
@@ -138,7 +138,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                 //if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 //    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagResource) == 0)
                 //{
-                    File.XmlReader.ReadEndElement();
+                File.XmlReader.ReadEndElement();
                 //}
 
                 return Task.CompletedTask;
@@ -199,8 +199,6 @@ namespace Jhu.SkyQuery.Format.VOTable
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0 ||
                  VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0))
             {
-             //   File.XmlReader.ReadEndElement();
-
                 // End of table
                 return Task.FromResult(false);
             }
@@ -259,13 +257,12 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void ReadResourceElement()
         {
-
             // The reader is now positioned on the RESOURCE tag            
-                File.XmlReader.ReadStartElement(Constants.TagResource);
-            // New part 
+            File.XmlReader.ReadStartElement(Constants.TagResource);
+
             // Read all tags inside VOTABLE but stop at any RESOURCE tag
             // because they are handled outside of this function
-            int q = 0; // Count the number of FILEDs 
+            int q = 0; // Count the number of FIELDs 
 
             while (File.XmlReader.NodeType == XmlNodeType.Element &&
                    XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
@@ -319,11 +316,15 @@ namespace Jhu.SkyQuery.Format.VOTable
             // TODO: process table
             // TODO: throw exception on embeded resource
 
+            // TODO: Call ReadDataElement function and do subsequent work from there
+
             // Consume beginning tags: Data and TableData
             File.XmlReader.ReadStartElement(Constants.TagData);
             File.XmlReader.ReadStartElement(Constants.TagTableData);
 
             // Reader is positioned on the first TR tag now
+
+            // TODO: here we have to figure out whether it's a simple table or binary
         }
 
         private void ReadTableElement()
@@ -344,7 +345,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             int q = 0;
 
             while (File.XmlReader.NodeType == XmlNodeType.Element &&
-        XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
+                   XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
             {
                 switch (File.XmlReader.Name)
                 {
@@ -378,12 +379,12 @@ namespace Jhu.SkyQuery.Format.VOTable
                 File.XmlReader.MoveToContent();
             }
 
-            // TODO: at this point we have all info on columns, so
+            // At this point we have all info on columns, so
             // call CreateColumns on base class
 
             CreateColumns(columns);
 
-            // The reader is now positioned on a LINK or a DATA tag
+            // TODO: The reader is now positioned on a LINK or a DATA tag
             // we do not support LINK tags, so throw on error
             // If a data tag is found, process further
         }
@@ -395,7 +396,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             switch (field.Datatype)
             {
                 // TODO: ARRAYS
-                // exampla: <FIELD ID= "values" datatype="int" arraysize="100*"/>
+                // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
                 case "boolean":
                     c = new Column(field.Name, DataTypes.SqlBit);
                     break;
@@ -704,7 +705,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         {
             await File.XmlWriter.WriteStartElementAsync(null, Constants.TagField, null);
 
-            await File.XmlWriter.WriteAttributeStringAsync(null,Constants.AttributeName, null, column.Name);
+            await File.XmlWriter.WriteAttributeStringAsync(null, Constants.AttributeName, null, column.Name);
             // *** TODO: write other column properties
 
             await File.XmlWriter.WriteEndElementAsync();
