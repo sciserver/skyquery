@@ -154,6 +154,28 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         [TestMethod]
+        public void VizierSampleDataReadTest()
+        {
+            var dr = OpenSimpleReader("vizier_corot_with_date.xml");
+
+            int q = 0;
+            int r = 0;
+
+            do
+            {
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
+            }
+            while (dr.NextResult());
+
+            Assert.AreEqual(2, q);
+            Assert.AreEqual(1, r);
+        }
+
+        [TestMethod]
         public void EverythingTest()
         {
             var dr = OpenSimpleReader("votable_everything.xml");
