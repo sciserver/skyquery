@@ -8,7 +8,28 @@ using System.Xml.Serialization;
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
+    [XmlRoot(Constants.TagValues)]
     public class Values
     {
+        [XmlElement(Constants.TagMin)]
+        public Min Min { get; set; }
+
+        [XmlElement(Constants.TagMax)]
+        public Max Max { get; set; }
+
+        [XmlElement(Constants.TagOption)]
+        public Option[] Options { get; set; }
+
+        [XmlAttribute(Constants.AttributeID)]
+        public string ID { get; set; }
+
+        [XmlAttribute(Constants.AttributeType)]
+        public string Type { get; set; }
+
+        [XmlAttribute(Constants.AttributeNull)]
+        public string Null { get; set; }
+
+        [XmlAttribute(Constants.AttributeRef)]
+        public string Ref { get; set; }
     }
 }

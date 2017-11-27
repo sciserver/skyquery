@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VOTABLE version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://www.ivoa.net/xml/VOTable/v1.2"
+xmlns="http://www.ivoa.net/xml/VOTable/v1.3"
 xmlns:stc="http://www.ivoa.net/xml/STC/v1.30" >
   <RESOURCE name="myFavouriteGalaxies">
     <TABLE name="results">
@@ -20,7 +20,7 @@ xmlns:stc="http://www.ivoa.net/xml/STC/v1.30" >
       utype="stc:AstroCoords.Position2D.Value2.C2"
       datatype="float" width="6" precision="2" unit="deg"/>
       <FIELD name="Name" ID="col3" ucd="meta.id;meta.main"
-      datatype="char" arraysize="8*"/>
+      datatype="char" arraysize="*"/>
       <FIELD name="RVel" ID="col4" ucd="spect.dopplerVeloc" datatype="int"
       width="5" unit="km/s"/>
       <FIELD name="e_RVel" ID="col5" ucd="stat.error;spect.dopplerVeloc"

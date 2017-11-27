@@ -7,6 +7,9 @@ using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Format;
 using System.Threading.Tasks;
 
+using System.Xml.Serialization;//Tom6
+using System.IO;//Tom6
+
 namespace Jhu.SkyQuery.Format.VOTable
 {
     /// <summary>
@@ -100,8 +103,48 @@ namespace Jhu.SkyQuery.Format.VOTable
             // trailing INFO tags (what are these for?)
             // make sure that they are read and position the reader after the
             // closing RESOURCE element, whatever it is.
+            if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0 ||
+                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0)))
+            {
+                File.XmlReader.ReadEndElement();
+                //Info in DATA
+                //Just skip
+                while(File.XmlReader.NodeType == XmlNodeType.Element && 
+                    VOTable.Comparer.Compare(File.XmlReader.Name,Constants.TagInfo) == 0)
+                {
+                    File.XmlReader.ReadStartElement(Constants.TagInfo);
+                    File.XmlReader.Skip();
+                    //var xml = File.Deserialize<Info>();
 
-            return Task.CompletedTask;
+                    File.XmlReader.ReadEndElement();
+                }
+                //End Table
+                //if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                //    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0)
+                //{
+                    File.XmlReader.ReadEndElement();
+                //}
+                //Info on RESOURCE
+                //Just skip
+                while (File.XmlReader.NodeType == XmlNodeType.Element &&
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
+                {
+                    File.XmlReader.ReadStartElement(Constants.TagInfo);
+                    File.XmlReader.Skip();
+                    File.XmlReader.ReadEndElement();
+                }
+                //End Resourxe
+                //if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                //    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagResource) == 0)
+                //{
+                    File.XmlReader.ReadEndElement();
+                //}
+            }
+            else
+            {
+                throw new FileFormatException();
+            }
         }
 
         /// <summary>
@@ -129,8 +172,15 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Consume closeing tag
             File.XmlReader.ReadEndElement();
             */
-
-            return Task.CompletedTask;
+            if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
+            {
+                while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
+                {
+                    File.XmlReader.Read();
+                }
+            }
+            File.XmlReader.ReadEndElement();
         }
 
         /// <summary>
@@ -141,22 +191,23 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <returns></returns>
         protected override Task<bool> OnReadNextRowPartsAsync(IList<string> parts, bool skipComments)
         {
-            throw new NotImplementedException();
 
-            /* OLD CODE, REUSE OR DELETE
+            // OLD CODE, REUSED 
             parts = new string[Columns.Count];
+
 
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0 ||
                  VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0))
             {
-                File.XmlReader.ReadEndElement();
+             //   File.XmlReader.ReadEndElement();
 
                 // End of table
                 return false;
             }
             else
             {
+
                 // Consume TR tag
                 File.XmlReader.ReadStartElement(Constants.TagTR);
 
@@ -167,8 +218,10 @@ namespace Jhu.SkyQuery.Format.VOTable
                     if (File.XmlReader.NodeType == XmlNodeType.Element &&
                         VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTD) == 0)
                     {
+
                         if (!File.XmlReader.IsEmptyElement)
                         {
+                            File.XmlReader.ReadStartElement(Constants.TagTD);
                             // A cell found
                             parts[q] = File.XmlReader.ReadString();
 
@@ -200,7 +253,6 @@ namespace Jhu.SkyQuery.Format.VOTable
 
                 return true;
             }
-            */
         }
 
         #endregion
@@ -208,19 +260,61 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void ReadResourceElement()
         {
-            // The reader is now positioned on the RESOURCE tag
+
+            // The reader is now positioned on the RESOURCE tag            
+                File.XmlReader.ReadStartElement(Constants.TagResource);
+            // New part 
+            // Read all tags inside VOTABLE but stop at any RESOURCE tag
+            // because they are handled outside of this function
+            int q = 0; // Count the number of FILEDs 
+
+            while (File.XmlReader.NodeType == XmlNodeType.Element &&
+                   XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
+            {
+                switch (File.XmlReader.Name)
+                {
+                    case Constants.TagDescription:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagInfo:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagCoosys:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagGroup:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagParam:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagLink:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagField:
+                        File.XmlReader.Skip();
+                        q++;
+                        break;
+                    case Constants.TagTable:
+                        ReadTableElement();
+                        // TODO: implement deserializets,
+                        break;
+
+                    case Constants.TagResource:
+                        throw Error.RecursiveResourceNotSupported();
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                File.XmlReader.MoveToContent();
+            }
 
             // TODO: read all possible tags here similary to VOTable.ReadVOTableElement
-            // * DESCRIPTION
-            // * INFO
-            // * COOSYS
-            // * GROUP
-            // * PARAM
-            // * LINK
-            // * TABLE
             // * RESOURCE
 
-            // TODO: while processing the above tags, collect info on columns
+            // * TITLE ?
+
+            //OK TODO: while processing the above tags, collect info on columns   
 
             // Reader must now be positioned on a TABLE tag or an embeded RESOURCE tag
             // TODO: process table
@@ -244,13 +338,117 @@ namespace Jhu.SkyQuery.Format.VOTable
             // * GROUP
 
             // TODO: while processing the above tags, collect info on columns
+            var columns = new List<Column>();
+
+            File.XmlReader.ReadStartElement(Constants.TagTable);
+
+            int q = 0;
+
+            while (File.XmlReader.NodeType == XmlNodeType.Element &&
+        XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
+            {
+                switch (File.XmlReader.Name)
+                {
+                    case Constants.TagDescription:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagInfo:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagCoosys:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagGroup:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagParam:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagLink:
+                        File.XmlReader.Skip();
+                        break;
+                    case Constants.TagField:
+                        var xml = File.Deserialize<Field>();
+                        var c = CreateColumn(xml);
+                        c.ID = q;
+                        q++;
+                        columns.Add(c);
+                        break;
+                }
+
+                File.XmlReader.MoveToContent();
+            }
 
             // TODO: at this point we have all info on columns, so
             // call CreateColumns on base class
 
+            CreateColumns(columns);
+
             // The reader is now positioned on a LINK or a DATA tag
             // we do not support LINK tags, so throw on error
             // If a data tag is found, process further
+        }
+
+        private Column CreateColumn(Field field)
+        {
+            Column c;
+
+            switch (field.Datatype)
+            {
+                // TODO: ARRAYS
+                // exampla: <FIELD ID= "values" datatype="int" arraysize="100*"/>
+                case "boolean":
+                    c = new Column(field.Name, DataTypes.SqlBit);
+                    break;
+                case "bit":
+                    c = new Column(field.Name, DataTypes.SqlBit);
+                    break;
+                case "unsignedByte":
+                    c = new Column(field.Name, DataTypes.SqlSmallInt);
+                    break;
+                case "char":
+                    if (field.Arraysize == "*")
+                    {
+                        c = new Column(field.Name, DataTypes.SqlVarCharMax);
+                    }
+                    else if (!String.IsNullOrWhiteSpace(field.Arraysize))
+                    {
+                        c = new Column(field.Name, DataTypes.SqlVarChar);
+                        c.DataType.Length = Int32.Parse(field.Arraysize);
+                    }
+                    else
+                    {
+                        c = new Column(field.Name, DataTypes.SqlChar);
+                    }
+                    break;
+                case "unicodeChar":
+                    c = new Column(field.Name, DataTypes.SqlNChar);
+                    break;
+                case "short":
+                    c = new Column(field.Name, DataTypes.SqlSmallInt);
+                    break;
+                case "int":
+                    c = new Column(field.Name, DataTypes.SqlInt);
+                    break;
+                case "long":
+                    c = new Column(field.Name, DataTypes.SqlBigInt);
+                    break;
+                case "float":
+                    c = new Column(field.Name, DataTypes.SqlReal);
+                    break;
+                case "double":
+                    c = new Column(field.Name, DataTypes.SqlFloat);
+                    break;
+                case "floatComplex":
+                    c = new Column(field.Name, DataTypes.SingleComplex);
+                    break;
+                case "doubleComplex":
+                    c = new Column(field.Name, DataTypes.DoubleComplex);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+            return c;
         }
 
         private void ReadDataElement()
