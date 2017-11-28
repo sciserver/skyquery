@@ -16,9 +16,9 @@ namespace Jhu.SkyQuery.Web.UI
             Application[Jhu.Graywulf.Web.UI.Constants.ApplicationVersion] = v;
         }
 
-        protected override void RegisterApps()
+        protected override void OnRegisterApps()
         {
-            base.RegisterApps();
+            base.OnRegisterApps();
 
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Common.App));
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Schema.App));
@@ -30,18 +30,18 @@ namespace Jhu.SkyQuery.Web.UI
             RegisterApp(typeof(Jhu.Graywulf.Web.UI.Apps.Docs.App));
         }
 
-        protected override void RegisterServices()
+        protected override void OnRegisterServices()
         {
-            base.RegisterServices();
+            base.OnRegisterServices();
 
             RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.ISchemaService));
             RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.IJobsService));
             RegisterService(typeof(Jhu.Graywulf.Web.Api.V1.IDataService));
         }
 
-        protected override void RegisterButtons()
+        protected override void OnRegisterButtons()
         {
-            base.RegisterButtons();
+            base.OnRegisterButtons();
             
             RegisterFooterButton(new Graywulf.Web.UI.MenuButton()
             {

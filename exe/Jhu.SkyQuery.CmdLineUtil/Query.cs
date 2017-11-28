@@ -106,7 +106,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var wfhost = new StandaloneWorkflowApplicationHost();
             wfhost.WorkflowEvent += new EventHandler<WorkflowApplicationHostEventArgs>(wfhost_WorkflowEvent);
 
-            wfhost.Start(true);
+            wfhost.Start(Jhu.Graywulf.Logging.LoggingContext.Current.GetLogger());
 
             var guid = wfhost.PrepareStartWorkflow(wf, par);
             wfhost.RunWorkflow(guid);
