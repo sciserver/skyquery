@@ -193,7 +193,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="parts"></param>
         /// <param name="skipComments"></param>
         /// <returns></returns>
-        protected override Task<bool> OnReadNextRowPartsAsync(IList<string> parts, bool skipComments)
+        protected override Task<bool> OnReadNextRowPartsAsync(List<string> parts, bool skipComments)
         {
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0 ||
