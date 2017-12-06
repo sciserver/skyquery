@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Threading;
@@ -10,7 +11,7 @@ using Jhu.SkyQuery.Format.VOTable;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
-    public class TapCommand : DbCommand
+    public class TapCommand : DbCommand, IDisposable
     {
         private enum TapCommandState
         {
@@ -36,9 +37,13 @@ namespace Jhu.SkyQuery.Tap.Client
         private UpdateRowSource updateRowSource;
 
         private TapCommandState state;
-        private CancellationTokenSource cancellationSource;
 
+        private TapClient client;
+        private Stream stream;
+        private VOTable votable;
         private DbDataReader reader;
+        private CancellationTokenSource cancellationSource;
+        private CancellationTokenRegistration cancellationRegistration;
 
         #endregion
         #region Properties
@@ -159,6 +164,21 @@ namespace Jhu.SkyQuery.Tap.Client
             InitializeMembers();
         }
 
+        public TapCommand(string cmdText)
+        {
+            InitializeMembers();
+
+            this.commandText = cmdText;
+        }
+
+        public TapCommand(string cmdText, TapConnection connection)
+        {
+            InitializeMembers();
+
+            this.commandText = cmdText;
+            this.connection = connection;
+        }
+
         private void InitializeMembers()
         {
             this.connection = null;
@@ -172,11 +192,44 @@ namespace Jhu.SkyQuery.Tap.Client
             this.updateRowSource = UpdateRowSource.None;
 
             this.state = TapCommandState.Initializing;
-            this.cancellationSource = null;
 
+            this.client = null;
+            this.stream = null;
+            this.votable = null;
             this.reader = null;
+            this.cancellationSource = null;
+            this.cancellationRegistration = new CancellationTokenRegistration();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (cancellationSource != null)
+            {
+                cancellationSource.Dispose();
+                cancellationSource = null;
+            }
+
+            if (votable != null)
+            {
+                votable.Dispose();
+                votable = null;
+            }
+
+            if (stream != null)
+            {
+                stream.Dispose();
+                stream = null;
+            }
+
+            if (client != null)
+            {
+                client.Dispose();
+                client = null;
+            }
+
+            base.Dispose(disposing);
+        }
+        
         #endregion
         #region Validation functions
 
@@ -300,26 +353,32 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public override object ExecuteScalar()
         {
+            // TODO
             throw new NotImplementedException();
         }
 
         public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
+            // TODO
             throw new NotImplementedException();
         }
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            throw new NotImplementedException();
+            return ExecuteDbDataReaderAsync(behavior, CancellationToken.None).Result;
         }
 
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
             EnsureNotExecuting();
 
-            var registration = RegisterCancellation(cancellationToken);
+            // TODO: support the following special behaviors:
+            // CommandBehavior.SchemaOnly
+            // CommandBehavior.KeyInfo (can TAP give back key info?)
+
             var job = CreateTapJob();
-            var client = CreateTapClient();
+            cancellationRegistration = RegisterCancellation(cancellationToken);
+            client = CreateTapClient();
 
             try
             {
@@ -338,8 +397,11 @@ namespace Jhu.SkyQuery.Tap.Client
                 if (job.Phase == TapJobPhase.Completed)
                 {
                     // TODO: return data reader
-                    var stream = await client.GetResultsAsync(job, cancellationSource.Token);
-                    var votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
+                    stream = await client.GetResultsAsync(job, cancellationSource.Token);
+                    votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read)
+                    {
+                        GenerateIdentityColumn = false,
+                    };
                     reader = new TapDataReader(this, votable);
 
                     return reader;
@@ -350,8 +412,8 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
                 else if (job.Phase == TapJobPhase.Error)
                 {
-                    var stream = await client.GetErrorAsync(job, cancellationSource.Token);
-                    var votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
+                    stream = await client.GetErrorAsync(job, cancellationSource.Token);
+                    votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
 
                     // TODO: read error document, parse VOTable and report error
                     // TODO: throw TAP exception with message from server
@@ -377,14 +439,6 @@ namespace Jhu.SkyQuery.Tap.Client
             {
                 state = TapCommandState.Error;
                 throw Error.CommunicationException(ex);
-            }
-            finally
-            {
-                cancellationSource.Dispose();
-                cancellationSource = null;
-
-                client.Dispose();
-                registration.Dispose();
             }
         }
         

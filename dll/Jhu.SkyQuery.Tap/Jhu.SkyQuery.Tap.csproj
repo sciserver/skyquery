@@ -56,6 +56,7 @@
       <HintPath>..\..\..\..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -91,7 +92,11 @@
     <Compile Include="Tap\Client\TapCommand.cs" />
     <Compile Include="Tap\Client\TapConnection.cs" />
     <Compile Include="Tap\Client\TapConnectionStringBuilder.cs" />
+    <Compile Include="Tap\Client\TapDataAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tap\Client\TapDataReader.cs" />
+    <Compile Include="Tap\Client\TapDataset.cs" />
     <Compile Include="Tap\Client\TapException.cs" />
     <Compile Include="Tap\Client\TapFactory.cs" />
     <Compile Include="Tap\Client\TapJob.cs" />
@@ -114,6 +119,10 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
       <Project>{6797ed88-1d8c-491b-a036-4c42c4bf2eaf}</Project>
       <Name>Jhu.Graywulf.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
+      <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
+      <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>

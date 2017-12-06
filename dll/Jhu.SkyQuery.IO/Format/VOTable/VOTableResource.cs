@@ -209,8 +209,10 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <param name="parts"></param>
         /// <param name="skipComments"></param>
         /// <returns></returns>
-        protected override Task<bool> OnReadNextRowPartsAsync(IList<string> parts, bool skipComments)
+        protected override Task<bool> OnReadNextRowPartsAsync(List<string> parts, bool skipComments)
         {
+            parts.Clear();
+
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0 ||
                  VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0))
@@ -224,7 +226,6 @@ namespace Jhu.SkyQuery.Format.VOTable
                 File.XmlReader.ReadStartElement(Constants.TagTR);
 
                 // Read the TD tags
-                int q = 0;
                 while (true)
                 {
                     if (File.XmlReader.NodeType == XmlNodeType.Element &&
@@ -235,19 +236,17 @@ namespace Jhu.SkyQuery.Format.VOTable
                         {
                             File.XmlReader.ReadStartElement(Constants.TagTD);
                             // A cell found
-                            parts[q] = File.XmlReader.ReadString();
+                            parts.Add(File.XmlReader.ReadString());
 
                             // Consume closing tag
                             File.XmlReader.ReadEndElement();
                         }
                         else
                         {
-                            parts[q] = null;
+                            parts.Add(null);
 
                             File.XmlReader.Read();
                         }
-
-                        q++;
                     }
                     else if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                         VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTR) == 0)

@@ -35,6 +35,8 @@ namespace Jhu.SkyQuery.Tap.Client
         public const string TapRequestDoQuery = "doQuery";
 
         public const string DateFormat = "yyyy-MM-ddTHH:mm:ssZ";
-        
+
+        public const string TapProviderName = "System.Data.SqlClient";
+
     }
 }

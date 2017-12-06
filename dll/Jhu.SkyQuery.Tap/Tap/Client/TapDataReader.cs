@@ -16,6 +16,7 @@ namespace Jhu.SkyQuery.Tap.Client
         public TapDataReader(TapCommand command, VOTable votable)
             : base(votable)
         {
+            this.command = command;
         }
     }
 }
