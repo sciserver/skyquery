@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_3
 {
-    [XmlRoot(Constants.TagCoosys)]
-    public class Coosys
+    [XmlRoot(Constants.TagCoosys, Namespace = Constants.VOTableNamespaceV1_3)]
+    public class Coosys : V1_2.Coosys
     {
+        /*
         [XmlAttribute(Constants.AttributeID)]
         public string ID { get; set; }
 
@@ -19,5 +20,6 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         [XmlAttribute(Constants.AttributeEquinox)]
         public string Equinox { get; set; }
+        */
     }
 }

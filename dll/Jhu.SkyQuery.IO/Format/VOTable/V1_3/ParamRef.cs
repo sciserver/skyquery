@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_3
 {
-    [XmlRoot(Constants.TagFieldRef)]
-    public class FieldRef
+    [XmlRoot(Constants.TagParamRef, Namespace = Constants.VOTableNamespaceV1_3)]
+    public class ParamRef : V1_2.ParamRef
     {
+        /*
         [XmlAttribute(Constants.AttributeRef)]
         public string Ref { get; set; }
 
@@ -18,6 +19,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public string Ucd { get; set; }
 
         [XmlAttribute(Constants.AttributeUType)]
-        public string UType { set; get; }
+        public string UType { get; set; }
+        */
     }
 }

@@ -67,10 +67,48 @@ namespace Jhu.SkyQuery.Format.VOTable {
         ///.Version 1.09: 23-Jan-2004 Version 1.09
         ///.Version 1.09: 30-Jan-2004 Version 1.091
         ///.Version 1.09: 22-Mar-2004 Version 1.092
+        ///.Version 1.094: 04-Jun-2004 GROUP does not contain FIELD
+        ///.Version 1.1 :  10-Jun-2004 remove the complexContent
+        ///--&gt;
+        ///&lt;xs:schema
+        ///   xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; elementFormDefault=&quot;qualified&quot;
+        ///   targetNamespace=&quot;http://www.ivoa.net/xml/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string Schema_VoTable_v1_1 {
+            get {
+                return ResourceManager.GetString("Schema_VoTable_v1_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;!--W3C Schema for VOTable  = Virtual Observatory Tabular Format
+        ///.Version 1.0 : 15-Apr-2002
+        ///.Version 1.09: 23-Jan-2004 Version 1.09
+        ///.Version 1.09: 30-Jan-2004 Version 1.091
+        ///.Version 1.09: 22-Mar-2004 Version 1.092
         ///.Version 1.094: 02-Jun-2004 GROUP does not contain FIELD
         ///.Version 1.1 :  10-Jun-2004 remove the complexContent
         ///.Version 1.11: GL: 23-May-2006 remove most root elements, use name= type= iso ref= structure
         ///.Version 1.11: GL: 29-Aug-2006 review and adde [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string Schema_VoTable_v1_2 {
+            get {
+                return ResourceManager.GetString("Schema_VoTable_v1_2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        ///&lt;!--W3C Schema for VOTable  = Virtual Observatory Tabular Format
+        ///.Version 1.0 : 15-Apr-2002
+        ///.Version 1.09: 23-Jan-2004 Version 1.09
+        ///.Version 1.09: 30-Jan-2004 Version 1.091
+        ///.Version 1.09: 22-Mar-2004 Version 1.092
+        ///.Version 1.094: 02-Jun-2004 GROUP does not contain FIELD
+        ///.Version 1.1 :  10-Jun-2004 remove the complexContent
+        ///.Version 1.11: GL: 23-May-2006 remove most root elements, use name= type= iso ref= structure
+        ///.Version 1.11: GL: 29-Aug-2006 review and added comment [rest of string was truncated]&quot;;.
         /// </summary>
         public static string Schema_VoTable_v1_3 {
             get {

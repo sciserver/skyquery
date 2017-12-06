@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_1
 {
-    [XmlRoot(ElementName = Constants.TagField, Namespace = Constants.VOTableNamespace)]
+    [XmlRoot(ElementName = Constants.TagField, Namespace = Constants.VOTableNamespaceV1_1)]
     public class Field
     {
         [XmlElement(Constants.TagDescription)]
@@ -34,9 +34,6 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         [XmlAttribute(Constants.AttributeWidth)]
         public string Width { get; set; }
-
-        [XmlAttribute(Constants.AttributeXType)]
-        public string Xtype { get; set; }
 
         [XmlAttribute(Constants.AttributeRef)]
         public string Ref { get; set; }

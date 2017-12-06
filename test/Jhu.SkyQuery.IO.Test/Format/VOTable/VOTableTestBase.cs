@@ -22,7 +22,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             settings.ValidationFlags |= XmlSchemaValidationFlags.ProcessSchemaLocation;
             settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
             settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
-            settings.Schemas.Add(Constants.VOTableNamespace, schema);
+            settings.Schemas.Add(Constants.VOTableNamespaceV1_3, schema);
 
             // TODO: add the XSD
             //Resources.Schema_VoTable_v1_3

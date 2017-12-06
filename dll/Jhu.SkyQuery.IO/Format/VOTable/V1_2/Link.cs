@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_2
 {
-    [XmlRoot(Constants.TagLink)]
-    public class Link
+    [XmlRoot(Constants.TagLink, Namespace = Constants.VOTableNamespaceV1_2)]
+    public class Link : V1_1.Link
     {
+        /*
         [XmlAttribute(Constants.AttributeID)]
         public string ID { get; set; }
 
@@ -34,5 +35,6 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         [XmlAttribute(Constants.AttributeAction)]
         public string Action { get; set; }
+        */
     }
 }

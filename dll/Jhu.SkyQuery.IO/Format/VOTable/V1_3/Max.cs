@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_3
 {
-    [XmlRoot(Constants.TagOption)]
-    public class Option
+    [XmlRoot(Constants.TagMax , Namespace = Constants.VOTableNamespaceV1_3)]
+    public class Max : V1_2.Max
     {
-        [XmlAttribute(Constants.AttributeName)]
-        public string Name { get; set; }
-
+        /*
         [XmlAttribute(Constants.AttributeValue)]
         public string Value { get; set; }
 
-        [XmlElement(Constants.TagOption)]
-        public Option[] Options { get; set; }
+        [XmlAttribute(Constants.AttributeInclusive)]
+        public string Inclusive { get; set; }
+        */
     }
 }

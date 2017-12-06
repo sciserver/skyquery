@@ -16,7 +16,9 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         // Name spaces
         public const string VOTableXsi = "http://www.w3.org/2001/XMLSchema-instance";
-        public const string VOTableNamespace = "http://www.ivoa.net/xml/VOTable/v1.3";
+        public const string VOTableNamespaceV1_1 = "http://www.ivoa.net/xml/VOTable/v1.1";
+        public const string VOTableNamespaceV1_2 = "http://www.ivoa.net/xml/VOTable/v1.2";
+        public const string VOTableNamespaceV1_3 = "http://www.ivoa.net/xml/VOTable/v1.3";
         public const string StcNs = "http://www.ivoa.net/xml/STC/v1.30";
 
         //public const String dtdFilename = "http://www.ivoa.net/internal/IVOA/IvoaVOTable/VOTable-1.2.dtd";
@@ -74,6 +76,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public const string AttributeNull = "null";
 
         public const string AttributeSystem = "system";
+        public const string AttributeEpoch = "epoch";
         public const string AttributeEquinox = "equinox";
 
 

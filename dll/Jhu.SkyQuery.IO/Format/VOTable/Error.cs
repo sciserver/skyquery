@@ -12,5 +12,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         {
             return new VOTableException(ExceptionMessage.RecursiveResourceNotSupported);
         }
+        public static VOTableException TypeofNamespaceNotSupported()
+        {
+            return new VOTableException(ExceptionMessage.TypeofNamespaceNotSupported);
+        }
     }
 }

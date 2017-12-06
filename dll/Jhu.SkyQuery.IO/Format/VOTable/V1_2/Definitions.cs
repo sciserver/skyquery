@@ -7,16 +7,16 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_2
 {
-    [XmlRoot(Constants.TagDefinitions)]
-    public class Definitions
+    [XmlRoot(Constants.TagDefinitions, Namespace = Constants.VOTableNamespaceV1_2)]
+    public class Definitions : V1_1.Definitions
     {
-        [XmlElement(Constants.TagCoosys)]
+        /*[XmlElement(Constants.TagCoosys)]
         public Coosys Coosys { get; set; }
 
         [XmlElement(Constants.TagParam)]
         public Param Param { get; set; }
-
+        */
     }
 }

@@ -28,7 +28,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             var r = XmlReader.Create(new StringReader(xml));
             r.ReadStartElement("VOTABLE");
 
-            var s = new XmlSerializer(typeof(Description));
+            var s = new XmlSerializer(typeof(V1_3.Description));
             s.Deserialize(r);
 
             r.ReadEndElement();
@@ -49,7 +49,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadCoosysElementTest()
         {
             var xml = "<COOSYS ID='coosys_FK5' system='eq_FK5' equinox='2000.0'/>";
-            var e = ReadElementHelper<Coosys>(xml);
+            var e = ReadElementHelper<V1_3.Coosys>(xml);
 
             Assert.AreEqual("coosys_FK5", e.ID);
             Assert.AreEqual("eq_FK5", e.System);
@@ -61,7 +61,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadDefinitionsElementTest()
         {
             var xml = "";
-            var e = ReadElementHelper<Definitions>(xml);
+            var e = ReadElementHelper<V1_3.Definitions>(xml);
 
             // TODO
         }
@@ -71,7 +71,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadDescriptionElementTest()
         {
             var xml = "<DESCRIPTION> Velocities and Distance estimations </DESCRIPTION>";
-            var e = ReadElementHelper<Description>(xml);
+            var e = ReadElementHelper<V1_3.Description>(xml);
 
             Assert.AreEqual(" Velocities and Distance estimations ", e.Text);
         }
@@ -80,7 +80,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadFieldElementTest()
         {
             var xml = "<FIELD ID=\"ID\" unit=\"un\" datatype=\"dt\" precision=\"pr\" width=\"wi\" xtype=\"xt\" ref=\"re\" name=\"na\" ucd=\"uc\" utype=\"ut\" arraysize=\"as\" type=\"ty\"/> ";
-            var e = ReadElementHelper<Field>(xml);
+            var e = ReadElementHelper<V1_3.Field>(xml);
 
             Assert.AreEqual("ID", e.ID);
             Assert.AreEqual("un", e.Unit);
@@ -100,7 +100,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadFieldRefElementTest()
         {
             var xml = "<FIELDref ref= \"field_2\" ucd = \"em.phot.mag\" utype = \"any.thing2\" />";
-            var e = ReadElementHelper<FieldRef>(xml);
+            var e = ReadElementHelper<V1_3.FieldRef>(xml);
 
             Assert.AreEqual("field_2", e.Ref);
             Assert.AreEqual("em.phot.mag", e.Ucd);
@@ -111,7 +111,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadGroupElementTest()
         {
             var xml = " <GROUP ID=\"link1\" name=\"group_name\" ref=\"???\" ucd=\"em.phot\" utype=\"???\"></GROUP> ";
-            var e = ReadElementHelper<Group>(xml);
+            var e = ReadElementHelper<V1_3.Group>(xml);
 
             Assert.AreEqual("link1", e.ID);
             Assert.AreEqual("group_name", e.Name);
@@ -124,7 +124,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadInfoElementTest()
         {
             var xml = "<INFO name=\"info_tag\" value=\"0\">inner text</INFO>";
-            var e = ReadElementHelper<Info>(xml);
+            var e = ReadElementHelper<V1_3.Info>(xml);
 
             Assert.AreEqual("info_tag", e.Name);
             Assert.AreEqual("0", e.Value);
@@ -135,7 +135,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadLinkElementTest()
         {
             var xml = "<LINK ID=\"link1\" content-role=\"location\" content-type=\"text/plain\" title=\"Another representation\" value=\"whatever value\" href=\"http://voservices.net/skyquery\" gref=\"???\" action=\"http://voservices.net/skyquery\"/> ";
-            var e = ReadElementHelper<Link>(xml);
+            var e = ReadElementHelper<V1_3.Link>(xml);
 
             Assert.AreEqual("link1", e.ID);
             Assert.AreEqual("location", e.ContentRole);
@@ -151,7 +151,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadMaxElementTest()
         {
             var xml = "<MAX value=\"0.32\" inclusive=\"yes\" />";
-            var e = ReadElementHelper<Max>(xml);
+            var e = ReadElementHelper<V1_3.Max>(xml);
 
             Assert.AreEqual("0.32", e.Value);
             Assert.AreEqual("yes", e.Inclusive);
@@ -161,7 +161,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadMinElementTest()
         {
             var xml = "<MIN value=\"0\" inclusive=\"yes\" />";
-            var e = ReadElementHelper<Min>(xml);
+            var e = ReadElementHelper<V1_3.Min>(xml);
 
             Assert.AreEqual("0", e.Value);
             Assert.AreEqual("yes", e.Inclusive);
@@ -172,7 +172,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadOptionElementTest()
         {
             var xml = "<OPTION name=\"na\" value=\"va\" />";
-            var e = ReadElementHelper<Option>(xml);
+            var e = ReadElementHelper<V1_3.Option>(xml);
 
             Assert.AreEqual("na", e.Name);
             Assert.AreEqual("va", e.Value);
@@ -182,7 +182,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadParamElementTest()
         {
             var xml = "<PARAM value=\"va\"/>";
-            var e = ReadElementHelper<Param>(xml);
+            var e = ReadElementHelper<V1_3.Param>(xml);
 
             Assert.AreEqual("va", e.Value);
         }
@@ -191,7 +191,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadParamRefElementTest()
         {
             var xml = "<PARAMref ref=\"re\" ucd=\"uc\" utype=\"ut\"/>";
-            var e = ReadElementHelper<ParamRef>(xml);
+            var e = ReadElementHelper<V1_3.ParamRef>(xml);
 
             Assert.AreEqual("re", e.Ref);
             Assert.AreEqual("uc", e.Ucd);

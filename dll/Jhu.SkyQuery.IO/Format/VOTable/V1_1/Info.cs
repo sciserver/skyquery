@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_1
 {
-    [XmlRoot(Constants.TagInfo)]
+    [XmlRoot(Constants.TagInfo, Namespace = Constants.VOTableNamespaceV1_1)]
     public class Info
     {
         [XmlText]
@@ -22,20 +22,5 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         [XmlAttribute(Constants.AttributeValue)]
         public string Value { get; set; }
-
-        [XmlAttribute(Constants.AttributeUnit)]
-        public string Unit { get; set; }
-
-        [XmlAttribute(Constants.AttributeXType)]
-        public string XType { get; set; }
-
-        [XmlAttribute(Constants.AttributeRef)]
-        public string Ref { get; set; }
-
-        [XmlAttribute(Constants.AttributeUcd)]
-        public string Ucd { get; set; }
-
-        [XmlAttribute(Constants.AttributeUType)]
-        public string UType { get; set; }
     }
 }

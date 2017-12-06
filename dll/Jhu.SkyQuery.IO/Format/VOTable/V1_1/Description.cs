@@ -7,9 +7,9 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VOTable.V1_1
 {
-    [XmlRoot(ElementName = Constants.TagDescription, Namespace = Constants.VOTableNamespace)]
+    [XmlRoot(ElementName = Constants.TagDescription, Namespace = Constants.VOTableNamespaceV1_1)]
     public class Description : IXmlSerializable
     {
         public string Text { get; set; }
