@@ -1,0 +1,12 @@
+VOTableResource.OnReadNextRowAsync:
+Itt ez most még a FormattedDataFileBlockBase-be hív bele, de majd ezt módosítani kell, hogy a BINARY is működjön.
+
+VOTableResource.OnReadFooterAsync:
+Kitakarítani a commenteket
+
+VOTableResource.OnReadToFinishAsync
+Kitakarítani a commenteket
+
+-A függvény végén ne olvasd be a DATA stb. taget, hanem tedd át azokat a ReadDataElement függvénybe. Ez azért lesz jó, mert akkor onnantól már más ágakra megyünk attól függően, hogy TABLE,TR,TD van-e a fájlban, vagy BINARY.
+VOTableResource.ReadTableElement:
+Ez most skippeli az összes belső taget, itt meg kellene hívni a deserializert, még akkor is, ha egyelőre nem használjuk fel a tartalmukat

@@ -1,0 +1,134 @@
+Különbségek:
+
++ element ref -> element name
+
+ <xs:simpleType  name="ucdType"> résznél:
++	<xs:pattern  value=":"/>
+
++ 	Min, Max, Option ezek a VALUES-ben vannak
+ 
+
++	VOTable-ben Group
+	
++	VOTable-ben változás: (0->1 RESOURCE , + INFO)
+	<xs:element ref="RESOURCE" minOccurs="0" maxOccurs="unbounded"/>
+	->
+	<xs:element name="RESOURCE" type="Resource" minOccurs="1" maxOccurs="unbounded"/>
+    <xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded"/>
+	
+ <!-- RESOURCES can contain DESCRIPTION, (INFO|PARAM|COSYS), LINK, TABLEs -->
++	<xs:element ref="DESCRIPTION" minOccurs="0"/>
+	<xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="INFO" />
+          <xs:element ref="COOSYS" />
+          <xs:element ref="PARAM"  />
+	->
+	<xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0"/>
+*    <xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded"/>
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="COOSYS" type="CoordinateSystem"/>
+        <!-- Deprecated in V1.2 -->
++       <xs:element name="GROUP" type="Group" />
+        <xs:element name="PARAM" type="Param" />
+		
++	<xs:choice>
+		<xs:element name="TABLE" type="Table" />
+		<xs:element name="RESOURCE" type="Resource" />
+    </xs:choice>
++	<xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded"/>
+
+INFO:
++	<xs:attribute name="unit"  type="xs:token"/>
+        <xs:attribute name="xtype" type="xs:token"/>
+        <xs:attribute name="ref"   type="xs:IDREF"/>
+        <xs:attribute name="ucd"   type="ucdType"/>
+        <xs:attribute name="utype" type="xs:string"/>
+
+Param:
+- 	<xs:element name="PARAM">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="DESCRIPTION" minOccurs="0"/>
+        <xs:element ref="VALUES" minOccurs="0"/>
+        <xs:element ref="LINK" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="ID" type="xs:ID"/>
+      <xs:attribute name="unit" type="xs:token"/>
+      <xs:attribute name="datatype" type="dataType" use="required"/>
+      <xs:attribute name="precision" type="precType"/>
+      <xs:attribute name="width" type="xs:positiveInteger"/>
+      <xs:attribute name="ref" type="xs:IDREF"/>
+      <xs:attribute name="name" type="xs:token" use="required"/>
+      <xs:attribute name="ucd" type="ucdType"/>
+      <xs:attribute name="utype" type="xs:string"/>
+      <xs:attribute name="value" type="xs:string" use="required"/>
+      <xs:attribute name="arraysize" type="arrayDEF"/>
+    </xs:complexType>
+  </xs:element>
+  ->
+  <xs:complexType name="Param">
+    <xs:complexContent>
+      <xs:extension base="Field">
+        <xs:attribute name="value" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+Table:
++	<xs:sequence>
+        <xs:element ref="DESCRIPTION" minOccurs="0"/>
+	->
+	<xs:sequence>
+      <xs:element name="DESCRIPTION" type="anyTEXT" minOccurs="0"/>
+	  <xs:element name="INFO" type="Info" minOccurs="0" maxOccurs="unbounded"/>
+	  
++	Info megint lehet ez után 
+	  
+Field:
++	<xs:attribute name="xtype" type="xs:token"/>
++	<xs:attribute name="type">
+
+LINK:
+-	<xs:complexType mixed="true">
+
+*	content-role was previsouly restricted as: <![CDATA[
+    <xs:attribute name="content-role">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="query"/>
+          <xs:enumeration value="hints"/>
+          <xs:enumeration value="doc"/>
+          <xs:enumeration value="location"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>]]>; is now a token.
+
+
+Fieldref, Paramref:
++	<xs:attribute name="ucd"  type="ucdType"/>
+    <xs:attribute name="utype" type="xs:string"/>
+	
+Data:
++	Binary2
++	INFO
+
+COOSYS:
+*	<xs:element name="COOSYS">   ->   <xs:complexType name="CoordinateSystem">
+
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  

@@ -68,5 +68,12 @@ namespace Jhu.SkyQuery.Format.VOTable {
                 return ResourceManager.GetString("RecursiveResourceNotSupported", resourceCulture);
             }
         }
+        internal static string TypeofNamespaceNotSupported
+        {
+            get
+            {
+                return ResourceManager.GetString("TypeofNamespaceNotSupported", resourceCulture);
+            }
+        }
     }
 }

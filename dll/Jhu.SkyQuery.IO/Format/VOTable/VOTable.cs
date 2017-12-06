@@ -21,6 +21,13 @@ namespace Jhu.SkyQuery.Format.VOTable
     [Serializable]
     public class VOTable : XmlDataFile, IDisposable, ICloneable
     {
+        private VOTableVersion version;
+
+        public VOTableVersion Version
+        {
+            get { return version; }
+        }
+
         #region Constructors and initializers
 
         /// <summary>
@@ -150,7 +157,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         #endregion
-       
+
         /// <summary>
         /// 
         /// </summary>
@@ -245,11 +252,26 @@ namespace Jhu.SkyQuery.Format.VOTable
             // Skip initial declarations
             XmlReader.MoveToContent();
 
+            switch (XmlReader.NamespaceURI)
+            {
+                case Constants.VOTableNamespaceV1_1:
+                    version = VOTableVersion.V1_1;
+                    break;
+                case Constants.VOTableNamespaceV1_2:
+                    version = VOTableVersion.V1_2;
+                    break;
+                case Constants.VOTableNamespaceV1_3:
+                    version = VOTableVersion.V1_3;
+                    break;
+                default:
+                    throw new VOTableException(); // TODO: unsupported version
+            }
+
             // Reader now should be positioned on the VOTABLE tag
             // Read attributes
 
             var id = XmlReader.GetAttribute(Constants.AttributeID);
-            var version = XmlReader.GetAttribute(Constants.AttributeVersion);
+            var ver = XmlReader.GetAttribute(Constants.AttributeVersion);
 
             // Finish reading tag and move to next content
             XmlReader.ReadStartElement(Constants.TagVOTable);
@@ -260,22 +282,67 @@ namespace Jhu.SkyQuery.Format.VOTable
             while (XmlReader.NodeType == XmlNodeType.Element &&
                    Comparer.Compare(XmlReader.Name, Constants.TagResource) != 0)
             {
-                switch (XmlReader.Name)
+                switch (version)
                 {
-                    case Constants.TagDescription:
-                        var d = Deserialize<Description>();
+                    case VOTableVersion.V1_1:
+                        switch (XmlReader.Name)
+                        {
+                            case Constants.TagDescription:
+                                var d = Deserialize<V1_1.Description>();
+                                break;
+                            case Constants.TagDefinitions:
+                            case Constants.TagCoosys:
+                            case Constants.TagGroup:
+                            case Constants.TagParam:
+                            case Constants.TagInfo:
+                                // TODO: implement deserializets,
+                                // now just skip the tag
+                                XmlReader.Skip();
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
                         break;
-                    case Constants.TagDefinitions:
-                    case Constants.TagCoosys:
-                    case Constants.TagGroup:
-                    case Constants.TagParam:
-                    case Constants.TagInfo:
-                        // TODO: implement deserializets,
-                        // now just skip the tag
-                        XmlReader.Skip();
+
+                    case VOTableVersion.V1_2:
+                        switch (XmlReader.Name)
+                        {
+                            case Constants.TagDescription:
+                                var d = Deserialize<V1_2.Description>();
+                                break;
+                            case Constants.TagDefinitions:
+                            case Constants.TagCoosys:
+                            case Constants.TagGroup:
+                            case Constants.TagParam:
+                            case Constants.TagInfo:
+                                // TODO: implement deserializets,
+                                // now just skip the tag
+                                XmlReader.Skip();
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
                         break;
-                    default:
-                        throw new NotImplementedException();
+
+                        case VOTableVersion.V1_3:
+                        switch (XmlReader.Name)
+                        {
+                            case Constants.TagDescription:
+                                var d = Deserialize<V1_3.Description>();
+                                break;
+                            case Constants.TagDefinitions:
+                            case Constants.TagCoosys:
+                            case Constants.TagGroup:
+                            case Constants.TagParam:
+                            case Constants.TagInfo:
+                                // TODO: implement deserializets,
+                                // now just skip the tag
+                                XmlReader.Skip();
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
+                        break;
                 }
 
                 XmlReader.MoveToContent();
