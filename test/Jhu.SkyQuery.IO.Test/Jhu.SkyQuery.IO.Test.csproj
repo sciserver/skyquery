@@ -77,6 +77,10 @@
       <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
       <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.ServiceModel\Jhu.Graywulf.ServiceModel.csproj">
+      <Project>{aa744162-dfa0-46bc-be03-20d50dd77806}</Project>
+      <Name>Jhu.Graywulf.ServiceModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{aada04ee-f578-4628-8ae0-d423bb94c738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
