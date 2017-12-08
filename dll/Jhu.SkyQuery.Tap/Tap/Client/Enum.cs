@@ -17,6 +17,9 @@ namespace Jhu.SkyQuery.Tap.Client
     public enum TapResultsFormat
     {
         VOTable,
+        VOTableBinary,
+        VOTableBinary2,
+        VOTableFits,
         Json,
         Csv,
         Text

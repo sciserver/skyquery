@@ -19,6 +19,7 @@ namespace Jhu.SkyQuery.Tap.Client
         public const string TapParamRequest = "REQUEST";
         public const string TapParamLang = "LANG";
         public const string TapParamFormat = "FORMAT";
+        public const string TapParamSerialization = "SERIALIZATION";
         public const string TapParamQuery = "QUERY";
         public const string TapParamPhase = "PHASE";
         public const string TapParamTermination = "TERMINATION";
@@ -38,5 +39,9 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public const string TapProviderName = "System.Data.SqlClient";
 
+        public const string VoTableTableData = "TABLEDATA";
+        public const string VoTableBinary = "BINARY";
+        public const string VoTableBinary2 = "BINARY2";
+        public const string VoTableFits = "FITS";
     }
 }

@@ -129,14 +129,45 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public Dictionary<string, string> GetSubmitRequestParameters()
         {
+            TapResultsFormat fmt;
+            string ser = null;
+
+            switch (format)
+            {
+                case TapResultsFormat.VOTable:
+                    fmt = TapResultsFormat.VOTable;
+                    ser = Constants.VoTableTableData;
+                    break;
+                case TapResultsFormat.VOTableBinary:
+                    fmt = TapResultsFormat.VOTable;
+                    ser = Constants.VoTableBinary;
+                    break;
+                case TapResultsFormat.VOTableBinary2:
+                    fmt = TapResultsFormat.VOTable;
+                    ser = Constants.VoTableBinary2;
+                    break;
+                case TapResultsFormat.VOTableFits:
+                    fmt = TapResultsFormat.VOTable;
+                    ser = Constants.VoTableFits;
+                    break;
+                default:
+                    fmt = format;
+                    break;
+            }
+
             var parameters = new Dictionary<string, string>()
             {
                 { Constants.TapParamRequest, Constants.TapRequestDoQuery },
                 { Constants.TapParamLang, language.ToString().ToUpperInvariant() },
-                { Constants.TapParamFormat, format.ToString().ToUpperInvariant() },
+                { Constants.TapParamFormat, fmt.ToString().ToUpperInvariant() },
                 { Constants.TapParamQuery, query },
                 { Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
             };
+
+            if (ser != null)
+            {
+                parameters.Add(Constants.TapParamSerialization, ser);
+            }
 
             if (duration != TimeSpan.Zero)
             {

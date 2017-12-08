@@ -315,7 +315,10 @@ namespace Jhu.SkyQuery.Tap.Client
             {
                 Query = commandText,
                 Language = queryLanguage,
+                Format = TapResultsFormat.VOTable
             };
+
+            // TODO: enable selecting format or use binary by default once it is implemented
 
             if (commandTimeout != 0)
             {
