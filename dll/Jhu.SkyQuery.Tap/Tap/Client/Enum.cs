@@ -24,6 +24,7 @@ namespace Jhu.SkyQuery.Tap.Client
         Csv,
         Text
     }
+    // application/x-votable+xml;serialization=TABLEDATA
 
     public enum TapJobAction
     {
