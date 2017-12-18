@@ -22,7 +22,9 @@ namespace Jhu.SkyQuery.Tap.Client
         VOTableFits,
         Json,
         Csv,
-        Text
+        Text,
+        Fits,
+        Html,
     }
     // application/x-votable+xml;serialization=TABLEDATA
 

@@ -127,48 +127,80 @@ namespace Jhu.SkyQuery.Tap.Client
             this.uri = old.uri;
         }
 
-        public Dictionary<string, string> GetSubmitRequestParameters()
+        private string GetFormatString()
         {
             TapResultsFormat fmt;
             string ser = null;
+            string mime = null;
 
             switch (format)
             {
                 case TapResultsFormat.VOTable:
                     fmt = TapResultsFormat.VOTable;
-                    ser = Constants.VoTableTableData;
+                    ser = Constants.TapSerializationVoTableTableData;
                     break;
                 case TapResultsFormat.VOTableBinary:
                     fmt = TapResultsFormat.VOTable;
-                    ser = Constants.VoTableBinary;
+                    ser = Constants.TapSerializationVoTableBinary;
                     break;
                 case TapResultsFormat.VOTableBinary2:
                     fmt = TapResultsFormat.VOTable;
-                    ser = Constants.VoTableBinary2;
+                    ser = Constants.TapSerializationVoTableBinary2;
                     break;
                 case TapResultsFormat.VOTableFits:
                     fmt = TapResultsFormat.VOTable;
-                    ser = Constants.VoTableFits;
+                    ser = Constants.TapSerializationVoTableFits;
                     break;
                 default:
                     fmt = format;
                     break;
             }
 
+            switch (fmt)
+            {
+                case TapResultsFormat.VOTable:
+                    mime = Constants.TapMimeVoTable;
+                    break;
+                case TapResultsFormat.Csv:
+                    mime = Constants.TapMimeCsv;
+                    break;
+                case TapResultsFormat.Json:
+                    mime = Constants.TapMimeJson;
+                    break;
+                case TapResultsFormat.Text:
+                    mime = Constants.TapMimeText;
+                    break;
+                case TapResultsFormat.Html:
+                    mime = Constants.TapMimeHtml;
+                    break;
+                case TapResultsFormat.Fits:
+                    mime = Constants.TapMimeFits;
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            if (ser != null)
+            {
+                mime += ";serialization=" + ser;
+            }
+
+            return mime;
+        }
+
+        public Dictionary<string, string> GetSubmitRequestParameters()
+        {
+            string fmt = GetFormatString();
+            
             var parameters = new Dictionary<string, string>()
             {
                 { Constants.TapParamRequest, Constants.TapRequestDoQuery },
                 { Constants.TapParamLang, language.ToString().ToUpperInvariant() },
-                { Constants.TapParamFormat, fmt.ToString().ToUpperInvariant() },
+                { Constants.TapParamFormat, fmt },
                 { Constants.TapParamQuery, query },
                 { Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
             };
-
-            if (ser != null)
-            {
-                parameters.Add(Constants.TapParamSerialization, ser);
-            }
-
+            
             if (duration != TimeSpan.Zero)
             {
                 parameters.Add(Constants.TapParamTermination, ((int)duration.TotalSeconds).ToString());
@@ -176,7 +208,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
             if (destruction != DateTime.MinValue)
             {
-                parameters.Add(Constants.TapParamDestruction, destruction.ToString(Constants.DateFormat));
+                parameters.Add(Constants.TapParamDestruction, destruction.ToString(Constants.TapDateFormat));
             }
 
             return parameters;
