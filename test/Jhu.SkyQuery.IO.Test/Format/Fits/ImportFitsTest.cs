@@ -36,10 +36,12 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             using (var cc = new CancellationContext())
             {
                 var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specsdss.fits");
-                var it = GetImportTableTask(cc, path, false, false);
-                var t = ExecuteImportTableTask(it);
-                Assert.AreEqual(8, t.Columns.Count);
-                DropTable(t);
+                using (var it = GetImportTableTask(cc, path, false, false))
+                {
+                    var t = ExecuteImportTableTask(it.Value);
+                    Assert.AreEqual(8, t.Columns.Count);
+                    DropTable(t);
+                }
             }
         }
 
@@ -49,10 +51,12 @@ namespace Jhu.SkyQuery.Format.Fits.Test
             using (var cc = new CancellationContext())
             {
                 var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specboss.fits");
-                var it = GetImportTableTask(cc, path, false, false);
-                var t = ExecuteImportTableTask(it);
-                Assert.AreEqual(8, t.Columns.Count);
-                DropTable(t);
+                using (var it = GetImportTableTask(cc, path, false, false))
+                {
+                    var t = ExecuteImportTableTask(it.Value);
+                    Assert.AreEqual(8, t.Columns.Count);
+                    DropTable(t);
+                }
             }
         }
         }
