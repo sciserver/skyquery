@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using Jhu.Graywulf.Schema;
 
 namespace Jhu.SkyQuery.Format.VOTable.V1_1
 {
@@ -52,5 +53,92 @@ namespace Jhu.SkyQuery.Format.VOTable.V1_1
 
         [XmlAttribute(Constants.AttributeType)]
         public string Type { get; set; }
+
+        public virtual Column CreateColumn()
+        {
+            Column c;
+
+            switch (Datatype)
+            {
+                // TODO: ARRAYS
+                // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
+                case "boolean":
+                    c = new Column(Name, DataTypes.SqlBit);
+                    break;
+                case "bit":
+                    c = new Column(Name, DataTypes.SqlBit);
+                    break;
+                case "unsignedByte":
+                    c = new Column(Name, DataTypes.SqlSmallInt);
+                    break;
+                case "char":
+                    /*
+                    if (Arraysize == "*" )
+                    {
+                        c = new Column(Name, DataTypes.SqlVarCharMax);
+                    }
+                    else if (!String.IsNullOrWhiteSpace(Arraysize))
+                    {
+                        c = new Column(Name, DataTypes.SqlVarChar);
+                        c.DataType.Length = Int32.Parse(Arraysize);
+                    }
+                    else
+                    {
+                        c = new Column(Name, DataTypes.SqlChar);
+                    }
+                    break;
+                    */
+                    if (!String.IsNullOrWhiteSpace(Arraysize))
+                    {
+                        if (Arraysize == "*" || Arraysize.Contains("*"))
+                        {
+                            c = new Column(Name, DataTypes.SqlVarCharMax);
+                        }
+                        else
+                        {
+                            c = new Column(Name, DataTypes.SqlVarChar);
+                            c.DataType.Length = Int32.Parse(Arraysize);
+                        }
+                    }
+                    else
+                    {
+                        c = new Column(Name, DataTypes.SqlChar);
+                    }
+                    break;
+                case "unicodeChar":
+                    c = new Column(Name, DataTypes.SqlNChar);
+
+                    // TODO length
+                    break;
+                case "short":
+                    c = new Column(Name, DataTypes.SqlSmallInt);
+                    break;
+                case "int":
+                    c = new Column(Name, DataTypes.SqlInt);
+                    break;
+                case "long":
+                    c = new Column(Name, DataTypes.SqlBigInt);
+                    break;
+                case "float":
+                    c = new Column(Name, DataTypes.SqlReal);
+                    break;
+                case "double":
+                    c = new Column(Name, DataTypes.SqlFloat);
+                    break;
+                case "floatComplex":
+                    c = new Column(Name, DataTypes.SingleComplex);
+                    break;
+                case "doubleComplex":
+                    c = new Column(Name, DataTypes.DoubleComplex);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            // VOTable data types are nullable by default
+            c.DataType.IsNullable = true;
+            
+            return c;
+        }
     }
 }

@@ -192,8 +192,9 @@ namespace Jhu.SkyQuery.Format.VOTable
 
             if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
             {
-                while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                while ((File.XmlReader.NodeType != XmlNodeType.EndElement ||
                     VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
+                    && VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagResource) != 0)
                 {
                     File.XmlReader.Read();
                 }
@@ -225,6 +226,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                 // Consume TR tag
                 File.XmlReader.ReadStartElement(Constants.TagTR);
 
+                var q = 0;
                 // Read the TD tags
                 while (true)
                 {
@@ -244,7 +246,6 @@ namespace Jhu.SkyQuery.Format.VOTable
                         else
                         {
                             parts.Add(null);
-
                             File.XmlReader.Read();
                         }
                     }
@@ -260,6 +261,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     {
                         throw new FileFormatException();    // *** TODO
                     }
+                    q++;
                 }
 
                 return Task.FromResult(true);
@@ -498,8 +500,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                                 File.Deserialize<V1_1.Link>();
                                 break;
                             case Constants.TagField:
-                                var xml = File.Deserialize<V1_1.Field>();
-                                var c = CreateColumnV1(xml);
+                                var field = File.Deserialize<V1_1.Field>();
+                                var c = field.CreateColumn();
                                 c.ID = q;
                                 q++;
                                 columns.Add(c);
@@ -530,8 +532,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                                 File.Deserialize<V1_2.Link>();
                                 break;
                             case Constants.TagField:
-                                var xml = File.Deserialize<V1_2.Field>();
-                                var c = CreateColumnV2(xml);
+                                var field = File.Deserialize<V1_2.Field>();
+                                var c = field.CreateColumn();
                                 c.ID = q;
                                 q++;
                                 columns.Add(c);
@@ -562,8 +564,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                                 File.Deserialize<V1_3.Link>();
                                 break;
                             case Constants.TagField:
-                                var xml = File.Deserialize<V1_3.Field>();
-                                var c = CreateColumnV3(xml);
+                                var field = File.Deserialize<V1_3.Field>();
+                                var c = field.CreateColumn();
                                 c.ID = q;
                                 q++;
                                 columns.Add(c);
@@ -584,192 +586,6 @@ namespace Jhu.SkyQuery.Format.VOTable
             // we do not support LINK tags, so throw on error
             // If a data tag is found, process further
         }
-
-        private Column CreateColumnV1(V1_1.Field field)
-        {
-            Column c;
-
-            switch (field.Datatype)
-            {
-                // TODO: ARRAYS
-                // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
-                case "boolean":
-                    c = new Column(field.Name, DataTypes.SqlBit);
-                    break;
-                case "bit":
-                    c = new Column(field.Name, DataTypes.SqlBit);
-                    break;
-                case "unsignedByte":
-                    c = new Column(field.Name, DataTypes.SqlSmallInt);
-                    break;
-                case "char":
-                    if (field.Arraysize == "*")
-                    {
-                        c = new Column(field.Name, DataTypes.SqlVarCharMax);
-                    }
-                    else if (!String.IsNullOrWhiteSpace(field.Arraysize))
-                    {
-                        c = new Column(field.Name, DataTypes.SqlVarChar);
-                        c.DataType.Length = Int32.Parse(field.Arraysize);
-                    }
-                    else
-                    {
-                        c = new Column(field.Name, DataTypes.SqlChar);
-                    }
-                    break;
-                case "unicodeChar":
-                    c = new Column(field.Name, DataTypes.SqlNChar);
-                    break;
-                case "short":
-                    c = new Column(field.Name, DataTypes.SqlSmallInt);
-                    break;
-                case "int":
-                    c = new Column(field.Name, DataTypes.SqlInt);
-                    break;
-                case "long":
-                    c = new Column(field.Name, DataTypes.SqlBigInt);
-                    break;
-                case "float":
-                    c = new Column(field.Name, DataTypes.SqlReal);
-                    break;
-                case "double":
-                    c = new Column(field.Name, DataTypes.SqlFloat);
-                    break;
-                case "floatComplex":
-                    c = new Column(field.Name, DataTypes.SingleComplex);
-                    break;
-                case "doubleComplex":
-                    c = new Column(field.Name, DataTypes.DoubleComplex);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-            return c;
-        }
-
-        private Column CreateColumnV2(V1_2.Field field)
-        {
-            Column c;
-
-            switch (field.Datatype)
-            {
-                // TODO: ARRAYS
-                // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
-                case "boolean":
-                    c = new Column(field.Name, DataTypes.SqlBit);
-                    break;
-                case "bit":
-                    c = new Column(field.Name, DataTypes.SqlBit);
-                    break;
-                case "unsignedByte":
-                    c = new Column(field.Name, DataTypes.SqlSmallInt);
-                    break;
-                case "char":
-                    if (field.Arraysize == "*")
-                    {
-                        c = new Column(field.Name, DataTypes.SqlVarCharMax);
-                    }
-                    else if (!String.IsNullOrWhiteSpace(field.Arraysize))
-                    {
-                        c = new Column(field.Name, DataTypes.SqlVarChar);
-                        c.DataType.Length = Int32.Parse(field.Arraysize);
-                    }
-                    else
-                    {
-                        c = new Column(field.Name, DataTypes.SqlChar);
-                    }
-                    break;
-                case "unicodeChar":
-                    c = new Column(field.Name, DataTypes.SqlNChar);
-                    break;
-                case "short":
-                    c = new Column(field.Name, DataTypes.SqlSmallInt);
-                    break;
-                case "int":
-                    c = new Column(field.Name, DataTypes.SqlInt);
-                    break;
-                case "long":
-                    c = new Column(field.Name, DataTypes.SqlBigInt);
-                    break;
-                case "float":
-                    c = new Column(field.Name, DataTypes.SqlReal);
-                    break;
-                case "double":
-                    c = new Column(field.Name, DataTypes.SqlFloat);
-                    break;
-                case "floatComplex":
-                    c = new Column(field.Name, DataTypes.SingleComplex);
-                    break;
-                case "doubleComplex":
-                    c = new Column(field.Name, DataTypes.DoubleComplex);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-            return c;
-        }
-        private Column CreateColumnV3(V1_3.Field field)
-        {
-            Column c;
-
-            switch (field.Datatype)
-            {
-                // TODO: ARRAYS
-                // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
-                case "boolean":
-                    c = new Column(field.Name, DataTypes.SqlBit);
-                    break;
-                case "bit":
-                    c = new Column(field.Name, DataTypes.SqlBit);
-                    break;
-                case "unsignedByte":
-                    c = new Column(field.Name, DataTypes.SqlSmallInt);
-                    break;
-                case "char":
-                    if (field.Arraysize == "*")
-                    {
-                        c = new Column(field.Name, DataTypes.SqlVarCharMax);
-                    }
-                    else if (!String.IsNullOrWhiteSpace(field.Arraysize))
-                    {
-                        c = new Column(field.Name, DataTypes.SqlVarChar);
-                        c.DataType.Length = Int32.Parse(field.Arraysize);
-                    }
-                    else
-                    {
-                        c = new Column(field.Name, DataTypes.SqlChar);
-                    }
-                    break;
-                case "unicodeChar":
-                    c = new Column(field.Name, DataTypes.SqlNChar);
-                    break;
-                case "short":
-                    c = new Column(field.Name, DataTypes.SqlSmallInt);
-                    break;
-                case "int":
-                    c = new Column(field.Name, DataTypes.SqlInt);
-                    break;
-                case "long":
-                    c = new Column(field.Name, DataTypes.SqlBigInt);
-                    break;
-                case "float":
-                    c = new Column(field.Name, DataTypes.SqlReal);
-                    break;
-                case "double":
-                    c = new Column(field.Name, DataTypes.SqlFloat);
-                    break;
-                case "floatComplex":
-                    c = new Column(field.Name, DataTypes.SingleComplex);
-                    break;
-                case "doubleComplex":
-                    c = new Column(field.Name, DataTypes.DoubleComplex);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-            return c;
-        }
-
 
         private void ReadDataElement()
         {

@@ -100,13 +100,46 @@ namespace Jhu.SkyQuery.Format.VOTable
             var dr = OpenSimpleReader("votable_nulls.xml");
 
             int q = 0;
+            int r = 0;
 
-            while (dr.Read())
+            do
             {
-                q++;
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
             }
+            while (dr.NextResult());
 
             Assert.AreEqual(3, q);
+            Assert.AreEqual(1, r);
+        }
+
+        /// <summary>
+        /// 
+        /// 
+        [TestMethod]
+        public void WithNullValuesReadTest()
+        {
+            var dr = OpenSimpleReader("votable_nulls2.xml");
+
+            int q = 0;
+            int r = 0;
+
+            do
+            {
+                q = 0;
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
+            }
+            while (dr.NextResult());
+
+            Assert.AreEqual(1, q);
+            Assert.AreEqual(2, r);
         }
 
         [TestMethod]

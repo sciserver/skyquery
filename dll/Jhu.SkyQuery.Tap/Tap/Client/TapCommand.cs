@@ -332,9 +332,10 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             return new Client.TapClient()
             {
-                BaseAddress = new Uri(connection.DataSource),
+                BaseAddress = new Uri(connection.DataSource), 
                 HttpTimeout = TimeSpan.FromSeconds(connection.ConnectionTimeout),
                 PollTimeout = TimeSpan.FromSeconds(commandTimeout),
+                
             };
         }
 
