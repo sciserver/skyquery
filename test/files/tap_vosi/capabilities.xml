@@ -1,55 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Jhu.Graywulf.Test;
-
-namespace Jhu.SkyQuery.Vosi
-{
-    [TestClass]
-    public class VosiElementsTest : TestClassBase
-    {
-        private T ReadElementHelper<T>(string xml)
-        {
-            var s = new XmlSerializer(typeof(T));
-            var r = XmlReader.Create(new StringReader(xml));
-
-            return (T)s.Deserialize(r);
-        }
-
-        [TestMethod]
-        public void AvailabilityTest()
-        {
-            var xml = 
-@"<?xml version=""1.0"" encoding=""UTF-8""?>
-<availability xmlns=""http://www.ivoa.net/xml/VOSIAvailability/v1.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://www.ivoa.net/xml/VOSIAvailability/v1.0 http://www.ivoa.net/xml/VOSIAvailability/v1.0"">
-        <available>true</available>
-        <note>VizieR TAP service available </note>
-</availability>";
-            var e = ReadElementHelper<Vosi.Availability.V1_0.Availability>(xml);
-
-            Assert.IsTrue(e.Available);
-        }
-
-        [TestMethod]
-        public void CapabilitiesTestFromFile()
-        {
-            string path = GetTestFilePath(@"modules\skyquery\test\files\tap_vosi\capabilities.xml");
-            var xml = File.ReadAllText(path);
-            var e = ReadElementHelper<Vosi.Capabilities.V1_0.Capabilities>(xml);
-        }
-
-        [TestMethod]
-        public void CapabilitiesTest()
-        {
-            var xml =
-@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<?xml version=""1.0"" encoding=""UTF-8""?>
 <vosi:capabilities xmlns:vosi=""http://www.ivoa.net/xml/VOSICapabilities/v1.0"" xmlns:tr=""http://www.ivoa.net/xml/TAPRegExt/v1.0"" xmlns:vr=""http://www.ivoa.net/xml/VOResource/v1.0"" xmlns:vs=""http://www.ivoa.net/xml/VODataService/v1.0"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""http://www.ivoa.net/xml/VOSICapabilities/v1.0 http://www.ivoa.net/xml/VOSICapabilities/v1.0 http://www.ivoa.net/xml/TAPRegExt/v1.0 http://www.ivoa.net/xml/TAPRegExt/v1.0 http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VOResource/v1.0 http://www.ivoa.net/xml/VODataService/v1.0 http://www.ivoa.net/xml/VODataService/v1.0"">
 <capability  standardID=""ivo://ivoa.net/std/TAP"" xsi:type=""tr:TableAccess"">
         <interface role=""std"" xsi:type=""vs:ParamHTTP"">
@@ -123,7 +72,4 @@ namespace Jhu.SkyQuery.Vosi
                         <accessURL use=""full""> http://localhost/TAPVizieR/tap/tables </accessURL>
                 </interface>
         </capability>
-</vosi:capabilities>";
-        }
-    }
-}
+</vosi:capabilities>
