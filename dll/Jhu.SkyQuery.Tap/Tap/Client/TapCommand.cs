@@ -38,7 +38,6 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private TapCommandState state;
 
-        private TapClient client;
         private Stream stream;
         private VOTable votable;
         private DbDataReader reader;
@@ -193,7 +192,6 @@ namespace Jhu.SkyQuery.Tap.Client
 
             this.state = TapCommandState.Initializing;
 
-            this.client = null;
             this.stream = null;
             this.votable = null;
             this.reader = null;
@@ -219,12 +217,6 @@ namespace Jhu.SkyQuery.Tap.Client
             {
                 stream.Dispose();
                 stream = null;
-            }
-
-            if (client != null)
-            {
-                client.Dispose();
-                client = null;
             }
 
             base.Dispose(disposing);
@@ -328,17 +320,6 @@ namespace Jhu.SkyQuery.Tap.Client
             return job;
         }
 
-        private TapClient CreateTapClient()
-        {
-            return new Client.TapClient()
-            {
-                BaseAddress = new Uri(connection.DataSource), 
-                HttpTimeout = TimeSpan.FromSeconds(connection.ConnectionTimeout),
-                PollTimeout = TimeSpan.FromSeconds(commandTimeout),
-                
-            };
-        }
-
         protected override DbParameter CreateDbParameter()
         {
             return new TapParameter();
@@ -382,7 +363,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
             var job = CreateTapJob();
             cancellationRegistration = RegisterCancellation(cancellationToken);
-            client = CreateTapClient();
+            connection.Client.PollTimeout = TimeSpan.FromSeconds(commandTimeout);
 
             try
             {
@@ -391,17 +372,17 @@ namespace Jhu.SkyQuery.Tap.Client
 
                 // 1. Submit job
                 state = TapCommandState.Submitting;
-                await client.SubmitAsync(job, cancellationSource.Token);
+                await connection.Client.SubmitAsync(job, cancellationSource.Token);
 
                 // 2. Poll status
                 state = TapCommandState.Executing;
-                await client.PollAsync(job, new[] { TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
+                await connection.Client.PollAsync(job, new[] { TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
 
                 // 3. Process output
                 if (job.Phase == TapJobPhase.Completed)
                 {
                     // TODO: return data reader
-                    stream = await client.GetResultsAsync(job, cancellationSource.Token);
+                    stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
                     votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read)
                     {
                         GenerateIdentityColumn = false,
@@ -416,7 +397,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
                 else if (job.Phase == TapJobPhase.Error)
                 {
-                    stream = await client.GetErrorAsync(job, cancellationSource.Token);
+                    stream = await connection.Client.GetErrorAsync(job, cancellationSource.Token);
                     votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
 
                     // TODO: read error document, parse VOTable and report error

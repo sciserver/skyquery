@@ -137,7 +137,7 @@ namespace Jhu.SkyQuery.Tap.Client
             {
                 case TapResultsFormat.VOTable:
                     fmt = TapResultsFormat.VOTable;
-                    ser = Constants.TapSerializationVoTableTableData;
+                    //ser = Constants.TapSerializationVoTableTableData;
                     break;
                 case TapResultsFormat.VOTableBinary:
                     fmt = TapResultsFormat.VOTable;

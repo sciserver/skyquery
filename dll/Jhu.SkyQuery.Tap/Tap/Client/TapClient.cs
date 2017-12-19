@@ -6,6 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
+using System.Xml;
+using System.Xml.Serialization;
 using Jhu.Graywulf.Util;
 
 namespace Jhu.SkyQuery.Tap.Client
@@ -126,6 +128,28 @@ namespace Jhu.SkyQuery.Tap.Client
             }
 
             return await result.Content.ReadAsStreamAsync();
+        }
+
+        private async Task<XmlReader> HttpGetXmlReaderAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
+        {
+            var stream = await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
+            var xml = XmlReader.Create(stream);
+            return xml;
+        }
+
+        private async Task<T> HttpGetObject<T>(Uri address, CancellationToken cancellationToken)
+        {
+            using (var reader = await HttpGetXmlReaderAsync(address, HttpStatusCode.OK, cancellationToken))
+            {
+                var s = new XmlSerializer(typeof(T));
+                return (T)s.Deserialize(reader);
+            }
+        }
+
+        public async Task<Vosi.Availability.V1_0.Availability> GetAvailabilityAsync(CancellationToken cancellationToken)
+        {
+            var address = UriConverter.Combine(baseAddress, Constants.TapCommandAvailability);
+            return await HttpGetObject<Vosi.Availability.V1_0.Availability>(address, cancellationToken);
         }
 
         private async Task<string> GetParameterAsync(TapJob job, string action, string parameter, CancellationToken cancellationToken)

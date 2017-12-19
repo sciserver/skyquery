@@ -16,6 +16,8 @@ namespace Jhu.SkyQuery.Tap.Client
         public const string KeyDataSource = "Data Source";
         public const string KeyConnectionTimeout = "Connect Timeout";
 
+        public const string TapCommandAvailability = "/availability";
+
         public const string TapParamRequest = "REQUEST";
         public const string TapParamLang = "LANG";
         public const string TapParamFormat = "FORMAT";

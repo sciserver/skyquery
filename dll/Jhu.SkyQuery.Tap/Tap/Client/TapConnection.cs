@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
@@ -18,6 +19,8 @@ namespace Jhu.SkyQuery.Tap.Client
         private string serverVersion;
 
         private ConnectionState state;
+
+        private TapClient client;
 
         #endregion
         #region Properties
@@ -57,6 +60,11 @@ namespace Jhu.SkyQuery.Tap.Client
             get { return state; }
         }
 
+        internal TapClient Client
+        {
+            get { return client; }
+        }
+
         #endregion
         #region Constructors and initializers
 
@@ -80,6 +88,8 @@ namespace Jhu.SkyQuery.Tap.Client
             this.serverVersion = null;
 
             this.state = ConnectionState.Closed;
+
+            this.client = null;
         }
 
         protected override void Dispose(bool disposing)
@@ -90,9 +100,24 @@ namespace Jhu.SkyQuery.Tap.Client
             {
                 Close();
             }
+
+            if (client != null)
+            {
+                client.Dispose();
+                client = null;
+            }
         }
 
         #endregion
+
+        private TapClient CreateTapClient()
+        {
+            return new Client.TapClient()
+            {
+                BaseAddress = new Uri(dataSource),
+                HttpTimeout = TimeSpan.FromSeconds(connectionTimeout),
+            };
+        }
 
         private void EnsureConnectionClosed()
         {
@@ -115,16 +140,24 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public override void Open()
         {
-            // Because we don't keep any HTTP connections alive,
-            // implementing this is not necessary. What we could
-            // do here is call /availability or /capabilities
-            // but that would require implementing VOSI which we
-            // won't do until working on the TAP server.
+            Jhu.Graywulf.Util.TaskHelper.Wait(OpenAsync(CancellationToken.None));
+        }
 
-            // However, we require calling this for consistency reasons
-            // and set the state to Open
+        public override async Task OpenAsync(CancellationToken cancellationToken)
+        {
+            this.client = CreateTapClient();
 
-            this.state = ConnectionState.Open;
+            var avail = await client.GetAvailabilityAsync(cancellationToken);
+
+            if (avail.Available)
+            {
+                this.state = ConnectionState.Open;
+            }
+            else
+            {
+                Close();
+                throw Error.ServiceNotAvailable(avail);
+            }
         }
 
         public override void Close()
@@ -133,6 +166,12 @@ namespace Jhu.SkyQuery.Tap.Client
             // connection open. Just set the state to Closed.
 
             this.state = ConnectionState.Closed;
+
+            if (client != null)
+            {
+                this.client.Dispose();
+                this.client = null;
+            }
         }
 
         public override void ChangeDatabase(string databaseName)

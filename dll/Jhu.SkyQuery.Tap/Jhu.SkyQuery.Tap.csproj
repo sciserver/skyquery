@@ -103,6 +103,13 @@
     <Compile Include="Tap\Client\TapParameter.cs" />
     <Compile Include="Tap\Client\TapParameterCollection.cs" />
     <Compile Include="Tap\Client\TapTransaction.cs" />
+    <Compile Include="Vosi\Availability\V1_0\Availability.cs" />
+    <Compile Include="Vosi\Constants.cs" />
+    <Compile Include="Vosi\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -134,9 +141,23 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Vosi\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Vosi\Resources\vosi-availability-v1.0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Vosi\Resources\vosi-capabilities-v1.0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Vosi\Resources\vosi-tables-v1.0.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\build\Jhu.Graywulf.Build.targets" />

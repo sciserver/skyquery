@@ -13,10 +13,11 @@ namespace Jhu.SkyQuery.Tap.Client
     [TestClass]
     public class TapCommandTest
     {
-        private const string connectionString = "Data Source=http://tapvizier.u-strasbg.fr/TAPVizieR/tap/";
+        private const string connectionStringVizier = "Data Source=http://tapvizier.u-strasbg.fr/TAPVizieR/tap/";
         private const string testQuery = "SELECT TOP 10 ra, dec FROM \"I/337/gaia\"";
         private const string testQueryAllTypeParameterKepler = "SELECT TOP 10 \"J/AJ/151/68/catalog\".V1,  \"J/AJ/151/68/catalog\".KIC, \"J/AJ/151/68/catalog\".DV, \"J/AJ/151/68/catalog\".Per FROM \"J/AJ/151/68/catalog\"";
         private const string testQueryAllTypeParameterGaia = "SELECT TOP 10 \"I/337/gaia\".ra,  \"I/337/gaia\".ra_error,  \"I/337/gaia\".source_id, \"I/337/gaia\".duplicated_source FROM \"I/337/gaia\"";
+
         private const string connectionStringGaia = "Data Source=http://gaia.ari.uni-heidelberg.de/tap/";
         private const string testQueryGaia = " SELECT TOP 10 ra, dec FROM gaiadr1.tgas_source";
         private const string testQueryEmpty = " SELECT TOP 20  \"J/ApJ/678/102/table4\".\"S/N\",  \"J/ApJ/678/102/table4\".OID, \"J/ApJ/678/102/table4\".f_OID,  \"J/ApJ/678/102/table4\".Off,  \"J/ApJ/678/102/table4\".Type,  \"J/ApJ/678/102/table4\".Cat,  \"J/ApJ/678/102/table4\".n_Cat,  \"J/ApJ/678/102/table4\".Ref FROM \"J/ApJ/678/102/table4\"" ;
@@ -24,7 +25,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void ExecuteReaderTest()
         {
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -48,7 +49,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void InterruptReaderTest()
         {
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -67,7 +68,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void FillDataSetTest()
         {
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -92,7 +93,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void SchemaTableTest()
         {
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -133,7 +134,7 @@ namespace Jhu.SkyQuery.Tap.Client
         public void EmptyElementReaderTest()
         {
             //Can't read empty element
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -158,7 +159,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void AllTypeDataTestKeplerEB()
         {
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -172,7 +173,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
             }
 
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -193,7 +194,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void AllTypeDataTestGaia()
         {
-            using (var cn = new TapConnection(connectionString))
+            using (var cn = new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
@@ -211,7 +212,7 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void AllColumnTypeTest()
         {
-            using (var cn =  new TapConnection(connectionString))
+            using (var cn =  new TapConnection(connectionStringVizier))
             {
                 cn.Open();
 
