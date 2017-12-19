@@ -83,6 +83,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tap\Client\Constants.cs" />
+    <Compile Include="Tap\Client\TapClientVizierTest.cs" />
     <Compile Include="Tap\Client\TapConnectionTest.cs" />
     <Compile Include="Tap\Client\TapCommandTest.cs" />
     <Compile Include="Tap\Client\TapClientTest.cs" />

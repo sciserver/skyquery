@@ -80,6 +80,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TapRegExt\Constants.cs" />
+    <Compile Include="TapRegExt\V1_0\DataLimit.cs" />
+    <Compile Include="TapRegExt\V1_0\DataLimits.cs" />
+    <Compile Include="TapRegExt\V1_0\DataModelType.cs" />
+    <Compile Include="TapRegExt\V1_0\Language.cs" />
+    <Compile Include="TapRegExt\V1_0\LanguageFeature.cs" />
+    <Compile Include="TapRegExt\V1_0\LanguageFeatureList.cs" />
+    <Compile Include="TapRegExt\V1_0\OutputFormat.cs" />
+    <Compile Include="TapRegExt\V1_0\TableAccess.cs" />
+    <Compile Include="TapRegExt\V1_0\TapCapRestriction.cs" />
+    <Compile Include="TapRegExt\V1_0\TimeLimits.cs" />
+    <Compile Include="TapRegExt\V1_0\UploadMethod.cs" />
+    <Compile Include="TapRegExt\V1_0\Version.cs" />
     <Compile Include="Tap\Client\Constants.cs" />
     <Compile Include="Tap\Client\Enum.cs" />
     <Compile Include="Tap\Client\Error.cs" />
@@ -89,8 +102,12 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Tap\Client\TapClient.cs" />
-    <Compile Include="Tap\Client\TapCommand.cs" />
-    <Compile Include="Tap\Client\TapConnection.cs" />
+    <Compile Include="Tap\Client\TapCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Tap\Client\TapConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tap\Client\TapConnectionStringBuilder.cs" />
     <Compile Include="Tap\Client\TapDataAdapter.cs">
       <SubType>Component</SubType>
@@ -103,7 +120,16 @@
     <Compile Include="Tap\Client\TapParameter.cs" />
     <Compile Include="Tap\Client\TapParameterCollection.cs" />
     <Compile Include="Tap\Client\TapTransaction.cs" />
+    <Compile Include="VoResource\Constants.cs" />
+    <Compile Include="VoResource\Resources.Designer.cs" />
+    <Compile Include="VoResource\V1_0\AccessUrl.cs" />
+    <Compile Include="VoResource\V1_0\Capability.cs" />
+    <Compile Include="VoResource\V1_0\Enum.cs" />
+    <Compile Include="VoResource\V1_0\Interface.cs" />
+    <Compile Include="VoResource\V1_0\SecurityMethod.cs" />
+    <Compile Include="VoResource\V1_0\Validation.cs" />
     <Compile Include="Vosi\Availability\V1_0\Availability.cs" />
+    <Compile Include="Vosi\Capabilities\V1_0\Capabilities.cs" />
     <Compile Include="Vosi\Constants.cs" />
     <Compile Include="Vosi\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -141,6 +167,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="VoResource\Resources.resx" />
     <EmbeddedResource Include="Vosi\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -149,6 +176,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TapRegExt\Resources\tapregext-v1.0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="VoResource\Resources\voresource-v1.0.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Vosi\Resources\vosi-availability-v1.0.xsd">
       <SubType>Designer</SubType>
     </None>

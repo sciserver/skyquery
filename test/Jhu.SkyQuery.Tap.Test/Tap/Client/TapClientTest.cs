@@ -8,20 +8,33 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
-    [TestClass]
-    public class TapClientTest
+    public abstract class TapClientTest
     {
-        private static readonly Uri baseUri = new Uri("http://tapvizier.u-strasbg.fr/TAPVizieR/tap/");
-        private const string testQuery = "SELECT TOP 10 ra, dec FROM \"I/337/gaia\"";
+        protected abstract Uri BaseUri { get; }
 
-        [TestMethod]
-        public void SubmitQueryAsyncTest()
+        protected Vosi.Availability.V1_0.Availability GetAvailabilityTestHelper()
         {
-            using (var tap = new TapClient(baseUri))
+            using (var tap = new TapClient(BaseUri))
+            {
+                return tap.GetAvailabilityAsync(CancellationToken.None).Result;
+            }
+        }
+
+        protected Vosi.Capabilities.V1_0.Capabilities GetCapabilitiesTestHelper()
+        {
+            using (var tap = new TapClient(BaseUri))
+            {
+                return tap.GetCapabilitiesAsync(CancellationToken.None).Result;
+            }
+        }
+
+        protected void SubmitQueryAsyncTestHelper(string query)
+        {
+            using (var tap = new TapClient(BaseUri))
             {
                 var job = new TapJob()
                 {
-                    Query = testQuery,
+                    Query = query,
                 };
 
                 tap.SubmitAsync(job, CancellationToken.None).Wait();

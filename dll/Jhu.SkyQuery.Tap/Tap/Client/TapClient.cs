@@ -152,6 +152,12 @@ namespace Jhu.SkyQuery.Tap.Client
             return await HttpGetObject<Vosi.Availability.V1_0.Availability>(address, cancellationToken);
         }
 
+        public async Task<Vosi.Capabilities.V1_0.Capabilities> GetCapabilitiesAsync(CancellationToken cancellationToken)
+        {
+            var address = UriConverter.Combine(baseAddress, Constants.TapCommandCapabilities);
+            return await HttpGetObject<Vosi.Capabilities.V1_0.Capabilities>(address, cancellationToken);
+        }
+
         private async Task<string> GetParameterAsync(TapJob job, string action, string parameter, CancellationToken cancellationToken)
         {
             var address = UriConverter.Combine(job.Uri, action);
