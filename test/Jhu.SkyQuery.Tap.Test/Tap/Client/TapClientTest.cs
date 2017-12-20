@@ -12,7 +12,7 @@ namespace Jhu.SkyQuery.Tap.Client
     {
         protected abstract Uri BaseUri { get; }
 
-        protected Vosi.Availability.V1_0.Availability GetAvailabilityTestHelper()
+        protected VO.Vosi.Availability.V1_0.Availability GetAvailabilityTestHelper()
         {
             using (var tap = new TapClient(BaseUri))
             {
@@ -20,7 +20,7 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
-        protected Vosi.Capabilities.V1_0.Capabilities GetCapabilitiesTestHelper()
+        protected VO.Vosi.Capabilities.V1_0.Capabilities GetCapabilitiesTestHelper()
         {
             using (var tap = new TapClient(BaseUri))
             {
