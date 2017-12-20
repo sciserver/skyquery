@@ -146,16 +146,16 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
-        public async Task<Vosi.Availability.V1_0.Availability> GetAvailabilityAsync(CancellationToken cancellationToken)
+        public async Task<VO.Vosi.Availability.V1_0.Availability> GetAvailabilityAsync(CancellationToken cancellationToken)
         {
             var address = UriConverter.Combine(baseAddress, Constants.TapCommandAvailability);
-            return await HttpGetObject<Vosi.Availability.V1_0.Availability>(address, cancellationToken);
+            return await HttpGetObject<VO.Vosi.Availability.V1_0.Availability>(address, cancellationToken);
         }
 
-        public async Task<Vosi.Capabilities.V1_0.Capabilities> GetCapabilitiesAsync(CancellationToken cancellationToken)
+        public async Task<VO.Vosi.Capabilities.V1_0.Capabilities> GetCapabilitiesAsync(CancellationToken cancellationToken)
         {
             var address = UriConverter.Combine(baseAddress, Constants.TapCommandCapabilities);
-            return await HttpGetObject<Vosi.Capabilities.V1_0.Capabilities>(address, cancellationToken);
+            return await HttpGetObject<VO.Vosi.Capabilities.V1_0.Capabilities>(address, cancellationToken);
         }
 
         private async Task<string> GetParameterAsync(TapJob job, string action, string parameter, CancellationToken cancellationToken)

@@ -76,7 +76,7 @@ namespace Jhu.SkyQuery.Tap.Client
             return new OperationCanceledException(token);
         }
 
-        public static TapException ServiceNotAvailable(Vosi.Availability.V1_0.Availability avail)
+        public static TapException ServiceNotAvailable(VO.Vosi.Availability.V1_0.Availability avail)
         {
             var ex = new TapException(ExceptionMessages.ServiceNotAvailable);
             ex.Data.Add("Availability", avail);

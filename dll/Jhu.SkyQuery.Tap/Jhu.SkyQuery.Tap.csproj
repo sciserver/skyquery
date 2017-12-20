@@ -80,19 +80,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TapRegExt\Constants.cs" />
-    <Compile Include="TapRegExt\V1_0\DataLimit.cs" />
-    <Compile Include="TapRegExt\V1_0\DataLimits.cs" />
-    <Compile Include="TapRegExt\V1_0\DataModelType.cs" />
-    <Compile Include="TapRegExt\V1_0\Language.cs" />
-    <Compile Include="TapRegExt\V1_0\LanguageFeature.cs" />
-    <Compile Include="TapRegExt\V1_0\LanguageFeatureList.cs" />
-    <Compile Include="TapRegExt\V1_0\OutputFormat.cs" />
-    <Compile Include="TapRegExt\V1_0\TableAccess.cs" />
-    <Compile Include="TapRegExt\V1_0\TapCapRestriction.cs" />
-    <Compile Include="TapRegExt\V1_0\TimeLimits.cs" />
-    <Compile Include="TapRegExt\V1_0\UploadMethod.cs" />
-    <Compile Include="TapRegExt\V1_0\Version.cs" />
     <Compile Include="Tap\Client\Constants.cs" />
     <Compile Include="Tap\Client\Enum.cs" />
     <Compile Include="Tap\Client\Error.cs" />
@@ -120,22 +107,6 @@
     <Compile Include="Tap\Client\TapParameter.cs" />
     <Compile Include="Tap\Client\TapParameterCollection.cs" />
     <Compile Include="Tap\Client\TapTransaction.cs" />
-    <Compile Include="VoResource\Constants.cs" />
-    <Compile Include="VoResource\Resources.Designer.cs" />
-    <Compile Include="VoResource\V1_0\AccessUrl.cs" />
-    <Compile Include="VoResource\V1_0\Capability.cs" />
-    <Compile Include="VoResource\V1_0\Enum.cs" />
-    <Compile Include="VoResource\V1_0\Interface.cs" />
-    <Compile Include="VoResource\V1_0\SecurityMethod.cs" />
-    <Compile Include="VoResource\V1_0\Validation.cs" />
-    <Compile Include="Vosi\Availability\V1_0\Availability.cs" />
-    <Compile Include="Vosi\Capabilities\V1_0\Capabilities.cs" />
-    <Compile Include="Vosi\Constants.cs" />
-    <Compile Include="Vosi\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -157,6 +128,10 @@
       <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
       <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\netvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
+      <Name>Jhu.VO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>
       <Name>Jhu.SkyQuery.IO</Name>
@@ -167,30 +142,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="VoResource\Resources.resx" />
-    <EmbeddedResource Include="Vosi\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="TapRegExt\Resources\tapregext-v1.0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="VoResource\Resources\voresource-v1.0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Vosi\Resources\vosi-availability-v1.0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Vosi\Resources\vosi-capabilities-v1.0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Vosi\Resources\vosi-tables-v1.0.xsd">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\build\Jhu.Graywulf.Build.targets" />
