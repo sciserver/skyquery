@@ -303,15 +303,15 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private TapJob CreateTapJob()
         {
+            connection.Client.GetBestFormat(out TapOutputFormat format, out string mime);
+
             var job = new TapJob()
             {
                 Query = commandText,
                 Language = queryLanguage,
-                Format = TapResultsFormat.VOTable
+                Format = mime,
             };
-
-            // TODO: enable selecting format or use binary by default once it is implemented
-
+            
             if (commandTimeout != 0)
             {
                 job.Destruction = DateTime.Now.AddSeconds(commandTimeout);

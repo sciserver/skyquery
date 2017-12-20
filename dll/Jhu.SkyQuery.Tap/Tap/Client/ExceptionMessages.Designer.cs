@@ -133,7 +133,7 @@ namespace Jhu.SkyQuery.Tap.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The TAP service is not available..
+        ///   Looks up a localized string similar to The TAP service is not available: {0}..
         /// </summary>
         internal static string ServiceNotAvailable {
             get {

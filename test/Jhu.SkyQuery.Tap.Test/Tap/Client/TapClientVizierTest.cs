@@ -34,9 +34,18 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
         [TestMethod]
+        public void GetBestFormatMimeType()
+        {
+            var mime = GetBestFormatMimeTypeTestHelper();
+            Assert.AreEqual("text/xml", mime);
+        }
+
+        [TestMethod]
         public void SubmitQueryAsyncTest()
         {
-            SubmitQueryAsyncTestHelper(testQuery);
+            SubmitQueryAsyncTestHelper(testQuery, "text/xml");
         }
+
+        
     }
 }

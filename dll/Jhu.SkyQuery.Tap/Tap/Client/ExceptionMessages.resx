@@ -142,7 +142,7 @@
     <value>Parameter '{0}' not found.</value>
   </data>
   <data name="ServiceNotAvailable" xml:space="preserve">
-    <value>The TAP service is not available.</value>
+    <value>The TAP service is not available: {0}.</value>
   </data>
   <data name="UnexpectedHttpResponse" xml:space="preserve">
     <value>Unexpected HTTP status code: {0} {1}.</value>

@@ -89,7 +89,6 @@
     <Compile Include="Tap\Client\TapClientTest.cs" />
     <Compile Include="Tap\Client\TapConnectionVizierTest.cs" />
     <Compile Include="Tap\Client\TapDatasetTest.cs" />
-    <Compile Include="Vosi\VosiElementsTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

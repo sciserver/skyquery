@@ -28,13 +28,14 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
-        protected void SubmitQueryAsyncTestHelper(string query)
+        protected void SubmitQueryAsyncTestHelper(string query, string format)
         {
             using (var tap = new TapClient(BaseUri))
             {
                 var job = new TapJob()
                 {
                     Query = query,
+                    Format = format,
                 };
 
                 tap.SubmitAsync(job, CancellationToken.None).Wait();
@@ -43,6 +44,17 @@ namespace Jhu.SkyQuery.Tap.Client
                 var stream = tap.GetResultsAsync(job, CancellationToken.None).Result;
                 var reader = new System.IO.StreamReader(stream);
                 var data = reader.ReadToEnd();
+            }
+        }
+
+        protected string GetBestFormatMimeTypeTestHelper()
+        {
+            using (var tap = new TapClient(BaseUri))
+            {
+                tap.GetCapabilitiesAsync(CancellationToken.None).Wait();
+                tap.GetBestFormat(out TapOutputFormat format, out string mime);
+
+                return mime;
             }
         }
     }

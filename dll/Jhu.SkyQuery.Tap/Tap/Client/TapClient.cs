@@ -20,6 +20,9 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private HttpClient httpClient;
 
+        private VO.Vosi.Availability.V1_0.Availability availability;
+        private VO.Vosi.Capabilities.V1_0.Capabilities capabilities;
+
         public Uri BaseAddress
         {
             get { return baseAddress; }
@@ -148,14 +151,24 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public async Task<VO.Vosi.Availability.V1_0.Availability> GetAvailabilityAsync(CancellationToken cancellationToken)
         {
-            var address = UriConverter.Combine(baseAddress, Constants.TapCommandAvailability);
-            return await HttpGetObject<VO.Vosi.Availability.V1_0.Availability>(address, cancellationToken);
+            if (availability == null)
+            {
+                var address = UriConverter.Combine(baseAddress, Constants.TapCommandAvailability);
+                availability = await HttpGetObject<VO.Vosi.Availability.V1_0.Availability>(address, cancellationToken);
+            }
+
+            return availability;
         }
 
         public async Task<VO.Vosi.Capabilities.V1_0.Capabilities> GetCapabilitiesAsync(CancellationToken cancellationToken)
         {
-            var address = UriConverter.Combine(baseAddress, Constants.TapCommandCapabilities);
-            return await HttpGetObject<VO.Vosi.Capabilities.V1_0.Capabilities>(address, cancellationToken);
+            if (capabilities == null)
+            {
+                var address = UriConverter.Combine(baseAddress, Constants.TapCommandCapabilities);
+                capabilities = await HttpGetObject<VO.Vosi.Capabilities.V1_0.Capabilities>(address, cancellationToken);
+            }
+
+            return capabilities;
         }
 
         private async Task<string> GetParameterAsync(TapJob job, string action, string parameter, CancellationToken cancellationToken)
@@ -194,7 +207,7 @@ namespace Jhu.SkyQuery.Tap.Client
             job.Phase = phase;
         }
 
-        
+
         public async Task SetPhaseAsync(TapJob job, CancellationToken cancellationToken)
         {
             await SetParameterAsync(job, Constants.TapActionAsyncPhase, Constants.TapParamPhase, job.Phase.ToString().ToUpperInvariant(), cancellationToken);
@@ -260,7 +273,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
                 // Wait and back-off logarithmically until ~30 sec polling time is reached
                 await Task.Delay(interval, cancellationToken);
-                
+
                 if (interval < 20000)
                 {
                     interval = (int)Math.Floor(1.4142 * interval);
@@ -269,5 +282,107 @@ namespace Jhu.SkyQuery.Tap.Client
 
 
         }
+
+        #region Output format logic
+
+        private string GetFormatMimeType(string mime, string alias, string serialization)
+        {
+            VO.TapRegExt.V1_0.TableAccess tableAccess = null;
+            VO.TapRegExt.V1_0.OutputFormat outputFormat = null;
+
+            var cq = from c in capabilities.CapabilityList
+                     where c is VO.TapRegExt.V1_0.TableAccess
+                     select (VO.TapRegExt.V1_0.TableAccess)c;
+            tableAccess = cq.FirstOrDefault();
+
+            if (tableAccess != null)
+            {
+                var fq = from f in tableAccess.OutputFormatList
+                         where
+                            (f.Mime.IndexOf(mime, StringComparison.InvariantCultureIgnoreCase) >= 0  ||
+                             f.Alias.FirstOrDefault(a => StringComparer.InvariantCultureIgnoreCase.Compare(alias, a) == 0) != null) &&
+                            (serialization == null || f.Mime.IndexOf(serialization, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                         select f;
+                outputFormat = fq.FirstOrDefault();
+            }
+
+            if (outputFormat != null)
+            {
+                return outputFormat.Mime;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public string GetFormatMimeType(TapOutputFormat format)
+        {
+            string mime = null;
+
+            switch (format)
+            {
+                case TapOutputFormat.VOTable:
+                    mime = GetFormatMimeType(Constants.TapMimeVoTable, TapOutputFormat.VOTable.ToString(), null);
+                    break;
+                case TapOutputFormat.VOTableBinary:
+                    mime = GetFormatMimeType(Constants.TapMimeVoTable, TapOutputFormat.VOTable.ToString(), Constants.TapSerializationVoTableBinary);
+                    break;
+                case TapOutputFormat.VOTableBinary2:
+                    mime = GetFormatMimeType(Constants.TapMimeVoTable, TapOutputFormat.VOTable.ToString(), Constants.TapSerializationVoTableBinary2);
+                    break;
+                case TapOutputFormat.VOTableFits:
+                    mime = GetFormatMimeType(Constants.TapMimeVoTable, TapOutputFormat.VOTable.ToString(), Constants.TapSerializationVoTableFits);
+                    break;
+                case TapOutputFormat.Json:
+                    mime = GetFormatMimeType(Constants.TapMimeJson, TapOutputFormat.Json.ToString(), null);
+                    break;
+                case TapOutputFormat.Csv:
+                    mime = GetFormatMimeType(Constants.TapMimeCsv, TapOutputFormat.Csv.ToString(), null);
+                    break;
+                case TapOutputFormat.Text:
+                    mime = GetFormatMimeType(Constants.TapMimeText, TapOutputFormat.Text.ToString(), null);
+                    break;
+                case TapOutputFormat.Fits:
+                    mime = GetFormatMimeType(Constants.TapMimeFits, TapOutputFormat.Fits.ToString(), null);
+                    break;
+                case TapOutputFormat.Html:
+                    mime = GetFormatMimeType(Constants.TapMimeHtml, TapOutputFormat.Html.ToString(), null);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return mime;
+        }
+
+        public bool GetBestFormat(out TapOutputFormat format, out string mime)
+        {
+            var formats = new[] 
+            {
+                TapOutputFormat.VOTableBinary2,
+                TapOutputFormat.VOTableBinary,
+                TapOutputFormat.VOTable,
+                TapOutputFormat.Fits,
+                TapOutputFormat.Csv
+            };
+
+            for (int i = 0; i < formats.Length; i++)
+            {
+                mime = GetFormatMimeType(formats[i]);
+
+                if (mime != null)
+                {
+                    format = formats[i];
+                    return true;
+                }
+            }
+
+            format = TapOutputFormat.None;
+            mime = null;
+            return false;
+        }
+
+        #endregion
     }
 }

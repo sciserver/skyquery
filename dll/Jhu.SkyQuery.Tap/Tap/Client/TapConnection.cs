@@ -151,6 +151,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
             if (avail.Available)
             {
+                var cap = await client.GetCapabilitiesAsync(cancellationToken);
                 this.state = ConnectionState.Open;
             }
             else
