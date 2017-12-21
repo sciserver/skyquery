@@ -198,11 +198,11 @@ namespace Jhu.SkyQuery.Format.VOTable.V1_1
             // VOTable data types are nullable by default
             c.DataType.IsNullable = true;
 
-            if (c.DataType.Type != typeof(string) && isArray || isUnboundSize)
+            if (c.DataType.Type != typeof(string) && (isArray || isUnboundSize))
             {
                 throw Error.PrimitiveArraysNotSupported();
             }
-            else
+            else if (c.DataType.Type == typeof(string) && isArray && !isUnboundSize)
             {
                 c.DataType.Length = size[0];
             }

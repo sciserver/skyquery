@@ -70,6 +70,15 @@ namespace Jhu.SkyQuery.Format.VOTable {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data not found inside VOTable table..
+        /// </summary>
+        internal static string DataNotFound {
+            get {
+                return ResourceManager.GetString("DataNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Encoding of binary stream cannot be determined..
         /// </summary>
         internal static string EncodingNotFound {
@@ -84,6 +93,15 @@ namespace Jhu.SkyQuery.Format.VOTable {
         internal static string EncodingNotSupported {
             get {
                 return ResourceManager.GetString("EncodingNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Links to external data are not supported..
+        /// </summary>
+        internal static string LinksNotSupported {
+            get {
+                return ResourceManager.GetString("LinksNotSupported", resourceCulture);
             }
         }
         
@@ -124,11 +142,29 @@ namespace Jhu.SkyQuery.Format.VOTable {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Table not found inside VOTable resource..
+        /// </summary>
+        internal static string TableNotFound {
+            get {
+                return ResourceManager.GetString("TableNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unsupported serialization: {0}..
         /// </summary>
         internal static string UnsupportedSerialization {
             get {
                 return ResourceManager.GetString("UnsupportedSerialization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported VOTable version: {0}..
+        /// </summary>
+        internal static string UnsupportedVersion {
+            get {
+                return ResourceManager.GetString("UnsupportedVersion", resourceCulture);
             }
         }
     }

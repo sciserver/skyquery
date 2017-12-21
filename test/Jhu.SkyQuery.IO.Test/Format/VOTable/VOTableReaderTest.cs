@@ -23,6 +23,39 @@ namespace Jhu.SkyQuery.Format.VOTable
             ValidateVOTable(xml);
         }
 
+        private void VoTableReaderTestHelper(string filename, int rows, int resultsets)
+        {
+            using (var dr = OpenSimpleReader(filename))
+            {
+                int q = 0;
+                int r = 0;
+
+                do
+                {
+                    var values = new object[dr.FieldCount];
+
+                    while (dr.Read())
+                    {
+                        dr.GetValues(values);
+                        q++;
+                    }
+                    r++;
+                }
+                while (dr.NextResult());
+
+                Assert.AreEqual(rows, q);
+                Assert.AreEqual(resultsets, r);
+            }
+        }
+
+        private void VoTableInterruptReaderTestHelper(string filename)
+        {
+            using (var dr = OpenSimpleReader(filename))
+            {
+                dr.Read();
+            }
+        }
+
         [TestMethod]
         public void SimpleReadTest()
         {
@@ -251,24 +284,19 @@ namespace Jhu.SkyQuery.Format.VOTable
         [TestMethod]
         public void ReadVOTableBinaryTest()
         {
-            var dr = OpenSimpleReader(@"tap_votable\votable_binary.xml");
-            int q = 0;
-            int r = 0;
-            do
-            {
-                var values = new object[dr.FieldCount];
+            var testfile = @"tap_votable\votable_binary.xml";
 
-                while (dr.Read())
-                {
-                    dr.GetValues(values);
-                    q++;
-                }
-                r++;
-            }
-            while (dr.NextResult());
+            VoTableReaderTestHelper(testfile, 10, 1);
+            VoTableInterruptReaderTestHelper(testfile);
+        }
 
-            Assert.AreEqual(3, q);
-            Assert.AreEqual(1, r);
+        [TestMethod]
+        public void ReadVOTableBinary2Test()
+        {
+            var testfile = @"tap_votable\votable_binary2.xml";
+
+            VoTableReaderTestHelper(testfile, 10, 1);
+            VoTableInterruptReaderTestHelper(testfile);
         }
     }
 }

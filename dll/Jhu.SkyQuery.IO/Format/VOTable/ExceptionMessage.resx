@@ -120,11 +120,17 @@
   <data name="BitNotSupported" xml:space="preserve">
     <value>Bit fields and bit arrays are not supported.</value>
   </data>
+  <data name="DataNotFound" xml:space="preserve">
+    <value>Data not found inside VOTable table.</value>
+  </data>
   <data name="EncodingNotFound" xml:space="preserve">
     <value>Encoding of binary stream cannot be determined.</value>
   </data>
   <data name="EncodingNotSupported" xml:space="preserve">
     <value>Encoding of binary stream not supported: {0}.</value>
+  </data>
+  <data name="LinksNotSupported" xml:space="preserve">
+    <value>Links to external data are not supported.</value>
   </data>
   <data name="MultidimensionalStringNotSupported" xml:space="preserve">
     <value>Multidimensional character arrays are not supported.</value>
@@ -138,7 +144,13 @@
   <data name="ReferencedStreamsNotSupported" xml:space="preserve">
     <value>Referenced data stream are not supported.</value>
   </data>
+  <data name="TableNotFound" xml:space="preserve">
+    <value>Table not found inside VOTable resource.</value>
+  </data>
   <data name="UnsupportedSerialization" xml:space="preserve">
     <value>Unsupported serialization: {0}.</value>
+  </data>
+  <data name="UnsupportedVersion" xml:space="preserve">
+    <value>Unsupported VOTable version: {0}.</value>
   </data>
 </root>

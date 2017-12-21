@@ -47,5 +47,25 @@ namespace Jhu.SkyQuery.Format.VOTable
         {
             return new VOTableException(ExceptionMessage.BitNotSupported);
         }
+
+        public static VOTableException UnsupportedVersion(string version)
+        {
+            return new VOTableException(String.Format(ExceptionMessage.UnsupportedVersion, version));
+        }
+
+        public static VOTableException TableNotFound()
+        {
+            return new VOTableException(ExceptionMessage.TableNotFound);
+        }
+
+        public static VOTableException DataNotFound()
+        {
+            return new VOTableException(ExceptionMessage.DataNotFound);
+        }
+
+        public static VOTableException LinksNotSupported()
+        {
+            return new VOTableException(ExceptionMessage.LinksNotSupported);
+        }
     }
 }

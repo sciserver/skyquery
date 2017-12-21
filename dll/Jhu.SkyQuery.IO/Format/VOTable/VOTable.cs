@@ -264,7 +264,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     version = VOTableVersion.V1_3;
                     break;
                 default:
-                    throw new VOTableException(); // TODO: unsupported version
+                    throw Error.UnsupportedVersion(XmlReader.NamespaceURI);
             }
 
             // Reader now should be positioned on the VOTABLE tag
@@ -324,7 +324,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                         }
                         break;
 
-                        case VOTableVersion.V1_3:
+                    case VOTableVersion.V1_3:
                         switch (XmlReader.Name)
                         {
                             case Constants.TagDescription:
@@ -343,6 +343,8 @@ namespace Jhu.SkyQuery.Format.VOTable
                                 throw new NotImplementedException();
                         }
                         break;
+                    default:
+                        throw new NotImplementedException();
                 }
 
                 XmlReader.MoveToContent();

@@ -21,11 +21,9 @@ namespace Jhu.SkyQuery.Format.VOTable
         private delegate object BinaryColumnReader(Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter);
         private delegate void BinaryColumnWriter(Column column, byte[] buffer, SharpFitsIO.BitConverterBase bitConverter, object value);
 
-        private VOTableVersion version;
         private VOTableSerialization serialization;
-        private XmlStream xmlStream;
         private SharpFitsIO.BitConverterBase bitConverter;
-        private byte[] strideBuffer;
+        private byte[] binaryBuffer;
         private BinaryColumnReader[] columnReaders;
         private BinaryColumnWriter[] columnWriters;
 
@@ -57,20 +55,16 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void InitializeMembers()
         {
-            this.version = VOTableVersion.Unknown;
             this.serialization = VOTableSerialization.Unknown;
-            this.xmlStream = null;
             this.bitConverter = null;
-            this.strideBuffer = null;
+            this.binaryBuffer = null;
         }
 
         private void CopyMembers(VOTableResource old)
         {
-            this.version = old.version;
             this.serialization = old.serialization;
-            this.xmlStream = null;
             this.bitConverter = null;
-            this.strideBuffer = null;
+            this.binaryBuffer = null;
         }
 
         public override object Clone()
@@ -120,7 +114,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// <summary>
         /// Completes reading of a resource by reading its closing tag.
         /// </summary>
-        protected override Task OnReadFooterAsync()
+        protected override async Task OnReadFooterAsync()
         {
             // Make sure the ending RESOURCE tag is read and the reader
             // is positioned at the next tag
@@ -130,75 +124,70 @@ namespace Jhu.SkyQuery.Format.VOTable
             // make sure that they are read and position the reader after the
             // closing RESOURCE element, whatever it is.
 
-            if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
-                (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0 ||
-                 VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0))
+            while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
             {
-                File.XmlReader.ReadEndElement();
-                //Info in DATA
-                //Just skip
-                switch (version)
+                switch (File.Version)
                 {
                     case VOTableVersion.V1_1:
-                        while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                            VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
-                        {
-                            File.Deserialize<V1_1.Info>();
-                        }
-                        //End Table
-                        File.XmlReader.ReadEndElement();
-                        //Info on RESOURCE
-                        while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
-                        {
-                            File.Deserialize<V1_1.Info>();
-                        }
-                        //End Resource
+                        File.Deserialize<V1_1.Info>();
                         break;
-
                     case VOTableVersion.V1_2:
-                        while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
-                        {
-                            File.Deserialize<V1_2.Info>();
-                        }
-                        //End Table
-                        File.XmlReader.ReadEndElement();
-                        //Info on RESOURCE
-                        while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
-                        {
-                            File.Deserialize<V1_2.Info>();
-                        }
-                        //End Resource
+                        File.Deserialize<V1_2.Info>();
                         break;
-
                     case VOTableVersion.V1_3:
-                        while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
-                        {
-                            File.Deserialize<V1_3.Info>();
-                        }
-                        //End Table
-                        File.XmlReader.ReadEndElement();
-                        //Info on RESOURCE
-                        while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
-                        {
-                            File.Deserialize<V1_3.Info>();
-                        }
-                        //End Resource
+                        File.Deserialize<V1_3.Info>();
                         break;
-
+                    default:
+                        throw new NotImplementedException();
                 }
-                File.XmlReader.ReadEndElement();
+            }
 
-                return Task.CompletedTask;
-            }
-            else
+            File.XmlReader.ReadEndElement();
+
+            while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) != 0)
             {
-                throw new FileFormatException();
+                switch (File.Version)
+                {
+                    case VOTableVersion.V1_1:
+                        File.Deserialize<V1_1.Info>();
+                        break;
+                    case VOTableVersion.V1_2:
+                        File.Deserialize<V1_2.Info>();
+                        break;
+                    case VOTableVersion.V1_3:
+                        File.Deserialize<V1_3.Info>();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
             }
+
+            File.XmlReader.ReadEndElement();
+
+            while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagResource) != 0)
+            {
+                switch (File.Version)
+                {
+                    case VOTableVersion.V1_1:
+                        File.Deserialize<V1_1.Info>();
+                        break;
+                    case VOTableVersion.V1_2:
+                        File.Deserialize<V1_2.Info>();
+                        break;
+                    case VOTableVersion.V1_3:
+                        File.Deserialize<V1_3.Info>();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+
+                // TODO: in reality, the RESOURCE tag could contain additional special tags
+            }
+
+            File.XmlReader.ReadEndElement();
         }
 
         /// <summary>
@@ -210,24 +199,29 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </remarks>
         protected override Task OnReadToFinishAsync()
         {
-            // TODO: This can be called by the framework anywhere within a RESOURCE tag,
-            // and it has to make sure that the reader is position right after the
-            // closing RESOURCE tag. This is for skipping or otherwise finishing the
-            // file block
+            // This can be called by the framework anywhere within a RESOURCE tag
 
-            // TODO: handle BINARY etc.
+            // Make sure that binary mode components are destroyed
+            binaryBuffer = null;
+            bitConverter = null;
 
-            if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
+            // Make sure that the reader is position right after the
+            // closing TABLEDATA/BINARY/BINARY2/FITS tag. There might be INFO tags
+            // that will be read in the footer
+            while (File.XmlReader.NodeType != XmlNodeType.EndElement ||
+                   File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0 &&
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagBinary) != 0 &&
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagBinary2) != 0 &&
+                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagFits) != 0)
             {
-                while ((File.XmlReader.NodeType != XmlNodeType.EndElement ||
-                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
-                    && VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagResource) != 0)
-                {
-                    File.XmlReader.Read();
-                }
+                File.XmlReader.Read();
             }
 
             File.XmlReader.ReadEndElement();
+
+            // Now the reader is positioned after the TABLEDATA/BINARY/BINARY2/FITS tags
+            // Footer reader will consume the rest of the tags.
 
             return Task.CompletedTask;
         }
@@ -301,37 +295,31 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void ReadResourceElement()
         {
-            switch (File.XmlReader.NamespaceURI)
-            {
-                case Constants.VOTableNamespaceV1_1:
-                    version = VOTableVersion.V1_1;
-                    break;
-                case Constants.VOTableNamespaceV1_2:
-                    version = VOTableVersion.V1_2;
-                    break;
-                case Constants.VOTableNamespaceV1_3:
-                    version = VOTableVersion.V1_3;
-                    break;
-                default:
-                    throw new VOTableException(); // TODO: unsupported version
-            }
-            // The reader is now positioned on the RESOURCE tag            
+            // The reader is now positioned on the RESOURCE tag   
             File.XmlReader.ReadStartElement(Constants.TagResource);
 
-            // Read all tags inside VOTABLE but stop at any RESOURCE tag
-            // because they are handled outside of this function
-            int q = 0; // Count the number of FIELDs 
+            // Read until the the TABLE tag is found and call the specific reader function
+            // which will then read the table header and stop at the DATA tag.
+            // If no table tag found we will bump into the closing </RESOURCE> tag anyway,
+            // so throw and exception there
+            // Also, throw exception on embeded RESOURCE tags.
 
             while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                   XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
+                VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) != 0)
             {
-                switch (version)
+                // Stop criterium: </RESOURCE>
+                if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagResource) == 0)
+                {
+                    throw Error.TableNotFound();
+                }
+
+                switch (File.Version)
                 {
                     case VOTableVersion.V1_1:
                         switch (File.XmlReader.Name)
                         {
                             case Constants.TagDescription:
-                                //File.XmlReader.Skip();
                                 File.Deserialize<V1_1.Description>();
                                 break;
                             case Constants.TagInfo:
@@ -340,37 +328,22 @@ namespace Jhu.SkyQuery.Format.VOTable
                             case Constants.TagCoosys:
                                 File.Deserialize<V1_1.Coosys>();
                                 break;
-                            case Constants.TagGroup:
-                                File.Deserialize<V1_1.Group>();
-                                break;
                             case Constants.TagParam:
                                 File.Deserialize<V1_1.Param>();
                                 break;
                             case Constants.TagLink:
                                 File.Deserialize<V1_1.Link>();
                                 break;
-                            case Constants.TagField:
-                                File.Deserialize<V1_1.Field>();
-                                q++;
-                                break;
-                            case Constants.TagTable:
-                                ReadTableElement();
-                                // TODO: implement deserializets,
-                                break;
-
                             case Constants.TagResource:
                                 throw Error.RecursiveResourceNotSupported();
                             default:
                                 throw new NotImplementedException();
                         }
-                        File.XmlReader.MoveToContent();
                         break;
-
                     case VOTableVersion.V1_2:
                         switch (File.XmlReader.Name)
                         {
                             case Constants.TagDescription:
-                                //File.XmlReader.Skip();
                                 File.Deserialize<V1_2.Description>();
                                 break;
                             case Constants.TagInfo:
@@ -388,28 +361,17 @@ namespace Jhu.SkyQuery.Format.VOTable
                             case Constants.TagLink:
                                 File.Deserialize<V1_2.Link>();
                                 break;
-                            case Constants.TagField:
-                                File.Deserialize<V1_2.Field>();
-                                q++;
-                                break;
-                            case Constants.TagTable:
-                                ReadTableElement();
-                                // TODO: implement deserializets,
-                                break;
-
                             case Constants.TagResource:
                                 throw Error.RecursiveResourceNotSupported();
                             default:
                                 throw new NotImplementedException();
                         }
-                        File.XmlReader.MoveToContent();
                         break;
 
                     case VOTableVersion.V1_3:
                         switch (File.XmlReader.Name)
                         {
                             case Constants.TagDescription:
-                                //File.XmlReader.Skip();
                                 File.Deserialize<V1_3.Description>();
                                 break;
                             case Constants.TagInfo:
@@ -427,84 +389,45 @@ namespace Jhu.SkyQuery.Format.VOTable
                             case Constants.TagLink:
                                 File.Deserialize<V1_3.Link>();
                                 break;
-                            case Constants.TagField:
-                                File.Deserialize<V1_3.Field>();
-                                q++;
-                                break;
-                            case Constants.TagTable:
-                                ReadTableElement();
-                                // TODO: implement deserializets,
-                                break;
-
                             case Constants.TagResource:
                                 throw Error.RecursiveResourceNotSupported();
                             default:
                                 throw new NotImplementedException();
                         }
-                        File.XmlReader.MoveToContent();
                         break;
-
+                    default:
+                        throw new NotImplementedException();
                 }
+
+                File.XmlReader.MoveToContent();
             }
 
-            // TODO: read all possible tags here similary to VOTable.ReadVOTableElement
-            // * RESOURCE
-
-            // * TITLE ?
-
-            //OK TODO: while processing the above tags, collect info on columns   
-
-            // Reader must now be positioned on a TABLE tag or an embeded RESOURCE tag
-            // TODO: process table
-            // TODO: throw exception on embeded resource
-
-            // TODO: Call ReadDataElement function and do subsequent work from there
-
-            // Consume beginning tags: Data and TableData
-            //            File.XmlReader.ReadStartElement(Constants.TagData);
-            //            File.XmlReader.ReadStartElement(Constants.TagTableData);
+            ReadTableElement();
             ReadDataElement();
-
-            // Reader is positioned on the first TR tag now
-
-            // TODO: here we have to figure out whether it's a simple table or binary
+            // Reader is positioned on the first TR tag or the STREAM tag now
         }
 
         private void ReadTableElement()
         {
-            // TODO: this works very similarly to the RESOURCE tag and
-            // can contain these tags:
-            // * DESCRIPTION
-            // * INFO
-            // * FIELS
-            // * PARAM
-            // * GROUP
-
-            switch (File.XmlReader.NamespaceURI)
-            {
-                case Constants.VOTableNamespaceV1_1:
-                    version = VOTableVersion.V1_1;
-                    break;
-                case Constants.VOTableNamespaceV1_2:
-                    version = VOTableVersion.V1_2;
-                    break;
-                case Constants.VOTableNamespaceV1_3:
-                    version = VOTableVersion.V1_3;
-                    break;
-                default:
-                    throw new VOTableException(); // TODO: unsupported version
-            }
-
-            // TODO: while processing the above tags, collect info on columns
+            // While processing the above tags, collect info on columns
             var columns = new List<Column>();
-            File.XmlReader.ReadStartElement(Constants.TagTable);
+            int fieldcount = 0;
 
-            int q = 0;
+            File.XmlReader.ReadStartElement(Constants.TagTable);
 
             while (File.XmlReader.NodeType == XmlNodeType.Element &&
                    XmlDataFile.Comparer.Compare(File.XmlReader.Name, Constants.TagData) != 0)
             {
-                switch (version)
+                // Stop criterium: </TABLE>
+                if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
+                    VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0)
+                {
+                    throw Error.DataNotFound();
+                }
+
+                V1_1.Field field = null;
+
+                switch (File.Version)
                 {
                     case VOTableVersion.V1_1:
                         switch (File.XmlReader.Name)
@@ -512,30 +435,21 @@ namespace Jhu.SkyQuery.Format.VOTable
                             case Constants.TagDescription:
                                 File.Deserialize<V1_1.Description>();
                                 break;
-                            case Constants.TagInfo:
-                                File.Deserialize<V1_1.Info>();
-                                break;
-                            case Constants.TagCoosys:
-                                File.Deserialize<V1_1.Coosys>();
-                                break;
-                            case Constants.TagGroup:
-                                File.Deserialize<V1_1.Group>();
+                            case Constants.TagField:
+                                field = File.Deserialize<V1_1.Field>();
                                 break;
                             case Constants.TagParam:
                                 File.Deserialize<V1_1.Param>();
                                 break;
+                            case Constants.TagGroup:
+                                File.Deserialize<V1_1.Group>();
+                                break;
                             case Constants.TagLink:
                                 File.Deserialize<V1_1.Link>();
-                                break;
-                            case Constants.TagField:
-                                var field = File.Deserialize<V1_1.Field>();
-                                var c = field.CreateColumn();
-                                c.ID = q;
-                                q++;
-                                columns.Add(c);
-                                break;
+                                throw Error.LinksNotSupported();
+                            default:
+                                throw new NotImplementedException();
                         }
-                        File.XmlReader.MoveToContent();
                         break;
 
                     case VOTableVersion.V1_2:
@@ -547,27 +461,21 @@ namespace Jhu.SkyQuery.Format.VOTable
                             case Constants.TagInfo:
                                 File.Deserialize<V1_2.Info>();
                                 break;
-                            case Constants.TagCoosys:
-                                File.Deserialize<V1_2.Coosys>();
-                                break;
-                            case Constants.TagGroup:
-                                File.Deserialize<V1_2.Group>();
+                            case Constants.TagField:
+                                field = File.Deserialize<V1_2.Field>();
                                 break;
                             case Constants.TagParam:
                                 File.Deserialize<V1_2.Param>();
                                 break;
+                            case Constants.TagGroup:
+                                File.Deserialize<V1_2.Group>();
+                                break;
                             case Constants.TagLink:
                                 File.Deserialize<V1_2.Link>();
-                                break;
-                            case Constants.TagField:
-                                var field = File.Deserialize<V1_2.Field>();
-                                var c = field.CreateColumn();
-                                c.ID = q;
-                                q++;
-                                columns.Add(c);
-                                break;
+                                throw Error.LinksNotSupported();
+                            default:
+                                throw new NotImplementedException();
                         }
-                        File.XmlReader.MoveToContent();
                         break;
 
                     case VOTableVersion.V1_3:
@@ -579,30 +487,33 @@ namespace Jhu.SkyQuery.Format.VOTable
                             case Constants.TagInfo:
                                 File.Deserialize<V1_3.Info>();
                                 break;
-                            case Constants.TagCoosys:
-                                File.Deserialize<V1_3.Coosys>();
-                                break;
-                            case Constants.TagGroup:
-                                File.Deserialize<V1_3.Group>();
+                            case Constants.TagField:
+                                field = File.Deserialize<V1_3.Field>();
                                 break;
                             case Constants.TagParam:
                                 File.Deserialize<V1_3.Param>();
                                 break;
+                            case Constants.TagGroup:
+                                File.Deserialize<V1_3.Group>();
+                                break;
                             case Constants.TagLink:
                                 File.Deserialize<V1_3.Link>();
-                                break;
-                            case Constants.TagField:
-                                var field = File.Deserialize<V1_3.Field>();
-                                var c = field.CreateColumn();
-                                c.ID = q;
-                                q++;
-                                columns.Add(c);
-                                break;
+                                throw Error.LinksNotSupported();
+                            default:
+                                throw new NotImplementedException();
                         }
-                        File.XmlReader.MoveToContent();
                         break;
-
                 }
+
+                if (field != null)
+                {
+                    var c = field.CreateColumn();
+                    c.ID = fieldcount;
+                    fieldcount++;
+                    columns.Add(c);
+                }
+
+                File.XmlReader.MoveToContent();
             }
 
             // At this point we have all info on columns, so
@@ -610,9 +521,7 @@ namespace Jhu.SkyQuery.Format.VOTable
 
             CreateColumns(columns);
 
-            // TODO: The reader is now positioned on a LINK or a DATA tag
-            // we do not support LINK tags, so throw on error
-            // If a data tag is found, process further
+            // The reader is now positioned on a DATA tag
         }
 
         private void ReadDataElement()
@@ -639,8 +548,6 @@ namespace Jhu.SkyQuery.Format.VOTable
             {
                 throw Error.UnsupportedSerialization(VOTableSerialization.Fits);
             }
-
-            // Now we are inside a binary tag, look for a stream and
         }
 
         private void ReadTableDataElement()
@@ -660,24 +567,26 @@ namespace Jhu.SkyQuery.Format.VOTable
         private void ReadBinaryElement()
         {
             File.XmlReader.ReadStartElement(Constants.TagBinary);
+            File.XmlReader.MoveToContent();
             ReadStreamElement();
         }
 
         private void ReadBinary2Element()
         {
             File.XmlReader.ReadStartElement(Constants.TagBinary2);
+            File.XmlReader.MoveToContent();
             ReadStreamElement();
         }
 
         private void ReadStreamElement()
         {
             // The reader is now positioned on a STREAM element
-
             if (File.XmlReader.GetAttribute(Constants.AttributeHref) != null)
             {
                 throw Error.ReferencedStreamsNotSupported();
             }
 
+            // Figure out content encoding
             var encattr = File.XmlReader.GetAttribute(Constants.AttributeEncoding);
 
             if (encattr == null)
@@ -696,10 +605,9 @@ namespace Jhu.SkyQuery.Format.VOTable
 
             CreateColumnReaders();
             bitConverter = new SharpFitsIO.SwapBitConverter();
-            xmlStream = new XmlStream(File.XmlReader);
 
             // TODO: estimate size of stride buffer
-            strideBuffer = new byte[0x10000];
+            binaryBuffer = new byte[0x10000];
         }
 
         private async Task<bool> ReadNextRowFromStreamAsync(object[] values)
@@ -722,42 +630,42 @@ namespace Jhu.SkyQuery.Format.VOTable
                             l *= column.DataType.Length;
                         }
 
-                        var s = await xmlStream.ReadAsync(strideBuffer, 0, l);
+                        var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
 
                         if (l != s)
                         {
                             return false;
                         }
 
-                        values[i] = columnReaders[i](column, strideBuffer, l, bitConverter);
+                        values[i] = columnReaders[i](column, binaryBuffer, l, bitConverter);
                     }
                     else
                     {
                         var l = 4;
-                        var s = await xmlStream.ReadAsync(strideBuffer, 0, l);
+                        var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
 
                         if (l != s)
                         {
                             return false;
                         }
 
-                        var length = bitConverter.ToInt32(strideBuffer, 0);
+                        var length = bitConverter.ToInt32(binaryBuffer, 0);
                         l = column.DataType.ByteSize * length;
 
                         // If stride buffer is not enough, increase
-                        if (l > strideBuffer.Length)
+                        if (l > binaryBuffer.Length)
                         {
-                            strideBuffer = new byte[l];
+                            binaryBuffer = new byte[l]; // TODO: round up to 64k blocks?
                         }
 
-                        s = await xmlStream.ReadAsync(strideBuffer, 0, l);
+                        s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
 
                         if (l != s)
                         {
                             return false;
                         }
 
-                        values[i] = columnReaders[i](column, strideBuffer, length, bitConverter);
+                        values[i] = columnReaders[i](column, binaryBuffer, length, bitConverter);
                     }
                 }
 
@@ -765,10 +673,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             }
             catch (EndOfStreamException)
             {
-                xmlStream.Dispose();
-                xmlStream = null;
                 bitConverter = null;
-                strideBuffer = null;
+                binaryBuffer = null;
 
                 return false;
             }
