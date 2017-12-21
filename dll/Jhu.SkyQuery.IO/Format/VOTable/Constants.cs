@@ -25,7 +25,6 @@ namespace Jhu.SkyQuery.Format.VOTable
         //public const String xsdFileName = "http://www.ivoa.net/xml/VOTable/VOTable-1.2.xsd";
         //public const String votableNameSpace = "http://www.ivoa.net/xml/VOTable/v1.2";
 
-        // Different Key used in VOTable document
         public const string TagVOTable = "VOTABLE";
         public const string TagDescription = "DESCRIPTION";
         public const string TagDefinitions = "DEFINITIONS";
@@ -40,12 +39,15 @@ namespace Jhu.SkyQuery.Format.VOTable
         public const string TagTable = "TABLE";
         public const string TagField = "FIELD";
         public const string TagTableData = "TABLEDATA";
+        public const string TagBinary = "BINARY";
+        public const string TagBinary2 = "BINARY2";
+        public const string TagFits = "FITS";
+        public const string TagStream = "STREAM";
         public const string TagData = "DATA";
         public const string TagTR = "TR";
         public const string TagTD = "TD";
         public const string TagLink = "LINK";
         public const string TagOption = "OPTION";
-
         public const string TagFieldRef = "FIELDref";
         public const string TagParamRef = "PARAMref";
 
@@ -70,17 +72,13 @@ namespace Jhu.SkyQuery.Format.VOTable
         public const string AttributeHref = "href";
         public const string AttributeGref = "gref";
         public const string AttributeAction = "action";
-
+        public const string AttributeEncoding = "encoding";
         public const string AttributeType = "type";
         public const string AttributeDatatype = "datatype";
         public const string AttributeNull = "null";
-
         public const string AttributeSystem = "system";
         public const string AttributeEpoch = "epoch";
         public const string AttributeEquinox = "equinox";
-
-
-
 
         public const string TypeBoolean = "boolean";
         public const string TypeBit = "bit";

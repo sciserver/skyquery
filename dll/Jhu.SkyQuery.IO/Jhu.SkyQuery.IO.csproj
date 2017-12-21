@@ -122,8 +122,10 @@
     <Compile Include="Format\VOTable\V1_3\ParamRef.cs" />
     <Compile Include="Format\VOTable\V1_3\Values.cs" />
     <Compile Include="Format\VOTable\VOTable.cs" />
+    <Compile Include="Format\VOTable\VOTableEncoding.cs" />
     <Compile Include="Format\VOTable\VOTableException.cs" />
     <Compile Include="Format\VOTable\VOTableResource.cs" />
+    <Compile Include="Format\VOTable\VOTableSerialization.cs" />
     <Compile Include="Format\VOTable\VOTableVersion.cs" />
     <Compile Include="IO\SkyQueryStreamFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

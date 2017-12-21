@@ -117,7 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BitNotSupported" xml:space="preserve">
+    <value>Bit fields and bit arrays are not supported.</value>
+  </data>
+  <data name="EncodingNotFound" xml:space="preserve">
+    <value>Encoding of binary stream cannot be determined.</value>
+  </data>
+  <data name="EncodingNotSupported" xml:space="preserve">
+    <value>Encoding of binary stream not supported: {0}.</value>
+  </data>
+  <data name="MultidimensionalStringNotSupported" xml:space="preserve">
+    <value>Multidimensional character arrays are not supported.</value>
+  </data>
+  <data name="PrimitiveArraysNotSupported" xml:space="preserve">
+    <value>Arrays of primitive types are not supported.</value>
+  </data>
   <data name="RecursiveResourceNotSupported" xml:space="preserve">
     <value>Recursvice resources are not supported.</value>
+  </data>
+  <data name="ReferencedStreamsNotSupported" xml:space="preserve">
+    <value>Referenced data stream are not supported.</value>
+  </data>
+  <data name="UnsupportedSerialization" xml:space="preserve">
+    <value>Unsupported serialization: {0}.</value>
   </data>
 </root>

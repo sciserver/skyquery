@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Xml;
+using System.Xml.Serialization;
+using System.Threading.Tasks;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Format;
-using System.Threading.Tasks;
-
-using System.Xml.Serialization;//Tom6
-using System.IO;//Tom6
 
 namespace Jhu.SkyQuery.Format.VOTable
 {
@@ -19,7 +18,16 @@ namespace Jhu.SkyQuery.Format.VOTable
     [Serializable]
     public class VOTableResource : XmlDataFileBlock, ICloneable
     {
+        private delegate object BinaryColumnReader(Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter);
+        private delegate void BinaryColumnWriter(Column column, byte[] buffer, SharpFitsIO.BitConverterBase bitConverter, object value);
+
         private VOTableVersion version;
+        private VOTableSerialization serialization;
+        private XmlStream xmlStream;
+        private SharpFitsIO.BitConverterBase bitConverter;
+        private byte[] strideBuffer;
+        private BinaryColumnReader[] columnReaders;
+        private BinaryColumnWriter[] columnWriters;
 
         /// <summary>
         /// Gets the objects wrapping the whole VOTABLE file.
@@ -49,10 +57,20 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void InitializeMembers()
         {
+            this.version = VOTableVersion.Unknown;
+            this.serialization = VOTableSerialization.Unknown;
+            this.xmlStream = null;
+            this.bitConverter = null;
+            this.strideBuffer = null;
         }
 
         private void CopyMembers(VOTableResource old)
         {
+            this.version = old.version;
+            this.serialization = old.serialization;
+            this.xmlStream = null;
+            this.bitConverter = null;
+            this.strideBuffer = null;
         }
 
         public override object Clone()
@@ -82,15 +100,21 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         protected override Task<bool> OnReadNextRowAsync(object[] values)
         {
-            // TODO: Implement this
-
             // If the RESOURCE contains a DATATABLE then the string contents
             // of the TD tags can be returned and the XmlDataFileBlock class will
             // take care of the data conversion, so simply call
-            return base.OnReadNextRowAsync(values);
 
-            // If the RESOURCE is binary then implement this function, parse
-            // columns from byte stream and return them
+            switch (serialization)
+            {
+                case VOTableSerialization.TableData:
+                    return base.OnReadNextRowAsync(values);
+                case VOTableSerialization.Binary:
+                case VOTableSerialization.Binary2:
+                    return ReadNextRowFromStreamAsync(values);
+                case VOTableSerialization.Fits:
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         /// <summary>
@@ -98,13 +122,14 @@ namespace Jhu.SkyQuery.Format.VOTable
         /// </summary>
         protected override Task OnReadFooterAsync()
         {
-            // TODO: make sure the ending RESOURCE tag is read and the reader
+            // Make sure the ending RESOURCE tag is read and the reader
             // is positioned at the next tag
 
-            // TODO: the TABLE element and the RESOURCE element can contain
+            // The TABLE element and the RESOURCE element can contain
             // trailing INFO tags (what are these for?)
             // make sure that they are read and position the reader after the
             // closing RESOURCE element, whatever it is.
+
             if (File.XmlReader.NodeType == XmlNodeType.EndElement &&
                 (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0 ||
                  VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTable) == 0))
@@ -116,7 +141,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                 {
                     case VOTableVersion.V1_1:
                         while (File.XmlReader.NodeType == XmlNodeType.Element &&
-                        VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
+                            VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagInfo) == 0)
                         {
                             File.Deserialize<V1_1.Info>();
                         }
@@ -190,6 +215,8 @@ namespace Jhu.SkyQuery.Format.VOTable
             // closing RESOURCE tag. This is for skipping or otherwise finishing the
             // file block
 
+            // TODO: handle BINARY etc.
+
             if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) != 0)
             {
                 while ((File.XmlReader.NodeType != XmlNodeType.EndElement ||
@@ -199,6 +226,7 @@ namespace Jhu.SkyQuery.Format.VOTable
                     File.XmlReader.Read();
                 }
             }
+
             File.XmlReader.ReadEndElement();
 
             return Task.CompletedTask;
@@ -589,20 +617,30 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private void ReadDataElement()
         {
-            if (File.XmlReader.NodeType == XmlNodeType.Element &&
-                      VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagData) == 0)
+            File.XmlReader.ReadStartElement(Constants.TagData);
+            File.XmlReader.MoveToContent();
+
+            if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0)
             {
-                File.XmlReader.ReadStartElement(Constants.TagData);
+                serialization = VOTableSerialization.TableData;
+                ReadTableDataElement();
             }
-            if (File.XmlReader.NodeType == XmlNodeType.Element &&
-                   VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagTableData) == 0)
+            else if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagBinary) == 0)
             {
-                File.XmlReader.ReadStartElement(Constants.TagTableData);
+                serialization = VOTableSerialization.Binary;
+                ReadBinaryElement();
             }
-            // TODO: The DATA tag can contain one of the following
-            // * TABLEDATA
-            // * BINARY
-            // * BINARY2
+            else if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagBinary2) == 0)
+            {
+                serialization = VOTableSerialization.Binary2;
+                ReadBinary2Element();
+            }
+            else if (VOTable.Comparer.Compare(File.XmlReader.Name, Constants.TagFits) == 0)
+            {
+                throw Error.UnsupportedSerialization(VOTableSerialization.Fits);
+            }
+
+            // Now we are inside a binary tag, look for a stream and
         }
 
         private void ReadTableDataElement()
@@ -610,17 +648,238 @@ namespace Jhu.SkyQuery.Format.VOTable
             // TODO: position reader on the very first TR tag
             // subsequent processing will be done when OnReadNextRow is called
             // by the framework
+
+            File.XmlReader.ReadStartElement(Constants.TagTableData);
+
+            // All subsequent tags will be read row-by-row
         }
+
+        #endregion
+        #region Binary serialization support
 
         private void ReadBinaryElement()
         {
-            // TODO: figure out binary type and make sure that OnReadNextRow
-            // reads contents accordingly
+            File.XmlReader.ReadStartElement(Constants.TagBinary);
+            ReadStreamElement();
         }
 
         private void ReadBinary2Element()
         {
-            // TODO: similar to ReadBinaryElement
+            File.XmlReader.ReadStartElement(Constants.TagBinary2);
+            ReadStreamElement();
+        }
+
+        private void ReadStreamElement()
+        {
+            // The reader is now positioned on a STREAM element
+
+            if (File.XmlReader.GetAttribute(Constants.AttributeHref) != null)
+            {
+                throw Error.ReferencedStreamsNotSupported();
+            }
+
+            var encattr = File.XmlReader.GetAttribute(Constants.AttributeEncoding);
+
+            if (encattr == null)
+            {
+                throw Error.EncodingNotFound();
+            }
+
+            if (!Enum.TryParse(encattr, true, out VOTableEncoding encoding) ||
+                encoding != VOTableEncoding.Base64)
+            {
+                throw Error.EncodingNotSupported(encattr);
+            }
+
+            File.XmlReader.ReadStartElement(Constants.TagStream);
+            // Now the reader is positioned on a base64 encoded binary stream
+
+            CreateColumnReaders();
+            bitConverter = new SharpFitsIO.SwapBitConverter();
+            xmlStream = new XmlStream(File.XmlReader);
+
+            // TODO: estimate size of stride buffer
+            strideBuffer = new byte[0x10000];
+        }
+
+        private async Task<bool> ReadNextRowFromStreamAsync(object[] values)
+        {
+            // TODO: add BINARY2 logic to read null bits first
+            // TODO: implement arrays
+
+            try
+            {
+                for (int i = 0; i < columnReaders.Length; i++)
+                {
+                    var column = Columns[i];
+
+                    if (column.DataType.IsFixedLength)
+                    {
+                        var l = column.DataType.ByteSize;
+
+                        if (column.DataType.HasLength)
+                        {
+                            l *= column.DataType.Length;
+                        }
+
+                        var s = await xmlStream.ReadAsync(strideBuffer, 0, l);
+
+                        if (l != s)
+                        {
+                            return false;
+                        }
+
+                        values[i] = columnReaders[i](column, strideBuffer, l, bitConverter);
+                    }
+                    else
+                    {
+                        var l = 4;
+                        var s = await xmlStream.ReadAsync(strideBuffer, 0, l);
+
+                        if (l != s)
+                        {
+                            return false;
+                        }
+
+                        var length = bitConverter.ToInt32(strideBuffer, 0);
+                        l = column.DataType.ByteSize * length;
+
+                        // If stride buffer is not enough, increase
+                        if (l > strideBuffer.Length)
+                        {
+                            strideBuffer = new byte[l];
+                        }
+
+                        s = await xmlStream.ReadAsync(strideBuffer, 0, l);
+
+                        if (l != s)
+                        {
+                            return false;
+                        }
+
+                        values[i] = columnReaders[i](column, strideBuffer, length, bitConverter);
+                    }
+                }
+
+                return true;
+            }
+            catch (EndOfStreamException)
+            {
+                xmlStream.Dispose();
+                xmlStream = null;
+                bitConverter = null;
+                strideBuffer = null;
+
+                return false;
+            }
+        }
+
+        private void CreateColumnReaders()
+        {
+            columnReaders = new BinaryColumnReader[Columns.Count];
+
+            for (int i = 0; i < columnReaders.Length; i++)
+            {
+                var datatype = Columns[i].DataType;
+                var type = datatype.Type;
+
+                // TODO: how to deal with bit arrays?
+                // TODO: how to deal with arrays in general?
+
+                if (type == typeof(Boolean))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return buffer[0] != 0;
+                    };
+                }
+                else if (type == typeof(Byte))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return buffer[0];
+                    };
+                }
+                else if (type == typeof(Int16))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return bitConverter.ToInt16(buffer, 0);
+                    };
+                }
+                else if (type == typeof(Int32))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return bitConverter.ToInt32(buffer, 0);
+                    };
+                }
+                else if (type == typeof(Int64))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return bitConverter.ToInt64(buffer, 0);
+                    };
+                }
+                else if (type == typeof(Single))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return bitConverter.ToSingle(buffer, 0);
+                    };
+                }
+                else if (type == typeof(Double))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        return bitConverter.ToDouble(buffer, 0);
+                    };
+                }
+                else if (type == typeof(SingleComplex))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        SingleComplex c;
+                        c.A = bitConverter.ToSingle(buffer, 0);
+                        c.B = bitConverter.ToSingle(buffer, 4);
+                        return c;
+                    };
+                }
+                else if (type == typeof(DoubleComplex))
+                {
+                    columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                    {
+                        DoubleComplex c;
+                        c.A = bitConverter.ToDouble(buffer, 0);
+                        c.B = bitConverter.ToDouble(buffer, 8);
+                        return c;
+                    };
+                }
+                else if (type == typeof(string))
+                {
+                    if (datatype.IsUnicode)
+                    {
+                        // Unicode
+                        columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                        {
+                            return Encoding.Unicode.GetChars(buffer, 0, 2 * length);
+                        };
+                    }
+                    else
+                    {
+                        // ASCII
+                        // Fixed length
+                        columnReaders[i] = delegate (Column column, byte[] buffer, int length, SharpFitsIO.BitConverterBase bitConverter)
+                        {
+                            return Encoding.ASCII.GetChars(buffer, 0, length);
+                        };
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
 
         #endregion

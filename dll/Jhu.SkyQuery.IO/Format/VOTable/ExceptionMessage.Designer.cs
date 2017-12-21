@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Format.VOTable {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ExceptionMessage {
@@ -61,6 +61,51 @@ namespace Jhu.SkyQuery.Format.VOTable {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bit fields and bit arrays are not supported..
+        /// </summary>
+        internal static string BitNotSupported {
+            get {
+                return ResourceManager.GetString("BitNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encoding of binary stream cannot be determined..
+        /// </summary>
+        internal static string EncodingNotFound {
+            get {
+                return ResourceManager.GetString("EncodingNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encoding of binary stream not supported: {0}..
+        /// </summary>
+        internal static string EncodingNotSupported {
+            get {
+                return ResourceManager.GetString("EncodingNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multidimensional character arrays are not supported..
+        /// </summary>
+        internal static string MultidimensionalStringNotSupported {
+            get {
+                return ResourceManager.GetString("MultidimensionalStringNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Arrays of primitive types are not supported..
+        /// </summary>
+        internal static string PrimitiveArraysNotSupported {
+            get {
+                return ResourceManager.GetString("PrimitiveArraysNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recursvice resources are not supported..
         /// </summary>
         internal static string RecursiveResourceNotSupported {
@@ -68,11 +113,22 @@ namespace Jhu.SkyQuery.Format.VOTable {
                 return ResourceManager.GetString("RecursiveResourceNotSupported", resourceCulture);
             }
         }
-        internal static string TypeofNamespaceNotSupported
-        {
-            get
-            {
-                return ResourceManager.GetString("TypeofNamespaceNotSupported", resourceCulture);
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Referenced data stream are not supported..
+        /// </summary>
+        internal static string ReferencedStreamsNotSupported {
+            get {
+                return ResourceManager.GetString("ReferencedStreamsNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported serialization: {0}..
+        /// </summary>
+        internal static string UnsupportedSerialization {
+            get {
+                return ResourceManager.GetString("UnsupportedSerialization", resourceCulture);
             }
         }
     }

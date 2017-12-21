@@ -8,6 +8,7 @@ namespace Jhu.SkyQuery.Format.VOTable
 {
     public enum VOTableVersion
     {
+        Unknown,
         V1_1,
         V1_2,
         V1_3

@@ -29,7 +29,7 @@ namespace Jhu.SkyQuery.Format.VOTable.V1_1
 
         [XmlAttribute(Constants.AttributeDatatype)]
         public string Datatype { get; set; }
-       
+
         [XmlAttribute(Constants.AttributePrecision)]
         public string Precision { get; set; }
 
@@ -54,82 +54,142 @@ namespace Jhu.SkyQuery.Format.VOTable.V1_1
         [XmlAttribute(Constants.AttributeType)]
         public string Type { get; set; }
 
+        private void GetArraySize(out int[] size, out bool isArray, out bool isVariableSize, out bool isUnboundSize)
+        {
+            // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
+            // example: <FIELD ID= "values" datatype="int" arraysize="100,*"/>
+            // example: <FIELD ID= "values" datatype="int" arraysize="100,10*"/>
+
+            if (String.IsNullOrEmpty(Arraysize))
+            {
+                size = new int[0];
+                isArray = false;
+                isVariableSize = false;
+                isUnboundSize = false;
+            }
+            else
+            {
+                isArray = true;
+
+                var parts = Arraysize.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var lastpart = parts[parts.Length - 1];
+
+                if (lastpart == "*")
+                {
+                    // "10,20,*"
+                    isVariableSize = false;
+                    isUnboundSize = true;
+                    size = new int[parts.Length - 1];
+                }
+                else if (lastpart.EndsWith("*"))
+                {
+                    // "10,20*"
+                    isVariableSize = true;
+                    isUnboundSize = false;
+                    size = new int[parts.Length];
+                }
+                else
+                {
+                    // "10,20"
+                    isVariableSize = false;
+                    isUnboundSize = false;
+                    size = new int[parts.Length];
+                }
+
+                for (int i = 0; i < size.Length; i++)
+                {
+                    size[i] = Int32.Parse(parts[i].TrimEnd('*'));
+                }
+            }
+        }
+
         public virtual Column CreateColumn()
         {
             Column c;
-
+            GetArraySize(out int[] size, out bool isArray, out bool isVariableSize, out bool isUnboundSize);
+            
             switch (Datatype)
             {
-                // TODO: ARRAYS
-                // example: <FIELD ID= "values" datatype="int" arraysize="100*"/>
-                case "boolean":
+                case Constants.TypeBoolean:
                     c = new Column(Name, DataTypes.SqlBit);
                     break;
-                case "bit":
-                    c = new Column(Name, DataTypes.SqlBit);
+                case Constants.TypeBit:
+                    throw Error.BitNotSupported();
+                case Constants.TypeByte:
+                    c = new Column(Name, DataTypes.Byte);
                     break;
-                case "unsignedByte":
+                case Constants.TypeShort:
                     c = new Column(Name, DataTypes.SqlSmallInt);
                     break;
-                case "char":
-                    /*
-                    if (Arraysize == "*" )
-                    {
-                        c = new Column(Name, DataTypes.SqlVarCharMax);
-                    }
-                    else if (!String.IsNullOrWhiteSpace(Arraysize))
-                    {
-                        c = new Column(Name, DataTypes.SqlVarChar);
-                        c.DataType.Length = Int32.Parse(Arraysize);
-                    }
-                    else
-                    {
-                        c = new Column(Name, DataTypes.SqlChar);
-                    }
-                    break;
-                    */
-                    if (!String.IsNullOrWhiteSpace(Arraysize))
-                    {
-                        if (Arraysize == "*" || Arraysize.Contains("*"))
-                        {
-                            c = new Column(Name, DataTypes.SqlVarCharMax);
-                        }
-                        else
-                        {
-                            c = new Column(Name, DataTypes.SqlVarChar);
-                            c.DataType.Length = Int32.Parse(Arraysize);
-                        }
-                    }
-                    else
-                    {
-                        c = new Column(Name, DataTypes.SqlChar);
-                    }
-                    break;
-                case "unicodeChar":
-                    c = new Column(Name, DataTypes.SqlNChar);
-
-                    // TODO length
-                    break;
-                case "short":
-                    c = new Column(Name, DataTypes.SqlSmallInt);
-                    break;
-                case "int":
+                case Constants.TypeInt:
                     c = new Column(Name, DataTypes.SqlInt);
                     break;
-                case "long":
+                case Constants.TypeLong:
                     c = new Column(Name, DataTypes.SqlBigInt);
                     break;
-                case "float":
+                case Constants.TypeFloat:
                     c = new Column(Name, DataTypes.SqlReal);
                     break;
-                case "double":
+                case Constants.TypeDouble:
                     c = new Column(Name, DataTypes.SqlFloat);
                     break;
-                case "floatComplex":
+                case Constants.TypeFloatComplex:
                     c = new Column(Name, DataTypes.SingleComplex);
                     break;
-                case "doubleComplex":
+                case Constants.TypeDoubleComplex:
                     c = new Column(Name, DataTypes.DoubleComplex);
+                    break;
+                case Constants.TypeChar:
+                    if (!isArray)
+                    {
+                        // Single character
+                        c = new Column(Name, DataTypes.SqlChar);
+                    }
+                    else if (size.Length == 0 && isUnboundSize)
+                    {
+                        // Unbound length
+                        c = new Column(Name, DataTypes.SqlVarCharMax);
+                    }
+                    else if (size.Length == 1 && isVariableSize)
+                    {
+                        // Variable length
+                        c = new Column(Name, DataTypes.SqlVarChar);
+                    }
+                    else if (size.Length == 1 && !isVariableSize)
+                    {
+                        // Fixed length
+                        c = new Column(Name, DataTypes.SqlChar);
+                    }
+                    else
+                    {
+                        throw Error.MultidimensionalStringNotSupported();
+                    }
+                    break;
+                case Constants.TypeUnicodeChar:
+                    if (!isArray)
+                    {
+                        // Single character
+                        c = new Column(Name, DataTypes.SqlNChar);
+                    }
+                    else if (size.Length == 0 && isUnboundSize)
+                    {
+                        // Unbound length
+                        c = new Column(Name, DataTypes.SqlNVarCharMax);
+                    }
+                    else if (size.Length == 1 && isVariableSize)
+                    {
+                        // Variable length
+                        c = new Column(Name, DataTypes.SqlNVarChar);
+                    }
+                    else if (size.Length == 1 && !isVariableSize)
+                    {
+                        // Fixed length
+                        c = new Column(Name, DataTypes.SqlNChar);
+                    }
+                    else
+                    {
+                        throw Error.MultidimensionalStringNotSupported();
+                    }
                     break;
                 default:
                     throw new NotImplementedException();
@@ -137,7 +197,16 @@ namespace Jhu.SkyQuery.Format.VOTable.V1_1
 
             // VOTable data types are nullable by default
             c.DataType.IsNullable = true;
-            
+
+            if (c.DataType.Type != typeof(string) && isArray || isUnboundSize)
+            {
+                throw Error.PrimitiveArraysNotSupported();
+            }
+            else
+            {
+                c.DataType.Length = size[0];
+            }
+
             return c;
         }
     }

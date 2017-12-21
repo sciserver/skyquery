@@ -247,5 +247,28 @@ namespace Jhu.SkyQuery.Format.VOTable
             Assert.AreEqual(3, q);
             Assert.AreEqual(1, r);
         }
+
+        [TestMethod]
+        public void ReadVOTableBinaryTest()
+        {
+            var dr = OpenSimpleReader(@"tap_votable\votable_binary.xml");
+            int q = 0;
+            int r = 0;
+            do
+            {
+                var values = new object[dr.FieldCount];
+
+                while (dr.Read())
+                {
+                    dr.GetValues(values);
+                    q++;
+                }
+                r++;
+            }
+            while (dr.NextResult());
+
+            Assert.AreEqual(3, q);
+            Assert.AreEqual(1, r);
+        }
     }
 }
