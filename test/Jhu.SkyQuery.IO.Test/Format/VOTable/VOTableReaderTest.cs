@@ -23,7 +23,7 @@ namespace Jhu.SkyQuery.Format.VOTable
             ValidateVOTable(xml);
         }
 
-        private void VoTableReaderTestHelper(string filename, int rows, int resultsets)
+        private void VoTableReaderTestHelper(string filename, int rows, int resultsets, object[][] gt)
         {
             using (var dr = OpenSimpleReader(filename))
             {
@@ -37,6 +37,15 @@ namespace Jhu.SkyQuery.Format.VOTable
                     while (dr.Read())
                     {
                         dr.GetValues(values);
+
+                        if (gt != null && gt.Length > q)
+                        {
+                            for (int i = 0; i < values.Length; i++)
+                            {
+                                Assert.AreEqual(gt[q][i], values[i]);
+                            }
+                        }
+
                         q++;
                     }
                     r++;
@@ -285,8 +294,12 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadVOTableBinaryTest()
         {
             var testfile = @"tap_votable\votable_binary.xml";
+            var gt = new object[][]
+            {
+                new object[] { 122.7034865286146, 0.91527890151003144 }
+            };
 
-            VoTableReaderTestHelper(testfile, 10, 1);
+            VoTableReaderTestHelper(testfile, 10, 1, gt);
             VoTableInterruptReaderTestHelper(testfile);
         }
 
@@ -294,8 +307,12 @@ namespace Jhu.SkyQuery.Format.VOTable
         public void ReadVOTableBinary2Test()
         {
             var testfile = @"tap_votable\votable_binary2.xml";
+            var gt = new object[][]
+            {
+                new object[] { 122.7034865286146, 0.91527890151003144 }
+            };
 
-            VoTableReaderTestHelper(testfile, 10, 1);
+            VoTableReaderTestHelper(testfile, 10, 1, gt);
             VoTableInterruptReaderTestHelper(testfile);
         }
     }

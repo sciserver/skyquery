@@ -612,60 +612,89 @@ namespace Jhu.SkyQuery.Format.VOTable
 
         private async Task<bool> ReadNextRowFromStreamAsync(object[] values)
         {
-            // TODO: add BINARY2 logic to read null bits first
             // TODO: implement arrays
 
             try
             {
-                for (int i = 0; i < columnReaders.Length; i++)
+                if (serialization == VOTableSerialization.Binary2)
                 {
-                    var column = Columns[i];
+                    int prefixlen = (Columns.Count + 7) / 8;
 
-                    if (column.DataType.IsFixedLength)
+                    var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, prefixlen);
+
+                    if (prefixlen != s)
                     {
-                        var l = column.DataType.ByteSize;
-
-                        if (column.DataType.HasLength)
-                        {
-                            l *= column.DataType.Length;
-                        }
-
-                        var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
-
-                        if (l != s)
-                        {
-                            return false;
-                        }
-
-                        values[i] = columnReaders[i](column, binaryBuffer, l, bitConverter);
+                        return false;
                     }
-                    else
+
+                    for (int i = 0; i < Columns.Count; i++)
                     {
-                        var l = 4;
-                        var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
+                        int bb = i / 8;
+                        int bi = i - bb * 8;
 
-                        if (l != s)
+                        if (((binaryBuffer[bb] << bi) & 0x80) != 0)
                         {
-                            return false;
+                            values[i] = DBNull.Value;
                         }
-
-                        var length = bitConverter.ToInt32(binaryBuffer, 0);
-                        l = column.DataType.ByteSize * length;
-
-                        // If stride buffer is not enough, increase
-                        if (l > binaryBuffer.Length)
+                        else
                         {
-                            binaryBuffer = new byte[l]; // TODO: round up to 64k blocks?
+                            values[i] = null;
                         }
+                    }
+                }
 
-                        s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
+                for (int i = 0; i < Columns.Count; i++)
+                {
+                    if (values[i] != DBNull.Value)
+                    {
+                        var column = Columns[i];
 
-                        if (l != s)
+                        if (column.DataType.IsFixedLength)
                         {
-                            return false;
-                        }
+                            var l = column.DataType.ByteSize;
 
-                        values[i] = columnReaders[i](column, binaryBuffer, length, bitConverter);
+                            if (column.DataType.HasLength)
+                            {
+                                l *= column.DataType.Length;
+                            }
+
+                            var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
+
+                            if (l != s)
+                            {
+                                return false;
+                            }
+
+                            values[i] = columnReaders[i](column, binaryBuffer, l, bitConverter);
+                        }
+                        else
+                        {
+                            var l = 4;
+                            var s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
+
+                            if (l != s)
+                            {
+                                return false;
+                            }
+
+                            var length = bitConverter.ToInt32(binaryBuffer, 0);
+                            l = column.DataType.ByteSize * length;
+
+                            // If stride buffer is not enough, increase
+                            if (l > binaryBuffer.Length)
+                            {
+                                binaryBuffer = new byte[l]; // TODO: round up to 64k blocks?
+                            }
+
+                            s = await File.XmlReader.ReadContentAsBase64Async(binaryBuffer, 0, l);
+
+                            if (l != s)
+                            {
+                                return false;
+                            }
+
+                            values[i] = columnReaders[i](column, binaryBuffer, length, bitConverter);
+                        }
                     }
                 }
 
