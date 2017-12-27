@@ -68,79 +68,13 @@
     <Compile Include="Format\Fits\FitsFileWrapper.cs" />
     <Compile Include="Format\SkyQueryFileFormatFactory.cs" />
     <Compile Include="Format\VOTable\Constants.cs" />
-    <Compile Include="Format\VOTable\Error.cs" />
-    <Compile Include="Format\VOTable\ExceptionMessage.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessage.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Format\VOTable\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Format\VOTable\V1_1\Coosys.cs" />
-    <Compile Include="Format\VOTable\V1_1\Definitions.cs" />
-    <Compile Include="Format\VOTable\V1_1\Description.cs" />
-    <Compile Include="Format\VOTable\V1_1\Field.cs" />
-    <Compile Include="Format\VOTable\V1_1\FieldRef.cs" />
-    <Compile Include="Format\VOTable\V1_1\Group.cs" />
-    <Compile Include="Format\VOTable\V1_1\Info.cs" />
-    <Compile Include="Format\VOTable\V1_1\Link.cs" />
-    <Compile Include="Format\VOTable\V1_1\Max.cs" />
-    <Compile Include="Format\VOTable\V1_1\Min.cs" />
-    <Compile Include="Format\VOTable\V1_1\Option.cs" />
-    <Compile Include="Format\VOTable\V1_1\Param.cs" />
-    <Compile Include="Format\VOTable\V1_1\ParamRef.cs" />
-    <Compile Include="Format\VOTable\V1_1\Values.cs" />
-    <Compile Include="Format\VOTable\V1_2\Coosys.cs" />
-    <Compile Include="Format\VOTable\V1_2\Definitions.cs" />
-    <Compile Include="Format\VOTable\V1_2\Description.cs" />
-    <Compile Include="Format\VOTable\V1_2\Field.cs" />
-    <Compile Include="Format\VOTable\V1_2\FieldRef.cs" />
-    <Compile Include="Format\VOTable\V1_2\Group.cs" />
-    <Compile Include="Format\VOTable\V1_2\Info.cs" />
-    <Compile Include="Format\VOTable\V1_2\Link.cs" />
-    <Compile Include="Format\VOTable\V1_2\Max.cs" />
-    <Compile Include="Format\VOTable\V1_2\Min.cs" />
-    <Compile Include="Format\VOTable\V1_2\Option.cs" />
-    <Compile Include="Format\VOTable\V1_2\Param.cs" />
-    <Compile Include="Format\VOTable\V1_2\ParamRef.cs" />
-    <Compile Include="Format\VOTable\V1_2\Values.cs" />
-    <Compile Include="Format\VOTable\V1_3\Coosys.cs" />
-    <Compile Include="Format\VOTable\V1_3\Definitions.cs" />
-    <Compile Include="Format\VOTable\V1_3\Description.cs" />
-    <Compile Include="Format\VOTable\V1_3\Field.cs" />
-    <Compile Include="Format\VOTable\V1_3\FieldRef.cs" />
-    <Compile Include="Format\VOTable\V1_3\Group.cs" />
-    <Compile Include="Format\VOTable\V1_3\Info.cs" />
-    <Compile Include="Format\VOTable\V1_3\Link.cs" />
-    <Compile Include="Format\VOTable\V1_3\Max.cs" />
-    <Compile Include="Format\VOTable\V1_3\Min.cs" />
-    <Compile Include="Format\VOTable\V1_3\Option.cs" />
-    <Compile Include="Format\VOTable\V1_3\Param.cs" />
-    <Compile Include="Format\VOTable\V1_3\ParamRef.cs" />
-    <Compile Include="Format\VOTable\V1_3\Values.cs" />
-    <Compile Include="Format\VOTable\VOTable.cs" />
-    <Compile Include="Format\VOTable\VOTableEncoding.cs" />
-    <Compile Include="Format\VOTable\VOTableException.cs" />
-    <Compile Include="Format\VOTable\VOTableResource.cs" />
-    <Compile Include="Format\VOTable\VOTableSerialization.cs" />
-    <Compile Include="Format\VOTable\VOTableVersion.cs" />
+    <Compile Include="Format\VOTable\VoTableResourceWrapper.cs" />
+    <Compile Include="Format\VOTable\VoTableWrapper.cs" />
     <Compile Include="IO\SkyQueryStreamFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Format\FileFormatNames.resx" />
-    <EmbeddedResource Include="Format\VOTable\ExceptionMessage.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ExceptionMessage.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Format\VOTable\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
@@ -159,21 +93,16 @@
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\netvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
+      <Name>Jhu.VO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\sharpfitsio\src\Jhu.SharpFitsIO\Jhu.SharpFitsIO.csproj">
       <Project>{D9E54B0E-9E09-4E53-95FD-4161F9D61914}</Project>
       <Name>Jhu.SharpFitsIO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Format\VOTable\Resources\votable-v1.1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Format\VOTable\Resources\votable-v1.2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Format\VOTable\Resources\votable-v1.3.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="post-build.ps1" />
     <None Include="pre-build.ps1" />
   </ItemGroup>

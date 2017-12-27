@@ -22,7 +22,7 @@ namespace Jhu.SkyQuery.Format
                 yield return file;
             }
 
-            yield return new VOTable.VOTable();
+            yield return new VoTable.VoTableWrapper();
             yield return new Fits.FitsFileWrapper();
         }
     }

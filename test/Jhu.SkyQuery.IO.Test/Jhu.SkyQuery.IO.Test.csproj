@@ -78,7 +78,6 @@
     <Compile Include="Format\Fits\FitsWriterTest.cs" />
     <Compile Include="Format\Fits\ImportFitsTest.cs" />
     <Compile Include="Format\Fits\ExportFitsTest.cs" />
-    <Compile Include="Format\VOTable\VOTableElementsTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableTestBase.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
@@ -146,6 +145,7 @@
     <None Include="post-build.ps1" />
     <None Include="pre-build.ps1" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

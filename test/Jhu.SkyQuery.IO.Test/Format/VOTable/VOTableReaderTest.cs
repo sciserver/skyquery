@@ -11,18 +11,11 @@ using Jhu.Graywulf.Util;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VoTable
 {
     [TestClass]
     public class VOTableReaderTest : VOTableTestBase
     {
-        [TestMethod]
-        public void ValidationTest()
-        {
-            var xml = File.ReadAllText(GetTestFilePath(@"modules\skyquery\test\files\votable_everything.xml"));
-            ValidateVOTable(xml);
-        }
-
         private void VoTableReaderTestHelper(string filename, int rows, int resultsets, object[][] gt)
         {
             using (var dr = OpenSimpleReader(filename))

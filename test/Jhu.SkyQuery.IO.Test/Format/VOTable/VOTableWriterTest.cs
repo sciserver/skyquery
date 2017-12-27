@@ -10,9 +10,8 @@ using System.Xml;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
-using Jhu.SkyQuery.Format.VOTable;
 
-namespace Jhu.SkyQuery.Format.VOTable.Test
+namespace Jhu.SkyQuery.Format.VoTable
 {
     [TestClass]
     public class VOTableWriterTest : Jhu.Graywulf.Test.TestClassBase
@@ -22,7 +21,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         {
             var uri = GetTestUniqueFileUri(".votable");
 
-            using (var nat = new VOTable(uri, DataFileMode.Write))
+            using (var nat = new VoTableWrapper(uri, DataFileMode.Write))
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
@@ -44,7 +43,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         {
             var uri = GetTestUniqueFileUri(".votable");
 
-            using (var nat = new VOTable(uri, DataFileMode.Write))
+            using (var nat = new VoTableWrapper(uri, DataFileMode.Write))
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
@@ -66,7 +65,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         {
             var uri = GetTestUniqueFileUri(".votable");
 
-            using (var nat = new VOTable(uri, DataFileMode.Write))
+            using (var nat = new VoTableWrapper(uri, DataFileMode.Write))
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {
@@ -88,7 +87,7 @@ namespace Jhu.SkyQuery.Format.VOTable.Test
         {
             var uri = GetTestUniqueFileUri(".votable");
 
-            using (var nat = new VOTable(uri, DataFileMode.Write))
+            using (var nat = new VoTableWrapper(uri, DataFileMode.Write))
             {
                 using (var cn = IOTestDataset.OpenConnection())
                 {

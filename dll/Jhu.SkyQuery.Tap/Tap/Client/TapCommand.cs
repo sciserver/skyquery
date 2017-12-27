@@ -7,7 +7,7 @@ using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Threading;
-using Jhu.SkyQuery.Format.VOTable;
+using Jhu.SkyQuery.Format.VoTable;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
@@ -39,7 +39,7 @@ namespace Jhu.SkyQuery.Tap.Client
         private TapCommandState state;
 
         private Stream stream;
-        private VOTable votable;
+        private VoTableWrapper votable;
         private DbDataReader reader;
         private CancellationTokenSource cancellationSource;
         private CancellationTokenRegistration cancellationRegistration;
@@ -383,7 +383,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 {
                     // TODO: return data reader
                     stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
-                    votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read)
+                    votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read)
                     {
                         GenerateIdentityColumn = false,
                     };
@@ -398,7 +398,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 else if (job.Phase == TapJobPhase.Error)
                 {
                     stream = await connection.Client.GetErrorAsync(job, cancellationSource.Token);
-                    votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
+                    votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read);
 
                     // TODO: read error document, parse VOTable and report error
                     // TODO: throw TAP exception with message from server
