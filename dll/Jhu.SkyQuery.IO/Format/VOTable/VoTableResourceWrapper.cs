@@ -20,7 +20,12 @@ namespace Jhu.SkyQuery.Format.VoTable
     [Serializable]
     public class VoTableResourceWrapper : DataFileBlockBase, ICloneable
     {
+        #region Private member variables
+
         private VO.VoTable.VoTableResource resource;
+
+        #endregion
+        #region Properties
 
         /// <summary>
         /// Gets a reference to the underlying FITS file wrapper.
@@ -38,6 +43,7 @@ namespace Jhu.SkyQuery.Format.VoTable
             get { return ((VoTableWrapper)file).VoTable; }
         }
 
+        #endregion
         #region Constructors and initializers
 
         public VoTableResourceWrapper(VoTableWrapper file, VO.VoTable.VoTableResource resource)
@@ -83,7 +89,8 @@ namespace Jhu.SkyQuery.Format.VoTable
             {
                 var col = new Column()
                 {
-                    Name = resource.Columns[i].Name,
+                    ID = i,
+                    Name = resource.Columns[i].Name ?? resource.Columns[i].ID,
                     DataType = ConvertDataTypeToDatabase(resource.Columns[i]),
                     Metadata = ConvertMetadataToDatabase(resource.Columns[i]),
                 };
@@ -92,11 +99,10 @@ namespace Jhu.SkyQuery.Format.VoTable
             }
 
             CreateColumns(cols);
-
         }
 
         /// <summary>
-        /// Converts a FITS data type to a database data type
+        /// Converts a VOTable data type to a database data type
         /// </summary>
         /// <param name="column"></param>
         /// <returns></returns>
@@ -104,8 +110,16 @@ namespace Jhu.SkyQuery.Format.VoTable
         {
             int length;
 
+            if (column.DataType.IsUnboundSize)
+            {
+                // TODO: this is for strings only
+                // add support for arrays
+                length = -1;
+            }
             if (column.DataType.HasLength)
             {
+                // TODO: this is for strings only
+                // add support for arrays
                 length = column.DataType.Length;
             }
             else
@@ -113,34 +127,58 @@ namespace Jhu.SkyQuery.Format.VoTable
                 length = 1;
             }
 
-            var dt = DataType.Create(column.DataType.Type, 1);
+            var dt = DataType.Create(column.DataType.Type, length);
             dt.IsNullable = column.DataType.IsNullable;
             dt.IsFixedLength = column.DataType.IsFixedLength;
             
-            // TODO: unbound length
-
             return dt;
         }
 
         /// <summary>
-        /// Converts FITS column metadata into database column metadata
+        /// Converts VOTable column metadata into database column metadata
         /// </summary>
         /// <param name="column"></param>
         /// <returns></returns>
         private VariableMetadata ConvertMetadataToDatabase(VO.VoTable.VoTableColumn column)
         {
-            var metadata = new VariableMetadata()
+            var metadata = new VariableMetadata();
+
+            if (!String.IsNullOrEmpty(column.UType))
             {
-                // TODO: convert format, unit, ucd etc.
-                // Format = column.Width + column.Precision,
-                //Summary TODO: figure out how to get comment from table column
-            };
+                metadata.Class = column.UType;
+            }
+
+            if (!String.IsNullOrEmpty(column.Ucd))
+            {
+                metadata.Quantity = Quantity.Parse(column.Ucd);
+            }
 
             if (!String.IsNullOrWhiteSpace(column.Unit))
             {
                 // *** TODO: user unit converter function!
-                metadata.Unit = Unit.Parse(column.Unit);
+                // metadata.Unit = Unit.Parse(column.Unit);
             }
+
+            // Convert format
+            var f = "{0";
+
+            if (!String.IsNullOrEmpty(column.Width))
+            {
+                f += ",";
+                f += (-int.Parse(column.Width)).ToString();
+            }
+
+            if (!String.IsNullOrEmpty(column.Precision))
+            {
+                // TODO: check if VOTable standard is same as .Net
+                f += ":";
+                f += column.Precision;
+            }
+
+            f += "}";
+
+            metadata.Format = f;
+            metadata.Summary = column.Description;
 
             return metadata;
         }
