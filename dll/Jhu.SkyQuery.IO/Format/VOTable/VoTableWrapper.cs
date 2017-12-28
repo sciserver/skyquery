@@ -195,19 +195,26 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override Task OnReadHeaderAsync()
         {
-            throw new NotImplementedException();
+            return votable.ReadHeaderAsync();
         }
 
-        protected override async Task<DataFileBlockBase> OnReadNextBlockAsync(DataFileBlockBase block)
+        protected override Task<DataFileBlockBase> OnReadNextBlockAsync(DataFileBlockBase block)
         {
-            //return block ?? new FitsBinaryTableWrapper(this, (BinaryTableHdu)hdu);
-            throw new NotImplementedException();
+            var resource = votable.ReadNextResource();
+
+            if (resource != null)
+            {
+                return Task.FromResult(block ?? new VoTableResourceWrapper(this, votable.ReadNextResource()));
+            }
+            else
+            {
+                return Task.FromResult<DataFileBlockBase>(null);
+            }
         }
 
         protected override Task<DataFileBlockBase> OnCreateNextBlockAsync(DataFileBlockBase block)
         {
-            // return Task.FromResult(block ?? new FitsBinaryTableWrapper(this, BinaryTableHdu.Create(votable, true)));
-            throw new NotImplementedException();
+            return Task.FromResult(block ?? new VoTableResourceWrapper(this, VO.VoTable.VoTableResource.Create(this.votable, true)));
         }
 
         protected override void OnBlockAppended(DataFileBlockBase block)
@@ -217,7 +224,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override Task OnReadFooterAsync()
         {
-            throw new NotImplementedException();
+            return votable.ReadFooterAsync();
         }
 
         protected override async Task OnWriteHeaderAsync()

@@ -77,24 +77,22 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// </summary>
         private void ConvertColumnsToDatabase()
         {
-            /*var cols = new Column[hdu.Columns.Count];
+            var cols = new Column[resource.Columns.Count];
 
             for (int i = 0; i < cols.Length; i++)
             {
                 var col = new Column()
                 {
-                    Name = hdu.Columns[i].Name,
-                    DataType = ConvertDataTypeToDatabase(hdu.Columns[i]),
-                    Metadata = ConvertMetadataToDatabase(hdu.Columns[i]),
+                    Name = resource.Columns[i].Name,
+                    DataType = ConvertDataTypeToDatabase(resource.Columns[i]),
+                    Metadata = ConvertMetadataToDatabase(resource.Columns[i]),
                 };
 
                 cols[i] = col;
             }
 
             CreateColumns(cols);
-            */
 
-            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -104,16 +102,24 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// <returns></returns>
         private DataType ConvertDataTypeToDatabase(VO.VoTable.VoTableColumn column)
         {
-            /*
-            // TODO: needs testing
-            // TODO: what to do with varchar(max) etc?
-            var dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            int length;
 
+            if (column.DataType.HasLength)
+            {
+                length = column.DataType.Length;
+            }
+            else
+            {
+                length = 1;
+            }
+
+            var dt = DataType.Create(column.DataType.Type, 1);
             dt.IsNullable = column.DataType.IsNullable;
+            dt.IsFixedLength = column.DataType.IsFixedLength;
+            
+            // TODO: unbound length
 
-            return dt;*/
-
-            throw new NotImplementedException();
+            return dt;
         }
 
         /// <summary>
@@ -123,10 +129,10 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// <returns></returns>
         private VariableMetadata ConvertMetadataToDatabase(VO.VoTable.VoTableColumn column)
         {
-            /*
             var metadata = new VariableMetadata()
             {
-                Format = column.Format,
+                // TODO: convert format, unit, ucd etc.
+                // Format = column.Width + column.Precision,
                 //Summary TODO: figure out how to get comment from table column
             };
 
@@ -137,9 +143,6 @@ namespace Jhu.SkyQuery.Format.VoTable
             }
 
             return metadata;
-            */
-
-            throw new NotImplementedException();
         }
 
         #endregion
@@ -150,7 +153,7 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// </summary>
         /// <param name="column"></param>
         /// <returns></returns>
-        private TypeMapping CreateTypeMappingToFits(Column column)
+        private TypeMapping CreateTypeMappingToVoTable(Column column)
         {
             if (column.DataType.Type == typeof(Decimal))
             {
@@ -292,14 +295,11 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// <returns></returns>
         private void ConvertDataTypeToVoTable(Column databaseColumn, out VO.VoTable.VoTableDataType votableType, out TypeMapping typeMapping)
         {
-            throw new NotImplementedException();
-
-            /*
             // Fits get type mapping
-            typeMapping = CreateTypeMappingToFits(databaseColumn);
+            typeMapping = CreateTypeMappingToVoTable(databaseColumn);
 
             Type type;
-            int repeat = 1;
+            int[] size = new int[] { 1 };
 
             if (typeMapping == null)
             {
@@ -313,22 +313,22 @@ namespace Jhu.SkyQuery.Format.VoTable
             if (type.IsArray)
             {
                 type = type.GetElementType();
-                repeat = databaseColumn.DataType.ByteSize;
+                size = new int[] { databaseColumn.DataType.ByteSize };
             }
 
             // TODO: this logic needs to be extended if arrays are supported
             if (databaseColumn.DataType.IsMaxLength)
             {
                 // This cannot be exported, so limit to a few characters or bytes
-                repeat = 128;   // *** TODO
+                size = new int[] { 128 };   // *** TODO
             }
             else if (databaseColumn.DataType.HasLength)
             {
-                repeat = databaseColumn.DataType.Length;
+                size = new int[] { databaseColumn.DataType.Length };
             }
 
-            votableType = VO.VoTable.VoTableDataType.Create(type, repeat, databaseColumn.DataType.IsNullable);
-            */
+            // TODO: review this whole function
+            votableType = VO.VoTable.VoTableDataType.Create(type, size, false, databaseColumn.DataType.IsNullable);
         }
 
         #endregion
@@ -348,11 +348,10 @@ namespace Jhu.SkyQuery.Format.VoTable
             }
         }
 
-        protected override Task OnReadHeaderAsync()
+        protected override async Task OnReadHeaderAsync()
         {
+            await resource.ReadHeaderAsync();
             ConvertColumnsToDatabase();
-            // TODO: delete RecordCount = hdu.GetAxisLength(2);
-            return Task.CompletedTask;
         }
 
         protected override void OnSetMetadata(int blockCounter)
@@ -370,12 +369,12 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override Task OnReadFooterAsync()
         {
-            throw new NotImplementedException();
+            return resource.ReadFooterAsync();
         }
 
         protected override Task OnReadToFinishAsync()
         {
-            throw new NotImplementedException();
+            return resource.ReadToFinishAsync();
         }
 
         protected override async Task OnWriteHeaderAsync()
