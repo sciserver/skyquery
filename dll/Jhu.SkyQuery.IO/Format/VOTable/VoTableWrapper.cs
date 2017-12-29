@@ -22,7 +22,10 @@ namespace Jhu.SkyQuery.Format.VoTable
         private VO.VoTable.VoTable votable;
 
         [NonSerialized]
-        private SharpFitsIO.Endianness endianness;
+        private VO.VoTable.VoTableVersion version;
+
+        [NonSerialized]
+        private VO.VoTable.VoTableSerialization serialization;
 
         #endregion
         #region Properties
@@ -32,12 +35,18 @@ namespace Jhu.SkyQuery.Format.VoTable
             get { return votable; }
         }
 
-        public SharpFitsIO.Endianness Endianness
+        public VO.VoTable.VoTableVersion Version
         {
-            get { return endianness; }
-            set { endianness = value; }
+            get { return version; }
+            set { version = value; }
         }
 
+        public VO.VoTable.VoTableSerialization Serialization
+        {
+            get { return serialization; }
+            set { serialization = value; }
+        }
+        
         #endregion
         #region Constructors and initializers
 
@@ -59,47 +68,25 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="fileMode"></param>
-        /// <param name="compression"></param>
-        /// <param name="encoding"></param>
-        public VoTableWrapper(Uri uri, DataFileMode fileMode, SharpFitsIO.Endianness endianness)
+        public VoTableWrapper(Uri uri, DataFileMode fileMode)
             : base(uri, fileMode)
         {
             InitializeMembers(new StreamingContext());
-
-            this.endianness = endianness;
-
             Open();
         }
-
-        public VoTableWrapper(Uri uri, DataFileMode fileMode)
-            : this(uri, fileMode, SharpFitsIO.Endianness.BigEndian)
-        {
-            // Overload
-        }
-
+        
         /// <summary>
         /// Initializes a FITS file by automatically wrapping and already open binary stream.
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="fileMode"></param>
-        /// <param name="compression"></param>
-        /// <param name="encoding"></param>
-        public VoTableWrapper(Stream stream, DataFileMode fileMode, SharpFitsIO.Endianness endianness)
+        public VoTableWrapper(Stream stream, DataFileMode fileMode)
             : base(stream, fileMode)
         {
             InitializeMembers(new StreamingContext());
-
-            this.endianness = endianness;
-
             Open();
         }
-
-        public VoTableWrapper(Stream stream, DataFileMode fileMode)
-            : this(stream, fileMode, SharpFitsIO.Endianness.BigEndian)
-        {
-            // Overload
-        }
-
+        
         [OnDeserializing]
         private void InitializeMembers(StreamingContext context)
         {
@@ -119,13 +106,15 @@ namespace Jhu.SkyQuery.Format.VoTable
             };
 
             this.votable = null;
-            this.endianness = SharpFitsIO.Endianness.BigEndian;
+            this.version = VO.VoTable.VoTableVersion.V1_3;
+            this.serialization = VO.VoTable.VoTableSerialization.TableData;
         }
 
         private void CopyMembers(VoTableWrapper old)
         {
             this.votable = null;
-            this.endianness = old.endianness;
+            this.version = old.version;
+            this.serialization = old.serialization;
         }
 
         public override void Dispose()
@@ -155,9 +144,7 @@ namespace Jhu.SkyQuery.Format.VoTable
             if (votable == null)
             {
                 await base.OpenForReadAsync();
-
-                // TODO: make it async if necessary
-                votable = new VO.VoTable.VoTable(BaseStream, FileAccess.Read, endianness);
+                votable = new VO.VoTable.VoTable(BaseStream, FileAccess.Read, version);
             }
         }
 
@@ -167,8 +154,10 @@ namespace Jhu.SkyQuery.Format.VoTable
             {
                 await base.OpenForWriteAsync();
 
-                // TODO: make it async if necessary
-                votable = new VO.VoTable.VoTable(BaseStream, FileAccess.Write, endianness);
+                votable = new VO.VoTable.VoTable(BaseStream, FileAccess.Write, version);
+
+                // TODO: initialize
+                // Move initialization code from VoTable.OpenForWrite()
             }
         }
 
@@ -214,7 +203,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override Task<DataFileBlockBase> OnCreateNextBlockAsync(DataFileBlockBase block)
         {
-            return Task.FromResult(block ?? new VoTableResourceWrapper(this, VO.VoTable.VoTableResource.Create(this.votable, true)));
+            return Task.FromResult(block ?? new VoTableResourceWrapper(this, VO.VoTable.VoTableResource.Create(this.votable, serialization)));
         }
 
         protected override void OnBlockAppended(DataFileBlockBase block)
@@ -229,20 +218,12 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override async Task OnWriteHeaderAsync()
         {
-            // As a header, we write the first HDU now,
-            // because bintables are all just extensions
-
-            // TODO: rewrite to async FITS
-
-            //var hdu = SimpleHdu.Create(votable, true, true, true);
-            //await hdu.WriteHeaderAsync();
-
-            throw new NotImplementedException();
+            await votable.WriteHeaderAsync();
         }
 
-        protected override Task OnWriteFooterAsync()
+        protected override async Task OnWriteFooterAsync()
         {
-            throw new NotImplementedException();
+            await votable.WriteFooterAsync();
         }
 
         #endregion

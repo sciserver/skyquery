@@ -417,7 +417,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override async Task OnWriteHeaderAsync()
         {
-            throw new NotImplementedException();
+            await resource.WriteHeaderAsync();
         }
 
         protected override async Task OnWriteNextRowAsync(object[] values)
@@ -436,7 +436,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override Task OnWriteFooterAsync()
         {
-            throw new NotImplementedException();
+            return resource.WriteFooterAsync();
         }
     }
 }
