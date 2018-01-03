@@ -313,7 +313,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
             ConvertDataTypeToVoTable(databaseColumn, out votabletype, out typeMapping);
 
-            votableColumn = VO.VoTable.VoTableColumn.Create(databaseColumn.ID.ToString(), databaseColumn.Name, votabletype);
+            votableColumn = VO.VoTable.VoTableColumn.Create(resource, databaseColumn.ID.ToString(), databaseColumn.Name, votabletype);
 
             votableColumn.Description = databaseColumn.Metadata.Summary;
             votableColumn.Ucd = databaseColumn.Metadata.Quantity.ToString();
@@ -333,7 +333,7 @@ namespace Jhu.SkyQuery.Format.VoTable
         /// <returns></returns>
         private void ConvertDataTypeToVoTable(Column databaseColumn, out VO.VoTable.VoTableDataType votableType, out TypeMapping typeMapping)
         {
-            // Fits get type mapping
+            // TODO: support more complex mapping here than .Net type to .Net type
             typeMapping = CreateTypeMappingToVoTable(databaseColumn);
 
             Type type;
@@ -348,25 +348,41 @@ namespace Jhu.SkyQuery.Format.VoTable
                 type = typeMapping.To;
             }
 
+            // TODO: implement arrays
             if (type.IsArray)
             {
                 type = type.GetElementType();
                 size = new int[] { databaseColumn.DataType.ByteSize };
             }
 
-            // TODO: this logic needs to be extended if arrays are supported
-            if (databaseColumn.DataType.IsMaxLength)
-            {
-                // This cannot be exported, so limit to a few characters or bytes
-                size = new int[] { 128 };   // *** TODO
-            }
-            else if (databaseColumn.DataType.HasLength)
+            if (databaseColumn.DataType.HasLength)
             {
                 size = new int[] { databaseColumn.DataType.Length };
             }
 
-            // TODO: review this whole function
-            votableType = VO.VoTable.VoTableDataType.Create(type, size, false, databaseColumn.DataType.IsNullable);
+            bool isVariableSize;
+            bool isUnboundSize;
+            bool isNullable;
+
+            if (databaseColumn.DataType.IsMaxLength)
+            {
+                isVariableSize = false;
+                isUnboundSize = true;
+            }
+            else if (databaseColumn.DataType.IsFixedLength)
+            {
+                isVariableSize = false;
+                isUnboundSize = false;
+            }
+            else
+            {
+                isVariableSize = true;
+                isUnboundSize = false;
+            }
+
+            isNullable = databaseColumn.DataType.IsNullable;
+
+            votableType = VO.VoTable.VoTableDataType.Create(type, size, isVariableSize, isUnboundSize, isNullable);
         }
 
         #endregion
@@ -389,6 +405,10 @@ namespace Jhu.SkyQuery.Format.VoTable
         protected override async Task OnReadHeaderAsync()
         {
             await resource.ReadHeaderAsync();
+
+            // TODO: get query status from VOTable
+            // After the header is read, info tags are parsed
+
             ConvertColumnsToDatabase();
         }
 

@@ -381,13 +381,14 @@ namespace Jhu.SkyQuery.Tap.Client
                 // 3. Process output
                 if (job.Phase == TapJobPhase.Completed)
                 {
-                    // TODO: return data reader
                     stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
                     votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read)
                     {
                         GenerateIdentityColumn = false,
                     };
                     reader = new TapDataReader(this, votable);
+
+                    // TODO: get query status from VOTable
 
                     return reader;
                 }

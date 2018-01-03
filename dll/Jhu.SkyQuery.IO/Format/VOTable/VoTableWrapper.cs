@@ -184,6 +184,9 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override Task OnReadHeaderAsync()
         {
+            // TODO: get query status from VOTable
+            // After the header is read, info tags are parsed
+
             return votable.ReadHeaderAsync();
         }
 
