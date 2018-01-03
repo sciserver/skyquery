@@ -93,13 +93,13 @@
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\netvolibs\dll\Jhu.VO\Jhu.VO.csproj">
-      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
-      <Name>Jhu.VO</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\sharpfitsio\src\Jhu.SharpFitsIO\Jhu.SharpFitsIO.csproj">
       <Project>{D9E54B0E-9E09-4E53-95FD-4161F9D61914}</Project>
       <Name>Jhu.SharpFitsIO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
+      <Name>Jhu.VO</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

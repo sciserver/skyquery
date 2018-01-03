@@ -107,7 +107,7 @@
       <Project>{ea6164ba-b283-46c2-874b-348d6bad41ad}</Project>
       <Name>Jhu.Graywulf.Test</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\netvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
       <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
       <Name>Jhu.VO</Name>
     </ProjectReference>
