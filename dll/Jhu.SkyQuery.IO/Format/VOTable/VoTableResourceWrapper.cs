@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Jhu.Graywulf.Schema;
 using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
@@ -20,6 +21,9 @@ namespace Jhu.SkyQuery.Format.VoTable
     [Serializable]
     public class VoTableResourceWrapper : DataFileBlockBase, ICloneable
     {
+        // Parser for .Net standard numeric format strings
+        private static readonly Regex formatStringRegex = new Regex(@"{[0-9]+(?:,([+-]?[0-9]+))?(?::([a-z][0-9]+))?}", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
         #region Private member variables
 
         private VO.VoTable.VoTableResource resource;
@@ -76,10 +80,32 @@ namespace Jhu.SkyQuery.Format.VoTable
         }
 
         #endregion
-        #region Column conversion from FITS to database
+        #region Column conversion from VOTable to database
 
+        private string FormatStringToDotNet(VO.VoTable.VoTableColumn column)
+        {
+            var f = "{0";
+
+            if (!String.IsNullOrEmpty(column.Width))
+            {
+                f += ",";
+                f += (-int.Parse(column.Width)).ToString();
+            }
+
+            if (!String.IsNullOrEmpty(column.Precision))
+            {
+                // TODO: check if VOTable standard is same as .Net
+                f += ":";
+                f += column.Precision;
+            }
+
+            f += "}";
+
+            return f;
+        }
+        
         /// <summary>
-        /// Converts FITS bintable columns into database columns
+        /// Converts VOTable columns into database columns
         /// </summary>
         private void ConvertColumnsToDatabase()
         {
@@ -93,6 +119,7 @@ namespace Jhu.SkyQuery.Format.VoTable
                     Name = resource.Columns[i].Name ?? resource.Columns[i].ID,
                     DataType = ConvertDataTypeToDatabase(resource.Columns[i]),
                     Metadata = ConvertMetadataToDatabase(resource.Columns[i]),
+                    // IsKey = TODO: do we know about key columns in VOTables?
                 };
 
                 cols[i] = col;
@@ -100,7 +127,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
             CreateColumns(cols);
         }
-
+        
         /// <summary>
         /// Converts a VOTable data type to a database data type
         /// </summary>
@@ -158,26 +185,8 @@ namespace Jhu.SkyQuery.Format.VoTable
                 // *** TODO: user unit converter function!
                 // metadata.Unit = Unit.Parse(column.Unit);
             }
-
-            // Convert format
-            var f = "{0";
-
-            if (!String.IsNullOrEmpty(column.Width))
-            {
-                f += ",";
-                f += (-int.Parse(column.Width)).ToString();
-            }
-
-            if (!String.IsNullOrEmpty(column.Precision))
-            {
-                // TODO: check if VOTable standard is same as .Net
-                f += ":";
-                f += column.Precision;
-            }
-
-            f += "}";
-
-            metadata.Format = f;
+            
+            metadata.Format = FormatStringToDotNet(column);
             metadata.Summary = column.Description;
 
             return metadata;
@@ -185,6 +194,26 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         #endregion
         #region Column conversion from database to VOTable
+
+        private void FormatStringToVoTable(Column column, out int width, out string precision)
+        {
+            var m = formatStringRegex.Match(column.Metadata.Format);
+
+            if (m.Success)
+            {
+                if (!Int32.TryParse(m.Groups[1].Value, out width))
+                {
+                    width = 0;
+                }
+
+                precision = m.Groups[2].Value;
+            }
+            else
+            {
+                width = 0;
+                precision = null;
+            }
+        }
 
         /// <summary>
         /// Returns a type mapping from .Net types to FITS types
@@ -318,12 +347,13 @@ namespace Jhu.SkyQuery.Format.VoTable
             votableColumn.Description = databaseColumn.Metadata.Summary;
             votableColumn.Ucd = databaseColumn.Metadata.Quantity.ToString();
             votableColumn.UType = databaseColumn.Metadata.Class;
+            
             // TODO: use unit converter function
             votableColumn.Unit = databaseColumn.Metadata.Unit.ToString();
 
-            // TODO: create form format string
-            // votableColumn.Precision =
-            // votableColumn.Width =
+            FormatStringToVoTable(databaseColumn, out int width, out string precision);
+            votableColumn.Width = width.ToString();
+            votableColumn.Precision = precision;
         }
 
         /// <summary>
@@ -442,7 +472,7 @@ namespace Jhu.SkyQuery.Format.VoTable
 
         protected override async Task OnWriteNextRowAsync(object[] values)
         {
-            // Replace DBNulls with object nulls, as required by the FITS library
+            // Replace DBNulls with object nulls, as required by the VOTable library
             for (int i = 0; i < values.Length; i++)
             {
                 if (values[i] == DBNull.Value)
