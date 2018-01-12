@@ -247,7 +247,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     // Rewrite original table reference to point to
                     // the subquery
-                    ss.QueryExpression.TableReference = tr;
+
+                    // TODO: review this because ResultsTableReference logic
+                    // has changed
+                    ss.QueryExpression.ResultsTableReference = tr;
                     tr.InterpretTableSource(sqts);
 
                     // Replace table source with subquery
