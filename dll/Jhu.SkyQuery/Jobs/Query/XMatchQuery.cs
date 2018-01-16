@@ -97,7 +97,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override void FinishInterpret(bool forceReinitialize)
+        protected override void OnNamesResolved(bool forceReinitialize)
         {
             // TODO: Fix, SelectStatement is likely parsingTree now.
 
