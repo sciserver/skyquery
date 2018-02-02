@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
 using Jhu.Graywulf.Jobs.Query;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.SkyQuery.Parser;
 using Jhu.SkyQuery.Jobs.Query;
 

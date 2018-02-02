@@ -104,10 +104,6 @@
       <Project>{5460db30-cfd9-4edb-a1e8-161a7cc505c5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
-      <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
-      <Name>Jhu.Graywulf.Schema</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.ServiceModel\Jhu.Graywulf.ServiceModel.csproj">
       <Project>{aa744162-dfa0-46bc-be03-20d50dd77806}</Project>
       <Name>Jhu.Graywulf.ServiceModel</Name>

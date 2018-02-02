@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 
 namespace Jhu.SkyQuery.Tap.Client
 {

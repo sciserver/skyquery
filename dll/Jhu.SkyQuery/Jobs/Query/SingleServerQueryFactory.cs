@@ -6,7 +6,7 @@ using System.Activities;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Schema.SqlServer;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.Graywulf.Jobs.Query;
@@ -128,7 +128,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (mydbds != null)
             {
-                query.DefaultDataset = mydbds;
+                query.DefaultSourceDataset = mydbds;
+                query.DefaultOutputDataset = mydbds;
+
                 // Add MyDB as custom source
                 query.CustomDatasets.Add(mydbds);
             }

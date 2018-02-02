@@ -7,7 +7,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Activities;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Scheduler;
 using Jhu.SkyQuery.Jobs.Query;
 
