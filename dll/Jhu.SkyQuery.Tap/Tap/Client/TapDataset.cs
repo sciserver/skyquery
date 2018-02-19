@@ -12,6 +12,8 @@ namespace Jhu.SkyQuery.Tap.Client
 {
     public class TapDataset : Jhu.Graywulf.Schema.DatasetBase
     {
+
+
         #region Private members
 
         #endregion
@@ -35,14 +37,10 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             get
             {
-                // TODO
-                // Do we need this in TAP? no concept of database
-                throw new NotImplementedException();
+                return "";
             }
             set
             {
-                // TODO
-                throw new NotImplementedException();
             }
         }
 
@@ -176,9 +174,51 @@ namespace Jhu.SkyQuery.Tap.Client
         protected override void OnLoadDatabaseObject<T>(T databaseObject)
         {
             // TODO: load table. TAP supports only tables.
+            string sql;
+            if (typeof(Table) == typeof(Table))
+            {
+                sql =
+@"SELECT schema_name, table_name, description
+FROM tap_schema.tables
+WHERE table_type = 'table' AND table_name = ";
+                sql += databaseObject.DisplayName;
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
 
-            throw new NotImplementedException();
+            using (var cn = OpenConnectionInternal())
+            {
+                using (var cmd = new TapCommand(sql, cn))
+                {
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var schemaname = dr.GetString(0);
+                            var tablename = dr.GetString(1);
+
+                            if (tablename.StartsWith(schemaname + "."))
+                            {
+                                tablename = tablename.Substring(1 + schemaname.Length);
+                            }
+
+                            databaseObject.Dataset = this;
+                            databaseObject.DatabaseName = DatabaseName;
+                            databaseObject.SchemaName = schemaname;
+                            databaseObject.ObjectName = tablename;
+                            databaseObject.ObjectType = DatabaseObjectType.Table;
+
+                            databaseObject.Metadata.Summary = dr.GetString(2);
+                        }
+                    }
+                }
+            }
         }
+
+
+
 
         protected override bool OnIsObjectExisting(DatabaseObject databaseObject)
         {
@@ -190,18 +230,121 @@ namespace Jhu.SkyQuery.Tap.Client
         protected override IEnumerable<KeyValuePair<string, T>> OnLoadAllObjects<T>()
         {
             // TODO: load all tables
+            string sql;
 
-            throw new NotImplementedException();
+            if (typeof(T) == typeof(Table))
+            {
+                sql = 
+@"SELECT schema_name, table_name, description
+FROM tap_schema.tables
+WHERE table_type = 'table'";
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            using (var cn = OpenConnectionInternal())
+            {
+                using (var cmd = new TapCommand(sql, cn))
+                {
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var schemaname = dr.GetString(0);
+                            var tablename = dr.GetString(1);
+
+                            if (tablename.StartsWith(schemaname + "."))
+                            {
+                                tablename = tablename.Substring(1 + schemaname.Length);
+                            }
+
+                            T obj = new T()
+                            {
+                                Dataset = this,
+                                DatabaseName = DatabaseName,
+                                SchemaName = schemaname,
+                                ObjectName = tablename,
+                                ObjectType = DatabaseObjectType.Table,
+                            };
+
+                            // No support in TAP
+                            // obj.Metadata.DateCreated = dr.GetDateTime(3).ToUniversalTime();
+                            // obj.Metadata.DateModified = dr.GetDateTime(4).ToUniversalTime();
+
+                            obj.Metadata.Summary = dr.GetString(2);
+
+                            yield return new KeyValuePair<string, T>(GetObjectUniqueKey(obj), obj);
+                        }
+                    }
+                }
+            }
         }
+
 
         protected override IEnumerable<KeyValuePair<string, Column>> OnLoadColumns(DatabaseObject databaseObject)
         {
             // TODO: load columns of the given table
+            string sql;
+            if (typeof(Column) == typeof(Column))
+            {
+                sql =
+@"SELECT  table_name, column_name, description, unit, ucd, utype, datatype, size, principal, indexed, std
+FROM tap_schema.columns
+WHERE table_name = '";
+                sql += databaseObject.ObjectName +"'";
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+
+            using (var cn = OpenConnectionInternal())
+            {
+                using (var cmd = new TapCommand(sql, cn))
+                {
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            var tablename =dr.GetString(0);
+                            var columnname = dr.GetString(1);
+                            var description = dr.GetString(2);
+                            var unit = dr.GetString(3);
+                            var ucd = dr.GetString(4);
+                            var utype = dr.GetString(5);
+                            var datatype = dr.GetString(6);
+                            var size = dr.GetInt32(7);
+                            var principal = dr.GetInt32(8);
+                            var indexed = dr.GetInt32(9);
+                            var std = dr.GetInt32(10);
+                            
+                            var c = new Column()
+                            {
+                                ColumnName = columnname,
+                            };
+//                            databaseObject.ObjectName = columnname;
+//                            databaseObject.Metadata.Summary = description;
+
+                            c.Metadata.Summary = description;
+                            c.Metadata.Unit = Unit.Parse(unit);
+                            c.Metadata.Quantity = Quantity.Parse(ucd);
+                            c.Metadata.Class = utype;
+                            c.DataType = DataTypes.Char;
+
+                            // TODO: size, principal, indexed, std
+
+                            yield return new KeyValuePair<string, Column>(c.Name, c);
+                        }
+                    }
+                }
+            }
             // TODO: how to get primary key information?
 
-            throw new NotImplementedException();
+//            throw new NotImplementedException();
         }
-
+  
         protected override IEnumerable<KeyValuePair<string, Index>> OnLoadIndexes(DatabaseObject databaseObject)
         {
             // TODO: TAP doesn't support querying indices. Fail or do nothing?
@@ -237,7 +380,7 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             // TODO: How to get table metadata from TAP? Does INFORMATION_SCHEMA have it?
 
-            throw new NotImplementedException();
+            return new DatabaseObjectMetadata();
         }
 
         protected override void OnDropDatabaseObjectMetadata(DatabaseObject databaseObject)

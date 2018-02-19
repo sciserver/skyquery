@@ -22,6 +22,12 @@ namespace Jhu.SkyQuery.Tap.Client
         private const string testQueryGaia = " SELECT TOP 10 ra, dec FROM gaiadr1.tgas_source";
         private const string testQueryEmpty = " SELECT TOP 20  \"J/ApJ/678/102/table4\".\"S/N\",  \"J/ApJ/678/102/table4\".OID, \"J/ApJ/678/102/table4\".f_OID,  \"J/ApJ/678/102/table4\".Off,  \"J/ApJ/678/102/table4\".Type,  \"J/ApJ/678/102/table4\".Cat,  \"J/ApJ/678/102/table4\".n_Cat,  \"J/ApJ/678/102/table4\".Ref FROM \"J/ApJ/678/102/table4\"" ;
 
+        private const string connectionStringAbellClusters = "Data Source: https://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=abell";
+        private const string testQueryAbellClusters = " SELECT TOP 10";
+
+        private const string connectionStringVstars = "Data Source=https://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/getvotable.pl?name=abell";
+        private const string testQueryVstars = "";
+
         [TestMethod]
         public void ExecuteReaderTest()
         {
@@ -60,6 +66,25 @@ namespace Jhu.SkyQuery.Tap.Client
                         // Read one row only, then dispose
                         dr.Read();
                         Assert.AreEqual(2, dr.FieldCount);
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
+        public void InterruptReaderTestVstars()
+        {
+            using (var cn = new TapConnection(connectionStringVstars))
+            {
+                cn.Open();
+
+                using (var cmd = new TapCommand(testQueryVstars, cn))
+                {
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        // Read one row only, then dispose
+                        dr.Read();
+//                        Assert.AreEqual(2, dr.FieldCount);
                     }
                 }
             }
@@ -228,6 +253,8 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
             }
         }
+
+   
         // TODO: add test:
         // - read data with all possible column types 
         // int, short,long, float, double, char(-string) already tested

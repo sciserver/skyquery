@@ -94,9 +94,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{abb4c403-720a-47e1-9485-cfaadd696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Logging\Jhu.Graywulf.Logging.csproj">
       <Project>{fd98fb58-a3e5-4d32-b6d6-3e20609c4d09}</Project>
       <Name>Jhu.Graywulf.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
+      <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
+      <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Logging.Test\Jhu.Graywulf.Logging.Test.csproj">
       <Project>{d152dc9a-004c-4851-b0e7-b81a4325c9b7}</Project>
@@ -106,7 +114,7 @@
       <Project>{ea6164ba-b283-46c2-874b-348d6bad41ad}</Project>
       <Name>Jhu.Graywulf.Test</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+    <ProjectReference Include="..\..\..\netvolibs\dll\Jhu.VO\Jhu.VO.csproj">
       <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
       <Name>Jhu.VO</Name>
     </ProjectReference>

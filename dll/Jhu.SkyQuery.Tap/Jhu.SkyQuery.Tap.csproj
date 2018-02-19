@@ -128,7 +128,7 @@
       <Project>{5868b518-cbfc-43fb-b9c8-c617a65121c4}</Project>
       <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+    <ProjectReference Include="..\..\..\netvolibs\dll\Jhu.VO\Jhu.VO.csproj">
       <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
       <Name>Jhu.VO</Name>
     </ProjectReference>
