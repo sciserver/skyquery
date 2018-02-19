@@ -83,12 +83,19 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tap\Client\Constants.cs" />
+    <Compile Include="Tap\Client\TapClientGaiaTest.cs" />
+    <Compile Include="Tap\Client\TapCommandHeasarcTest.cs" />
+    <Compile Include="Tap\Client\TapClientHeasarcTest.cs" />
     <Compile Include="Tap\Client\TapClientVizierTest.cs" />
+    <Compile Include="Tap\Client\TapCommandGaiaTest.cs" />
+    <Compile Include="Tap\Client\TapCommandVizierTest.cs" />
     <Compile Include="Tap\Client\TapConnectionTest.cs" />
     <Compile Include="Tap\Client\TapCommandTest.cs" />
     <Compile Include="Tap\Client\TapClientTest.cs" />
     <Compile Include="Tap\Client\TapConnectionVizierTest.cs" />
     <Compile Include="Tap\Client\TapDatasetTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetGaiaTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetVizierTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

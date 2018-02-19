@@ -180,8 +180,14 @@ namespace Jhu.SkyQuery.Tap.Client
                 sql =
 @"SELECT schema_name, table_name, description
 FROM tap_schema.tables
-WHERE table_type = 'table' AND table_name = ";
-                sql += databaseObject.DisplayName;
+WHERE table_type = 'table'";
+
+                if (!String.IsNullOrWhiteSpace(databaseObject.SchemaName))
+                {
+                    sql += String.Format(" AND schema_name = '{0}'", databaseObject.SchemaName);
+                }
+
+                sql += String.Format(" AND table_name = '{0}'", databaseObject.ObjectName);
             }
             else
             {
