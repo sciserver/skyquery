@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Base.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
