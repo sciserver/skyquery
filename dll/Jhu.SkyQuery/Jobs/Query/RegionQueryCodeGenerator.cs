@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
@@ -247,7 +247,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     // Rewrite original table reference to point to
                     // the subquery
-                    ss.QueryExpression.TableReference = tr;
+
+                    // TODO: review this because ResultsTableReference logic
+                    // has changed
+                    ss.QueryExpression.ResultsTableReference = tr;
                     tr.InterpretTableSource(sqts);
 
                     // Replace table source with subquery

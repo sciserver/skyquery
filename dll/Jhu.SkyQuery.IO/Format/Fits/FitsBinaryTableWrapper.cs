@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.SharpFitsIO;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
 using System.Threading.Tasks;
@@ -203,28 +203,28 @@ namespace Jhu.SkyQuery.Format.Fits
                     }
                 };
             }
-            else if (column.DataType.Type == typeof(Jhu.Graywulf.Schema.SingleComplex))
+            else if (column.DataType.Type == typeof(Jhu.Graywulf.Sql.Schema.SingleComplex))
             {
                 return new TypeMapping()
                 {
-                    From = typeof(Jhu.Graywulf.Schema.SingleComplex),
+                    From = typeof(Jhu.Graywulf.Sql.Schema.SingleComplex),
                     To = typeof(Jhu.SharpFitsIO.SingleComplex),
                     Mapping = delegate(object value)
                     {
-                        var s = (Jhu.Graywulf.Schema.SingleComplex)value;
+                        var s = (Jhu.Graywulf.Sql.Schema.SingleComplex)value;
                         return new Jhu.SharpFitsIO.SingleComplex(s.A, s.B);
                     }
                 };
             }
-            else if (column.DataType.Type == typeof(Jhu.Graywulf.Schema.DoubleComplex))
+            else if (column.DataType.Type == typeof(Jhu.Graywulf.Sql.Schema.DoubleComplex))
             {
                 return new TypeMapping()
                 {
-                    From = typeof(Jhu.Graywulf.Schema.DoubleComplex),
+                    From = typeof(Jhu.Graywulf.Sql.Schema.DoubleComplex),
                     To = typeof(Jhu.SharpFitsIO.DoubleComplex),
                     Mapping = delegate(object value)
                     {
-                        var s = (Jhu.Graywulf.Schema.DoubleComplex)value;
+                        var s = (Jhu.Graywulf.Sql.Schema.DoubleComplex)value;
                         return new Jhu.SharpFitsIO.DoubleComplex(s.A, s.B);
                     }
                 };

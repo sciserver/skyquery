@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
-    public class TapDataset : Jhu.Graywulf.Schema.DatasetBase
+    public class TapDataset : Jhu.Graywulf.Sql.Schema.DatasetBase
     {
 
 
@@ -98,7 +98,7 @@ namespace Jhu.SkyQuery.Tap.Client
         private void InitializeMembers(StreamingContext context)
         {
             // TODO: default schema name?
-            this.DefaultSchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName;
+            this.DefaultSchemaName = Jhu.Graywulf.Sql.Schema.SqlServer.Constants.DefaultSchemaName;
         }
 
         /// <summary>

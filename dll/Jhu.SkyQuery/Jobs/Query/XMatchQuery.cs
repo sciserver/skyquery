@@ -6,7 +6,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Jobs.Query;
 using gw = Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Tasks;
@@ -97,7 +97,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override void FinishInterpret(bool forceReinitialize)
+        protected override void OnNamesResolved(bool forceReinitialize)
         {
             // TODO: Fix, SelectStatement is likely parsingTree now.
 
@@ -140,7 +140,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return res;
         }
 
-        public override void CollectTablesForStatistics()
+        public override void IdentifyTablesForStatistics()
         {
             // TODO: upgrade
 

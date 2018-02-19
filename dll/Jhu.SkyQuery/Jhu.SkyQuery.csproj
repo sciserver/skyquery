@@ -133,6 +133,7 @@
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTable.sql" />
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTableHtm.sql" />
     <Content Include="Jobs\Query\XMatchResources\ComputeMinMaxError.sql" />
+    <None Include="app.config" />
     <None Include="Jobs\Query\XMatchResources\CreateZoneTable.sql" />
     <Content Include="Jobs\Query\XMatchResources\PopulateLinkTable.sql" />
     <None Include="Jobs\Query\XMatchResources\PopulateZoneTable.sql" />
@@ -190,10 +191,6 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.RemoteService\Jhu.Graywulf.RemoteService.csproj">
       <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
-      <Project>{5868B518-CBFC-43FB-B9C8-C617A65121C4}</Project>
-      <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
