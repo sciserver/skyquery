@@ -132,6 +132,10 @@
       <Project>{3c9ea0e6-dad6-4f6e-bfba-f24cfc8e2a66}</Project>
       <Name>Jhu.Graywulf.Web.Test</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
+      <Name>Jhu.VO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>
       <Name>Jhu.SkyQuery.IO</Name>

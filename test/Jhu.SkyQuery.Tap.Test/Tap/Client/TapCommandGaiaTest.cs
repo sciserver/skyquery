@@ -53,7 +53,6 @@ namespace Jhu.SkyQuery.Tap.Client
 FROM gaiadr1.tgas_source ",
                 2,
                 20);
-        //Üres elemnél megáll. (Már a 3. sorban)
         }
 
         [TestMethod]

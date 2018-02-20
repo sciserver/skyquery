@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VOTABLE version="1.3" xmlns="http://www.ivoa.net/xml/VOTable/v1.3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.3 http://www.ivoa.net/xml/VOTable/v1.3">
+<RESOURCE type="results">
+<INFO name="QUERY_STATUS" value="OK"/>
+<INFO name="PROVIDER" value="ARI (Astronomisches Rechen Institut - Heidelberg, Germany)">ARI's TAP access to the Gaia Archive.</INFO>
+<INFO name="QUERY" value="SELECT  &quot;table_name&quot;, &quot;column_name&quot;, &quot;description&quot;, &quot;unit&quot;, &quot;ucd&quot;, &quot;utype&quot;, &quot;datatype&quot;, &quot;size&quot;, &quot;principal&quot;, &quot;indexed&quot;, &quot;std&quot;
+FROM tap_schema.columns
+WHERE &quot;table_name&quot; = 'twomass'"/>
+<TABLE>
+<FIELD arraysize="*" datatype="char" name="table_name">
+<DESCRIPTION>table name from TAP_SCHEMA.tables</DESCRIPTION>
+</FIELD>
+<FIELD arraysize="*" datatype="char" name="column_name">
+<DESCRIPTION>column name</DESCRIPTION>
+</FIELD>
+<FIELD arraysize="*" datatype="char" name="description">
+<DESCRIPTION>brief description of column</DESCRIPTION>
+</FIELD>
+<FIELD arraysize="*" datatype="char" name="unit">
+<DESCRIPTION>unit in VO standard format</DESCRIPTION>
+</FIELD>
+<FIELD arraysize="*" datatype="char" name="ucd">
+<DESCRIPTION>UCD of column if any</DESCRIPTION>
+</FIELD>
+<FIELD arraysize="*" datatype="char" name="utype">
+<DESCRIPTION>UTYPE of column if any</DESCRIPTION>
+</FIELD>
+<FIELD arraysize="*" datatype="char" name="datatype">
+<DESCRIPTION>an XType or a TAPType</DESCRIPTION>
+</FIELD>
+<FIELD datatype="int" name="size">
+<DESCRIPTION>same as "arraysize" but kept for backward compatibility only</DESCRIPTION>
+</FIELD>
+<FIELD datatype="int" name="principal">
+<DESCRIPTION>a principal column; 1 means true, 0 means false</DESCRIPTION>
+</FIELD>
+<FIELD datatype="int" name="indexed">
+<DESCRIPTION>an indexed column; 1 means true, 0 means false</DESCRIPTION>
+</FIELD>
+<FIELD datatype="int" name="std">
+<DESCRIPTION>a standard column; 1 means true, 0 means false</DESCRIPTION>
+</FIELD>
+<DATA>
+<TABLEDATA>
+  <TR>
+    <TD>twomass</TD>
+    <TD>edgeew</TD>
+    <TD>Distance from the source to the nearest East or West scan edge</TD>
+    <TD>deg</TD>
+    <TD>pos;arith.diff</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>edgens</TD>
+    <TD>Distance from the source to the nearest North or South scan edge</TD>
+    <TD>deg</TD>
+    <TD>pos;arith.diff</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>e_hmag</TD>
+    <TD>2MASS H total magnitude uncertainty</TD>
+    <TD>mag</TD>
+    <TD>stat.error;phot.mag;em.IR.H</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>e_jmag</TD>
+    <TD>2MASS J total magnitude uncertainty</TD>
+    <TD>mag</TD>
+    <TD>stat.error;phot.mag;em.IR.J</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>e_kmag</TD>
+    <TD>2MASS K_s total magnitude uncertainty</TD>
+    <TD>mag</TD>
+    <TD>stat.error;phot.mag;em.IR.K</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>errmin</TD>
+    <TD>Minor axis of position error ellipse</TD>
+    <TD>deg</TD>
+    <TD>stat.error;pos.eq</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>errpa</TD>
+    <TD>Position angle of error ellipse major axis (E of N)</TD>
+    <TD>deg</TD>
+    <TD>stat.error;pos.eq</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>hcmsig</TD>
+    <TD>H default magnitude uncertainty</TD>
+    <TD>mag</TD>
+    <TD>stat.error;phot.mag;em.IR.H</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>hsnr</TD>
+    <TD>H Signal-to-noise ratio</TD>
+    <TD></TD>
+    <TD>stat.snr;phot.mag;em.IR.H</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>jcmsig</TD>
+    <TD>J default magnitude uncertainty</TD>
+    <TD>mag</TD>
+    <TD>stat.error;phot.mag;em.IR.J</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>jmag</TD>
+    <TD>2MASS J magnitude</TD>
+    <TD>mag</TD>
+    <TD>phot.mag;em.IR.J</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>jsnr</TD>
+    <TD>J Signal-to-noise ratio</TD>
+    <TD></TD>
+    <TD>stat.snr;phot.mag;em.IR.J</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>kcmsig</TD>
+    <TD>magnitude uncertainty</TD>
+    <TD>mag</TD>
+    <TD>stat.error;phot.mag;em.IR.K</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>kmag</TD>
+    <TD>2MASS K_s magnitude</TD>
+    <TD>mag</TD>
+    <TD>phot.mag;em.IR.K</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>ksnr</TD>
+    <TD>K Signal-to-noise ratio</TD>
+    <TD></TD>
+    <TD>stat.snr;phot.mag;em.IR.K</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>xscan</TD>
+    <TD>Distance of source from focal plane centerline</TD>
+    <TD>deg</TD>
+    <TD>pos.cartesian;instr.det</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>bflg</TD>
+    <TD>JHK blend flag</TD>
+    <TD></TD>
+    <TD>meta.code</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>3</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>cflg</TD>
+    <TD>Contamination and confusion flag</TD>
+    <TD></TD>
+    <TD>meta.code</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>3</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>aflg</TD>
+    <TD>Association with asteroid or comet</TD>
+    <TD></TD>
+    <TD>meta.code</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>3</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>edge</TD>
+    <TD>flag indicating to which edges the edgeNS and edgeEW values refer</TD>
+    <TD></TD>
+    <TD>pos.cartesian;instr.det</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>2</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>dup</TD>
+    <TD>Flag indicating duplicate source</TD>
+    <TD></TD>
+    <TD>meta.code</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>errmaj</TD>
+    <TD>Major axis of position error ellipse</TD>
+    <TD>deg</TD>
+    <TD>stat.error;pos.eq</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>jd</TD>
+    <TD>Julian date of detection</TD>
+    <TD>d</TD>
+    <TD>time.epoch</TD>
+    <TD></TD>
+    <TD>TIMESTAMP</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>pts_key</TD>
+    <TD>Unique source identifier in catalogue</TD>
+    <TD></TD>
+    <TD>meta.id;meta.table</TD>
+    <TD></TD>
+    <TD>BIGINT</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>qflg</TD>
+    <TD>JHK photometric quality flag</TD>
+    <TD></TD>
+    <TD>meta.code.qual;phot</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>3</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>rflg</TD>
+    <TD>JHK default magnitude read flag</TD>
+    <TD></TD>
+    <TD>meta.ref</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>3</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>scan</TD>
+    <TD>Scan number (within date)</TD>
+    <TD></TD>
+    <TD>obs.field</TD>
+    <TD></TD>
+    <TD>SMALLINT</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>use_src</TD>
+    <TD>Use source flag</TD>
+    <TD></TD>
+    <TD>meta.code</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>xflg</TD>
+    <TD>Extended source contamination</TD>
+    <TD></TD>
+    <TD>meta.code</TD>
+    <TD></TD>
+    <TD>CHAR</TD>
+    <TD>3</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>mainid</TD>
+    <TD>Source designation</TD>
+    <TD></TD>
+    <TD>meta.id;meta.main</TD>
+    <TD></TD>
+    <TD>VARCHAR</TD>
+    <TD>-1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>hmag</TD>
+    <TD>2MASS H magnitude</TD>
+    <TD>mag</TD>
+    <TD>phot.mag;em.IR.H</TD>
+    <TD></TD>
+    <TD>REAL</TD>
+    <TD>-1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>"date"</TD>
+    <TD>Observation date</TD>
+    <TD>yr</TD>
+    <TD>time.epoch;obs</TD>
+    <TD></TD>
+    <TD>TIMESTAMP</TD>
+    <TD>-1</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>dej2000</TD>
+    <TD>Declination (J2000)</TD>
+    <TD>deg</TD>
+    <TD>pos.eq.dec;meta.main</TD>
+    <TD></TD>
+    <TD>DOUBLE</TD>
+    <TD>-1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+  <TR>
+    <TD>twomass</TD>
+    <TD>raj2000</TD>
+    <TD>Right ascension (J2000)</TD>
+    <TD>deg</TD>
+    <TD>pos.eq.ra;meta.main</TD>
+    <TD></TD>
+    <TD>DOUBLE</TD>
+    <TD>-1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>0</TD>
+  </TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>
