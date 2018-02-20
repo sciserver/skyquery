@@ -42,6 +42,7 @@ namespace Jhu.SkyQuery.Tap.Client
             var t = ds.Tables["", "extcat", "twomass"];
             Assert.IsTrue(t.Columns.Count > 0);
             Assert.AreEqual(t.Columns.Count, 34);
+            //utype-nál nincs benne elem és emiatt megáll
         }
     }
 }

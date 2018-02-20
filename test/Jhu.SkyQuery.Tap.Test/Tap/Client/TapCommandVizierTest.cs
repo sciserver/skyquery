@@ -49,17 +49,22 @@ namespace Jhu.SkyQuery.Tap.Client
         public void EmptyElementReaderTest()
         {
             ExecuteReaderTestHelper(
-                "SELECT TOP 20  \"J/ApJ/678/102/table4\".\"S/N\",  \"J/ApJ/678/102/table4\".OID, \"J/ApJ/678/102/table4\".f_OID,  \"J/ApJ/678/102/table4\".Off,  \"J/ApJ/678/102/table4\".Type,  \"J/ApJ/678/102/table4\".Cat,  \"J/ApJ/678/102/table4\".n_Cat,  \"J/ApJ/678/102/table4\".Ref FROM \"J/ApJ/678/102/table4\"",
+@"SELECT TOP 20  ""J/ApJ/678/102/table4"".""S/N"",  ""J/ApJ/678/102/table4"".OID, ""J/ApJ/678/102/table4"".f_OID,
+""J/ApJ/678/102/table4"".Off,  ""J/ApJ/678/102/table4"".Type,  ""J/ApJ/678/102/table4"".Cat,  
+""J/ApJ/678/102/table4"".n_Cat,  ""J/ApJ/678/102/table4"".Ref FROM ""J/ApJ/678/102/table4"" ",
                 8,
                 20);
+            //Van egy üres sor, ahol nincsenek elemek és ott elvágódik
         }
 
         [TestMethod]
         public void AllTypeDataTest()
         {
-            // TODO: write a query that returns columns with different data types
-            // ExecuteReaderTestHelper();
-            throw new NotImplementedException();
+            InterruptReaderTestHelper(
+@"SELECT TOP 100 ""I/239/hip_main"".""(V-I)red"", ""I/239/hip_main"".""r_B-V"", ""I/239/hip_main"".BD, ""I/239/hip_main"".F1,
+""I/239/hip_main"".HD, ""I/239/hip_main"".SpType
+ FROM ""I/239/hip_main""", 6);
+            // Only returns double, char(1), char(10), smallint, int, varchar;
         }
 
         // TODO: add test:

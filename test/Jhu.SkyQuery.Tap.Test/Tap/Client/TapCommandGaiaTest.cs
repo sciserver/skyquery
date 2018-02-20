@@ -48,13 +48,20 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public void EmptyElementReaderTest()
         {
-            throw new NotImplementedException();
+            ExecuteReaderTestHelper(
+@"SELECT TOP 20 ""source_id"", ""tycho2_id""
+FROM gaiadr1.tgas_source ",
+                2,
+                20);
+        //Üres elemnél megáll. (Már a 3. sorban)
         }
 
         [TestMethod]
         public void AllTypeDataTest()
         {
-            throw new NotImplementedException();
+            InterruptReaderTestHelper(
+@"SELECT TOP 10 ""source_id"", ""ra"",""astrometric_delta_q"", ""astrometric_n_bad_obs_al"",  ""matched_observations"" ,""tycho2_id""
+FROM gaiadr1.tgas_source", 6);
         }
 
         // TODO: implement all test with different queries as in vizier

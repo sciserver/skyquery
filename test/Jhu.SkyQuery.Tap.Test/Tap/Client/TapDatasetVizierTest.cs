@@ -43,7 +43,7 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             var ds = CreateTestDataset();
 
-            var t = ds.Tables["", "", "'J/AJ/144/129/refs'"];
+            var t = ds.Tables["", "", "J/AJ/144/129/refs"];
             Assert.IsTrue(t.Columns.Count > 0);
             Assert.AreEqual(5, t.Columns.Count);
             Assert.AreEqual("J/AJ/144/129/refs", t.ObjectName);
@@ -55,16 +55,11 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             var ds = CreateTestDataset();
 
-            var t = ds.Tables["", "", "'J/ApJ/678/102/table4'"];
+            var t = ds.Tables["", "", "J/ApJ/678/102/table4"];
             Assert.IsTrue(t.Columns.Count > 0);
             Assert.AreEqual(t.Columns.Count, 16);
             Assert.AreEqual(t.Columns["Ref"].Metadata.Summary, "Reference code for XRT position (4)");
             Assert.AreEqual(t.Columns["Type"].Metadata.Summary, "Source type");
-            //          Assert.AreEqual(t.Columns["Type"].Metadata.Unit, "" );
-            //Assert.AreEqual(t.Columns["Type"].Metadata.Quantity ,  "src.class");
-            //            Assert.AreEqual(t.Columns["Type"].Metadata.Class, "" );
-            Assert.AreEqual(t.ObjectName, "Ref");
-            Assert.AreEqual(t.Metadata.Summary, "Reference code for XRT position (4)");
         }
 
         /*

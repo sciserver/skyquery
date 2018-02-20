@@ -178,16 +178,16 @@ namespace Jhu.SkyQuery.Tap.Client
             if (typeof(Table) == typeof(Table))
             {
                 sql =
-@"SELECT schema_name, table_name, description
+@"SELECT ""schema_name"", ""table_name"", ""description""
 FROM tap_schema.tables
-WHERE table_type = 'table'";
+WHERE ""table_type"" = 'table'";
 
                 if (!String.IsNullOrWhiteSpace(databaseObject.SchemaName))
                 {
-                    sql += String.Format(" AND schema_name = '{0}'", databaseObject.SchemaName);
+                    sql += String.Format(" AND \"schema_name\" = '{0}'", databaseObject.SchemaName);
                 }
 
-                sql += String.Format(" AND table_name = '{0}'", databaseObject.ObjectName);
+                sql += String.Format(" AND \"table_name\" = '{0}'", databaseObject.ObjectName);
             }
             else
             {
@@ -241,9 +241,9 @@ WHERE table_type = 'table'";
             if (typeof(T) == typeof(Table))
             {
                 sql = 
-@"SELECT schema_name, table_name, description
+@"SELECT ""schema_name"", ""table_name"", ""description""
 FROM tap_schema.tables
-WHERE table_type = 'table'";
+WHERE ""table_type"" = 'table'";
             }
             else
             {
@@ -296,9 +296,9 @@ WHERE table_type = 'table'";
             if (typeof(Column) == typeof(Column))
             {
                 sql =
-@"SELECT  table_name, column_name, description, unit, ucd, utype, datatype, size, principal, indexed, std
+@"SELECT  ""table_name"", ""column_name"", ""description"", ""unit"", ""ucd"", ""utype"", ""datatype"", ""size"", ""principal"", ""indexed"", ""std""
 FROM tap_schema.columns
-WHERE table_name = '";
+WHERE ""table_name"" = '";
                 sql += databaseObject.ObjectName +"'";
             }
             else
@@ -330,8 +330,6 @@ WHERE table_name = '";
                             {
                                 ColumnName = columnname,
                             };
-//                            databaseObject.ObjectName = columnname;
-//                            databaseObject.Metadata.Summary = description;
 
                             c.Metadata.Summary = description;
                             c.Metadata.Unit = Unit.Parse(unit);
@@ -347,8 +345,6 @@ WHERE table_name = '";
                 }
             }
             // TODO: how to get primary key information?
-
-//            throw new NotImplementedException();
         }
   
         protected override IEnumerable<KeyValuePair<string, Index>> OnLoadIndexes(DatabaseObject databaseObject)

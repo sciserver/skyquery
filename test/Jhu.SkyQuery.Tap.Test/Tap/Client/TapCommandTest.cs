@@ -49,7 +49,7 @@ namespace Jhu.SkyQuery.Tap.Client
                     {
                         // Read one row only, then dispose
                         dr.Read();
-                        Assert.AreEqual(2, dr.FieldCount);
+                        Assert.AreEqual(fieldCount , dr.FieldCount);
                     }
                 }
             }
