@@ -93,6 +93,12 @@
     <Compile Include="Tap\Client\TapCommandTest.cs" />
     <Compile Include="Tap\Client\TapClientTest.cs" />
     <Compile Include="Tap\Client\TapConnectionVizierTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetAadcTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetCadcTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetGavoTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetHeasarcTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetNoaoTest.cs" />
+    <Compile Include="Tap\Client\TapDatasetSkymapperTest.cs" />
     <Compile Include="Tap\Client\TapDatasetTest.cs" />
     <Compile Include="Tap\Client\TapDatasetGaiaTest.cs" />
     <Compile Include="Tap\Client\TapDatasetVizierTest.cs" />

@@ -17,7 +17,19 @@ namespace Jhu.SkyQuery.Tap.Client
         public const string TapBaseUrlHeasarc = "https://heasarc.gsfc.nasa.gov/cgi-bin/W3Browse/";
         public const string TapConnectionStringHeasarc = "Data Source=" + TapBaseUrlHeasarc;
 
-        //private const string connectionString = "Data Source = http://dc.zah.uni-heidelberg.de/__system__/tap/run/tap/";
-        //private const string connectionString = "Data Source=http://gaia.ari.uni-heidelberg.de/tap/";
+        public const string TapBaseUrlGavo = "http://dc.zah.uni-heidelberg.de/__system__/tap/run/tap/";
+        public const string TapConnectionStringGavo = "Data Source=" + TapBaseUrlGavo;
+
+        public const string TapBaseUrlCadc = "http://www.cadc-ccda.hia-iha.nrc-cnrc.gc.ca/tap/";
+        public const string TapConnectionStringCadc = "Data Source=" + TapBaseUrlCadc;
+
+        public const string TapBaseUrlAadc = "http://vo.phys.au.dk/__system__/tap/run/tap/";
+        public const string TapConnectionStringAadc = "Data Source=" + TapBaseUrlAadc;
+
+        public const string TapBaseUrlSkymapper = "http://skymappertap.asvo.nci.org.au/ncitap/tap/";
+        public const string TapConnectionStringSkymapper = "Data Source=" + TapBaseUrlSkymapper;
+
+        public const string TapBaseUrlNoao = "http://datalab.noao.edu/tap";
+        public const string TapConnectionStringNoao = "Data Source=" + TapBaseUrlNoao;
     }
 }
