@@ -54,7 +54,6 @@ namespace Jhu.SkyQuery.Tap.Client
 ""J/ApJ/678/102/table4"".n_Cat,  ""J/ApJ/678/102/table4"".Ref FROM ""J/ApJ/678/102/table4"" ",
                 8,
                 20);
-            //Van egy üres sor, ahol nincsenek elemek és ott elvágódik
         }
 
         [TestMethod]

@@ -314,17 +314,17 @@ WHERE ""table_name"" = '";
                     {
                         while (dr.Read())
                         {
-                            var tablename =dr.GetString(0);
-                            var columnname = dr.GetString(1);
-                            var description = dr.GetString(2);
-                            var unit = dr.GetString(3);
-                            var ucd = dr.GetString(4);
-                            var utype = dr.GetString(5);
-                            var datatype = dr.GetString(6);
-                            var size = dr.GetInt32(7);
-                            var principal = dr.GetInt32(8);
-                            var indexed = dr.GetInt32(9);
-                            var std = dr.GetInt32(10);
+                            var tablename = dr.IsDBNull(0) ? null : dr.GetString(0);
+                            var columnname = dr.IsDBNull(1) ? null : dr.GetString(1);
+                            var description = dr.IsDBNull(2) ? null : dr.GetString(2);
+                            var unit = dr.IsDBNull(3) ? null : dr.GetString(3);
+                            var ucd = dr.IsDBNull(4) ? null : dr.GetString(4);
+                            var utype = dr.IsDBNull(5) ? null : dr.GetString(5);
+                            var datatype = dr.IsDBNull(6) ? null : dr.GetString(6);
+                            var size = dr.IsDBNull(7) ? -1 : dr.GetInt32(7);
+                            var principal = dr.IsDBNull(8) ? 0 : dr.GetInt32(8);
+                            var indexed = dr.IsDBNull(9) ? 0 : dr.GetInt32(9);
+                            var std = dr.IsDBNull(10) ? 0 : dr.GetInt32(10);
                             
                             var c = new Column()
                             {

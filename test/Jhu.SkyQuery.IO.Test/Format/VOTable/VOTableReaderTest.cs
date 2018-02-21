@@ -244,6 +244,7 @@ namespace Jhu.SkyQuery.Format.VoTable
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Jhu.VO.VoTable.VoTableException))]
         public void EverythingTest()
         {
             var dr = OpenSimpleReader("votable_everything.xml");
@@ -284,6 +285,19 @@ namespace Jhu.SkyQuery.Format.VoTable
         }
 
         [TestMethod]
+        public void ReadVOTableNullsTest()
+        {
+            var testfile = @"tap_votable\votable_nulls.xml";
+            var gt = new object[][]
+            {
+                new object[] { "twomass", "edgeew", "Distance from the source to the nearest East or West scan edge", "deg", "pos;arith.diff", "", "REAL", -1, 0, 0,  0 }
+            };
+
+            VoTableReaderTestHelper(testfile, 34, 1, gt);
+            VoTableInterruptReaderTestHelper(testfile);
+        }
+
+        [TestMethod]
         public void ReadVOTableBinaryTest()
         {
             var testfile = @"tap_votable\votable_binary.xml";
@@ -306,6 +320,19 @@ namespace Jhu.SkyQuery.Format.VoTable
             };
 
             VoTableReaderTestHelper(testfile, 10, 1, gt);
+            VoTableInterruptReaderTestHelper(testfile);
+        }
+
+        [TestMethod]
+        public void ReadVOTableBinary2NullsTest()
+        {
+            var testfile = @"tap_votable\votable_binary2_nulls.xml";
+            var gt = new object[][]
+            {
+                new object[] { "twomass", "edgeew", "Distance from the source to the nearest East or West scan edge", "deg", "pos;arith.diff", DBNull.Value, "REAL", -1, 0, 0,  0 }
+            };
+
+            VoTableReaderTestHelper(testfile, 34, 1, gt);
             VoTableInterruptReaderTestHelper(testfile);
         }
     }
