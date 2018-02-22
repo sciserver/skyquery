@@ -350,7 +350,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            return ExecuteDbDataReaderAsync(behavior, CancellationToken.None).Result;
+            return Jhu.Graywulf.Util.TaskHelper.Wait(ExecuteDbDataReaderAsync(behavior, CancellationToken.None));
         }
 
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)

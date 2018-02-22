@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Xml.Schema;
 using Jhu.Graywulf.Util;
 
 namespace Jhu.SkyQuery.Tap.Client
@@ -97,9 +98,15 @@ namespace Jhu.SkyQuery.Tap.Client
 
             var result = await httpClient.PostAsync(address, content, cancellationToken);
 
+            if (500 <= (int)result.StatusCode && (int)result.StatusCode < 600)
+            {
+                var body = await result.Content.ReadAsStringAsync();
+                throw Error.ServiceError(result.StatusCode, result.ReasonPhrase, body);
+            }
             if (result.StatusCode != expectedStatus)
             {
-                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase);
+                var body = await result.Content.ReadAsStringAsync();
+                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
             }
 
             return result;
@@ -113,7 +120,8 @@ namespace Jhu.SkyQuery.Tap.Client
 
             if (result.StatusCode != expectedStatus)
             {
-                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase);
+                var body = await result.Content.ReadAsStringAsync();
+                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
             }
 
             return await result.Content.ReadAsStringAsync();
@@ -127,7 +135,8 @@ namespace Jhu.SkyQuery.Tap.Client
 
             if (result.StatusCode != expectedStatus)
             {
-                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase);
+                var body = await result.Content.ReadAsStringAsync();
+                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
             }
 
             return await result.Content.ReadAsStreamAsync();
@@ -136,19 +145,34 @@ namespace Jhu.SkyQuery.Tap.Client
         private async Task<XmlReader> HttpGetXmlReaderAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
         {
             var stream = await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
-            var xml = XmlReader.Create(stream);
-            return xml;
+            var settings = new XmlReaderSettings()
+            {
+                Async = true,
+                // Schemas  ... TODO: add schema cache?
+                // XmlResolver 
+            };
+
+            var xml = XmlReader.Create(stream, settings);
+            return new VO.VoXmlReader(xml);
         }
 
         private async Task<T> HttpGetObject<T>(Uri address, CancellationToken cancellationToken)
         {
             using (var reader = await HttpGetXmlReaderAsync(address, HttpStatusCode.OK, cancellationToken))
             {
-                var s = new XmlSerializer(typeof(T));
-                return (T)s.Deserialize(reader);
+                try
+                {
+                    var s = new XmlSerializer(typeof(T));
+                    var obj = (T)s.Deserialize(reader);
+                    return obj;
+                }
+                catch (XmlException ex)
+                {
+                    throw Error.DeserializationException(ex);
+                }
             }
         }
-
+        
         public async Task<VO.Vosi.Availability.V1_0.Availability> GetAvailabilityAsync(CancellationToken cancellationToken)
         {
             if (availability == null)

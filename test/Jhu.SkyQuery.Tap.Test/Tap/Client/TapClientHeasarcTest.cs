@@ -18,6 +18,29 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
-        // TODO: implement test similar to vizier
+        [TestMethod]
+        public void GetAvailabilityTest()
+        {
+            var avail = GetAvailabilityTestHelper();
+        }
+
+        [TestMethod]
+        public void GetCapabilitiesTest()
+        {
+            var cap = GetCapabilitiesTestHelper();
+        }
+
+        [TestMethod]
+        public void GetBestFormatMimeType()
+        {
+            var mime = GetBestFormatMimeTypeTestHelper();
+            Assert.AreEqual("text/xml", mime);
+        }
+
+        [TestMethod]
+        public void SubmitQueryAsyncTest()
+        {
+            SubmitQueryAsyncTestHelper("SELECT TOP 10 ra, dec FROM \"I/337/gaia\"", "text/xml");
+        }
     }
 }

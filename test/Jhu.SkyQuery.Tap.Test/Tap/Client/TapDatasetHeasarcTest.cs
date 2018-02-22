@@ -19,6 +19,8 @@ namespace Jhu.SkyQuery.Tap.Client
         [TestMethod]
         public async Task OpenConnectionTest()
         {
+            // NASA service provides wrong URL for TAPRegExt schema
+
             await CreateTestDataset().OpenConnectionAsync(CancellationToken.None);
         }
 

@@ -26,9 +26,14 @@ namespace Jhu.SkyQuery.Tap.Client
             return new InvalidOperationException(ExceptionMessages.ConnectionNotOpen);
         }
 
-        public static TapException UnexpectedHttpResponse(HttpStatusCode statusCode, string message)
+        public static TapException UnexpectedHttpResponse(HttpStatusCode statusCode, string message, string body)
         {
-            return new TapException(String.Format(ExceptionMessages.UnexpectedHttpResponse, (int)statusCode, message));
+            return new TapException(String.Format(ExceptionMessages.UnexpectedHttpResponse, (int)statusCode, message, body));
+        }
+
+        public static TapException ServiceError(HttpStatusCode statusCode, string message, string body)
+        {
+            return new TapException(String.Format(ExceptionMessages.ServiceError, (int)statusCode, message, body));
         }
 
         public static TapException UnexpectedPhase(string phase)
@@ -80,6 +85,11 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             var ex = new TapException(String.Format(ExceptionMessages.ServiceNotAvailable, avail.Note));
             return ex;
+        }
+        
+        public static TapException DeserializationException(System.Xml.XmlException ex)
+        {
+            return new TapException(ExceptionMessages.DeserializationException, ex);
         }
     }
 }
