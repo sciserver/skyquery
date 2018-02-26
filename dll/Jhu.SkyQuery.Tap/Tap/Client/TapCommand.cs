@@ -33,6 +33,9 @@ namespace Jhu.SkyQuery.Tap.Client
         private int commandTimeout;
         private CommandType commandType;
 
+        private bool isAsync;
+        private TimeSpan destruction;
+
         private bool designTimeVisible;
         private UpdateRowSource updateRowSource;
 
@@ -142,6 +145,18 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
+        public bool IsAsync
+        {
+            get { return isAsync; }
+            set { isAsync = value; }
+        }
+
+        public TimeSpan Destruction
+        {
+            get { return destruction; }
+            set { destruction = value; }
+        }
+
         public override bool DesignTimeVisible
         {
             get { return designTimeVisible; }
@@ -187,6 +202,9 @@ namespace Jhu.SkyQuery.Tap.Client
             this.commandTimeout = Constants.DefaultCommandTimeout;
             this.commandType = CommandType.Text;
 
+            this.isAsync = true;
+            this.destruction = TimeSpan.FromDays(2);
+
             this.designTimeVisible = false;
             this.updateRowSource = UpdateRowSource.None;
 
@@ -221,7 +239,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
             base.Dispose(disposing);
         }
-        
+
         #endregion
         #region Validation functions
 
@@ -310,12 +328,9 @@ namespace Jhu.SkyQuery.Tap.Client
                 Query = commandText,
                 Language = queryLanguage,
                 Format = mime,
+                Destruction = DateTime.UtcNow + destruction,
+                IsAsync = isAsync
             };
-            
-            if (commandTimeout != 0)
-            {
-                job.Destruction = DateTime.Now.AddSeconds(commandTimeout);
-            }
 
             return job;
         }
@@ -362,54 +377,62 @@ namespace Jhu.SkyQuery.Tap.Client
             // CommandBehavior.KeyInfo (can TAP give back key info?)
 
             var job = CreateTapJob();
+
+            // Create source that will be used to cancel async http calls
             cancellationRegistration = RegisterCancellation(cancellationToken);
-            connection.Client.PollTimeout = TimeSpan.FromSeconds(commandTimeout);
+            cancellationSource = new CancellationTokenSource();
 
             try
             {
-                // Create source that will be used to cancel async http calls
-                cancellationSource = new CancellationTokenSource();
-
                 // 1. Submit job
                 state = TapCommandState.Submitting;
-                await connection.Client.SubmitAsync(job, cancellationSource.Token);
+                connection.Client.PollTimeout = TimeSpan.FromSeconds(commandTimeout);
+                var result = await connection.Client.SubmitAsync(job, cancellationSource.Token);
 
-                // 2. Poll status
-                state = TapCommandState.Executing;
-                await connection.Client.PollAsync(job, new[] { TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
-
-                // 3. Process output
-                if (job.Phase == TapJobPhase.Completed)
+                if (!isAsync)
                 {
-                    stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
-                    votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read)
-                    {
-                        GenerateIdentityColumn = false,
-                    };
-                    reader = new TapDataReader(this, votable);
-
-                    // TODO: get query status from VOTable
-
-                    return reader;
-                }
-                else if (job.Phase == TapJobPhase.Aborted)
-                {
-                    throw Error.CommandCancelled();
-                }
-                else if (job.Phase == TapJobPhase.Error)
-                {
-                    stream = await connection.Client.GetErrorAsync(job, cancellationSource.Token);
-                    votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read);
-
-                    // TODO: read error document, parse VOTable and report error
-                    // TODO: throw TAP exception with message from server
-
-                    throw new TapException();
+                    stream = await result.Content.ReadAsStreamAsync();
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    // 2. Poll status
+                    state = TapCommandState.Executing;
+                    await connection.Client.PollAsync(job, new[] { TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
+
+                    // 3. Process output
+                    if (job.Phase == TapJobPhase.Completed)
+                    {
+                        stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
+                    }
+                    else if (job.Phase == TapJobPhase.Aborted)
+                    {
+                        throw Error.CommandCancelled();
+                    }
+                    else if (job.Phase == TapJobPhase.Error)
+                    {
+                        stream = await connection.Client.GetErrorAsync(job, cancellationSource.Token);
+                        votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read);
+
+                        // TODO: read error document, parse VOTable and report error
+                        // TODO: throw TAP exception with message from server
+
+                        throw new TapException();
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
+
+                votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read)
+                {
+                    GenerateIdentityColumn = false,
+                };
+                reader = new TapDataReader(this, votable);
+
+                // TODO: get query status from VOTable
+
+                return reader;
             }
             catch (TapException)
             {
@@ -427,6 +450,5 @@ namespace Jhu.SkyQuery.Tap.Client
                 throw Error.CommunicationException(ex);
             }
         }
-        
     }
 }

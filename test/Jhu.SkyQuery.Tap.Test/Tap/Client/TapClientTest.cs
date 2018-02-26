@@ -12,23 +12,23 @@ namespace Jhu.SkyQuery.Tap.Client
     {
         protected abstract Uri BaseUri { get; }
 
-        protected VO.Vosi.Availability.V1_0.Availability GetAvailabilityTestHelper()
+        protected VO.Vosi.Availability.Common.IAvailability GetAvailabilityTestHelper()
         {
             using (var tap = new TapClient(BaseUri))
             {
-                return tap.GetAvailabilityAsync(CancellationToken.None).Result;
+                return Jhu.Graywulf.Util.TaskHelper.Wait(tap.GetAvailabilityAsync(CancellationToken.None));
             }
         }
 
-        protected VO.Vosi.Capabilities.V1_0.Capabilities GetCapabilitiesTestHelper()
+        protected VO.Vosi.Capabilities.Common.ICapabilities GetCapabilitiesTestHelper()
         {
             using (var tap = new TapClient(BaseUri))
             {
-                return tap.GetCapabilitiesAsync(CancellationToken.None).Result;
+                return Jhu.Graywulf.Util.TaskHelper.Wait(tap.GetCapabilitiesAsync(CancellationToken.None));
             }
         }
 
-        protected void SubmitQueryAsyncTestHelper(string query, string format)
+        protected async Task SubmitQueryAsyncTestHelper(string query, string format)
         {
             using (var tap = new TapClient(BaseUri))
             {
@@ -38,10 +38,28 @@ namespace Jhu.SkyQuery.Tap.Client
                     Format = format,
                 };
 
-                tap.SubmitAsync(job, CancellationToken.None).Wait();
-                tap.PollAsync(job, new[] { TapJobPhase.Completed }, null, CancellationToken.None).Wait();
+                await tap.SubmitAsync(job, CancellationToken.None);
+                await tap.PollAsync(job, new[] { TapJobPhase.Completed }, null, CancellationToken.None);
+                
+                var stream = await tap.GetResultsAsync(job, CancellationToken.None);
+                var reader = new System.IO.StreamReader(stream);
+                var data = reader.ReadToEnd();
+            }
+        }
 
-                var stream = tap.GetResultsAsync(job, CancellationToken.None).Result;
+        protected async Task SubmitQuerySyncTestHelper(string query, string format)
+        {
+            using (var tap = new TapClient(BaseUri))
+            {
+                var job = new TapJob()
+                {
+                    Query = query,
+                    Format = format,
+                    IsAsync = false,
+                };
+
+                var result = await tap.SubmitAsync(job, CancellationToken.None);
+                var stream = await result.Content.ReadAsStreamAsync();
                 var reader = new System.IO.StreamReader(stream);
                 var data = reader.ReadToEnd();
             }

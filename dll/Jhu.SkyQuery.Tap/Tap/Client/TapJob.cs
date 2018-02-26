@@ -19,6 +19,7 @@ namespace Jhu.SkyQuery.Tap.Client
         private DateTime destruction;
         private string error;
         private Uri uri;
+        private bool isAsync;
 
         public string Query
         {
@@ -86,6 +87,12 @@ namespace Jhu.SkyQuery.Tap.Client
             set { uri = value; }
         }
 
+        public bool IsAsync
+        {
+            get { return isAsync; }
+            set { isAsync = value; }
+        }
+
         public TapJob()
         {
             InitializeMembers();
@@ -109,7 +116,7 @@ namespace Jhu.SkyQuery.Tap.Client
             this.destruction = DateTime.MinValue;
             this.error = null;
             this.uri = null;
-            
+            this.isAsync = true;
         }
 
         private void CopyMembers(TapJob old)
@@ -125,6 +132,7 @@ namespace Jhu.SkyQuery.Tap.Client
             this.destruction = old.destruction;
             this.error = old.error;
             this.uri = old.uri;
+            this.isAsync = old.isAsync;
         }
 
         public Dictionary<string, string> GetSubmitRequestParameters()
@@ -143,10 +151,10 @@ namespace Jhu.SkyQuery.Tap.Client
                 parameters.Add(Constants.TapParamTermination, ((int)duration.TotalSeconds).ToString());
             }
 
-            if (destruction != DateTime.MinValue)
+            /*if (destruction != DateTime.MinValue)
             {
                 parameters.Add(Constants.TapParamDestruction, destruction.ToString(Constants.TapDateFormat));
-            }
+            }*/
 
             return parameters;
         }

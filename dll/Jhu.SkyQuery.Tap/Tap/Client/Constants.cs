@@ -9,7 +9,7 @@ namespace Jhu.SkyQuery.Tap.Client
     class Constants
     {
         public const int DefaultConnectionTimeout = 30;
-        public const int DefaultCommandTimeout = 30;
+        public const int DefaultCommandTimeout = 1200;      // Pumped up to support slow TAP services
         public const int DefaultHttpTimeout = 30;
         public const int DefaultPollTimeout = 120;
 
@@ -28,6 +28,7 @@ namespace Jhu.SkyQuery.Tap.Client
         public const string TapParamTermination = "TERMINATION";
         public const string TapParamDestruction = "DESTRUCTION";
 
+        public const string TapActionSync = "sync";
         public const string TapActionAsync = "async";
         public const string TapActionAsyncPhase = "phase";
         public const string TapActionAsyncQuote = "quote";

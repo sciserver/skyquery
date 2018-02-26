@@ -38,6 +38,7 @@ namespace Jhu.SkyQuery.Tap.Client
     public enum TapJobPhase
     {
         Unknown,
+        Pending,
         Queued,
         Executing,
         Completed,

@@ -147,6 +147,16 @@ namespace Jhu.SkyQuery.Tap.Client
             return await OpenConnectionInternalAsync(cancellationToken);
         }
 
+        private TapCommand CreateSchemaCommand(string sql, TapConnection cn)
+        {
+            var cmd = new TapCommand(sql, cn)
+            {
+                IsAsync = false
+            };
+
+            return cmd;
+        }
+
         #region Fully resolved names and keys
 
         public override string QuoteIdentifier(string identifier)
@@ -196,7 +206,7 @@ WHERE ""table_type"" = 'table'";
 
             using (var cn = OpenConnectionInternal())
             {
-                using (var cmd = new TapCommand(sql, cn))
+                using (var cmd = CreateSchemaCommand(sql, cn))
                 {
                     using (var dr = cmd.ExecuteReader())
                     {
@@ -252,7 +262,7 @@ WHERE ""table_type"" = 'table'";
 
             using (var cn = OpenConnectionInternal())
             {
-                using (var cmd = new TapCommand(sql, cn))
+                using (var cmd = CreateSchemaCommand(sql, cn))
                 {
                     using (var dr = cmd.ExecuteReader())
                     {
@@ -308,7 +318,7 @@ WHERE ""table_name"" = '";
 
             using (var cn = OpenConnectionInternal())
             {
-                using (var cmd = new TapCommand(sql, cn))
+                using (var cmd = CreateSchemaCommand(sql, cn))
                 {
                     using (var dr = cmd.ExecuteReader())
                     {

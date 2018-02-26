@@ -39,9 +39,15 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
         [TestMethod]
-        public void SubmitQueryAsyncTest()
+        public async Task SubmitQueryAsyncTest()
         {
-            SubmitQueryAsyncTestHelper("SELECT TOP 10 ra, dec FROM \"I/337/gaia\"", "text/xml");
+            await SubmitQueryAsyncTestHelper("SELECT TOP 10 ra, dec FROM \"I/337/gaia\"", "text/xml");
+        }
+
+        [TestMethod]
+        public async Task SubmitQuerySyncTest()
+        {
+            await SubmitQuerySyncTestHelper("SELECT TOP 10 ra, dec FROM \"I/337/gaia\"", "text/xml");
         }
     }
 }

@@ -15,14 +15,16 @@ namespace Jhu.SkyQuery.Tap.Client
 {
     public class TapClient : IDisposable
     {
+        public static readonly StringComparer Comparer = StringComparer.InvariantCultureIgnoreCase;
+
         private Uri baseAddress;
         private TimeSpan httpTimeout;
         private TimeSpan pollTimeout;
 
         private HttpClient httpClient;
 
-        private VO.Vosi.Availability.V1_0.Availability availability;
-        private VO.Vosi.Capabilities.V1_0.Capabilities capabilities;
+        private VO.Vosi.Availability.Common.IAvailability availability;
+        private VO.Vosi.Capabilities.Common.ICapabilities capabilities;
 
         public Uri BaseAddress
         {
@@ -172,8 +174,8 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
             }
         }
-        
-        public async Task<VO.Vosi.Availability.V1_0.Availability> GetAvailabilityAsync(CancellationToken cancellationToken)
+
+        public async Task<VO.Vosi.Availability.Common.IAvailability> GetAvailabilityAsync(CancellationToken cancellationToken)
         {
             if (availability == null)
             {
@@ -184,7 +186,7 @@ namespace Jhu.SkyQuery.Tap.Client
             return availability;
         }
 
-        public async Task<VO.Vosi.Capabilities.V1_0.Capabilities> GetCapabilitiesAsync(CancellationToken cancellationToken)
+        public async Task<VO.Vosi.Capabilities.Common.ICapabilities> GetCapabilitiesAsync(CancellationToken cancellationToken)
         {
             if (capabilities == null)
             {
@@ -206,16 +208,35 @@ namespace Jhu.SkyQuery.Tap.Client
             throw new NotImplementedException();
         }
 
-        public async Task SubmitAsync(TapJob job, CancellationToken cancellationToken)
+        public async Task<HttpResponseMessage> SubmitAsync(TapJob job, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
+            string action;
+            HttpStatusCode expectedStatus;
+
+            if (job.IsAsync)
+            {
+                action = Constants.TapActionAsync;
+                expectedStatus = HttpStatusCode.RedirectMethod;
+            }
+            else
+            {
+                action = Constants.TapActionSync;
+                expectedStatus = HttpStatusCode.OK;
+            }
+
             var parameters = job.GetSubmitRequestParameters();
             var content = new FormUrlEncodedContent(parameters);
-            var address = UriConverter.Combine(baseAddress, Constants.TapActionAsync);
-            var result = await HttpPostAsync(address, content, HttpStatusCode.RedirectMethod, cancellationToken);
+            var address = UriConverter.Combine(baseAddress, action);
+            var result = await HttpPostAsync(address, content, expectedStatus, cancellationToken);
 
-            job.Uri = result.Headers.Location;
+            if (job.IsAsync)
+            {
+                job.Uri = result.Headers.Location;
+            }
+
+            return result;
         }
 
         private async Task GetPhaseAsync(TapJob job, CancellationToken cancellationToken)
@@ -304,26 +325,68 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
             }
 
-
+            throw Error.CommandTimeout();
         }
 
+        #region Feature support logic
+
+        private VO.VoResource.Common.ICapability GetCapability(string standardID)
+        {
+            var cap = capabilities.CapabilityList.FirstOrDefault(i => Comparer.Compare(i.StandardID, standardID) == 0);
+            return cap;
+        }
+
+        private VO.TapRegExt.Common.ITableAccess GetTableAccessCapability()
+        {
+            // TODO: we always pick the first capability though there could be more entry points
+            var cap = GetCapability(VO.Constants.StandardIDTap);
+            return (VO.TapRegExt.Common.ITableAccess)cap;
+        }
+
+        private string GetTapUri()
+        {
+            // TODO: how to select the right access URL
+            //       - prefer one matching connection string
+            //       - prefer https
+            var cap = GetTableAccessCapability();
+            var iface = cap.InterfaceList.FirstOrDefault(i => i is VO.VoDataService.Common.IParamHttp);
+            return iface.AccessUrlList.FirstOrDefault().Value;
+        }
+
+        public bool IsLanguageSupported(string name)
+        {
+            var cap = GetTableAccessCapability();
+            if (cap != null)
+            {
+                var lang = cap.LanguageList.FirstOrDefault(i => Comparer.Compare(name, i) == 0);
+                if (lang != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsSchemaInfoSupported()
+        {
+            var cap = GetCapability(VO.Constants.StandardIDVosiTables);
+            return cap != null;
+        }
+        
+        #endregion
         #region Output format logic
 
         private string GetFormatMimeType(string mime, string alias, string serialization)
         {
-            VO.TapRegExt.V1_0.TableAccess tableAccess = null;
-            VO.TapRegExt.V1_0.OutputFormat outputFormat = null;
-
-            var cq = from c in capabilities.CapabilityList
-                     where c is VO.TapRegExt.V1_0.TableAccess
-                     select (VO.TapRegExt.V1_0.TableAccess)c;
-            tableAccess = cq.FirstOrDefault();
-
+            VO.TapRegExt.Common.ITableAccess tableAccess = GetTableAccessCapability();
+            VO.TapRegExt.Common.IOutputFormat outputFormat = null;
+            
             if (tableAccess != null)
             {
                 var fq = from f in tableAccess.OutputFormatList
                          where
-                            (f.Mime.IndexOf(mime, StringComparison.InvariantCultureIgnoreCase) >= 0  ||
+                            (f.Mime.IndexOf(mime, StringComparison.InvariantCultureIgnoreCase) >= 0 ||
                              f.Alias.FirstOrDefault(a => StringComparer.InvariantCultureIgnoreCase.Compare(alias, a) == 0) != null) &&
                             (serialization == null || f.Mime.IndexOf(serialization, StringComparison.InvariantCultureIgnoreCase) >= 0)
                          select f;
@@ -382,7 +445,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public bool GetBestFormat(out TapOutputFormat format, out string mime)
         {
-            var formats = new[] 
+            var formats = new[]
             {
                 TapOutputFormat.VOTableBinary2,
                 TapOutputFormat.VOTableBinary,
