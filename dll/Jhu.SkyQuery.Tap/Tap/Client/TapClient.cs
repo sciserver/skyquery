@@ -336,11 +336,11 @@ namespace Jhu.SkyQuery.Tap.Client
             return cap;
         }
 
-        private VO.TapRegExt.Common.ITableAccess GetTableAccessCapability()
+        private VO.VoResource.Common.ICapability GetTableAccessCapability()
         {
-            // TODO: we always pick the first capability though there could be more entry points
+            // TODO: we always pick the first matching capability though there could be more entry points
             var cap = GetCapability(VO.Constants.StandardIDTap);
-            return (VO.TapRegExt.Common.ITableAccess)cap;
+            return cap;
         }
 
         private string GetTapUri()
@@ -355,7 +355,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public bool IsLanguageSupported(string name)
         {
-            var cap = GetTableAccessCapability();
+            var cap = GetTableAccessCapability() as VO.TapRegExt.Common.ITableAccess;
             if (cap != null)
             {
                 var lang = cap.LanguageList.FirstOrDefault(i => Comparer.Compare(name, i) == 0);
@@ -379,7 +379,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private string GetFormatMimeType(string mime, string alias, string serialization)
         {
-            VO.TapRegExt.Common.ITableAccess tableAccess = GetTableAccessCapability();
+            var tableAccess = GetTableAccessCapability() as VO.TapRegExt.Common.ITableAccess;
             VO.TapRegExt.Common.IOutputFormat outputFormat = null;
             
             if (tableAccess != null)
@@ -465,8 +465,9 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
             }
 
-            format = TapOutputFormat.None;
-            mime = null;
+            // Fall-back to default if format list is not available
+            format = TapOutputFormat.VOTable;
+            mime = Constants.TapMimeVoTable;
             return false;
         }
 

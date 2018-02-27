@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Tap.Client
         public void GetBestFormatMimeType()
         {
             var mime = GetBestFormatMimeTypeTestHelper();
-            Assert.AreEqual("text/xml", mime);
+            Assert.AreEqual("application/x-votable+xml", mime);
         }
 
         [TestMethod]

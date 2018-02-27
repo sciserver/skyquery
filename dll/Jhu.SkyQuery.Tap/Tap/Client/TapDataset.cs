@@ -215,10 +215,6 @@ WHERE ""table_type"" = 'table'";
                             var schemaname = dr.GetString(0);
                             var tablename = dr.GetString(1);
 
-                            if (tablename.StartsWith(schemaname + "."))
-                            {
-                                tablename = tablename.Substring(1 + schemaname.Length);
-                            }
 
                             databaseObject.Dataset = this;
                             databaseObject.DatabaseName = DatabaseName;
@@ -302,20 +298,13 @@ WHERE ""table_type"" = 'table'";
         protected override IEnumerable<KeyValuePair<string, Column>> OnLoadColumns(DatabaseObject databaseObject)
         {
             // TODO: load columns of the given table
-            string sql;
-            if (typeof(Column) == typeof(Column))
-            {
-                sql =
+            string sql =
 @"SELECT  ""table_name"", ""column_name"", ""description"", ""unit"", ""ucd"", ""utype"", ""datatype"", ""size"", ""principal"", ""indexed"", ""std""
 FROM tap_schema.columns
-WHERE ""table_name"" = '";
-                sql += databaseObject.ObjectName +"'";
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+WHERE ""table_name"" = '{0}'";
 
+            sql = String.Format(sql, databaseObject.ObjectName);
+            
             using (var cn = OpenConnectionInternal())
             {
                 using (var cmd = CreateSchemaCommand(sql, cn))

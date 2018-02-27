@@ -424,10 +424,11 @@ namespace Jhu.SkyQuery.Tap.Client
                     }
                 }
 
-                votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read)
+                votable = new VoTableWrapper()
                 {
                     GenerateIdentityColumn = false,
                 };
+                await votable.OpenAsync(stream, Graywulf.IO.DataFileMode.Read);
                 reader = new TapDataReader(this, votable);
 
                 // TODO: get query status from VOTable

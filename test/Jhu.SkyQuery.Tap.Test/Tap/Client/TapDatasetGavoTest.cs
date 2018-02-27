@@ -34,9 +34,8 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             var ds = CreateTestDataset();
 
-            var t = ds.Tables["", "ohmaser", "masers"];
+            var t = ds.Tables["", "", "ohmaser.masers"];
             Assert.IsTrue(t.Columns.Count > 0);
-
         }
     }
 }
