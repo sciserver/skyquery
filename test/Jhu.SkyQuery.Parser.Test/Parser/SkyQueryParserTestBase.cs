@@ -39,7 +39,8 @@ namespace Jhu.SkyQuery.Parser
             {
                 return new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator()
                 {
-                    ResolveNames = true
+                    //ResolveNames = true
+                    // TODO: use *Rendering properties
                 };
             }
         }

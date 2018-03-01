@@ -96,7 +96,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var q = f.CreateQuery(query);
             q.Verify();
 
-            q.DumpSql = dumpSql;
+            q.Parameters.DumpSql = dumpSql;
 
             // Create a workflow
             var wf = f.GetAsWorkflow(q);

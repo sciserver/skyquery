@@ -44,7 +44,8 @@ namespace Jhu.SkyQuery.Parser
         private string GenerateCode(QuerySpecification qs)
         {
             var cg = new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator();
-            cg.ResolveNames = true;
+            //cg.ResolveNames = true;
+            // TODO: use *Rendering properties
 
             var sw = new StringWriter();
             cg.Execute(sw, qs);

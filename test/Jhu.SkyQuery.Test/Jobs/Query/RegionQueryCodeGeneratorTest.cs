@@ -8,7 +8,7 @@ using System.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.Sql.Schema;
 using Jhu.SkyQuery.Parser;
 using Jhu.SkyQuery.Jobs.Query;
@@ -36,12 +36,13 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 return new RegionQueryCodeGenerator()
                 {
-                    CodeDataset = new Graywulf.Schema.SqlServer.SqlServerDataset()
+                    CodeDataset = new Jhu.Graywulf.Sql.Schema.SqlServer.SqlServerDataset()
                     {
                         Name = "CODE",
                         ConnectionString = "data source=localhost;initial catalog=SkyQuery_Code",
                     },
-                    ResolveNames = true,
+                    //ResolveNames = true,
+                    // TODO: use *Rendering properties
                 };
             }
         }
@@ -93,7 +94,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             return CodeGenerator.Execute(ss);
         }
 
-        private Graywulf.IO.Tasks.SourceTableQuery GetExecuteQueryTestHelper(string sql)
+        private Graywulf.IO.Tasks.SourceQuery GetExecuteQueryTestHelper(string sql)
         {
             // TODO: upgrade
 

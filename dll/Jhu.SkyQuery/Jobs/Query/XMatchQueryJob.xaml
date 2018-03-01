@@ -98,7 +98,7 @@
               </Sequence.Variables>
               <jgsjq:AssignServerInstance EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="AssignServerInstance_2" JobInfo="[JobInfo]" QueryObject="[queryPartition]" />
               <jgsjq:IdentifyRemoteSourceTables sap2010:WorkflowViewState.IdRef="IdentifyRemoteSourceTables_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <jgsjq:IdentifyRemoteOutputTables JobInfo="{x:Null}" QueryPartition="{x:Null}" sap2010:WorkflowViewState.IdRef="IdentifyRemoteOutputTables_1" />
+              <jgsjq:IdentifyRemoteOutputTables JobInfo="[JobInfo]" QueryPartition="[queryPartition]" sap2010:WorkflowViewState.IdRef="IdentifyRemoteOutputTables_1" />
               <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_2" Values="[queryPartition.RemoteSourceTables.Keys]">
                 <ActivityAction x:TypeArguments="x:String">
                   <ActivityAction.Argument>
@@ -123,7 +123,7 @@
                 </ActivityAction>
               </ForEach>
               <jgsjq:ExecuteQuery sap2010:WorkflowViewState.IdRef="ExecuteQuery_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;">
+              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" Values="[queryPartition.RemoteOutputTables.Keys]">
                 <ActivityAction x:TypeArguments="x:String">
                   <ActivityAction.Argument>
                     <DelegateInArgument x:TypeArguments="x:String" Name="tableKey" />

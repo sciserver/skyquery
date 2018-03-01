@@ -97,10 +97,6 @@
       <Project>{6797ED88-1D8C-491B-A036-4C42C4BF2EAF}</Project>
       <Name>Jhu.Graywulf.IO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
-      <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
-      <Name>Jhu.Graywulf.Jobs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Logging\Jhu.Graywulf.Logging.csproj">
       <Project>{fd98fb58-a3e5-4d32-b6d6-3e20609c4d09}</Project>
       <Name>Jhu.Graywulf.Logging</Name>
@@ -121,6 +117,10 @@
       <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql.Jobs\Jhu.Graywulf.Sql.Jobs.csproj">
+      <Project>{08789ba4-645a-4980-9fdb-15aae7be7754}</Project>
+      <Name>Jhu.Graywulf.Sql.Jobs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
@@ -129,13 +129,13 @@
       <Project>{975ee996-a41b-4c73-8562-e2b2035e8899}</Project>
       <Name>Jhu.Graywulf.Web.Api</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Jobs.Test\Jhu.Graywulf.Jobs.Test.csproj">
-      <Project>{ecc46a31-4d61-4c1e-b9f6-6f1b97809fb1}</Project>
-      <Name>Jhu.Graywulf.Jobs.Test</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Logging.Test\Jhu.Graywulf.Logging.Test.csproj">
       <Project>{d152dc9a-004c-4851-b0e7-b81a4325c9b7}</Project>
       <Name>Jhu.Graywulf.Logging.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Sql.Jobs.Test\Jhu.Graywulf.Sql.Jobs.Test.csproj">
+      <Project>{7246a5aa-c488-4cb6-adc3-5f85d8bbc04b}</Project>
+      <Name>Jhu.Graywulf.Sql.Jobs.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\GrayWulf\Test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>

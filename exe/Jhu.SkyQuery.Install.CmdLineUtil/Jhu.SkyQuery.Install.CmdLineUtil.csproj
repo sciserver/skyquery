@@ -113,10 +113,6 @@
       <Project>{AC357A2C-5388-4D7F-B1AF-C78D9BF8326C}</Project>
       <Name>Jhu.Graywulf.Install</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
-      <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
-      <Name>Jhu.Graywulf.Jobs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Logging\Jhu.Graywulf.Logging.csproj">
       <Project>{FD98FB58-A3E5-4D32-B6D6-3E20609C4D09}</Project>
       <Name>Jhu.Graywulf.Logging</Name>
@@ -128,6 +124,10 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.RemoteService\Jhu.Graywulf.RemoteService.csproj">
       <Project>{5460DB30-CFD9-4EDB-A1E8-161A7CC505C5}</Project>
       <Name>Jhu.Graywulf.RemoteService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql.Jobs\Jhu.Graywulf.Sql.Jobs.csproj">
+      <Project>{08789ba4-645a-4980-9fdb-15aae7be7754}</Project>
+      <Name>Jhu.Graywulf.Sql.Jobs</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Web\Jhu.Graywulf.Web.csproj">
       <Project>{E9D182CF-746E-4E40-B01C-74A32FB70749}</Project>

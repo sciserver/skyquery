@@ -5,12 +5,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
@@ -24,7 +24,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             {
                 return new XMatchQueryCodeGenerator()
                 {
-                    CodeDataset = new Graywulf.Schema.SqlServer.SqlServerDataset()
+                    CodeDataset = new Jhu.Graywulf.Sql.Schema.SqlServer.SqlServerDataset()
                     {
                         Name = "CODE",
                         ConnectionString = "data source=localhost;initial catalog=SkyQuery_Code",

@@ -123,10 +123,6 @@
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Jobs\Jhu.Graywulf.Jobs.csproj">
-      <Project>{2BD2D467-D003-468D-9B97-83DDC6F2ED78}</Project>
-      <Name>Jhu.Graywulf.Jobs</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Logging\Jhu.Graywulf.Logging.csproj">
       <Project>{FD98FB58-A3E5-4D32-B6D6-3E20609C4D09}</Project>
       <Name>Jhu.Graywulf.Logging</Name>
@@ -147,6 +143,10 @@
       <Project>{94ab6a2e-6877-4fed-87e2-1f9f17622f43}</Project>
       <Name>Jhu.Graywulf.Scheduler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql.Jobs\Jhu.Graywulf.Sql.Jobs.csproj">
+      <Project>{08789ba4-645a-4980-9fdb-15aae7be7754}</Project>
+      <Name>Jhu.Graywulf.Sql.Jobs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
@@ -156,7 +156,7 @@
       <Name>Jhu.SkyQuery.Parser</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
-      <Project>{2887F181-7F61-4DF5-BD89-2800503D5F84}</Project>
+      <Project>{2887f181-7f61-4df5-bd89-2800503d5f84}</Project>
       <Name>Jhu.SkyQuery</Name>
     </ProjectReference>
   </ItemGroup>
