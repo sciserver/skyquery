@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;

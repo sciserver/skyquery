@@ -8,7 +8,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using gw = Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Tasks;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query

@@ -13,9 +13,9 @@ namespace Jhu.SkyQuery.CodeGen
 {
     public class SkyQueryCodeGenerator : SqlServerCodeGenerator
     {
-        public override SqlColumnListGeneratorBase CreateColumnListGenerator(TableReference table, ColumnContext columnContext, ColumnListType listType)
+        public override ColumnListGeneratorBase CreateColumnListGenerator()
         {
-            return new SkyQueryColumnListGenerator(table, columnContext, listType);
+            return new SkyQueryColumnListGenerator();
         }
 
         public static new string QuoteIdentifier(string identifier)

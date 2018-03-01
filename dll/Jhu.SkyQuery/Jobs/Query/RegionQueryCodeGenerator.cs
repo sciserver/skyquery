@@ -9,14 +9,14 @@ using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-    public class RegionQueryCodeGenerator : Jhu.Graywulf.Jobs.Query.SqlQueryCodeGenerator
+    public class RegionQueryCodeGenerator : Jhu.Graywulf.Sql.Jobs.Query.SqlQueryCodeGenerator
     {
         #region Constants
 
@@ -67,11 +67,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="selectStatement"></param>
         /// <returns></returns>
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.Sql.Parsing.SelectStatement selectStatement)
+        protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
-            if (!(selectStatement is RegionSelectStatement))
+            throw new NotImplementedException();
+
+            /* TODO: modify to use QueryDetails
+            if (!(query is RegionSelectStatement))
             {
-                return base.OnGetExecuteQuery(selectStatement);
+                return base.OnGetExecuteQuery(query);
             }
 
             var regions = new List<Region>();
@@ -110,6 +113,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             return source;
+            */
         }
 
         /// <summary>
@@ -213,6 +217,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void AppendRegionJoinsAndConditions(TableSource tableSource, int qsi, ref int tsi)
         {
+            throw new NotImplementedException();
+
+            /*
             // Descend on table sources and append htm constraint to each of them
             var rts = tableSource.FindDescendant<TableSource>();
             if (rts != null)
@@ -267,6 +274,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     qs.AppendSearchCondition(sc, "AND");
                 }
             }
+            */
         }
 
         private Jhu.Graywulf.Sql.Parsing.QuerySpecification GenerateHtmJoinTableQuerySpecification(CoordinatesTableSource ts, int qsi, bool partial)
@@ -412,6 +420,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <returns></returns>
         protected virtual StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
         {
+            throw new NotImplementedException();
+
+            /*
             StringBuilder sql;
 
             var coords = options.Table.Coordinates;
@@ -514,6 +525,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             SubstituteAugmentedTableColumns(sql, options);
 
             return sql;
+            */
         }
 
         protected virtual void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
@@ -522,9 +534,13 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void SubstituteHtmId(StringBuilder sql, TableCoordinates coords)
         {
+            throw new NotImplementedException();
+
+            /*
             var htmex = GetHtmIdExpression(coords);
             SubstituteSystemDatabaseNames(htmex);
             sql.Replace("[$htmid]", Execute(htmex));
+            */
         }
 
         #endregion
@@ -861,7 +877,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             */
         }
 
-        protected override Jhu.Graywulf.Sql.Parsing.WhereClause GetTableSpecificWhereClause(ITableSource tableSource)
+        protected Jhu.Graywulf.Sql.Parsing.WhereClause GetTableSpecificWhereClause(ITableSource tableSource)
         {
             return GetTableSpecificWhereClause(tableSource, true);
         }
@@ -914,7 +930,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = region == null ? System.Data.SqlTypes.SqlBytes.Null : region.ToSqlBytes();
         }
 
-        protected void AppendRegionParameters(SourceTableQuery source, List<Spherical.Region> regions)
+        protected void AppendRegionParameters(SourceQuery source, List<Spherical.Region> regions)
         {
             for (int i = 0; i < regions.Count; i++)
             {

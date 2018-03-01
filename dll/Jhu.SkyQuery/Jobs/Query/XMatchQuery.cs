@@ -7,7 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
 using Jhu.Graywulf.Sql.Schema;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using gw = Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Tasks;
 using Jhu.SkyQuery.Parser;
@@ -178,7 +178,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return xmatchTables.Values.OrderBy(i => i);
         }
 
-        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Jobs.Query.TableStatistics stat)
+        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Sql.Jobs.Query.TableStatistics stat)
         {
             throw new NotImplementedException();
 

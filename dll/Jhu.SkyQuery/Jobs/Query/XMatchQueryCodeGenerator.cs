@@ -5,12 +5,12 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using Jhu.Graywulf.Sql.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
@@ -966,7 +966,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Final query execution
 
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.Sql.Parsing.SelectStatement selectStatement)
+        protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
             // TODO: upgrade
 

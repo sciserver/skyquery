@@ -6,7 +6,7 @@ using System.Activities;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Activities;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.Tasks;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -23,7 +23,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             XMatchQueryStep xmatchstep = XMatchStep.Get(activityContext);
             XMatchQueryPartition xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
 
-            switch (xmqp.Query.ExecutionMode)
+            switch (xmqp.Parameters.ExecutionMode)
             {
                 case ExecutionMode.SingleServer:
                     xmqp.InitializeQueryObject(cancellationContext, null);

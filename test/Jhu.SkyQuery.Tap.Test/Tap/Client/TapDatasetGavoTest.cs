@@ -14,7 +14,6 @@ namespace Jhu.SkyQuery.Tap.Client
         protected override string ConnectionString
         {
             get { return Constants.TapConnectionStringGavo; }
-            //get { return Constants.TapConnectionStringNoao; }
         }
 
         [TestMethod]

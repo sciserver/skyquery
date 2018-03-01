@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Sql.Parsing;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.Tasks;
 using Jhu.SkyQuery.Parser;
 
@@ -103,7 +103,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     timeout,
                     comments);
 
-                job.Parameters[Jhu.Graywulf.Jobs.Constants.JobParameterQuery].Value = query;
+                job.Parameters[Jhu.Graywulf.Registry.Constants.JobParameterParameters].Value = query.Parameters;
 
                 return job;
             }
