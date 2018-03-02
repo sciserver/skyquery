@@ -8,15 +8,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
-    public abstract class TapConnectionTest
+    [TestClass]
+    public class EndpointVizierTest : TapTestBase
     {
-        protected abstract string ConnectionString { get; }
-
-        protected void OpenConnectionTestHelper()
+        protected override Uri BaseUri
         {
-            using (var cn = new TapConnection(ConnectionString))
+            get
             {
-                cn.Open();
+                return new Uri("http://tapvizier.u-strasbg.fr/TAPVizieR/tap/");
             }
         }
     }

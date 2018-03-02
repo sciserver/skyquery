@@ -151,6 +151,9 @@
   <data name="ServiceNotAvailable" xml:space="preserve">
     <value>The TAP service is not available: {0}.</value>
   </data>
+  <data name="TooManyRedirects" xml:space="preserve">
+    <value>Too many redirects in TAP response.</value>
+  </data>
   <data name="UnexpectedHttpResponse" xml:space="preserve">
     <value>Unexpected HTTP status code: {0} {1}. The response body is:
 {2}</value>

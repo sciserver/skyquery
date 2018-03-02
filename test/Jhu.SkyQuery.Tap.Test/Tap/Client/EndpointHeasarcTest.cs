@@ -8,16 +8,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Jhu.SkyQuery.Tap.Client
 {
     [TestClass]
-    public class TapCommandHeasarcTest : TapClientTest
+    public class EndpointHeasarcTest : TapTestBase
     {
         protected override Uri BaseUri
         {
             get
             {
-                return new Uri(Constants.TapBaseUrlHeasarc);
+                return new Uri("https://heasarc.gsfc.nasa.gov/xamin/vo/tap/");
             }
         }
-
-        // TODO: implement test similar to vizier
     }
 }

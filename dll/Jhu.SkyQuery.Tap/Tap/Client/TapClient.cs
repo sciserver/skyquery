@@ -17,14 +17,24 @@ namespace Jhu.SkyQuery.Tap.Client
     {
         public static readonly StringComparer Comparer = StringComparer.InvariantCultureIgnoreCase;
 
+        #region Private member variables
+
+        // TAP service base URI
         private Uri baseAddress;
+
+        // Timeout of individual HTTP requests
         private TimeSpan httpTimeout;
+
+        // Timeout of polling process
         private TimeSpan pollTimeout;
 
         private HttpClient httpClient;
 
         private VO.Vosi.Availability.Common.IAvailability availability;
         private VO.Vosi.Capabilities.Common.ICapabilities capabilities;
+
+        #endregion
+        #region Properties
 
         public Uri BaseAddress
         {
@@ -43,6 +53,9 @@ namespace Jhu.SkyQuery.Tap.Client
             get { return pollTimeout; }
             set { pollTimeout = value; }
         }
+
+        #endregion
+        #region Constructors and initializers
 
         public TapClient()
         {
@@ -74,6 +87,9 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
+        #endregion
+        #region Generic HTTP methods
+
         private void CreateHttpClient()
         {
             var h = new HttpClientHandler()
@@ -94,59 +110,75 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
+        private async Task ValidateResponseCodeAsync(HttpResponseMessage response, IList<HttpStatusCode> expectedStatus)
+        {
+            if (500 <= (int)response.StatusCode && (int)response.StatusCode < 600)
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                throw Error.ServiceError(response.StatusCode, response.ReasonPhrase, body);
+            }
+            else if (expectedStatus.IndexOf(response.StatusCode) < 0)
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                throw Error.UnexpectedHttpResponse(response.StatusCode, response.ReasonPhrase, body);
+            }
+        }
+
         private async Task<HttpResponseMessage> HttpPostAsync(Uri address, HttpContent content, IList<HttpStatusCode> expectedStatus, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
-            var result = await httpClient.PostAsync(address, content, cancellationToken);
-
-            if (500 <= (int)result.StatusCode && (int)result.StatusCode < 600)
-            {
-                var body = await result.Content.ReadAsStringAsync();
-                throw Error.ServiceError(result.StatusCode, result.ReasonPhrase, body);
-            }
-            if (expectedStatus.IndexOf(result.StatusCode) < 0)
-            {
-                var body = await result.Content.ReadAsStringAsync();
-                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
-            }
-
-            return result;
+            var response = await httpClient.PostAsync(address, content, cancellationToken);
+            await ValidateResponseCodeAsync(response, expectedStatus);
+            return response;
         }
 
-        private async Task<string> HttpGetAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> HttpGetAsync(Uri address, IList<HttpStatusCode> expectedStatus, bool allowRedirect, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
-
-            var result = await httpClient.GetAsync(address, cancellationToken);
-
-            if (result.StatusCode != expectedStatus)
+            
+            // Allow a few 303 redirects here but not too many
+            HttpResponseMessage response = null;
+            int q = 0;
+            while (q < 5)
             {
-                var body = await result.Content.ReadAsStringAsync();
-                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
+                response = await httpClient.GetAsync(address, cancellationToken);
+
+                if (allowRedirect && response.StatusCode == HttpStatusCode.RedirectMethod)
+                {
+                    address = response.Headers.Location;
+                    q++;
+                }
+                else
+                {
+                    break;
+                }
             }
 
-            return await result.Content.ReadAsStringAsync();
-        }
-
-        private async Task<System.IO.Stream> HttpGetStreamAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
-        {
-            EnsureHttpClientCreated();
-
-            var result = await httpClient.GetAsync(address, cancellationToken);
-
-            if (result.StatusCode != expectedStatus)
+            if (response == null)
             {
-                var body = await result.Content.ReadAsStringAsync();
-                throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
+                throw Error.TooManyRedirects();
             }
 
-            return await result.Content.ReadAsStreamAsync();
+            await ValidateResponseCodeAsync(response, expectedStatus);
+            return response;
         }
 
-        private async Task<XmlReader> HttpGetXmlReaderAsync(Uri address, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
+        private async Task<string> HttpGetStringAsync(Uri address, CancellationToken cancellationToken)
         {
-            var stream = await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
+            var response = await HttpGetAsync(address, new[] { HttpStatusCode.OK }, false, cancellationToken);
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private async Task<System.IO.Stream> HttpGetStreamAsync(Uri address, IList<HttpStatusCode> expectedStatus, CancellationToken cancellationToken)
+        {
+            var response = await HttpGetAsync(address, expectedStatus, false, cancellationToken);
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        private async Task<XmlReader> HttpGetXmlReaderAsync(Uri address, CancellationToken cancellationToken)
+        {
+            var stream = await HttpGetStreamAsync(address, new[] { HttpStatusCode.OK }, cancellationToken);
             var settings = new XmlReaderSettings()
             {
                 Async = true,
@@ -160,7 +192,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private async Task<T> HttpGetObject<T>(Uri address, CancellationToken cancellationToken)
         {
-            using (var reader = await HttpGetXmlReaderAsync(address, HttpStatusCode.OK, cancellationToken))
+            using (var reader = await HttpGetXmlReaderAsync(address, cancellationToken))
             {
                 try
                 {
@@ -174,6 +206,8 @@ namespace Jhu.SkyQuery.Tap.Client
                 }
             }
         }
+
+#endregion
 
         public async Task<VO.Vosi.Availability.Common.IAvailability> GetAvailabilityAsync(CancellationToken cancellationToken)
         {
@@ -200,15 +234,21 @@ namespace Jhu.SkyQuery.Tap.Client
         private async Task<string> GetParameterAsync(TapJob job, string action, string parameter, CancellationToken cancellationToken)
         {
             var address = UriConverter.Combine(job.Uri, action);
-            return await HttpGetAsync(address, HttpStatusCode.OK, cancellationToken);
+            return await HttpGetStringAsync(address, cancellationToken);
         }
 
-        private async Task SetParameterAsync(TapJob job, string action, string parameter, string value, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SetParameterAsync(TapJob job, string action, string parameter, string value, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var address = UriConverter.Combine(job.Uri, action);
+            var parameters = new Dictionary<string, string>()
+            {
+                {parameter, value }
+            };
+            var content = new FormUrlEncodedContent(parameters);
+            return await HttpPostAsync(address, content, new[] { HttpStatusCode.RedirectMethod, HttpStatusCode.OK }, cancellationToken);
         }
 
-        public async Task<HttpResponseMessage> SubmitAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> SubmitAsync(TapJob job, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
@@ -253,23 +293,23 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
 
-        public async Task SetPhaseAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task SetPhaseAsync(TapJob job, CancellationToken cancellationToken)
         {
             await SetParameterAsync(job, Constants.TapActionAsyncPhase, Constants.TapParamPhase, job.Phase.ToString().ToUpperInvariant(), cancellationToken);
         }
 
-        public async Task GetQuoteAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task GetQuoteAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
 
-        public async Task GetExecutionDurationAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task GetExecutionDurationAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task SetExecutionDurationAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task SetExecutionDurationAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -279,12 +319,12 @@ namespace Jhu.SkyQuery.Tap.Client
             throw new NotImplementedException();
         }
 
-        public async Task SetDestructionAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task SetDestructionAsync(TapJob job, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<System.IO.Stream> GetResultsAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task<System.IO.Stream> GetResultsAsync(TapJob job, CancellationToken cancellationToken)
         {
             Uri address;
 
@@ -297,16 +337,18 @@ namespace Jhu.SkyQuery.Tap.Client
                 address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncResults);
             }
 
-            return await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
+            var response = await HttpGetAsync(address, new[] { HttpStatusCode.RedirectMethod, HttpStatusCode.OK }, true, cancellationToken);
+            
+            return await response.Content.ReadAsStreamAsync();
         }
 
-        public async Task<System.IO.Stream> GetErrorAsync(TapJob job, CancellationToken cancellationToken)
+        private async Task<System.IO.Stream> GetErrorAsync(TapJob job, CancellationToken cancellationToken)
         {
             var address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncError);
-            return await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
+            return await HttpGetStreamAsync(address, new[] { HttpStatusCode.OK }, cancellationToken);
         }
 
-        public async Task PollAsync(TapJob job, IList<TapJobPhase> expectedPhase, IList<TapJobPhase> errorPhase, CancellationToken cancellationToken)
+        private async Task PollAsync(TapJob job, IList<TapJobPhase> expectedPhase, IList<TapJobPhase> errorPhase, CancellationToken cancellationToken)
         {
             var limit = DateTime.Now + pollTimeout;
             var interval = 1000; // start from one second polling interval
@@ -336,6 +378,68 @@ namespace Jhu.SkyQuery.Tap.Client
             }
 
             throw Error.CommandTimeout();
+        }
+
+        public async Task<System.IO.Stream> ExecuteJobAsync(TapJob job, CancellationToken cancellationToken)
+        {
+            System.IO.Stream stream;
+
+            // 1. Submit job
+            var result = await SubmitAsync(job, cancellationToken);
+
+            if (!job.IsAsync)
+            {
+                // Allow a single redirect
+                if (result.StatusCode == System.Net.HttpStatusCode.RedirectMethod)
+                {
+                    stream = await GetResultsAsync(job, cancellationToken);
+                }
+                else
+                {
+                    stream = await result.Content.ReadAsStreamAsync();
+                }
+            }
+            else
+            {
+                while (true)
+                {
+                    // 2. Poll status and commit if pending
+                    await PollAsync(job, new[] { TapJobPhase.Pending, TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationToken);
+
+                    // 3. Process output
+                    if (job.Phase == TapJobPhase.Pending)
+                    {
+                        job.Phase = TapJobPhase.Run;
+                        await SetPhaseAsync(job, cancellationToken);
+                        continue;
+                    }
+                    else if (job.Phase == TapJobPhase.Completed)
+                    {
+                        stream = await GetResultsAsync(job, cancellationToken);
+                        break;
+                    }
+                    else if (job.Phase == TapJobPhase.Aborted)
+                    {
+                        throw Error.CommandCancelled();
+                    }
+                    else if (job.Phase == TapJobPhase.Error)
+                    {
+                        stream = await GetErrorAsync(job, cancellationToken);
+                        var votable = new Jhu.SkyQuery.Format.VoTable.VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read);
+
+                        // TODO: read error document, parse VOTable and report error
+                        // TODO: throw TAP exception with message from server
+
+                        throw new TapException();
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
+            }
+
+            return stream;
         }
 
         #region Feature support logic

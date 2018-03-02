@@ -91,5 +91,10 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             return new TapException(ExceptionMessages.DeserializationException, ex);
         }
+
+        public static TapException TooManyRedirects()
+        {
+            return new TapException(ExceptionMessages.TooManyRedirects);
+        }
     }
 }
