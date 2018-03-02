@@ -391,7 +391,14 @@ namespace Jhu.SkyQuery.Tap.Client
 
                 if (!isAsync)
                 {
-                    stream = await result.Content.ReadAsStreamAsync();
+                    if (result.StatusCode == System.Net.HttpStatusCode.RedirectMethod)
+                    {
+                        stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
+                    }
+                    else
+                    {
+                        stream = await result.Content.ReadAsStreamAsync();
+                    }
                 }
                 else
                 {

@@ -94,7 +94,7 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
-        private async Task<HttpResponseMessage> HttpPostAsync(Uri address, HttpContent content, HttpStatusCode expectedStatus, CancellationToken cancellationToken)
+        private async Task<HttpResponseMessage> HttpPostAsync(Uri address, HttpContent content, IList<HttpStatusCode> expectedStatus, CancellationToken cancellationToken)
         {
             EnsureHttpClientCreated();
 
@@ -105,7 +105,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 var body = await result.Content.ReadAsStringAsync();
                 throw Error.ServiceError(result.StatusCode, result.ReasonPhrase, body);
             }
-            if (result.StatusCode != expectedStatus)
+            if (expectedStatus.IndexOf(result.StatusCode) < 0)
             {
                 var body = await result.Content.ReadAsStringAsync();
                 throw Error.UnexpectedHttpResponse(result.StatusCode, result.ReasonPhrase, body);
@@ -213,17 +213,17 @@ namespace Jhu.SkyQuery.Tap.Client
             EnsureHttpClientCreated();
 
             string action;
-            HttpStatusCode expectedStatus;
+            HttpStatusCode[] expectedStatus;
 
             if (job.IsAsync)
             {
                 action = Constants.TapActionAsync;
-                expectedStatus = HttpStatusCode.RedirectMethod;
+                expectedStatus = new[] { HttpStatusCode.RedirectMethod };
             }
             else
             {
                 action = Constants.TapActionSync;
-                expectedStatus = HttpStatusCode.OK;
+                expectedStatus = new[] { HttpStatusCode.RedirectMethod, HttpStatusCode.OK };
             }
 
             var parameters = job.GetSubmitRequestParameters();
@@ -231,7 +231,7 @@ namespace Jhu.SkyQuery.Tap.Client
             var address = UriConverter.Combine(baseAddress, action);
             var result = await HttpPostAsync(address, content, expectedStatus, cancellationToken);
 
-            if (job.IsAsync)
+            if (result.StatusCode == HttpStatusCode.RedirectMethod)
             {
                 job.Uri = result.Headers.Location;
             }
@@ -286,7 +286,17 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public async Task<System.IO.Stream> GetResultsAsync(TapJob job, CancellationToken cancellationToken)
         {
-            var address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncResults);
+            Uri address;
+
+            if (!job.IsAsync)
+            {
+                address = job.Uri;
+            }
+            else
+            {
+                address = UriConverter.Combine(job.Uri, Constants.TapActionAsyncResults);
+            }
+
             return await HttpGetStreamAsync(address, HttpStatusCode.OK, cancellationToken);
         }
 
@@ -373,7 +383,7 @@ namespace Jhu.SkyQuery.Tap.Client
             var cap = GetCapability(VO.Constants.StandardIDVosiTables);
             return cap != null;
         }
-        
+
         #endregion
         #region Output format logic
 
@@ -381,7 +391,7 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             var tableAccess = GetTableAccessCapability() as VO.TapRegExt.Common.ITableAccess;
             VO.TapRegExt.Common.IOutputFormat outputFormat = null;
-            
+
             if (tableAccess != null)
             {
                 var fq = from f in tableAccess.OutputFormatList
