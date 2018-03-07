@@ -102,9 +102,28 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <returns></returns>
         private DataType ConvertDataTypeToDatabase(FitsTableColumn column)
         {
-            // TODO: needs testing
-            // TODO: what to do with varchar(max) etc?
-            var dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            DataType dt;
+
+            if (column.DataType.Repeat == 1)
+            {
+                // Primitive types
+                dt = DataType.Create(column.DataType.Type, 1);
+            }
+            else if (column.DataType.Type == typeof(string))
+            {
+                // Strings
+                dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            }
+            else if (column.DataType.Repeat > 0)
+            {
+                // Arrays
+                dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            }
+            else
+            {
+                // TODO: max arrays?
+                throw new NotImplementedException();
+            }
 
             dt.IsNullable = column.DataType.IsNullable;
 
@@ -347,7 +366,6 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override Task<bool> OnReadNextRowAsync(object[] values)
         {
-            // TODO: convert to async
             return this.hdu.ReadNextRowAsync(values, File.GenerateIdentityColumn ? 1 : 0);
         }
 
