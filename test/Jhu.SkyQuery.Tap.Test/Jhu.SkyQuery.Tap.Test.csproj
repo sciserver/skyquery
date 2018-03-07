@@ -82,26 +82,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tap\Client\Constants.cs" />
-    <Compile Include="Tap\Client\TapClientGaiaTest.cs" />
-    <Compile Include="Tap\Client\TapCommandHeasarcTest.cs" />
-    <Compile Include="Tap\Client\TapClientHeasarcTest.cs" />
-    <Compile Include="Tap\Client\TapClientVizierTest.cs" />
-    <Compile Include="Tap\Client\TapCommandGaiaTest.cs" />
-    <Compile Include="Tap\Client\TapCommandVizierTest.cs" />
-    <Compile Include="Tap\Client\TapConnectionTest.cs" />
-    <Compile Include="Tap\Client\TapCommandTest.cs" />
-    <Compile Include="Tap\Client\TapClientTest.cs" />
-    <Compile Include="Tap\Client\TapConnectionVizierTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetAadcTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetCadcTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetGavoTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetHeasarcTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetNoaoTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetSkymapperTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetGaiaTest.cs" />
-    <Compile Include="Tap\Client\TapDatasetVizierTest.cs" />
+    <Compile Include="Tap\Client\EndpointAadcTest.cs" />
+    <Compile Include="Tap\Client\EndpointCadc.cs" />
+    <Compile Include="Tap\Client\EndpointGaiaTest.cs" />
+    <Compile Include="Tap\Client\EndpointGavoTest.cs" />
+    <Compile Include="Tap\Client\EndpointHeasarcTest.cs" />
+    <Compile Include="Tap\Client\EndpointNoaoTest.cs" />
+    <Compile Include="Tap\Client\EndpointSkymapperTest.cs" />
+    <Compile Include="Tap\Client\EndpointVizierTest.cs" />
+    <Compile Include="Tap\Client\TapTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

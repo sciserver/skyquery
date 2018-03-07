@@ -384,45 +384,11 @@ namespace Jhu.SkyQuery.Tap.Client
 
             try
             {
-                // 1. Submit job
                 state = TapCommandState.Submitting;
                 connection.Client.PollTimeout = TimeSpan.FromSeconds(commandTimeout);
-                var result = await connection.Client.SubmitAsync(job, cancellationSource.Token);
 
-                if (!isAsync)
-                {
-                    stream = await result.Content.ReadAsStreamAsync();
-                }
-                else
-                {
-                    // 2. Poll status
-                    state = TapCommandState.Executing;
-                    await connection.Client.PollAsync(job, new[] { TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
-
-                    // 3. Process output
-                    if (job.Phase == TapJobPhase.Completed)
-                    {
-                        stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
-                    }
-                    else if (job.Phase == TapJobPhase.Aborted)
-                    {
-                        throw Error.CommandCancelled();
-                    }
-                    else if (job.Phase == TapJobPhase.Error)
-                    {
-                        stream = await connection.Client.GetErrorAsync(job, cancellationSource.Token);
-                        votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read);
-
-                        // TODO: read error document, parse VOTable and report error
-                        // TODO: throw TAP exception with message from server
-
-                        throw new TapException();
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
-                }
+                stream = await connection.Client.ExecuteJobAsync(job, cancellationSource.Token);
+                state = TapCommandState.Executing;
 
                 votable = new VoTableWrapper()
                 {
@@ -434,6 +400,64 @@ namespace Jhu.SkyQuery.Tap.Client
                 // TODO: get query status from VOTable
 
                 return reader;
+
+                /* TODO: delete
+                var result = await connection.Client.SubmitAsync(job, cancellationSource.Token);
+
+                state = TapCommandState.Executing;
+
+                if (!isAsync)
+                {
+                    if (result.StatusCode == System.Net.HttpStatusCode.RedirectMethod)
+                    {
+                        stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
+                    }
+                    else
+                    {
+                        stream = await result.Content.ReadAsStreamAsync();
+                    }
+                }
+                else
+                {
+                    while (true)
+                    {
+                        // 2. Poll status and commit if pending
+                        await connection.Client.PollAsync(job, new[] { TapJobPhase.Pending, TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
+
+                        // 3. Process output
+                        if (job.Phase == TapJobPhase.Pending)
+                        {
+                            job.Phase = TapJobPhase.Run;
+                            await connection.Client.SetPhaseAsync(job, cancellationToken);
+                            continue;
+                        }
+                        else if (job.Phase == TapJobPhase.Completed)
+                        {
+                            stream = await connection.Client.GetResultsAsync(job, cancellationSource.Token);
+                            break;
+                        }
+                        else if (job.Phase == TapJobPhase.Aborted)
+                        {
+                            throw Error.CommandCancelled();
+                        }
+                        else if (job.Phase == TapJobPhase.Error)
+                        {
+                            stream = await connection.Client.GetErrorAsync(job, cancellationSource.Token);
+                            votable = new VoTableWrapper(stream, Graywulf.IO.DataFileMode.Read);
+
+                            // TODO: read error document, parse VOTable and report error
+                            // TODO: throw TAP exception with message from server
+
+                            throw new TapException();
+                        }
+                        else
+                        {
+                            throw new NotImplementedException();
+                        }
+                    }
+                }
+                */
+
             }
             catch (TapException)
             {

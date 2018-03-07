@@ -161,6 +161,15 @@ namespace Jhu.SkyQuery.Tap.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Too many redirects in TAP response..
+        /// </summary>
+        internal static string TooManyRedirects {
+            get {
+                return ResourceManager.GetString("TooManyRedirects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unexpected HTTP status code: {0} {1}. The response body is:
         ///{2}.
         /// </summary>

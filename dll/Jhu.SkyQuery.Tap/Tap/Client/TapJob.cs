@@ -143,7 +143,9 @@ namespace Jhu.SkyQuery.Tap.Client
                 { Constants.TapParamLang, language.ToString().ToUpperInvariant() },
                 { Constants.TapParamFormat, format },
                 { Constants.TapParamQuery, query },
-                { Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
+
+                // CADC service doesn't like this
+                //{ Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
             };
             
             if (duration != TimeSpan.Zero)
@@ -151,6 +153,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 parameters.Add(Constants.TapParamTermination, ((int)duration.TotalSeconds).ToString());
             }
 
+            // Many services don't like this parameter
             /*if (destruction != DateTime.MinValue)
             {
                 parameters.Add(Constants.TapParamDestruction, destruction.ToString(Constants.TapDateFormat));
