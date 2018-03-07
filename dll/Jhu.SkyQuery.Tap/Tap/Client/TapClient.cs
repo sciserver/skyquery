@@ -144,7 +144,9 @@ namespace Jhu.SkyQuery.Tap.Client
             {
                 response = await httpClient.GetAsync(address, cancellationToken);
 
-                if (allowRedirect && response.StatusCode == HttpStatusCode.RedirectMethod)
+                if (allowRedirect && 
+                    (response.StatusCode == HttpStatusCode.RedirectMethod ||
+                     response.StatusCode == HttpStatusCode.Redirect))
                 {
                     address = response.Headers.Location;
                     q++;
@@ -166,7 +168,7 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private async Task<string> HttpGetStringAsync(Uri address, CancellationToken cancellationToken)
         {
-            var response = await HttpGetAsync(address, new[] { HttpStatusCode.OK }, false, cancellationToken);
+            var response = await HttpGetAsync(address, new[] { HttpStatusCode.OK }, true, cancellationToken);
             return await response.Content.ReadAsStringAsync();
         }
 
@@ -245,7 +247,7 @@ namespace Jhu.SkyQuery.Tap.Client
                 {parameter, value }
             };
             var content = new FormUrlEncodedContent(parameters);
-            return await HttpPostAsync(address, content, new[] { HttpStatusCode.RedirectMethod, HttpStatusCode.OK }, cancellationToken);
+            return await HttpPostAsync(address, content, new[] { HttpStatusCode.RedirectMethod, HttpStatusCode.Redirect, HttpStatusCode.OK }, cancellationToken);
         }
 
         private async Task<HttpResponseMessage> SubmitAsync(TapJob job, CancellationToken cancellationToken)
