@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Jhu.SkyQuery.IO.Test.IO
 {
     [TestClass]
-    public class ImportFromSciDriveTest : Jhu.Graywulf.SciDrive.ImportTest
+    public class ImportFromSciDriveTest : Jhu.Graywulf.Web.Api.V1.ApiTestBase
     {
         [ClassInitialize]
         public new static void Initialize(TestContext context)

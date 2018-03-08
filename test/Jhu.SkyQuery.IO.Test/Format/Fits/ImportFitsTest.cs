@@ -12,7 +12,7 @@ using Jhu.SkyQuery.Format.Fits;
 namespace Jhu.SkyQuery.Format.Fits.Test
 {
     [TestClass]
-    public class ImportFitsTest : Jhu.Graywulf.IO.Tasks.ImportTableTest
+    public class ImportFitsTest : Jhu.Graywulf.IO.Tasks.ImportTableTestBase
     {
         [ClassInitialize]
         public static void Initialize(TestContext context)
