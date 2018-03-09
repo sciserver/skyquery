@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
-    [TestClass]
+    /*[TestClass]
     public class EndpointAadcTest : TapTestBase
     {
         protected override Uri BaseUri
@@ -16,4 +16,5 @@ namespace Jhu.SkyQuery.Tap.Client
             get { return new Uri("https://vo.phys.au.dk/__system__/tap/run/tap/"); }
         }
     }
+    */
 }

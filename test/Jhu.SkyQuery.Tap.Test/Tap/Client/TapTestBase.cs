@@ -123,14 +123,19 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
         [TestMethod]
-        public void ExecuteReaderTest()
+        public async Task ExecuteReaderTest()
         {
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(30));
+
             using (var cmd = new TapCommand(TestQuery, connection))
             {
-                using (var dr = cmd.ExecuteReader())
+                cmd.CommandTimeout = 20;
+
+                using (var dr = await cmd.ExecuteReaderAsync(cts.Token))
                 {
                     int q = 0;
-                    while (dr.Read())
+                    while (await dr.ReadAsync())
                     {
                         Assert.AreEqual(2, dr.FieldCount);
                         q++;
@@ -142,14 +147,19 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
         [TestMethod]
-        public void InterruptReaderTest()
+        public async Task InterruptReaderTest()
         {
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(30));
+
             using (var cmd = new TapCommand(TestQuery, connection))
             {
-                using (var dr = cmd.ExecuteReader())
+                cmd.CommandTimeout = 20;
+
+                using (var dr = await cmd.ExecuteReaderAsync(cts.Token))
                 {
                     // Read one row only, then dispose
-                    dr.Read();
+                    await dr.ReadAsync();
                     Assert.AreEqual(2, dr.FieldCount);
                 }
 
@@ -158,15 +168,20 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
         [TestMethod]
-        public void FillDataSetTest()
+        public async Task FillDataSetTest()
         {
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(30));
+
             using (var cmd = new TapCommand(TestQuery, connection))
             {
+                cmd.CommandTimeout = 20;
+
                 var ds = new DataSet();
                 var da = new TapDataAdapter();
                 da.SelectCommand = cmd;
 
-                da.Fill(ds);
+                await Task.Run(() => da.Fill(ds), cts.Token);
 
                 // TODO: Add more asserts
                 var dt = ds.Tables[0];
@@ -176,11 +191,14 @@ namespace Jhu.SkyQuery.Tap.Client
         }
 
         [TestMethod]
-        public void SchemaTableTest()
+        public async Task SchemaTableTest()
         {
+            var cts = new CancellationTokenSource();
+            cts.CancelAfter(TimeSpan.FromSeconds(30));
+
             using (var cmd = new TapCommand(TestQuery, connection))
             {
-                using (var dr = cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+                using (var dr = await cmd.ExecuteReaderAsync(CommandBehavior.SchemaOnly, cts.Token))
                 {
                     var dt = dr.GetSchemaTable();
 

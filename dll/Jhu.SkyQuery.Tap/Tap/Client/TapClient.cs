@@ -403,6 +403,8 @@ namespace Jhu.SkyQuery.Tap.Client
             }
             else
             {
+                // TODO: this gets into an endless loop here for AADC
+
                 while (true)
                 {
                     // 2. Poll status and commit if pending
