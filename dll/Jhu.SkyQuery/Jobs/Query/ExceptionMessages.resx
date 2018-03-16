@@ -123,4 +123,7 @@
   <data name="NoCoordinateColumnsFound" xml:space="preserve">
     <value>Coordinate columns are not specified with a hint on table '{0}' and cannot be infered automatically.</value>
   </data>
+  <data name="XMatchMultipleStatementsNotSupported" xml:space="preserve">
+    <value>Only single select statement xmatch queries are supported.</value>
+  </data>
 </root>

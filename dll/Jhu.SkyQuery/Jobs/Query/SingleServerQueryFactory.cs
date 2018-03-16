@@ -88,17 +88,13 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Initializes a query object for execution outside the Graywulf framework.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="queryString"></param>
         /// <param name="outputTable"></param>
         /// <param name="mydbds"></param>
         /// <param name="tempds"></param>
         /// <param name="codeds"></param>
-        protected override void InitializeQuery(SqlQuery query, string queryString)
+        protected override void OnSetParameters(SqlQuery query)
         {
-            // TODO: factor it out to a new class
-
             query.Parameters.ExecutionMode = ExecutionMode.SingleServer;
-            query.Parameters.QueryString = queryString;
 
             query.Parameters.QueryTimeout = 7200;
 

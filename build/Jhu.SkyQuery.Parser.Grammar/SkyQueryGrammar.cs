@@ -62,13 +62,55 @@ namespace Jhu.SkyQuery.Parser.Grammar
                 SelectStatement,
                 Sequence
                 (
-                    QueryExpression,
-                    May(Sequence(May(CommentOrWhitespace), RegionClause)),
+                    //May(Sequence(CommonTableExpression, May(CommentOrWhitespace))),
+                    RegionQueryExpression,
                     May(Sequence(May(CommentOrWhitespace), OrderByClause)),
                     May(Sequence(May(CommentOrWhitespace), QueryHintClause))
                 )
             );
-        
+
+        public static Expression<Rule> RegionQueryExpression = () =>
+            Inherit
+            (
+                QueryExpression,
+                Sequence
+                (
+                    Must
+                    (
+                        RegionQueryExpressionBrackets,
+                        RegionQuerySpecification
+                    ),
+                    May(Sequence(May(CommentOrWhitespace), QueryOperator, May(CommentOrWhitespace), RegionQueryExpression))
+                )
+            );
+
+        public static Expression<Rule> RegionQueryExpressionBrackets = () =>
+            Inherit
+            (
+                QueryExpressionBrackets,
+                Sequence(BracketOpen, May(CommentOrWhitespace), QueryExpression, May(CommentOrWhitespace), BracketClose)
+            );
+
+        public static Expression<Rule> RegionQuerySpecification = () =>
+            Inherit
+            (
+                QuerySpecification,
+                Sequence
+                (
+                    Keyword("SELECT"),
+                    May(Sequence(CommentOrWhitespace, Must(Keyword("ALL"), Keyword("DISTINCT")))),
+                    May(Sequence(CommentOrWhitespace, TopExpression)),
+                    May(CommentOrWhitespace),
+                    SelectList,
+                    May(Sequence(May(CommentOrWhitespace), IntoClause)),
+                    May(Sequence(May(CommentOrWhitespace), FromClause)),
+                    May(Sequence(May(CommentOrWhitespace), WhereClause)),
+                    Sequence(May(CommentOrWhitespace), RegionClause),
+                    May(Sequence(May(CommentOrWhitespace), GroupByClause)),
+                    May(Sequence(May(CommentOrWhitespace), HavingClause))
+                )
+            );
+
         public static Expression<Rule> RegionClause = () =>
             Sequence
             (
@@ -149,14 +191,14 @@ namespace Jhu.SkyQuery.Parser.Grammar
         public static Expression<Rule> XMatchQueryExpression = () =>
             Inherit
             (
-                QueryExpression,
+                RegionQueryExpression,
                 XMatchQuerySpecification
             );
 
         public static Expression<Rule> XMatchQuerySpecification = () =>
             Inherit
             (
-                QuerySpecification,
+                RegionQuerySpecification,
                 Sequence
                 (
                     Keyword("SELECT"),

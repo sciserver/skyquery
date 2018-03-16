@@ -22,6 +22,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             get { return (BayesFactorXMatchQueryCodeGenerator)CreateCodeGenerator(); }
         }
 
+        public BayesFactorXMatchQuery()
+        {
+            // overload
+        }
+
         protected BayesFactorXMatchQuery(CancellationContext cancellationContext)
             : base(cancellationContext)
         {

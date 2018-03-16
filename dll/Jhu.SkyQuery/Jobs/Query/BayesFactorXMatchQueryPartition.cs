@@ -69,7 +69,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override SqlServerCodeGenerator CreateCodeGenerator()
+        protected override SqlQueryCodeGenerator CreateCodeGenerator()
         {
             return new BayesFactorXMatchQueryCodeGenerator(this);
         }

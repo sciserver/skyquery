@@ -53,7 +53,7 @@ namespace Jhu.SkyQuery.Parser
         {
             get { return table; }
         }
-
+        
         /// <summary>
         /// Placeholder for opting out from region constraint
         /// </summary>

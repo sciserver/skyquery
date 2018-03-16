@@ -968,18 +968,13 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
             // Collect tables that are part of the XMatch operation
-            var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            var xmss = query.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>();
+            var qs = (XMatchQuerySpecification)xmss.QueryExpression.EnumerateQuerySpecifications().First();
 
             ReplaceXMatchClause(qs);
 
-            return base.OnGetExecuteQuery(selectStatement);
-            */
+            return base.OnGetExecuteQuery(query);
         }
 
         protected void ReplaceXMatchClause(XMatchQuerySpecification qs)

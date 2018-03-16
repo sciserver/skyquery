@@ -43,28 +43,44 @@ namespace Jhu.SkyQuery.Jobs.Query
             };
         }
 
-        protected override SqlQuery CreateQueryBase(Node root)
+        protected override SqlQuery OnCreateQuery(Graywulf.Sql.Parsing.StatementBlock parsingTree)
         {
             SqlQuery res;
+            StatementType type = StatementType.Unknown;
+            bool region = false;
+            bool xmatch = false;
+            int count = 0;
+
+            foreach (var s in parsingTree.EnumerateDescendantsRecursive<IStatement>())
+            {
+                if (s.StatementType != StatementType.Block)
+                {
+                    type |= s.StatementType;
+                    region |= (s is RegionSelectStatement);
+                    xmatch |= (s is XMatchSelectStatement);
+                    count++;
+                }
+            }
 
             // TODO: do we need the cancellation context here?
             using (var cancellationContext = new CancellationContext())
             {
-                if (root is XMatchSelectStatement)
+                if (xmatch && count == 1)
                 {
+                    // TODO: differentiate here when other xmatch alrogithms are added
                     res = new BayesFactorXMatchQuery(cancellationContext, RegistryContext);
                 }
-                else if (root is RegionSelectStatement)
+                else if (xmatch && count > 1)
+                {
+                    throw Error.XMatchMultipleStatementsNotSupported();
+                }
+                else if (region)
                 {
                     res = new RegionQuery(cancellationContext, RegistryContext);
                 }
-                else if (root is SelectStatement)
-                {
-                    res = new SqlQuery(cancellationContext, RegistryContext);
-                }
                 else
                 {
-                    throw new NotImplementedException();
+                    res = new SqlQuery(cancellationContext, RegistryContext);
                 }
             }
 

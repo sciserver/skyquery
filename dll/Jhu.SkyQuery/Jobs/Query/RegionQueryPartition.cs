@@ -45,7 +45,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator CreateCodeGenerator()
+        protected override SqlQueryCodeGenerator CreateCodeGenerator()
         {
             return new RegionQueryCodeGenerator(this);
         }

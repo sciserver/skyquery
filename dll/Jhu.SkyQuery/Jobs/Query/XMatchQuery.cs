@@ -67,6 +67,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Constructors and initializers
 
+        public XMatchQuery()
+        {
+        }
+
         public XMatchQuery(CancellationContext cancellationContext)
             : base(cancellationContext)
         {
@@ -79,6 +83,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
+        [OnDeserializing]
         private void InitializeMembers(StreamingContext context)
         {
             this.zoneHeight = Constants.DefaultZoneHeight;
@@ -99,18 +104,13 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override void OnNamesResolved(bool forceReinitialize)
         {
-            // TODO: Fix, SelectStatement is likely parsingTree now.
-
-            throw new NotImplementedException();
-
-            /*
             if (xmatchTables == null || forceReinitialize)
             {
-                InterpretXMatchQuery((XMatchSelectStatement)SelectStatement);
+                var xmss = QueryDetails.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>();
+                InterpretXMatchQuery(xmss);
             }
 
-            base.FinishInterpret(forceReinitialize);
-            */
+            base.OnNamesResolved(forceReinitialize);
         }
 
         private void InterpretXMatchQuery(XMatchSelectStatement selectStatement)
@@ -142,34 +142,28 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override void IdentifyTablesForStatistics()
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
-            TableSourceStatistics.Clear();
+            TableStatistics.Clear();
 
             // Only collect statistics for xmatch tables
+            // TODO: how to deal with remote tables?
+
             foreach (var table in xmatchTables.Values)
             {
                 var tr = table.TableReference;
+                var ts = table.TableSource;
 
-                // Statistics is only gathered for table on known servers. Skip foreign
-                // datasets here because we cannot make sure they support the necessary
-                // CLR functions.
                 if (tr.DatabaseObject.Dataset is GraywulfDataset)
                 {
                     // Collect statistics for zoneID
-                    tr.Statistics = new Graywulf.SqlParser.TableStatistics()
+                    var stat = new Graywulf.Sql.Jobs.Query.TableStatistics()
                     {
                         KeyColumn = CodeGenerator.GetZoneIdExpression(table.Coordinates),
                         KeyColumnDataType = DataTypes.SqlInt,
                     };
 
-                    TableSourceStatistics.Add(table.TableSource);
+                    TableStatistics.Add(ts, stat);
                 }
             }
-            */
         }
 
         private IEnumerable<XMatchTableSpecification> SortXMatchTables(IEnumerable<XMatchTableSpecification> tables)

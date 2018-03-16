@@ -98,7 +98,7 @@
               </Sequence.Variables>
               <jgsjq:AssignServerInstance EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="AssignServerInstance_2" JobInfo="[JobInfo]" QueryObject="[queryPartition]" />
               <jgsjq:IdentifyRemoteSourceTables sap2010:WorkflowViewState.IdRef="IdentifyRemoteSourceTables_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <jgsjq:IdentifyRemoteOutputTables JobInfo="[JobInfo]" QueryPartition="[queryPartition]" sap2010:WorkflowViewState.IdRef="IdentifyRemoteOutputTables_1" />
+              <jgsjq:IdentifyRemoteOutputTables sap2010:WorkflowViewState.IdRef="IdentifyRemoteOutputTables_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
               <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_2" Values="[queryPartition.RemoteSourceTables.Keys]">
                 <ActivityAction x:TypeArguments="x:String">
                   <ActivityAction.Argument>
@@ -123,18 +123,17 @@
                 </ActivityAction>
               </ForEach>
               <jgsjq:ExecuteQuery sap2010:WorkflowViewState.IdRef="ExecuteQuery_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" Values="[queryPartition.RemoteOutputTables.Keys]">
+              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_7" Values="[queryPartition.RemoteOutputTables.Keys]">
                 <ActivityAction x:TypeArguments="x:String">
                   <ActivityAction.Argument>
                     <DelegateInArgument x:TypeArguments="x:String" Name="tableKey" />
                   </ActivityAction.Argument>
                   <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
-                    <jgsjq:InitializeOutputTable JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" sap2010:WorkflowViewState.IdRef="InitializeOutputTable_1" />
-                    <jgsjq:CopyOutputTable JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" sap2010:WorkflowViewState.IdRef="CopyOutputTable_1" />
+                    <jgsjq:InitializeOutputTable sap2010:WorkflowViewState.IdRef="InitializeOutputTable_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" />
+                    <jgsjq:CopyOutputTable sap2010:WorkflowViewState.IdRef="CopyOutputTable_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" />
                     <jga:PlaceholderActivity DisplayName="TODO: CreateOutputTablePrimaryKey" sap2010:WorkflowViewState.IdRef="PlaceholderActivity_2" />
                   </Sequence>
                 </ActivityAction>
-                <sap2010:WorkflowViewState.IdRef>ParallelForEach`1_7</sap2010:WorkflowViewState.IdRef>
               </ParallelForEach>
             </Sequence>
           </jga:Retry>
@@ -159,7 +158,7 @@
         </ActivityAction>
       </ParallelForEach>
     </CancellationScope.CancellationHandler>
-    <sads:DebugSymbol.Symbol>d2hDOlxEYXRhXGRvYm9zXHByb2plY3Rcc2t5cXVlcnktYWxsLXYxLjRcbW9kdWxlc1xza3lxdWVyeVxkbGxcSmh1LlNreVF1ZXJ5XEpvYnNcUXVlcnlcWE1hdGNoUXVlcnlKb2IueGFtbFJGA6MBFwIBAUoFlwEQAgEKmQEHoAEZAgECSwdLqAECAXFMB0yEAQIBcE0HTZ4BAgFrTgdXGQIBXlgHWJQBAgFZWQeOARkCAROPAQeWARkCAQuZAbcBmQHLAQIBCZ4BC54BrAECAQNLhwFLlQECAXZLcEt7AgF0S5wBS6UBAgFyTXpNhQECAW5NkgFNmwECAWxOqwFOyQECAWpTC1UXAgFfWHZYgQECAVxYiAFYkQECAVpZtgFZygECAVheC4wBFwIBFI8BtgGPAcoBAgESlAELlAGtAQIBDJ4BgQGeAZMBAgEHngGjAZ4BqQECAQaeAWaeAXECAQRTclN1AgFiU1tTZgIBYFQNVKgBAgFjXnJedQIBF15bXmYCARVfDYsBGAIBGJQBgQGUAZMBAgEQlAGjAZQBqgECAQ+UAWaUAXECAQ1UblR5AgFoVJYBVKUBAgFmVIABVIkBAgFkYw9jrwECAVNkD2SoAQIBTmUPZZ8BAgFNZg9tIQIBRG4PfBkCASN9D32MAQIBHn4PigEhAgEZY4IBY40BAgFWY5oBY6wBAgFUZJMBZKUBAgFRZHhkgwECAU9mpAFmzgECAUxrE2uvAQIBRW51bscBAgFDcxN6HgIBJH13fYkBAgEhfVx9ZwIBH4MBE4cBHgIBGmuBAWuTAQIBSmugAWusAQIBSGtma3ECAUZ0FXSXAQIBPnUVda0BAgE5dhV2lQECATR3FXePAQIBL3gVeI8BAgEqeRV5kQECASWEARWEAbIBAgEdhQEVhQGmAQIBHIYBFYYBmAECARt0cHR7AgFBdIcBdJQBAgE/dYYBdZEBAgE8dZ0BdaoBAgE6dm52eQIBN3aFAXaSAQIBNXdod3MCATJ3f3eMAQIBMHhoeHMCAS14f3iMAQIBK3lqeXUCASh5gQF5jgECASY=</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d2hDOlxEYXRhXGRvYm9zXHByb2plY3Rcc2t5cXVlcnktYWxsLXYxLjRcbW9kdWxlc1xza3lxdWVyeVxkbGxcSmh1LlNreVF1ZXJ5XEpvYnNcUXVlcnlcWE1hdGNoUXVlcnlKb2IueGFtbFtGA6IBFwIBAUoFlgEQAgEKmAEHnwEZAgECSwdLqAECAX9MB0yEAQIBfk0HTZ4BAgF6TgdXGQIBblgHWJQBAgFqWQeNARkCAROOAQeVARkCAQuYAbcBmAHLAQIBCZ0BC50BrAECAQNLhwFLlQEDAYMBS3BLewMBgQFLnAFLpQEDAYABTXpNhQECAXxNkgFNmwECAXtOqwFOyQECAXlTC1UXAgFvWHZYgQECAWxYiAFYkQECAWtZtgFZygECAWleC4sBFwIBFI4BtgGOAcoBAgESkwELkwGtAQIBDJ0BgQGdAZMBAgEHnQGjAZ0BqQECAQadAWadAXECAQRTclN1AgFyU1tTZgIBcFQNVKgBAgFzXnJedQIBF15bXmYCARVfDYoBGAIBGJMBgQGTAZMBAgEQkwGjAZMBqgECAQ+TAWaTAXECAQ1UblR5AgF3VJYBVKUBAgF1VIABVIkBAgF0Yw9jrwECAWRkD2SoAQIBX2UPZagBAgFaZg9tIQIBUW4PfBkCATB9D32MAQIBK34PiQEhAgEZY4IBY40BAgFnY5oBY6wBAgFlZJMBZKUBAgFiZHhkgwECAWBlkwFlpQECAV1leGWDAQIBW2akAWbOAQIBWWsTa68BAgFSbnVuxwECAVBzE3oeAgExfXd9iQECAS59XH1nAgEsfqQBfs4BAgEqgwEThwEeAgEaa4EBa5MBAgFXa6ABa6wBAgFVa2ZrcQIBU3QVdJcBAgFLdRV1rQECAUZ2FXaVAQIBQXcVd48BAgE8eBV4jwECATd5FXmRAQIBMoQBFYQBvQECASOFARWFAbEBAgEchgEVhgGYAQIBG3RwdHsCAU50hwF0lAECAUx1hgF1kQECAUl1nQF1qgECAUd2bnZ5AgFEdoUBdpIBAgFCd2h3cwIBP3d/d4wBAgE9eGh4cwIBOnh/eIwBAgE4eWp5dQIBNXmBAXmOAQIBM4QBjwGEAaEBAgEohAGuAYQBugECASaEAXSEAX8CASSFAYMBhQGVAQIBIYUBogGFAa4BAgEfhQFohQFzAgEd</sads:DebugSymbol.Symbol>
   </CancellationScope>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>

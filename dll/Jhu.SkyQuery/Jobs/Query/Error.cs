@@ -23,5 +23,10 @@ namespace Jhu.SkyQuery.Jobs.Query
                 ExceptionMessages.NoCoordinateColumnsFound,
                 coords.Table.TableReference.UniqueName));
         }
+
+        public static XMatchException XMatchMultipleStatementsNotSupported()
+        {
+            return new XMatchException(ExceptionMessages.XMatchMultipleStatementsNotSupported);
+        }
     }
 }

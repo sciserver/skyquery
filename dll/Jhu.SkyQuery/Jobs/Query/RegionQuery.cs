@@ -29,6 +29,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Constructors and initializers
 
+        public RegionQuery()
+        {
+        }
+
         protected RegionQuery(CancellationContext cancellationContext)
             : base(cancellationContext)
         {

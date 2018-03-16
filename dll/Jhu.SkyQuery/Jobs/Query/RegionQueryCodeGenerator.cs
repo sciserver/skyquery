@@ -16,7 +16,7 @@ using Jhu.Spherical;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-    public class RegionQueryCodeGenerator : Jhu.Graywulf.Sql.Jobs.Query.SqlQueryCodeGenerator
+    public class RegionQueryCodeGenerator : SqlQueryCodeGenerator
     {
         #region Constants
 
@@ -69,38 +69,34 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <returns></returns>
         protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
-            throw new NotImplementedException();
-
-            /* TODO: modify to use QueryDetails
-            if (!(query is RegionSelectStatement))
-            {
-                return base.OnGetExecuteQuery(query);
-            }
-
+            var header = new StringBuilder();
             var regions = new List<Region>();
 
-            // Rewrite query
-            AppendRegionJoinsAndConditions(selectStatement, regions);
-            RemoveNonStandardTokens(selectStatement);
-
-            if (queryObject != null)
+            foreach (var selectStatement in query.ParsingTree.EnumerateDescendantsRecursive<SelectStatement>())
             {
-                SubstituteServerSpecificDatabaseNames(selectStatement);
-                SubstituteRemoteTableNames(selectStatement);
+                if (selectStatement is RegionSelectStatement)
+                {
+                    AppendRegionJoinsAndConditions((RegionSelectStatement)selectStatement, regions);
+                    RemoveNonStandardTokens(selectStatement);
+                }
             }
 
-            // Compose final script
-            var header = new StringBuilder();
+            if (queryObject != null && queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(queryObject.Parameters.SourceDatabaseVersionName, null);
+                AddOutputTableMappings();
+            }
 
             for (int i = 0; i < regions.Count; i++)
             {
                 header.AppendLine(String.Format("DECLARE @r{0} dbo.Region = @region{0};", i));
             }
 
-            var source = new SourceTableQuery()
+            var source = new SourceQuery()
             {
                 Header = header.ToString(),
-                Query = Execute(selectStatement),
+                Query = Execute(query.ParsingTree),
             };
 
             if (queryObject != null)
@@ -113,7 +109,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             return source;
-            */
         }
 
         /// <summary>
@@ -146,12 +141,14 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region HTM joins and conditions
 
-        private void AppendRegionJoinsAndConditions(Graywulf.Sql.Parsing.SelectStatement selectStatement, List<Region> regions)
+        private void AppendRegionJoinsAndConditions(RegionSelectStatement selectStatement, List<Region> regions)
         {
             int qsi = 0;
             int tsi = 0;
 
-            var qe = selectStatement.QueryExpression;
+            // TODO: add support for WITH?
+
+            var qe = (RegionQueryExpression)selectStatement.QueryExpression;
             AppendRegionJoinsAndConditions(qe, regions, ref qsi, ref tsi);
         }
 
@@ -163,14 +160,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         private void AppendRegionJoinsAndConditions(Graywulf.Sql.Parsing.QueryExpression queryExpression, List<Region> regions, ref int qsi, ref int tsi)
         {
-            // TODO: upgrade once parser is operational.
-            // There's no RegionQuerySpecification, only RegionSelectStatement
-
-            throw new NotImplementedException();
-
-            /*
             // QueryExpression can have two children of type QueryExpression,
-            // on in brackets and another one after a query operator.
+            // one in brackets and another one after a query operator.
 
             // Recursive calls on children
 
@@ -212,14 +203,16 @@ namespace Jhu.SkyQuery.Jobs.Query
                     qsi++;
                 }
             }
-            */
         }
 
+        /// <summary>
+        /// Generates a UNION query to do htm-based filtering of the original table
+        /// </summary>
+        /// <param name="tableSource"></param>
+        /// <param name="qsi"></param>
+        /// <param name="tsi"></param>
         private void AppendRegionJoinsAndConditions(TableSource tableSource, int qsi, ref int tsi)
         {
-            throw new NotImplementedException();
-
-            /*
             // Descend on table sources and append htm constraint to each of them
             var rts = tableSource.FindDescendant<TableSource>();
             if (rts != null)
@@ -227,34 +220,51 @@ namespace Jhu.SkyQuery.Jobs.Query
                 AppendRegionJoinsAndConditions(rts, qsi, ref tsi);
             }
 
-            if (tableSource.SpecificTableSource is SkyQuery.Parser.CoordinatesTableSource)
+            if (tableSource.SpecificTableSource is CoordinatesTableSource)
             {
-                var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource.SpecificTableSource;
+                // Get original table that will be filtered by region
+                var ts = (CoordinatesTableSource)tableSource.SpecificTableSource;
                 var coords = ts.Coordinates;
 
+                // Check if it's possible to filter based on HTMID. If HTMID is not
+                // available but the table is opted-in for region filtering by
+                // specifying the coordinates then use row-by-row filtering
                 if (coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)
                 {
-                    var qs1 = GenerateHtmJoinTableQuerySpecification(ts, qsi, false);
-                    var qs2 = GenerateHtmJoinTableQuerySpecification(ts, qsi, true);
+                    // Make sure table references in the generated subquery
+                    // remain pointed to the original table
+                    // Copy table source because original will be mapped to new one
+                    var sqname = String.Format("__htm_t{0}", tsi);
+                    var htmts = (CoordinatesTableSource)ts.Clone();
+                    var htmtr = htmts.TableReference = (TableReference)ts.TableReference.Clone();
 
-                    var qe = Jhu.Graywulf.Sql.Parsing.QueryExpression.Create(qs1, qs2, QueryOperator.CreateUnionAll());
+                    // Generate HTM logic and wrap it up into a subquery
+                    var qs1 = GenerateHtmJoinTableQuerySpecification(htmts, qsi, false);
+                    var qs2 = GenerateHtmJoinTableQuerySpecification(htmts, qsi, true);
+                    var qe = QueryExpression.Create(qs1, qs2, QueryOperator.CreateUnionAll());
+                    var ss = SelectStatement.Create(qe);
+                    var sqts = SubqueryTableSource.Create(ss, sqname);
 
-                    // Wrap is up into a subquery
-                    var ss = Jhu.Graywulf.Sql.Parsing.SelectStatement.Create(qe);
-                    var sqts = Jhu.Graywulf.Sql.Parsing.SubqueryTableSource.Create(ss, "__htm_t" + tsi.ToString());
+                    // Make sure subquery has a new table reference so it doesn't get automatically
+                    // mapped.
+                    // TODO: verify this because it might break server assignment logic
+                    SubstituteTableReference(ss, ts.TableReference, htmtr);
 
                     // Create a copy of the original table reference, substitute subquery with the new one
                     // and rewrite the old one to point to the subquery
                     var tr = ts.TableReference;
-                    var ntr = new TableReference(tr);
+                    var ntr = new TableReference(tr)
+                    {
+                        Alias = sqname,
+                        DatasetName = null,
+                        DatabaseName = null,
+                        SchemaName = null,
+                        DatabaseObjectName = null
+                    };
 
-                    // Replace table reference on subtree to a new one
-                    // that will point to the original table
-                    SubstituteTableReference(ss, tr, ntr);
-
-                    // Rewrite original table reference to point to
-                    // the subquery
-
+                    // Map original table reference to point to the subquery
+                    TableReferenceMap.Add(tr, ntr);
+                    
                     // TODO: review this because ResultsTableReference logic
                     // has changed
                     ss.QueryExpression.ResultsTableReference = tr;
@@ -274,9 +284,15 @@ namespace Jhu.SkyQuery.Jobs.Query
                     qs.AppendSearchCondition(sc, "AND");
                 }
             }
-            */
         }
 
+        /// <summary>
+        /// Generates the HTM-based join query for table filtering
+        /// </summary>
+        /// <param name="ts"></param>
+        /// <param name="qsi"></param>
+        /// <param name="partial"></param>
+        /// <returns></returns>
         private Jhu.Graywulf.Sql.Parsing.QuerySpecification GenerateHtmJoinTableQuerySpecification(CoordinatesTableSource ts, int qsi, bool partial)
         {
             var coords = ts.Coordinates;
@@ -321,7 +337,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="ts"></param>
         /// <param name="htmTable"></param>
         /// <returns></returns>
-        protected Jhu.Graywulf.Sql.Parsing.BooleanExpression GenerateHtmJoinCondition(SkyQuery.Parser.CoordinatesTableSource ts, TableReference htmTable, bool partial, int qsi)
+        protected Jhu.Graywulf.Sql.Parsing.BooleanExpression GenerateHtmJoinCondition(CoordinatesTableSource ts, TableReference htmTable, bool partial, int qsi)
         {
             var coords = ts.Coordinates;
 
@@ -355,7 +371,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             return sc;
         }
 
-        protected Jhu.Graywulf.Sql.Parsing.BooleanExpression GenerateRegionContainsCondition(SkyQuery.Parser.CoordinatesTableSource ts, int qsi)
+        protected Jhu.Graywulf.Sql.Parsing.BooleanExpression GenerateRegionContainsCondition(CoordinatesTableSource ts, int qsi)
         {
             string udt;
             var coords = ts.Coordinates;
@@ -420,9 +436,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <returns></returns>
         protected virtual StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
         {
-            throw new NotImplementedException();
-
-            /*
             StringBuilder sql;
 
             var coords = options.Table.Coordinates;
@@ -514,18 +527,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                 sql.Replace("[$where]", Execute(whereregion));
             }
 
-            // 5. Substitute remote table name, if necessary
-            var tr = new TableReference(options.Table.TableReference);
-            SubstituteRemoteTableName(tr);
+            // TODO: test
 
-            // Substitute additional tokens
-            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(tr));
+            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
             sql.Replace("[$columnlist]", columnlist.Execute());
 
             SubstituteAugmentedTableColumns(sql, options);
 
             return sql;
-            */
         }
 
         protected virtual void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
@@ -534,13 +543,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected void SubstituteHtmId(StringBuilder sql, TableCoordinates coords)
         {
-            throw new NotImplementedException();
-
-            /*
             var htmex = GetHtmIdExpression(coords);
-            SubstituteSystemDatabaseNames(htmex);
+            // TODO: delete if works SubstituteSystemDatabaseNames(htmex);
             sql.Replace("[$htmid]", Execute(htmex));
-            */
         }
 
         #endregion
@@ -787,15 +792,9 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
-            // TODO upgrade
-            // There's no RegionQuerySpecification, only RegionSelectStatement
-
-            throw new NotImplementedException();
-
-            /*
             var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource;
             var coords = ts.Coordinates;
-            var qs = ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
+            var qs = ts.FindAscendant<SkyQuery.Parser.RegionQuerySpecification>();
 
             if (qs is RegionQuerySpecification && ((RegionQuerySpecification)qs).Region != null &&
                 coords != null && !coords.IsNoRegion)
@@ -806,7 +805,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 return base.GetTableStatisticsCommand(tableSource, statisticsDataset);
             }
-            */
         }
 
         /// <summary>
@@ -816,14 +814,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <returns></returns>
         private SqlCommand GetTableStatisticsWithRegionCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
-            if (tableSource.TableReference.Statistics == null)
+            if (!queryObject.TableStatistics.ContainsKey(tableSource))
             {
-                throw new ArgumentNullException();
+                throw new InvalidOperationException();
             }
 
             if (!(tableSource.TableReference.DatabaseObject is TableOrView))
@@ -831,8 +824,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new ArgumentException();
             }
 
-            var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource;
-            var qs = (RegionQuerySpecification)ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
+            var ts = (CoordinatesTableSource)tableSource;
+            var qs = ts.FindAscendant<RegionQuerySpecification>();
             var region = qs.Region;
 
             // There are three options to generate a region-aware statistics query for a table
@@ -859,8 +852,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             var query = GenerateAugmentedTableQuery(options);
 
             // Statistics key needs to be changed because table is aliased
-            var tr = new TableReference("__t");
-            var keycol = SubstituteColumnTableReference(tableSource.TableReference.Statistics.KeyColumn, tableSource.TableReference, tr);
+            var tr = new TableReference(tableSource.TableReference)
+            {
+                Alias = "__t",
+                DatasetName = null,
+                DatabaseName = null,
+                SchemaName = null,
+                DatabaseObjectName = null,
+            };
+            TableReferenceMap.Add(tableSource.TableReference, tr);
+
+            var keycol = SubstituteColumnTableReference(queryObject.TableStatistics[tableSource].KeyColumn, tableSource.TableReference, tr);
             SubstituteSystemDatabaseNames(keycol);
 
             var sql = new StringBuilder(RegionScripts.TableStatistics);
@@ -873,34 +875,26 @@ namespace Jhu.SkyQuery.Jobs.Query
             AppendRegionParameter(cmd, region);
             AppendTableStatisticsCommandParameters(tableSource, cmd);
             return cmd;
-
-            */
         }
 
-        protected Jhu.Graywulf.Sql.Parsing.WhereClause GetTableSpecificWhereClause(ITableSource tableSource)
+        protected override WhereClause GetTableSpecificWhereClause(ITableSource tableSource)
         {
             return GetTableSpecificWhereClause(tableSource, true);
         }
 
         protected WhereClause GetTableSpecificWhereClause(ITableSource tableSource, bool useRegion)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
-            var ts = (SkyQuery.Parser.CoordinatesTableSource)tableSource;
-            var qs = (RegionQuerySpecification)ts.FindAscendant<SkyQuery.Parser.QuerySpecification>();
+            var ts = (CoordinatesTableSource)tableSource;
+            var coords = ts.Coordinates;
+            var qs = ts.FindAscendant<RegionQuerySpecification>();
             var region = qs.Region;
-            var where = base.GetTableSpecificWhereClause(tableSource);
-
-            if (region == null || !(tableSource is SkyQuery.Parser.CoordinatesTableSource))
+            var where = base.GetTableSpecificWhereClause(ts);
+            
+            if (region == null)
             {
                 return where;
             }
-
-            var coords = ((SkyQuery.Parser.CoordinatesTableSource)tableSource).Coordinates;
-
+            
             if (useRegion && coords != null && !coords.IsNoRegion && !coords.IsHtmIdHintSpecified)
             {
                 // If coords are null we cannot filter the table by regions
@@ -909,11 +903,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // In this case, no HTM ID columns is specified so we have to use coordinates
                 // and function calls to apply region filter
 
-                var sc = GenerateRegionContainsCondition((SkyQuery.Parser.CoordinatesTableSource)tableSource, -1);
+                var sc = GenerateRegionContainsCondition(ts, -1);
 
                 if (where == null)
                 {
-                    where = Jhu.Graywulf.SqlParser.WhereClause.Create(sc);
+                    where = WhereClause.Create(sc);
                 }
                 else
                 {
@@ -922,7 +916,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             return where;
-            */
         }
 
         protected void AppendRegionParameter(SqlCommand cmd, Spherical.Region region)
