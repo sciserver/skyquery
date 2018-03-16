@@ -106,6 +106,7 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Parser\RegionClause.cs" />
+    <Compile Include="Parser\RegionQuerySpecification.cs" />
     <Compile Include="Parser\RegionSelectStatement.cs" />
     <Compile Include="Parser\SkyQueryNameResolver.cs" />
     <Compile Include="Parser\SkyQueryParser.cs" />

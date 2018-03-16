@@ -138,6 +138,7 @@
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />
     <Compile Include="Jobs\Query\XMatchQuery.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJobInstaller.cs" />
+    <Compile Include="Jobs\Query\XMatchQueryParameters.cs" />
     <Compile Include="Jobs\Query\XMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTable.sql" />
