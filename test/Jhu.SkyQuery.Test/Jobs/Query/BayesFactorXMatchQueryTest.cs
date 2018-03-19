@@ -183,9 +183,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -204,9 +204,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -518,8 +518,8 @@ FROM XMATCH(
     MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
-WHERE a.g < b.w1mpro AND b.w2mpro < c.nuv_mag AND a.i < c.fuv_mag";
+WHERE a.g < b.w1mpro AND b.w2mpro < c.nuv_mag AND a.i < c.fuv_mag
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }

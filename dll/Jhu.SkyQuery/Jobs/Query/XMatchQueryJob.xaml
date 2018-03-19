@@ -2,7 +2,6 @@
  xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
  xmlns:jga="clr-namespace:Jhu.Graywulf.Activities;assembly=Jhu.Graywulf.Activities"
  xmlns:jgsjq="clr-namespace:Jhu.Graywulf.Sql.Jobs.Query;assembly=Jhu.Graywulf.Sql.Jobs"
- xmlns:jgsp="clr-namespace:Jhu.Graywulf.Sql.Parsing;assembly=Jhu.Graywulf.Sql"
  xmlns:local="clr-namespace:Jhu.SkyQuery.Jobs.Query"
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
  xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
@@ -75,13 +74,13 @@
       <jgsjq:InitializeQuery EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="InitializeQuery_1" JobInfo="[JobInfo]" Parameters="[Parameters]" Query="[Query]" />
       <jga:PlaceholderActivity DisplayName="TODO: CheckDestinationTable" sap2010:WorkflowViewState.IdRef="PlaceholderActivity_1" />
       <jgsjq:AssignServerInstance EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="AssignServerInstance_1" JobInfo="[JobInfo]" QueryObject="[Query]" />
-      <ParallelForEach x:TypeArguments="jgsp:ITableSource" DisplayName="ParallelForEach&lt;ITableSource&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_1" Values="[Query.TableStatistics.Keys]">
-        <ActivityAction x:TypeArguments="jgsp:ITableSource">
+      <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_8" Values="[Query.TableStatistics.Keys]">
+        <ActivityAction x:TypeArguments="x:String">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgsp:ITableSource" Name="tableSource" />
+            <DelegateInArgument x:TypeArguments="x:String" Name="key" />
           </ActivityAction.Argument>
           <jga:Retry Finally="{x:Null}" sap2010:WorkflowViewState.IdRef="Retry_1" JobInfo="[JobInfo]" MaxRetries="3">
-            <jgsjq:ComputeTableStatistics sap2010:WorkflowViewState.IdRef="ComputeTableStatistics_1" JobInfo="[JobInfo]" Query="[Query]" TableSource="[tableSource]" />
+            <jgsjq:ComputeTableStatistics sap2010:WorkflowViewState.IdRef="ComputeTableStatistics_1" JobInfo="[JobInfo]" Query="[Query]" TableSource="[Query.TableStatistics(key).TableSource]" />
           </jga:Retry>
         </ActivityAction>
       </ParallelForEach>
@@ -158,7 +157,7 @@
         </ActivityAction>
       </ParallelForEach>
     </CancellationScope.CancellationHandler>
-    <sads:DebugSymbol.Symbol>d2hDOlxEYXRhXGRvYm9zXHByb2plY3Rcc2t5cXVlcnktYWxsLXYxLjRcbW9kdWxlc1xza3lxdWVyeVxkbGxcSmh1LlNreVF1ZXJ5XEpvYnNcUXVlcnlcWE1hdGNoUXVlcnlKb2IueGFtbFtGA6IBFwIBAUoFlgEQAgEKmAEHnwEZAgECSwdLqAECAX9MB0yEAQIBfk0HTZ4BAgF6TgdXGQIBblgHWJQBAgFqWQeNARkCAROOAQeVARkCAQuYAbcBmAHLAQIBCZ0BC50BrAECAQNLhwFLlQEDAYMBS3BLewMBgQFLnAFLpQEDAYABTXpNhQECAXxNkgFNmwECAXtOqwFOyQECAXlTC1UXAgFvWHZYgQECAWxYiAFYkQECAWtZtgFZygECAWleC4sBFwIBFI4BtgGOAcoBAgESkwELkwGtAQIBDJ0BgQGdAZMBAgEHnQGjAZ0BqQECAQadAWadAXECAQRTclN1AgFyU1tTZgIBcFQNVKgBAgFzXnJedQIBF15bXmYCARVfDYoBGAIBGJMBgQGTAZMBAgEQkwGjAZMBqgECAQ+TAWaTAXECAQ1UblR5AgF3VJYBVKUBAgF1VIABVIkBAgF0Yw9jrwECAWRkD2SoAQIBX2UPZagBAgFaZg9tIQIBUW4PfBkCATB9D32MAQIBK34PiQEhAgEZY4IBY40BAgFnY5oBY6wBAgFlZJMBZKUBAgFiZHhkgwECAWBlkwFlpQECAV1leGWDAQIBW2akAWbOAQIBWWsTa68BAgFSbnVuxwECAVBzE3oeAgExfXd9iQECAS59XH1nAgEsfqQBfs4BAgEqgwEThwEeAgEaa4EBa5MBAgFXa6ABa6wBAgFVa2ZrcQIBU3QVdJcBAgFLdRV1rQECAUZ2FXaVAQIBQXcVd48BAgE8eBV4jwECATd5FXmRAQIBMoQBFYQBvQECASOFARWFAbEBAgEchgEVhgGYAQIBG3RwdHsCAU50hwF0lAECAUx1hgF1kQECAUl1nQF1qgECAUd2bnZ5AgFEdoUBdpIBAgFCd2h3cwIBP3d/d4wBAgE9eGh4cwIBOnh/eIwBAgE4eWp5dQIBNXmBAXmOAQIBM4QBjwGEAaEBAgEohAGuAYQBugECASaEAXSEAX8CASSFAYMBhQGVAQIBIYUBogGFAa4BAgEfhQFohQFzAgEd</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d2hDOlxEYXRhXGRvYm9zXHByb2plY3Rcc2t5cXVlcnktYWxsLXYxLjRcbW9kdWxlc1xza3lxdWVyeVxkbGxcSmh1LlNreVF1ZXJ5XEpvYnNcUXVlcnlcWE1hdGNoUXVlcnlKb2IueGFtbFtFA6EBFwIBAUkFlQEQAgEKlwEHngEZAgECSgdKqAEDAYEBSwdLhAEDAYABTAdMngECAXtNB1YZAgFvVwdXlAECAWpYB4wBGQIBE40BB5QBGQIBC5cBtwGXAcsBAgEJnAELnAGsAQIBA0qHAUqVAQMBhgFKcEp7AwGEAUqcAUqlAQMBggFMekyFAQIBfkySAUybAQIBfE2cAU26AQIBelILVBcCAXBXdleBAQIBbVeIAVeRAQIBa1i2AVjKAQIBaV0LigEXAgEUjQG2AY0BygECARKSAQuSAa0BAgEMnAGBAZwBkwECAQecAaMBnAGpAQIBBpwBZpwBcQIBBFJyUnUCAXNSW1JmAgFxUw1TqAECAXRdcl11AgEXXVtdZgIBFV4NiQEYAgEYkgGBAZIBkwECARCSAaMBkgGqAQIBD5IBZpIBcQIBDVNuU3kCAXhTlgFTpQECAXdTgAFTiQECAXViD2KvAQIBZGMPY6gBAgFfZA9kqAECAVplD2whAgFRbQ97GQIBMHwPfIwBAgErfQ+IASECARliggFijQECAWdimgFirAECAWVjkwFjpQECAWJjeGODAQIBYGSTAWSlAQIBXWR4ZIMBAgFbZaQBZc4BAgFZahNqrwECAVJtdW3HAQIBUHITeR4CATF8d3yJAQIBLnxcfGcCASx9pAF9zgECASqCAROGAR4CARpqgQFqkwECAVdqoAFqrAECAVVqZmpxAgFTcxVzlwECAUt0FXStAQIBRnUVdZUBAgFBdhV2jwECATx3FXePAQIBN3gVeJEBAgEygwEVgwG9AQIBI4QBFYQBsQECARyFARWFAZgBAgEbc3BzewIBTnOHAXOUAQIBTHSGAXSRAQIBSXSdAXSqAQIBR3VudXkCAUR1hQF1kgECAUJ2aHZzAgE/dn92jAECAT13aHdzAgE6d393jAECATh4anh1AgE1eIEBeI4BAgEzgwGPAYMBoQECASiDAa4BgwG6AQIBJoMBdIMBfwIBJIQBgwGEAZUBAgEhhAGiAYQBrgECAR+EAWiEAXMCAR0=</sads:DebugSymbol.Symbol>
   </CancellationScope>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
@@ -167,7 +166,7 @@
       <sap2010:ViewStateData Id="AssignServerInstance_1" sap:VirtualizedContainerService.HintSize="350.857142857143,21.7142857142857" />
       <sap2010:ViewStateData Id="ComputeTableStatistics_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
       <sap2010:ViewStateData Id="Retry_1" sap:VirtualizedContainerService.HintSize="213.714285714286,134.285714285714" />
-      <sap2010:ViewStateData Id="ParallelForEach`1_1" sap:VirtualizedContainerService.HintSize="350.857142857143,285.714285714286" />
+      <sap2010:ViewStateData Id="ParallelForEach`1_8" sap:VirtualizedContainerService.HintSize="350.857142857143,285.714285714286" />
       <sap2010:ViewStateData Id="GeneratePartitions_1" sap:VirtualizedContainerService.HintSize="350.857142857143,21.7142857142857" />
       <sap2010:ViewStateData Id="AssignServerInstance_2" sap:VirtualizedContainerService.HintSize="285.714285714286,21.7142857142857" />
       <sap2010:ViewStateData Id="IdentifyRemoteSourceTables_1" sap:VirtualizedContainerService.HintSize="285.714285714286,21.7142857142857" />

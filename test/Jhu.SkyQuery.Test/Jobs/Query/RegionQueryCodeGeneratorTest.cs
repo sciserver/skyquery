@@ -148,7 +148,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var keycol = ts.TableReference.ColumnReferences.First(c => c.ColumnName == "dec");
             keycol.ColumnContext |= Graywulf.Sql.NameResolution.ColumnContext.SelectList;
 
-            q.TableStatistics[ts] = new Graywulf.Sql.Jobs.Query.TableStatistics()
+            q.TableStatistics[ts.UniqueKey] = new Graywulf.Sql.Jobs.Query.TableStatistics(ts)
             {
                 BinCount = 200,
                 KeyColumn = Graywulf.Sql.Parsing.Expression.Create(keycol),

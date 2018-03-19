@@ -183,8 +183,10 @@ namespace Jhu.SkyQuery.Parser.Grammar
                 RegionSelectStatement,
                 Sequence
                 (
+                    //May(Sequence(CommonTableExpression, May(CommentOrWhitespace))),
                     XMatchQueryExpression,
-                    May(Sequence(May(CommentOrWhitespace), RegionClause))
+                    May(Sequence(May(CommentOrWhitespace), OrderByClause)),
+                    May(Sequence(May(CommentOrWhitespace), QueryHintClause))
                 )
             );
 
@@ -206,7 +208,8 @@ namespace Jhu.SkyQuery.Parser.Grammar
                     SelectList,
                     May(Sequence(May(CommentOrWhitespace), IntoClause)),
                     May(CommentOrWhitespace), XMatchFromClause,
-                    May(Sequence(May(CommentOrWhitespace), WhereClause))
+                    May(Sequence(May(CommentOrWhitespace), WhereClause)),
+                    May(Sequence(May(CommentOrWhitespace), RegionClause))
                 )
             );
 

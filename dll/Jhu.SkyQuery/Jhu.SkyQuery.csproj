@@ -154,6 +154,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>XMatchScripts.resx</DependentUpon>
     </Compile>
+    <Compile Include="Jobs\Query\XMatchTableComparer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
     <None Include="post-build.ps1" />

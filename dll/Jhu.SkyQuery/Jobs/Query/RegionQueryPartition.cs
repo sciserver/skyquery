@@ -47,7 +47,14 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override SqlQueryCodeGenerator CreateCodeGenerator()
         {
-            return new RegionQueryCodeGenerator(this);
+            return new RegionQueryCodeGenerator(this)
+            {
+                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
+                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
+                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified
+            };
         }
     }
 }

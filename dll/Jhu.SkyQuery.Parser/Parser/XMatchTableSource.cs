@@ -11,11 +11,18 @@ namespace Jhu.SkyQuery.Parser
     public partial class XMatchTableSource : ITableReference, ITableSource
     {
         private TableReference tableReference;
-
+        private string uniqueKey;
+        
         public override TableReference TableReference
         {
             get { return tableReference; }
             set { tableReference = value; }
+        }
+
+        public string UniqueKey
+        {
+            get { return uniqueKey; }
+            set { uniqueKey = value; }
         }
 
         public override ITableSource SpecificTableSource
