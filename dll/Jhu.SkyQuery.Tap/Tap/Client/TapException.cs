@@ -21,5 +21,10 @@ namespace Jhu.SkyQuery.Tap.Client
             : base(message, innerException)
         {
         }
+
+        public TapException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+            : base(info, context)
+        {
+        }
     }
 }
