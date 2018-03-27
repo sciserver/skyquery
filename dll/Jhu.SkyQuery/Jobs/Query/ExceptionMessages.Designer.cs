@@ -79,6 +79,15 @@ namespace Jhu.SkyQuery.Jobs.Query {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A calculated search radius of {0} degrees is too large. If variable astrometric error is specified, make sure you limit the error to a reasonable value..
+        /// </summary>
+        internal static string SearchRadiusTooLarge {
+            get {
+                return ResourceManager.GetString("SearchRadiusTooLarge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only single select statement xmatch queries are supported..
         /// </summary>
         internal static string XMatchMultipleStatementsNotSupported {

@@ -434,13 +434,13 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>
-        protected virtual StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
+        protected StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
         {
             StringBuilder sql;
 
             var coords = options.Table.Coordinates;
-            Jhu.Graywulf.Sql.Parsing.WhereClause where = null;
-            Jhu.Graywulf.Sql.Parsing.WhereClause whereregion = null;
+            WhereClause where = null;
+            WhereClause whereregion = null;
 
             // 1. Generate column list
 
@@ -455,9 +455,78 @@ namespace Jhu.SkyQuery.Jobs.Query
                 LeadingSeparator = true,
             };
 
-            // 2. Figure out where clause
+            // 2. Load template
 
-            if (options.UseConditions)
+            var hasRegion =
+                options.Region != null && options.UseRegion && options.UseHtm &&
+                (options.Table.Coordinates.IsHtmIdHintSpecified ||
+                fallBackToDefaultColumns && options.Table.Coordinates.IsHtmIdColumnAvailable);
+
+            if (hasRegion)
+            {
+                sql = GetSelectAugmentedTableHtmTemplate();
+            }
+            else
+            {
+                sql = GetSelectAugmentedTableTemplate();
+            }
+
+            // 2. Generate where clause
+
+            OnGenerateAugmentedTableQuery(options, sql, ref where);
+
+            // 3. Add explicit region filter, if necessary
+
+            if (options.Region != null && options.UseRegion)
+            {
+                // Filter on region containment
+                var rc = GenerateRegionContainsCondition(options.Table, -1);
+
+                if (rc != null)
+                {
+                    if (where != null)
+                    {
+                        whereregion = (WhereClause)where.Clone();
+                        whereregion.AppendCondition(rc, "AND");
+                    }
+                    else
+                    {
+                        whereregion = WhereClause.Create(rc);
+                    }
+                }
+            }
+            else
+            {
+                whereregion = where;
+            }
+            
+            // 4. Rewrite SQL template by substituting tokens
+
+            if (hasRegion)
+            {
+                SubstituteHtmId(sql, coords);
+                sql.Replace("[$where_inner]", Execute(where));
+                sql.Replace("[$where_partial]", Execute(whereregion));
+            }
+            else
+            {
+                
+                sql.Replace("[$where]", Execute(whereregion));
+            }
+
+            // TODO: test
+
+            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
+            sql.Replace("[$columnlist]", columnlist.Execute());
+
+            SubstituteAugmentedTableColumns(sql, options);
+
+            return sql;
+        }
+
+        protected virtual void OnGenerateAugmentedTableQuery(AugmentedTableQueryOptions options, StringBuilder sql, ref WhereClause where)
+        {
+            if (options.UseWhereConditions)
             {
                 // Take the most restrictive where clause from the table
                 // The region condition will be appended later as HTM-based joins
@@ -477,64 +546,10 @@ namespace Jhu.SkyQuery.Jobs.Query
                     }
                     else
                     {
-                        where = Jhu.Graywulf.Sql.Parsing.WhereClause.Create(pc);
+                        where = WhereClause.Create(pc);
                     }
                 }
             }
-
-            // 3. Add explicit region filter, if necessary
-
-            if (options.Region != null && options.UseRegion)
-            {
-                // Filter on region containment
-                var rc = GenerateRegionContainsCondition(options.Table, -1);
-
-                if (rc != null)
-                {
-                    if (where != null)
-                    {
-                        whereregion = (Jhu.Graywulf.Sql.Parsing.WhereClause)where.Clone();
-                        whereregion.AppendCondition(rc, "AND");
-                    }
-                    else
-                    {
-                        whereregion = Jhu.Graywulf.Sql.Parsing.WhereClause.Create(rc);
-                    }
-                }
-            }
-            else
-            {
-                whereregion = where;
-            }
-
-            // 4. Load and rewrite SQL template
-
-            if (options.Region != null && options.UseRegion && options.UseHtm &&
-                (options.Table.Coordinates.IsHtmIdHintSpecified ||
-                fallBackToDefaultColumns && options.Table.Coordinates.IsHtmIdColumnAvailable))
-            {
-                sql = GetSelectAugmentedTableHtmTemplate();
-
-                SubstituteHtmId(sql, coords);
-
-                sql.Replace("[$where_inner]", Execute(where));
-                sql.Replace("[$where_partial]", Execute(whereregion));
-            }
-            else
-            {
-                sql = GetSelectAugmentedTableTemplate();
-
-                sql.Replace("[$where]", Execute(whereregion));
-            }
-
-            // TODO: test
-
-            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
-            sql.Replace("[$columnlist]", columnlist.Execute());
-
-            SubstituteAugmentedTableColumns(sql, options);
-
-            return sql;
         }
 
         protected virtual void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
@@ -916,7 +931,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return where;
         }
-
+        
         protected void AppendRegionParameter(SqlCommand cmd, Spherical.Region region)
         {
             cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = region == null ? System.Data.SqlTypes.SqlBytes.Null : region.ToSqlBytes();

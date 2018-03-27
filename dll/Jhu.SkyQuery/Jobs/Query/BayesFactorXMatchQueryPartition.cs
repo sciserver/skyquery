@@ -131,7 +131,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     var res = await ExecuteSqlOnAssignedServerScalarAsync(cmd, CommandTarget.Code);
                     var theta = res != DBNull.Value ? (double)res : 0;
-                    step.SearchRadius = Math.Sqrt(theta) * 180.0 / Math.PI;
+                    var radius = Math.Sqrt(theta) * 180.0 / Math.PI;
+
+                    if (radius / Query.ZoneHeight > 100)
+                    {
+                        throw Error.SearchRadiusTooLarge(radius);
+                    }
+
+                    step.SearchRadius = radius;
                 }
             }
         }

@@ -12,7 +12,8 @@ namespace Jhu.SkyQuery.Jobs.Query
         private SkyQuery.Parser.CoordinatesTableSource table;
         private Region region;
         private bool useRegion;
-        private bool useConditions;
+        private bool useWhereConditions;
+        private bool excludeZeroWeight;
         private bool useHtm;
         private bool usePartitioning;
         private ColumnContext columnContext;
@@ -35,10 +36,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             set { useRegion = value; }
         }
 
-        public bool UseConditions
+        public bool UseWhereConditions
         {
-            get { return useConditions; }
-            set { useConditions = value; }
+            get { return useWhereConditions; }
+            set { useWhereConditions = value; }
+        }
+
+        public bool ExcludeZeroWeight
+        {
+            get { return excludeZeroWeight; }
+            set { excludeZeroWeight = value; }
         }
 
         public bool UseHtm
@@ -83,7 +90,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             this.table = null;
             this.region = null;
             this.useRegion = true;
-            this.useConditions = true;
+            this.useWhereConditions = true;
+            this.excludeZeroWeight = true;
             this.useHtm = true;
             this.usePartitioning = true;
             this.columnContext = ColumnContext.Default;

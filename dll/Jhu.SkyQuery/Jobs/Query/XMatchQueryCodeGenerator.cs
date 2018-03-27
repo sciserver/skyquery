@@ -83,6 +83,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             // TODO: Figure out from metadata
         }
 
+        protected BooleanExpression GenerateExcludeZeroWeightCondition(CoordinatesTableSource table)
+        {
+            var a = Expression.CreateNumber("0");
+            var b = GetCoordinateErrorExpression(table.Coordinates);
+            var p = Predicate.CreateGreaterThan(b, a);
+            return BooleanExpression.Create(false, p);
+        }
+
         public Expression GetZoneIdExpression(TableCoordinates coords)
         {
             if (coords.IsZoneIdHintSpecified)
@@ -864,7 +872,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                     UseRegion = false,
                     UsePartitioning = false,
-                    UseConditions = false,
+                    UseWhereConditions = false,
                 };
                 query1 = GenerateAugmentedTableQuery(options).ToString();
             }
@@ -880,7 +888,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                 UseRegion = false,
                 UsePartitioning = false,
-                UseConditions = false,
+                UseWhereConditions = false,
             };
             query2 = GenerateAugmentedTableQuery(options2).ToString();
 

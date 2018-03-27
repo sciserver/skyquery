@@ -28,5 +28,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             return new XMatchException(ExceptionMessages.XMatchMultipleStatementsNotSupported);
         }
+
+        public static XMatchException SearchRadiusTooLarge(double radius)
+        {
+            return new XMatchException(String.Format(ExceptionMessages.SearchRadiusTooLarge, radius));
+        }
     }
 }

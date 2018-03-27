@@ -46,14 +46,31 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             return new StringBuilder(BayesFactorXMatchScripts.SelectAugmentedTableHtm);
         }
-
-        protected override StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
+        
+        protected override void OnGenerateAugmentedTableQuery(AugmentedTableQueryOptions options, StringBuilder sql, ref WhereClause where)
         {
+            base.OnGenerateAugmentedTableQuery(options, sql, ref where);
+
             var coords = options.Table.Coordinates;
             var error = GetCoordinateErrorExpression(coords);
             var weight = GetWeightExpressionString(Execute(error));
 
-            var sql = base.GenerateAugmentedTableQuery(options);
+            if (options.ExcludeZeroWeight && !options.Table.Coordinates.IsConstantError)
+            {
+                var wc = GenerateExcludeZeroWeightCondition(options.Table);
+
+                if (wc != null)
+                {
+                    if (where != null)
+                    {
+                        where.AppendCondition(wc, "AND");
+                    }
+                    else
+                    {
+                        where = WhereClause.Create(wc);
+                    }
+                }
+            }
 
             sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
             sql.Replace("[$weight]", weight);
@@ -68,8 +85,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 sql.Replace("[$n]", "1");
             }
-
-            return sql;
         }
 
         protected override void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)

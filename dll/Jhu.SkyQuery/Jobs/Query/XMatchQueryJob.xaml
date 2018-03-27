@@ -4,7 +4,9 @@
  xmlns:jgsjq="clr-namespace:Jhu.Graywulf.Sql.Jobs.Query;assembly=Jhu.Graywulf.Sql.Jobs"
  xmlns:local="clr-namespace:Jhu.SkyQuery.Jobs.Query"
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
  xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:s="clr-namespace:System;assembly=mscorlib"
  xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
  xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
  xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
@@ -15,9 +17,7 @@
     <x:Property Name="JobInfo" Type="InArgument(jga:JobInfo)" />
     <x:Property Name="Parameters" Type="InOutArgument(jgsjq:SqlQueryParameters)" />
   </x:Members>
-  <mva:VisualBasic.Settings>
-    <x:Null />
-  </mva:VisualBasic.Settings>
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
   <sap2010:WorkflowViewState.IdRef>Jhu.SkyQuery.Jobs.Query.XMatchQueryJob_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <sco:Collection x:TypeArguments="x:String">
@@ -31,8 +31,6 @@
       <x:String>Jhu.Graywulf.Registry</x:String>
       <x:String>Jhu.Graywulf.Sql.Parsing</x:String>
       <x:String>Jhu.Graywulf.Tasks</x:String>
-      <x:String>Microsoft.VisualBasic</x:String>
-      <x:String>Microsoft.VisualBasic.Activities</x:String>
       <x:String>System</x:String>
       <x:String>System.Activities.Debugger</x:String>
       <x:String>System.Activities.Debugger.Symbol</x:String>
@@ -59,6 +57,7 @@
       <AssemblyReference>System.Core</AssemblyReference>
       <AssemblyReference>System.ServiceModel</AssemblyReference>
       <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
       <AssemblyReference>PresentationFramework</AssemblyReference>
       <AssemblyReference>WindowsBase</AssemblyReference>
       <AssemblyReference>PresentationCore</AssemblyReference>
@@ -80,6 +79,11 @@
             <DelegateInArgument x:TypeArguments="x:String" Name="key" />
           </ActivityAction.Argument>
           <jga:Retry Finally="{x:Null}" sap2010:WorkflowViewState.IdRef="Retry_1" JobInfo="[JobInfo]" MaxRetries="3">
+            <jga:Retry.HandledExceptionTypes>
+              <InArgument x:TypeArguments="s:Type[]">
+                <mca:CSharpValue x:TypeArguments="s:Type[]">new[] { typeof(System.Data.SqlClient.SqlException)}</mca:CSharpValue>
+              </InArgument>
+            </jga:Retry.HandledExceptionTypes>
             <jgsjq:ComputeTableStatistics sap2010:WorkflowViewState.IdRef="ComputeTableStatistics_1" JobInfo="[JobInfo]" Query="[Query]" TableSource="[Query.TableStatistics(key).TableSource]" />
           </jga:Retry>
         </ActivityAction>
@@ -91,6 +95,15 @@
             <DelegateInArgument x:TypeArguments="jgsjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
           <jga:Retry Finally="{x:Null}" sap2010:WorkflowViewState.IdRef="Retry_2" JobInfo="[JobInfo]" MaxRetries="3">
+            <jga:Retry.HandledExceptionTypes>
+              <InArgument x:TypeArguments="s:Type[]">
+                <mca:CSharpValue x:TypeArguments="s:Type[]" xml:space="preserve">new[] 
+{
+    typeof(System.Data.SqlClient.SqlException),
+    typeof(System.IO.IOException),
+}</mca:CSharpValue>
+              </InArgument>
+            </jga:Retry.HandledExceptionTypes>
             <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2">
               <Sequence.Variables>
                 <Variable x:TypeArguments="scg:List(x:String)" Name="remoteTableReferences" />
