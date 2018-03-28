@@ -9,6 +9,18 @@ namespace Jhu.SkyQuery.CodeGen
     [TestClass]
     public class SkyQueryCodeGeneratorTest : SkyQueryTestBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            StartLogger();
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            StopLogger();
+        }
+
         [TestMethod]
         public void GenerateXMatchWhereClauseTest()
         {
@@ -25,8 +37,8 @@ namespace Jhu.SkyQuery.CodeGen
             {
                 ID = 0,
                 InclusionMethod = Parser.XMatchInclusionMethod.Must,
-                DatasetName = "SDSSDR12",
-                TableUniqueKey = "dbo.PhotoObjAll",     // TODO
+                DatasetName = "SDSSDR13",
+                TableUniqueKey = "Table|SDSSDR13|SkyNode_SDSSDR13|dbo|PhotoObjAll",     // TODO
                 Alias = "s",
                 CoordinateMode = CoordinateMode.Automatic,
                 ErrorMode = ErrorMode.Constant,
@@ -41,7 +53,7 @@ namespace Jhu.SkyQuery.CodeGen
                 ID = 0,
                 InclusionMethod = Parser.XMatchInclusionMethod.Must,
                 DatasetName = "TwoMASS",
-                TableUniqueKey = "dbo.PhotoPSC",    // TODO
+                TableUniqueKey = "Table|TwoMASS|SkyNode_TwoMASS|dbo|PhotoPSC",    // TODO
                 Alias = "t",
                 CoordinateMode = CoordinateMode.Automatic,
                 ErrorMode = ErrorMode.Constant,
@@ -51,19 +63,23 @@ namespace Jhu.SkyQuery.CodeGen
             c2.Columns.AddRange(new[] { "objID", "ra", "dec" });
             xmatch.Catalogs.Add(c2);
 
-            var cg = new SkyQueryCodeGenerator();
+            var cg = new SkyQueryCodeGenerator()
+            {
+                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+            };
             var q = cg.GenerateXMatchQuery(xmatch, CreateSchemaManager());
 
             var gt =
 @"SELECT [x].[MatchID], [x].[RA], [x].[Dec], [s].[objID], [s].[ra], [s].[dec], [t].[objID], [t].[ra], [t].[dec]
 INTO MYDB:webuser.xmatchtest
 FROM XMATCH (
-    MUST EXIST IN [SDSSDR12]:[dbo].[PhotoObjAll] AS [s] WITH(ERROR(0.1)),
+    MUST EXIST IN [SDSSDR13]:[dbo].[PhotoObjAll] AS [s] WITH(ERROR(0.1)),
     MUST EXIST IN [TwoMASS]:[dbo].[PhotoPSC] AS [t] WITH(ERROR(0.1)),
     LIMIT BAYESFACTOR TO 1000) AS x
-WHERE
-    ([s].[ra] BETWEEN 0 AND 10) AND
-    ([t].[ra] BETWEEN 0 AND 10)
+WHERE (ra BETWEEN 0 AND 10) AND
+(ra BETWEEN 0 AND 10)
 REGION 'CIRCLE J2000 10 10 10'";
 
             Assert.AreEqual(gt, q);

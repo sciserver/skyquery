@@ -272,6 +272,7 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(sigRaDec), HTMID(htmid), ZONEID(zoneid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
+WHERE sigRaDec < 9999
 REGION 'CIRCLE J2000 0 0 10'
 ";
 
