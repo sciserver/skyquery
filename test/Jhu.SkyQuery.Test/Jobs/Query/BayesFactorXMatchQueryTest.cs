@@ -820,6 +820,9 @@ WHERE a.ra BETWEEN 0 AND 1 AND
         [TestCategory("Query")]
         public void XMatchWithXMatchOutputTest()
         {
+            // TODO: this now creates a table without primary key
+            // Can be used to test xmatch w/o PK behavior
+
             DropUserDatabaseTable("XMatchWithXMatchOutput1");
 
             var sql = @"
