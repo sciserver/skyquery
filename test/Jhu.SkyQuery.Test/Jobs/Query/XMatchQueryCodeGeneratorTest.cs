@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Sql.Parsing;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test
@@ -18,13 +18,25 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
     [TestClass]
     public class XMatchQueryCodeGeneratorTest : SkyQueryTestBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            StartLogger();
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            StopLogger();
+        }
+
         protected XMatchQueryCodeGenerator CodeGenerator
         {
             get
             {
                 return new XMatchQueryCodeGenerator()
                 {
-                    CodeDataset = new Graywulf.Schema.SqlServer.SqlServerDataset()
+                    CodeDataset = new Jhu.Graywulf.Sql.Schema.SqlServer.SqlServerDataset()
                     {
                         Name = "CODE",
                         ConnectionString = "data source=localhost;initial catalog=SkyQuery_Code",
@@ -35,39 +47,30 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
 
         protected XMatchSelectStatement Parse(string sql)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
             var p = new SkyQueryParser();
-            var ss = p.Execute<XMatchSelectStatement>(sql);
+            var script = p.Execute<SkyQuery.Parser.StatementBlock>(sql);
+            var ss = script.FindDescendantRecursive<XMatchSelectStatement>();
             var qs = (XMatchQuerySpecification)ss.QueryExpression.EnumerateQuerySpecifications().First();
 
             var nr = new SkyQueryNameResolver();
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
             nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
-            nr.Execute(ss);
+            nr.Execute(script);
 
             return ss;
-            */
         }
 
         #region Helper functions
 
         private string[] GeneratePropagatedColumnListTestHelper(string sql, ColumnContext context)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
             var res = new List<string>();
             var q = CreateQuery(sql);
+            var ss = q.QueryDetails.ParsingTree.FindDescendantRecursive<SelectStatement>();
             var cg = new XMatchQueryCodeGenerator(q);
 
-            foreach (var qs in q.SelectStatement.QueryExpression.EnumerateQuerySpecifications())
+            foreach (var qs in ss.QueryExpression.EnumerateQuerySpecifications())
             {
                 foreach (var ts in qs.EnumerateSourceTables(false))
                 {
@@ -82,27 +85,23 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             }
 
             return res.ToArray();
-            */
         }
 
         private string GetExecuteQueryTextTestHelper(string sql)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
             using (var context = ContextManager.Instance.CreateReadOnlyContext())
             {
                 var sm = new GraywulfSchemaManager(new FederationContext(context, null));
 
                 var xmq = CreateQuery(sql);
-                xmq.ExecutionMode = ExecutionMode.SingleServer;
+                xmq.Parameters.ExecutionMode = ExecutionMode.SingleServer;
 
                 var xmqp = new BayesFactorXMatchQueryPartition((BayesFactorXMatchQuery)xmq);
                 xmqp.ID = 0;
                 xmqp.InitializeQueryObject(null);
-                xmqp.DefaultDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
+                xmqp.Parameters.DefaultSourceDataset =
+                    xmqp.Parameters.DefaultOutputDataset =
+                    (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Test.Constants.TestDatasetName];
                 xmqp.CodeDataset = (SqlServerDataset)sm.Datasets[Jhu.Graywulf.Registry.Constants.CodeDbName];
 
                 // TODO: where to take this? let's just hack it for now
@@ -112,18 +111,23 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
                     DatabaseName = "Graywulf_Temp"
                 };
 
-                var qs = xmqp.Query.SelectStatement.QueryExpression.EnumerateQuerySpecifications().First();
-                var fc = qs.FindDescendant<Jhu.Graywulf.SqlParser.FromClause>();
+                var qs = xmqp.Query.QueryDetails.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>().QueryExpression.EnumerateQuerySpecifications().First();
+                var fc = qs.FindDescendant<Jhu.Graywulf.Sql.Parsing.FromClause>();
                 var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Parser.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
                 xmqp.GenerateSteps(xmtables);
 
-                var cg = new XMatchQueryCodeGenerator(xmqp);
+                var cg = new XMatchQueryCodeGenerator(xmqp)
+                {
+                    ColumnNameRendering = NameRendering.FullyQualified,
+                    ColumnAliasRendering = AliasRendering.Always,
+                    TableNameRendering = NameRendering.FullyQualified,
+                    FunctionNameRendering = NameRendering.FullyQualified,
+                };
 
-                var res = cg.GetExecuteQuery(xmq.SelectStatement);
+                var res = cg.GetExecuteQuery();
 
                 return res.Query;
             }
-            */
         }
 
         #endregion

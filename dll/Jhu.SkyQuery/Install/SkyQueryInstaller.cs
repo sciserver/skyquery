@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.Install;
 
 namespace Jhu.SkyQuery.Install
@@ -85,7 +85,7 @@ namespace Jhu.SkyQuery.Install
         {
             Federation.System = true;
 
-            Federation.SchemaManager = GetUnversionedTypeName(typeof(Jhu.Graywulf.Schema.GraywulfSchemaManager));
+            Federation.SchemaManager = GetUnversionedTypeName(typeof(Jhu.Graywulf.Sql.Schema.GraywulfSchemaManager));
             Federation.UserDatabaseFactory = GetUnversionedTypeName(typeof(Jhu.Graywulf.CasJobs.CasJobsUserDatabaseFactory));
             Federation.QueryFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Jobs.Query.SkyQueryQueryFactory));
             Federation.FileFormatFactory = GetUnversionedTypeName(typeof(Jhu.SkyQuery.Format.SkyQueryFileFormatFactory));

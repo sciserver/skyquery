@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Sql.NameResolution;
@@ -13,9 +13,9 @@ namespace Jhu.SkyQuery.CodeGen
 {
     public class SkyQueryCodeGenerator : SqlServerCodeGenerator
     {
-        public override SqlColumnListGeneratorBase CreateColumnListGenerator(TableReference table, ColumnContext columnContext, ColumnListType listType)
+        public override ColumnListGeneratorBase CreateColumnListGenerator()
         {
-            return new SkyQueryColumnListGenerator(table, columnContext, listType);
+            return new SkyQueryColumnListGenerator();
         }
 
         public static new string QuoteIdentifier(string identifier)

@@ -10,7 +10,7 @@ namespace Jhu.SkyQuery.Tap.Client
     {
         private string query;
         private TapQueryLanguage language;
-        private TapResultsFormat format;
+        private string format;
         private int maxRec;
         private string runId;
         private TapJobPhase phase;
@@ -19,6 +19,7 @@ namespace Jhu.SkyQuery.Tap.Client
         private DateTime destruction;
         private string error;
         private Uri uri;
+        private bool isAsync;
 
         public string Query
         {
@@ -32,7 +33,7 @@ namespace Jhu.SkyQuery.Tap.Client
             set { language = value; }
         }
 
-        public TapResultsFormat Format
+        public string Format
         {
             get { return format; }
             set { format = value; }
@@ -86,6 +87,12 @@ namespace Jhu.SkyQuery.Tap.Client
             set { uri = value; }
         }
 
+        public bool IsAsync
+        {
+            get { return isAsync; }
+            set { isAsync = value; }
+        }
+
         public TapJob()
         {
             InitializeMembers();
@@ -100,7 +107,7 @@ namespace Jhu.SkyQuery.Tap.Client
         {
             this.query = null;
             this.language = TapQueryLanguage.Adql;
-            this.format = TapResultsFormat.VOTable;
+            this.format = Constants.TapMimeVoTable;
             this.maxRec = -1;
             this.runId = null;
             this.phase = TapJobPhase.Unknown;
@@ -109,7 +116,7 @@ namespace Jhu.SkyQuery.Tap.Client
             this.destruction = DateTime.MinValue;
             this.error = null;
             this.uri = null;
-            
+            this.isAsync = true;
         }
 
         private void CopyMembers(TapJob old)
@@ -125,28 +132,32 @@ namespace Jhu.SkyQuery.Tap.Client
             this.destruction = old.destruction;
             this.error = old.error;
             this.uri = old.uri;
+            this.isAsync = old.isAsync;
         }
 
         public Dictionary<string, string> GetSubmitRequestParameters()
-        {
+        {            
             var parameters = new Dictionary<string, string>()
             {
                 { Constants.TapParamRequest, Constants.TapRequestDoQuery },
                 { Constants.TapParamLang, language.ToString().ToUpperInvariant() },
-                { Constants.TapParamFormat, format.ToString().ToUpperInvariant() },
+                { Constants.TapParamFormat, format },
                 { Constants.TapParamQuery, query },
-                { Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
-            };
 
+                // CADC service doesn't like this
+                //{ Constants.TapParamPhase, TapJobAction.Run.ToString().ToUpperInvariant() }
+            };
+            
             if (duration != TimeSpan.Zero)
             {
                 parameters.Add(Constants.TapParamTermination, ((int)duration.TotalSeconds).ToString());
             }
 
-            if (destruction != DateTime.MinValue)
+            // Many services don't like this parameter
+            /*if (destruction != DateTime.MinValue)
             {
-                parameters.Add(Constants.TapParamDestruction, destruction.ToString(Constants.DateFormat));
-            }
+                parameters.Add(Constants.TapParamDestruction, destruction.ToString(Constants.TapDateFormat));
+            }*/
 
             return parameters;
         }

@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Scheduler;
 using Jhu.Graywulf.RemoteService;
 using Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Jobs.Query;
 
 namespace Jhu.SkyQuery.Jobs.Query.Test

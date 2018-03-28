@@ -11,16 +11,51 @@ using Jhu.Graywulf.Util;
 using Jhu.Graywulf.IO;
 using Jhu.Graywulf.Format;
 
-namespace Jhu.SkyQuery.Format.VOTable
+namespace Jhu.SkyQuery.Format.VoTable
 {
     [TestClass]
     public class VOTableReaderTest : VOTableTestBase
     {
-        [TestMethod]
-        public void ValidationTest()
+        private void VoTableReaderTestHelper(string filename, int rows, int resultsets, object[][] gt)
         {
-            var xml = File.ReadAllText(GetTestFilePath(@"modules\skyquery\test\files\votable_everything.xml"));
-            ValidateVOTable(xml);
+            using (var dr = OpenSimpleReader(filename))
+            {
+                int q = 0;
+                int r = 0;
+
+                do
+                {
+                    var values = new object[dr.FieldCount];
+
+                    while (dr.Read())
+                    {
+                        dr.GetValues(values);
+
+                        if (gt != null && gt.Length > q)
+                        {
+                            for (int i = 0; i < values.Length; i++)
+                            {
+                                Assert.AreEqual(gt[q][i], values[i]);
+                            }
+                        }
+
+                        q++;
+                    }
+                    r++;
+                }
+                while (dr.NextResult());
+
+                Assert.AreEqual(rows, q);
+                Assert.AreEqual(resultsets, r);
+            }
+        }
+
+        private void VoTableInterruptReaderTestHelper(string filename)
+        {
+            using (var dr = OpenSimpleReader(filename))
+            {
+                dr.Read();
+            }
         }
 
         [TestMethod]
@@ -100,13 +135,46 @@ namespace Jhu.SkyQuery.Format.VOTable
             var dr = OpenSimpleReader("votable_nulls.xml");
 
             int q = 0;
+            int r = 0;
 
-            while (dr.Read())
+            do
             {
-                q++;
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
             }
+            while (dr.NextResult());
 
             Assert.AreEqual(3, q);
+            Assert.AreEqual(1, r);
+        }
+
+        /// <summary>
+        /// 
+        /// 
+        [TestMethod]
+        public void WithNullValuesReadTest()
+        {
+            var dr = OpenSimpleReader("votable_nulls2.xml");
+
+            int q = 0;
+            int r = 0;
+
+            do
+            {
+                q = 0;
+                while (dr.Read())
+                {
+                    q++;
+                }
+                r++;
+            }
+            while (dr.NextResult());
+
+            Assert.AreEqual(1, q);
+            Assert.AreEqual(2, r);
         }
 
         [TestMethod]
@@ -176,6 +244,7 @@ namespace Jhu.SkyQuery.Format.VOTable
         }
 
         [TestMethod]
+        [ExpectedException(typeof(Jhu.VO.VoTable.VoTableException))]
         public void EverythingTest()
         {
             var dr = OpenSimpleReader("votable_everything.xml");
@@ -213,6 +282,58 @@ namespace Jhu.SkyQuery.Format.VOTable
 
             Assert.AreEqual(3, q);
             Assert.AreEqual(1, r);
+        }
+
+        [TestMethod]
+        public void ReadVOTableNullsTest()
+        {
+            var testfile = @"tap_votable\votable_nulls.xml";
+            var gt = new object[][]
+            {
+                new object[] { "twomass", "edgeew", "Distance from the source to the nearest East or West scan edge", "deg", "pos;arith.diff", "", "REAL", -1, 0, 0,  0 }
+            };
+
+            VoTableReaderTestHelper(testfile, 34, 1, gt);
+            VoTableInterruptReaderTestHelper(testfile);
+        }
+
+        [TestMethod]
+        public void ReadVOTableBinaryTest()
+        {
+            var testfile = @"tap_votable\votable_binary.xml";
+            var gt = new object[][]
+            {
+                new object[] { 122.7034865286146, 0.91527890151003144 }
+            };
+
+            VoTableReaderTestHelper(testfile, 10, 1, gt);
+            VoTableInterruptReaderTestHelper(testfile);
+        }
+
+        [TestMethod]
+        public void ReadVOTableBinary2Test()
+        {
+            var testfile = @"tap_votable\votable_binary2.xml";
+            var gt = new object[][]
+            {
+                new object[] { 122.7034865286146, 0.91527890151003144 }
+            };
+
+            VoTableReaderTestHelper(testfile, 10, 1, gt);
+            VoTableInterruptReaderTestHelper(testfile);
+        }
+
+        [TestMethod]
+        public void ReadVOTableBinary2NullsTest()
+        {
+            var testfile = @"tap_votable\votable_binary2_nulls.xml";
+            var gt = new object[][]
+            {
+                new object[] { "twomass", "edgeew", "Distance from the source to the nearest East or West scan edge", "deg", "pos;arith.diff", DBNull.Value, "REAL", -1, 0, 0,  0 }
+            };
+
+            VoTableReaderTestHelper(testfile, 34, 1, gt);
+            VoTableInterruptReaderTestHelper(testfile);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.Graywulf.Sql.NameResolution;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 
 namespace Jhu.SkyQuery.Parser
 {
@@ -35,7 +35,7 @@ namespace Jhu.SkyQuery.Parser
             AddColumn("LogBF", DataTypes.SqlFloat);
         }
 
-        private Column AddColumn(string name, Jhu.Graywulf.Schema.DataType type)
+        private Column AddColumn(string name, Jhu.Graywulf.Sql.Schema.DataType type)
         {
             var col = new Column();
             col.Name = name;

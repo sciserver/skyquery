@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 
@@ -69,9 +69,16 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override SqlServerCodeGenerator CreateCodeGenerator()
+        protected override SqlQueryCodeGenerator CreateCodeGenerator()
         {
-            return new BayesFactorXMatchQueryCodeGenerator(this);
+            return new BayesFactorXMatchQueryCodeGenerator(this)
+            {
+                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
+                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
+                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified
+            };
         }
 
         #region Step generation
@@ -124,7 +131,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     var res = await ExecuteSqlOnAssignedServerScalarAsync(cmd, CommandTarget.Code);
                     var theta = res != DBNull.Value ? (double)res : 0;
-                    step.SearchRadius = Math.Sqrt(theta) * 180.0 / Math.PI;
+                    var radius = Math.Sqrt(theta) * 180.0 / Math.PI;
+
+                    if (radius / Query.ZoneHeight > 100)
+                    {
+                        throw Error.SearchRadiusTooLarge(radius);
+                    }
+
+                    step.SearchRadius = radius;
                 }
             }
         }

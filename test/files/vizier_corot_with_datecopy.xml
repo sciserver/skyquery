@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.2" xmlns="http://www.ivoa.net/xml/VOTable/v1.2">
+	<RESOURCE type="results">
+		<INFO name="QUERY_STATUS" value="OK" />
+		<INFO name="PROVIDER" value="TAPVizieR">VizieR TAP service.</INFO>
+		<INFO name="QUERY"><![CDATA[-- output format : csv
+SELECT TOP 100 "B/corot/Bright_star".date1,  "B/corot/Bright_star".date2,  "B/corot/Bright_star".CoRoT,  "B/corot/Bright_star".SpT,  "B/corot/Bright_star".Run,  "B/corot/Bright_star".RAJ2000,  "B/corot/Bright_star".DEJ2000,
+"B/corot/Bright_star".size,  "B/corot/Bright_star".Star,  "B/corot/Bright_star".FileName
+FROM "B/corot/Bright_star"]]></INFO>
+		<COOSYS ID='coosys_FK5' system='eq_FK5' equinox='2000.0'/>
+		<TABLE>
+			<FIELD ID="date1" name="date1" datatype="int" ucd="time.epoch" unit="s">
+<DESCRIPTION>(startdat) UT date of first measurement</DESCRIPTION>
+</FIELD>
+			<FIELD ID="date2" name="date2" datatype="int" ucd="time.epoch" unit="s">
+<DESCRIPTION>(end_date) UT date of last measurment</DESCRIPTION>
+</FIELD>
+			<FIELD ID="CoRoT" name="CoRoT" datatype="short" ucd="meta.id;meta.main">
+<DESCRIPTION>[1/21960] (corotid) ID of the CoRoT target</DESCRIPTION>
+</FIELD>
+			<FIELD arraysize="*" datatype="char" name="obs_release_date" ucd="time.release" utype="obscore:Curation.releaseDate" xtype="adql:TIMESTAMP">
+<DESCRIPTION>Observation release date (ISO 8601).</DESCRIPTION>
+</FIELD>
+			<DATA>
+				<TABLEDATA>
+<TR><TD>223556794</TD><TD>228813135</TD><TD>20</TD><TD>2017-01-06T02:31:12Z</TD></TR>
+<TR><TD>223556794</TD><TD>228813135</TD><TD>116</TD><TD>2017-01-06T02:31:12Z</TD></TR>
+				</TABLEDATA>
+			</DATA>
+		</TABLE>
+	</RESOURCE>
+</VOTABLE>

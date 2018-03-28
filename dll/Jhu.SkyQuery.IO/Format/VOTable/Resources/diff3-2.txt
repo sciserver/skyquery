@@ -1,1 +1,0 @@
-<xs:element name="BINARY2" type="Binary2"/>

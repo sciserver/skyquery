@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 using gw = Jhu.Graywulf.Registry;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query

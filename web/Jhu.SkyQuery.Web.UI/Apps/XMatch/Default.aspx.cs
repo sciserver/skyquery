@@ -4,10 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Web.UI;
 using Jhu.Graywulf.Web.Api.V1;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.CodeGen;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
@@ -115,7 +115,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 {
                     SaveSessiongQuery();
 
-                    var q = CreateQueryJob(query.QueryString, JobQueue.Long);
+                    var q = CreateQueryJob(query.Parameters.QueryString, JobQueue.Long);
 
                     if (q != null)
                     {
@@ -155,7 +155,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
                 GetQueryFromSession(out q, out s, out selectionOnly);
             }
 
-            SetQueryInSession(query.QueryString, null, selectionOnly);
+            SetQueryInSession(query.Parameters.QueryString, null, selectionOnly);
         }
 
         private void UpdateForm()

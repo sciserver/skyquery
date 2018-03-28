@@ -106,6 +106,7 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Parser\RegionClause.cs" />
+    <Compile Include="Parser\RegionQuerySpecification.cs" />
     <Compile Include="Parser\RegionSelectStatement.cs" />
     <Compile Include="Parser\SkyQueryNameResolver.cs" />
     <Compile Include="Parser\SkyQueryParser.cs" />
@@ -132,10 +133,6 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Parsing\Jhu.Graywulf.Parsing.csproj">
       <Project>{6215a919-1626-4f32-8c16-5764243b2748}</Project>
       <Name>Jhu.Graywulf.Parsing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Schema\Jhu.Graywulf.Schema.csproj">
-      <Project>{5868B518-CBFC-43FB-B9C8-C617A65121C4}</Project>
-      <Name>Jhu.Graywulf.Schema</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>

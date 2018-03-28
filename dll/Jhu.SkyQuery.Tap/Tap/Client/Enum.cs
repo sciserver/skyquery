@@ -14,13 +14,20 @@ namespace Jhu.SkyQuery.Tap.Client
         SkyQuery
     }
 
-    public enum TapResultsFormat
+    public enum TapOutputFormat
     {
+        None,
         VOTable,
+        VOTableBinary,
+        VOTableBinary2,
+        VOTableFits,
         Json,
         Csv,
-        Text
+        Text,
+        Fits,
+        Html,
     }
+    // application/x-votable+xml;serialization=TABLEDATA
 
     public enum TapJobAction
     {
@@ -31,6 +38,8 @@ namespace Jhu.SkyQuery.Tap.Client
     public enum TapJobPhase
     {
         Unknown,
+        Run,
+        Pending,
         Queued,
         Executing,
         Completed,

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
@@ -81,6 +81,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // TODO: Figure out from metadata
+        }
+
+        protected BooleanExpression GenerateExcludeZeroWeightCondition(CoordinatesTableSource table)
+        {
+            var a = Expression.CreateNumber("0");
+            var b = GetCoordinateErrorExpression(table.Coordinates);
+            var p = Predicate.CreateGreaterThan(b, a);
+            return BooleanExpression.Create(false, p);
         }
 
         public Expression GetZoneIdExpression(TableCoordinates coords)
@@ -864,7 +872,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                     UseRegion = false,
                     UsePartitioning = false,
-                    UseConditions = false,
+                    UseWhereConditions = false,
                 };
                 query1 = GenerateAugmentedTableQuery(options).ToString();
             }
@@ -880,7 +888,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                 UseRegion = false,
                 UsePartitioning = false,
-                UseConditions = false,
+                UseWhereConditions = false,
             };
             query2 = GenerateAugmentedTableQuery(options2).ToString();
 
@@ -966,20 +974,15 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Final query execution
 
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.Sql.Parsing.SelectStatement selectStatement)
+        protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
             // Collect tables that are part of the XMatch operation
-            var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            var xmss = query.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>();
+            var qs = (XMatchQuerySpecification)xmss.QueryExpression.EnumerateQuerySpecifications().First();
 
             ReplaceXMatchClause(qs);
 
-            return base.OnGetExecuteQuery(selectStatement);
-            */
+            return base.OnGetExecuteQuery(query);
         }
 
         protected void ReplaceXMatchClause(XMatchQuerySpecification qs)

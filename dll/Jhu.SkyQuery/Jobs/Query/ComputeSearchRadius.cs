@@ -23,12 +23,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
 
-            switch (xmqp.Query.ExecutionMode)
+            switch (xmqp.Parameters.ExecutionMode)
             {
-                case Jhu.Graywulf.Jobs.Query.ExecutionMode.SingleServer:
+                case Jhu.Graywulf.Sql.Jobs.Query.ExecutionMode.SingleServer:
                     xmqp.InitializeQueryObject(cancellationContext, null);
                     break;
-                case Jhu.Graywulf.Jobs.Query.ExecutionMode.Graywulf:
+                case Jhu.Graywulf.Sql.Jobs.Query.ExecutionMode.Graywulf:
                     using (RegistryContext registryContext = ContextManager.Instance.CreateReadOnlyContext())
                     {
                         xmqp.InitializeQueryObject(cancellationContext, registryContext);

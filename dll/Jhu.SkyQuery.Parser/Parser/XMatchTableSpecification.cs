@@ -7,7 +7,7 @@ using Jhu.Graywulf.Sql.NameResolution;
 namespace Jhu.SkyQuery.Parser
 {
     // TODO: Remove IComparable<XMatchTableSpecification>
-    public partial class XMatchTableSpecification : ICloneable, IComparable<XMatchTableSpecification>
+    public partial class XMatchTableSpecification : ICloneable
     {
         private XMatchInclusionMethod inclusionMethod;
 
@@ -98,31 +98,6 @@ namespace Jhu.SkyQuery.Parser
             {
                 return XMatchInclusionMethod.Must;
             }
-        }
-
-        public int CompareTo(object obj)
-        {
-            return CompareTo((XMatchTableSpecification)obj);
-        }
-
-        public int CompareTo(XMatchTableSpecification other)
-        {
-            throw new NotImplementedException();
-
-            // TODO: sorting tables by statistics is not general enough to be
-            // implemented here. Move this logic to an IComparer class instead
-            // under Jobs.Query
-
-            /*
-            // Inclusion method ordering always preceeds table statistics
-            if (other.InclusionMethod != this.InclusionMethod)
-            {
-                return other.InclusionMethod - this.InclusionMethod;
-            }
-
-            // Order tables by cardinality
-            return Math.Sign(this.TableReference.Statistics.RowCount - other.TableReference.Statistics.RowCount);
-            */
         }
     }
 }

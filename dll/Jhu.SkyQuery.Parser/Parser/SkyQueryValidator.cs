@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Sql.Validation;
 using Jhu.Graywulf.Sql.Parsing;
@@ -12,9 +12,6 @@ namespace Jhu.SkyQuery.Parser
     public class SkyQueryValidator : SqlValidator
     {
         #region Constructors and initializers
-
-        // TODO: validate source tables whether they have the neccessary columns
-        // for a region/XMatch query
 
         public SkyQueryValidator()
         {
@@ -26,33 +23,28 @@ namespace Jhu.SkyQuery.Parser
         }
 
         #endregion
-
-        public override void Execute(Graywulf.Sql.Parsing.StatementBlock parsingTree)
-        {
-            throw new NotImplementedException();
-            // TODO: validate entire script, not just the select
-            // and make sure xmatch queries are single-statement scripts
-            // ValidateSelectStatement(selectStatement, 0);
-        }
         
-        private void ValidateSelectStatement(Graywulf.Sql.Parsing.SelectStatement selectStatement, int depth)
+        protected override void OnValidateStatement(IStatement statement)
         {
-            if (selectStatement is XMatchSelectStatement)
+            // and make sure xmatch queries are single-statement scripts
+
+            // TODO: validate source tables whether they have the neccessary columns
+            // for a region/XMatch query
+
+            if (statement is XMatchSelectStatement)
             {
-                ValidateXMatchQuery((XMatchSelectStatement)selectStatement, depth);
+                ValidateXMatchQuery((XMatchSelectStatement)statement, 0);
             }
-            else if (selectStatement is RegionSelectStatement)
+            else if (statement is RegionSelectStatement)
             {
-                ValidateRegionQuery((RegionSelectStatement)selectStatement, depth);
+                ValidateRegionQuery((RegionSelectStatement)statement, 0);
             }
             else
             {
-                throw new NotImplementedException();
-                // TODO
-                //base.Execute(selectStatement);
+                base.OnValidateStatement(statement);
             }
         }
-
+        
         private void ValidateRegionQuery(RegionSelectStatement selectStatement, int depth)
         {
             // Parse region string or try to download from URI if necessary

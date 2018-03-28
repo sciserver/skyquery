@@ -158,7 +158,7 @@ namespace Jhu.SkyQuery.Format.Fits
                 await base.OpenForReadAsync();
 
                 // TODO: make it async if necessary
-                fits = new FitsFile(BaseStream, FitsFileMode.Read, endianness);
+                fits = new FitsFile(BaseStream, FileAccess.Read, endianness);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Jhu.SkyQuery.Format.Fits
                 await base.OpenForWriteAsync();
 
                 // TODO: make it async if necessary
-                fits = new FitsFile(BaseStream, FitsFileMode.Write, endianness);
+                fits = new FitsFile(BaseStream, FileAccess.Write, endianness);
             }
         }
 

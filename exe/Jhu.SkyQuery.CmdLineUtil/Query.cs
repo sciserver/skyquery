@@ -7,7 +7,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Activities;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Scheduler;
 using Jhu.SkyQuery.Jobs.Query;
 
@@ -96,7 +96,7 @@ namespace Jhu.SkyQuery.CmdLineUtil
             var q = f.CreateQuery(query);
             q.Verify();
 
-            q.DumpSql = dumpSql;
+            q.Parameters.DumpSql = dumpSql;
 
             // Create a workflow
             var wf = f.GetAsWorkflow(q);

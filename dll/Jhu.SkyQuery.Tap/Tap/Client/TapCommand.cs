@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using System.Data;
 using System.Data.Common;
 using System.Threading;
-using Jhu.SkyQuery.Format.VOTable;
+using Jhu.SkyQuery.Format.VoTable;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
-    public class TapCommand : DbCommand
+    public class TapCommand : DbCommand, IDisposable
     {
         private enum TapCommandState
         {
@@ -32,13 +33,19 @@ namespace Jhu.SkyQuery.Tap.Client
         private int commandTimeout;
         private CommandType commandType;
 
+        private bool isAsync;
+        private TimeSpan destruction;
+
         private bool designTimeVisible;
         private UpdateRowSource updateRowSource;
 
         private TapCommandState state;
-        private CancellationTokenSource cancellationSource;
 
+        private Stream stream;
+        private VoTableWrapper votable;
         private DbDataReader reader;
+        private CancellationTokenSource cancellationSource;
+        private CancellationTokenRegistration cancellationRegistration;
 
         #endregion
         #region Properties
@@ -138,6 +145,18 @@ namespace Jhu.SkyQuery.Tap.Client
             }
         }
 
+        public bool IsAsync
+        {
+            get { return isAsync; }
+            set { isAsync = value; }
+        }
+
+        public TimeSpan Destruction
+        {
+            get { return destruction; }
+            set { destruction = value; }
+        }
+
         public override bool DesignTimeVisible
         {
             get { return designTimeVisible; }
@@ -159,6 +178,21 @@ namespace Jhu.SkyQuery.Tap.Client
             InitializeMembers();
         }
 
+        public TapCommand(string cmdText)
+        {
+            InitializeMembers();
+
+            this.commandText = cmdText;
+        }
+
+        public TapCommand(string cmdText, TapConnection connection)
+        {
+            InitializeMembers();
+
+            this.commandText = cmdText;
+            this.connection = connection;
+        }
+
         private void InitializeMembers()
         {
             this.connection = null;
@@ -168,13 +202,42 @@ namespace Jhu.SkyQuery.Tap.Client
             this.commandTimeout = Constants.DefaultCommandTimeout;
             this.commandType = CommandType.Text;
 
+            this.isAsync = true;
+            this.destruction = TimeSpan.FromDays(2);
+
             this.designTimeVisible = false;
             this.updateRowSource = UpdateRowSource.None;
 
             this.state = TapCommandState.Initializing;
-            this.cancellationSource = null;
 
+            this.stream = null;
+            this.votable = null;
             this.reader = null;
+            this.cancellationSource = null;
+            this.cancellationRegistration = new CancellationTokenRegistration();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (cancellationSource != null)
+            {
+                cancellationSource.Dispose();
+                cancellationSource = null;
+            }
+
+            if (votable != null)
+            {
+                votable.Dispose();
+                votable = null;
+            }
+
+            if (stream != null)
+            {
+                stream.Dispose();
+                stream = null;
+            }
+
+            base.Dispose(disposing);
         }
 
         #endregion
@@ -258,28 +321,18 @@ namespace Jhu.SkyQuery.Tap.Client
 
         private TapJob CreateTapJob()
         {
+            connection.Client.GetBestFormat(out TapOutputFormat format, out string mime);
+
             var job = new TapJob()
             {
                 Query = commandText,
                 Language = queryLanguage,
+                Format = mime,
+                Destruction = DateTime.UtcNow + destruction,
+                IsAsync = isAsync
             };
-
-            if (commandTimeout != 0)
-            {
-                job.Destruction = DateTime.Now.AddSeconds(commandTimeout);
-            }
 
             return job;
-        }
-
-        private TapClient CreateTapClient()
-        {
-            return new Client.TapClient()
-            {
-                BaseAddress = new Uri(connection.DataSource),
-                HttpTimeout = TimeSpan.FromSeconds(connection.ConnectionTimeout),
-                PollTimeout = TimeSpan.FromSeconds(commandTimeout),
-            };
         }
 
         protected override DbParameter CreateDbParameter()
@@ -300,68 +353,53 @@ namespace Jhu.SkyQuery.Tap.Client
 
         public override object ExecuteScalar()
         {
+            // TODO
             throw new NotImplementedException();
         }
 
         public override async Task<object> ExecuteScalarAsync(CancellationToken cancellationToken)
         {
+            // TODO
             throw new NotImplementedException();
         }
 
         protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
         {
-            throw new NotImplementedException();
+            return Jhu.Graywulf.Util.TaskHelper.Wait(ExecuteDbDataReaderAsync(behavior, CancellationToken.None));
         }
 
         protected override async Task<DbDataReader> ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)
         {
             EnsureNotExecuting();
 
-            var registration = RegisterCancellation(cancellationToken);
+            // TODO: support the following special behaviors:
+            // CommandBehavior.SchemaOnly
+            // CommandBehavior.KeyInfo (can TAP give back key info?)
+
             var job = CreateTapJob();
-            var client = CreateTapClient();
+
+            // Create source that will be used to cancel async http calls
+            cancellationRegistration = RegisterCancellation(cancellationToken);
+            cancellationSource = new CancellationTokenSource();
 
             try
             {
-                // Create source that will be used to cancel async http calls
-                cancellationSource = new CancellationTokenSource();
-
-                // 1. Submit job
                 state = TapCommandState.Submitting;
-                await client.SubmitAsync(job, cancellationSource.Token);
+                connection.Client.PollTimeout = TimeSpan.FromSeconds(commandTimeout);
 
-                // 2. Poll status
+                stream = await connection.Client.ExecuteJobAsync(job, cancellationSource.Token);
                 state = TapCommandState.Executing;
-                await client.PollAsync(job, new[] { TapJobPhase.Completed, TapJobPhase.Aborted, TapJobPhase.Error }, null, cancellationSource.Token);
 
-                // 3. Process output
-                if (job.Phase == TapJobPhase.Completed)
+                votable = new VoTableWrapper()
                 {
-                    // TODO: return data reader
-                    var stream = await client.GetResultsAsync(job, cancellationSource.Token);
-                    var votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
-                    reader = new TapDataReader(this, votable);
+                    GenerateIdentityColumn = false,
+                };
+                await votable.OpenAsync(stream, Graywulf.IO.DataFileMode.Read);
+                reader = new TapDataReader(this, votable);
 
-                    return reader;
-                }
-                else if (job.Phase == TapJobPhase.Aborted)
-                {
-                    throw Error.CommandCancelled();
-                }
-                else if (job.Phase == TapJobPhase.Error)
-                {
-                    var stream = await client.GetErrorAsync(job, cancellationSource.Token);
-                    var votable = new VOTable(stream, Graywulf.IO.DataFileMode.Read);
+                // TODO: get query status from VOTable
 
-                    // TODO: read error document, parse VOTable and report error
-                    // TODO: throw TAP exception with message from server
-
-                    throw new TapException();
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                return reader;
             }
             catch (TapException)
             {
@@ -378,15 +416,6 @@ namespace Jhu.SkyQuery.Tap.Client
                 state = TapCommandState.Error;
                 throw Error.CommunicationException(ex);
             }
-            finally
-            {
-                cancellationSource.Dispose();
-                cancellationSource = null;
-
-                client.Dispose();
-                registration.Dispose();
-            }
         }
-        
     }
 }

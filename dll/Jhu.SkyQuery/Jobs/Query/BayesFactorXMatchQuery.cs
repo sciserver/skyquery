@@ -8,7 +8,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using gw = Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Tasks;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -20,6 +20,11 @@ namespace Jhu.SkyQuery.Jobs.Query
         private BayesFactorXMatchQueryCodeGenerator CodeGenerator
         {
             get { return (BayesFactorXMatchQueryCodeGenerator)CreateCodeGenerator(); }
+        }
+
+        public BayesFactorXMatchQuery()
+        {
+            // overload
         }
 
         protected BayesFactorXMatchQuery(CancellationContext cancellationContext)
@@ -41,7 +46,14 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override SqlQueryCodeGenerator CreateCodeGenerator()
         {
-            return new BayesFactorXMatchQueryCodeGenerator(this);
+            return new BayesFactorXMatchQueryCodeGenerator(this)
+            {
+                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
+                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
+                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified
+            };
         }
 
         protected override SqlQueryPartition CreatePartition()

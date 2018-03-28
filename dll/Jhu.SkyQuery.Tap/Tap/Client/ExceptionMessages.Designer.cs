@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Tap.Client {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ExceptionMessages {
@@ -115,6 +115,15 @@ namespace Jhu.SkyQuery.Tap.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An XML deserialization exception has happened. This is likely due to a remote TAP service sending a a responce with an invalid format or unsupported standard..
+        /// </summary>
+        internal static string DeserializationException {
+            get {
+                return ResourceManager.GetString("DeserializationException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid command type. Only CommandType.Text supported..
         /// </summary>
         internal static string InvalidTapCommandType {
@@ -133,7 +142,36 @@ namespace Jhu.SkyQuery.Tap.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unexpected HTTP status code: {0} {1}..
+        ///   Looks up a localized string similar to The TAP service returned an error: {0} {1}. The response body is:
+        ///{2}.
+        /// </summary>
+        internal static string ServiceError {
+            get {
+                return ResourceManager.GetString("ServiceError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The TAP service is not available: {0}..
+        /// </summary>
+        internal static string ServiceNotAvailable {
+            get {
+                return ResourceManager.GetString("ServiceNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Too many redirects in TAP response..
+        /// </summary>
+        internal static string TooManyRedirects {
+            get {
+                return ResourceManager.GetString("TooManyRedirects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unexpected HTTP status code: {0} {1}. The response body is:
+        ///{2}.
         /// </summary>
         internal static string UnexpectedHttpResponse {
             get {
