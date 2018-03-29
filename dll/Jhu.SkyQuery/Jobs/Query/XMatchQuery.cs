@@ -135,7 +135,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 xt.TableSource.PartitioningKeyExpression = CodeGenerator.GetZoneIdExpression(xt.TableSource.Coordinates);
                 xt.TableSource.PartitioningKeyDataType = DataTypes.SqlInt;
 
-                res.Add(xt.TableReference.UniqueName, xt);
+                res.Add(xt.TableSource.UniqueKey, xt);
             }
 
             return res;
@@ -166,40 +166,26 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
         }
-
-        private IEnumerable<XMatchTableSpecification> SortXMatchTables(IEnumerable<XMatchTableSpecification> tables)
-        {
-            // Use the comparer defined on SortXMatchTables to sort tables by increasing cardinality
-            return xmatchTables.Values.OrderBy(i => i, new XMatchTableComparer(this));
-        }
-
+        
         protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Sql.Jobs.Query.TableStatistics stat)
         {
-            /* TODO: delete
-            // XmathTables might be reinitialized, so copy statistics
-            foreach (var ts in TableStatistics.Keys)
-            {
-                TableStatistics[
-                xmatchTables[ts.TableReference.UniqueName].TableReference.Statistics = st.TableReference.Statistics;
-            }*/
-
-            /* TODO: delete
-            // We don't compute statistics for remote tables so we have to deal with them now
-            foreach (var xt in xmatchTables.Values)
-            {
-                if (xt.TableReference.Statistics == null)
-                {
-                    xt.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics();
-                }
-            }*/
+            var tables = new List<XMatchTableSpecification>(); ;
 
             // Order tables based on incusion method and statistics
-            var tables = SortXMatchTables(xmatchTables.Values).ToArray();
+            foreach (var key in xmatchTables.Keys)
+            {
+                if (TableStatistics.ContainsKey(key))
+                {
+                    tables.Add(xmatchTables[key]);
+                }
+            }
+
+            tables.Sort(new XMatchTableComparer(this));
 
             // Find stat histogram with most bins, that will be used to generate partitions
             // instead of the very first table
             int statmax = -1;
-            for (int i = 0; i < tables.Length; i++)
+            for (int i = 0; i < tables.Count; i++)
             {
                 if (statmax == -1 ||
                     TableStatistics[tables[i].TableSource.UniqueKey].RowCount > TableStatistics[tables[statmax].TableSource.UniqueKey].RowCount)

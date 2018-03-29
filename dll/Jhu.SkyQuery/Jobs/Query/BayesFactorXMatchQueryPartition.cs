@@ -103,7 +103,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 var s = new BayesFactorXMatchQueryStep(this, RegistryContext);
 
                 s.StepNumber = i;
-                s.XMatchTable = t.TableReference.UniqueName;
+                s.XMatchTable = t.TableSource.UniqueKey;
 
                 steps.Add(s);
 
