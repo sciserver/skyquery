@@ -559,7 +559,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         protected void SubstituteHtmId(StringBuilder sql, TableCoordinates coords)
         {
             var htmex = GetHtmIdExpression(coords);
-            // TODO: delete if works SubstituteSystemDatabaseNames(htmex);
             sql.Replace("[$htmid]", Execute(htmex));
         }
 
@@ -807,18 +806,21 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override SqlCommand GetTableStatisticsCommand(ITableSource tableSource, DatasetBase statisticsDataset)
         {
+            SqlCommand cmd;
             var ts = (CoordinatesTableSource)tableSource;
             var coords = ts.Coordinates;
             var qs = ts.FindAscendant<RegionQuerySpecification>();
 
             if (qs.Region != null && coords != null && !coords.IsNoRegion)
             {
-                return this.GetTableStatisticsWithRegionCommand(tableSource, statisticsDataset);
+                cmd = this.GetTableStatisticsWithRegionCommand(tableSource, statisticsDataset);
             }
             else
             {
-                return base.GetTableStatisticsCommand(tableSource, statisticsDataset);
+                cmd = base.GetTableStatisticsCommand(tableSource, statisticsDataset);
             }
+
+            return cmd;
         }
 
         /// <summary>
@@ -856,6 +858,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 return base.GetTableStatisticsCommand(tableSource, statisticsDataset);
             }
 
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings(tableSource);
+                AddSourceTableMappings(queryObject.Parameters.StatDatabaseVersionName, queryObject.Parameters.SourceDatabaseVersionName);
+                AddOutputTableMappings();
+            }
+
             var options = new AugmentedTableQueryOptions((SkyQuery.Parser.CoordinatesTableSource)tableSource, region)
             {
                 UseHtm = coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable,
@@ -866,7 +875,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             var query = GenerateAugmentedTableQuery(options);
 
             // Statistics key needs to be changed because table is aliased
-            var tr = new TableReference(tableSource.TableReference)
+            var stattable = MapTableReference(tableSource.TableReference);
+            var tr = new TableReference(stattable)
             {
                 Alias = "__t",
                 DatasetName = null,
@@ -874,11 +884,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                 SchemaName = null,
                 DatabaseObjectName = null,
             };
-            TableReferenceMap.Add(tableSource.TableReference, tr);
+            TableReferenceMap.Add(stattable, tr);
 
-            var keycol = SubstituteColumnTableReference(queryObject.TableStatistics[tableSource.UniqueKey].KeyColumn, tableSource.TableReference, tr);
+            var keycol = queryObject.TableStatistics[tableSource.UniqueKey].KeyColumn;
             SubstituteSystemDatabaseNames(keycol);
-
+            AddColumnTableReferenceMappings(keycol, tableSource.TableReference, tr);
+            
             var sql = new StringBuilder(RegionScripts.TableStatistics);
 
             sql.Replace("[$query]", query.ToString());
@@ -888,6 +899,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var cmd = new SqlCommand(sql.ToString());
             AppendRegionParameter(cmd, region);
             AppendTableStatisticsCommandParameters(tableSource, cmd);
+
             return cmd;
         }
 

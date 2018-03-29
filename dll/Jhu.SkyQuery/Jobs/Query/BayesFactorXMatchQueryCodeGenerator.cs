@@ -72,7 +72,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
 
-            sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
+            SubstituteZoneId(sql, coords);
             sql.Replace("[$weight]", weight);
 
             // When called from HTM table statistics, there is no partition yet

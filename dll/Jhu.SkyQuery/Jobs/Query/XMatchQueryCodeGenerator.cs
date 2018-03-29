@@ -446,7 +446,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     keymax = null;
                 }
             }
-            
+
             // Generate augmented query for select
             var query = new AugmentedTableQueryOptions(table.TableSource, table.Region)
             {
@@ -849,7 +849,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// from a pair table and an older match table.
         /// </summary>
         /// <param name="step">Reference to the XMatch step.</param>
-        public SqlCommand GetPopulateMatchTableCommand(XMatchQueryStep step, Table pairtable,  Table matchtable)
+        public SqlCommand GetPopulateMatchTableCommand(XMatchQueryStep step, Table pairtable, Table matchtable)
         {
             if (step.StepNumber == 0)
             {
@@ -947,7 +947,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return cmd;
         }
-        
+
         protected virtual string GetBuildMatchTableIndexScript()
         {
             throw new NotImplementedException();
@@ -989,10 +989,10 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var xmts = qs.XMatchTableSource;
             var xmtstr = new List<TableReference>(xmts.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
-            
+
             var matchtable = GetMatchTable(Partition.Steps[Partition.Steps.Count - 1]);
             var mtr = new TableReference(matchtable, "__match", false);
-            
+
             SubstituteMatchTableName(qs, xmtstr, mtr);
 
             var nts = Jhu.Graywulf.Sql.Parsing.SimpleTableSource.Create(mtr);
