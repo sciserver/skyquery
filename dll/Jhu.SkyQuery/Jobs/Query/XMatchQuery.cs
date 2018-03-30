@@ -191,7 +191,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
 
-            stat = TableStatistics[tables[statmax].TableSource.UniqueKey];
+            if (statmax >= 0)
+            {
+                stat = TableStatistics[tables[statmax].TableSource.UniqueKey];
+            }
+            else
+            {
+                stat = null;
+            }
 
             base.OnGeneratePartitions(partitionCount, stat);
 
