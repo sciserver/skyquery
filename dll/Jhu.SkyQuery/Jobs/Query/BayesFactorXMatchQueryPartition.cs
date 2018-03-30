@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.Data.SqlClient;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
 using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
@@ -114,22 +115,38 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Compute search radius
 
-        /// <summary>
-        /// Calculates the search radius by taking the constant error value or error limits of each
-        /// catalog into account.
-        /// </summary>
-        /// <param name="step"></param>
-        public override async Task ComputeSearchRadiusAsync(XMatchQueryStep step)
+        public override void PrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand)
         {
             if (step.StepNumber > 0)
             {
                 // Calculate search radius from the first sourca table our the output of
                 // the previous match
                 var pstep = Steps[step.StepNumber - 1];
-                
-                using (var cmd = CodeGenerator.GetComputeSearchRadiusCommand(pstep))
+
+                computeSearchRadiusCommand = CodeGenerator.GetComputeSearchRadiusCommand(pstep);
+            }
+            else
+            {
+                computeSearchRadiusCommand = null;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the search radius by taking the constant error value or error limits of each
+        /// catalog into account.
+        /// </summary>
+        /// <param name="step"></param>
+        public override async Task ComputeSearchRadiusAsync(XMatchQueryStep step, SqlCommand computeSearchRadiusCommand)
+        {
+            if (step.StepNumber > 0)
+            {
+                // Calculate search radius from the first sourca table our the output of
+                // the previous match
+                var pstep = Steps[step.StepNumber - 1];
+
+                using (computeSearchRadiusCommand)
                 {
-                    var res = await ExecuteSqlOnAssignedServerScalarAsync(cmd, CommandTarget.Code);
+                    var res = await ExecuteSqlOnAssignedServerScalarAsync(computeSearchRadiusCommand, CommandTarget.Code);
                     var theta = res != DBNull.Value ? (double)res : 0;
                     var radius = Math.Sqrt(theta) * 180.0 / Math.PI;
 

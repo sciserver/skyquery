@@ -166,7 +166,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
         }
-        
+
         protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Sql.Jobs.Query.TableStatistics stat)
         {
             var tables = new List<XMatchTableSpecification>(); ;
@@ -174,10 +174,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Order tables based on incusion method and statistics
             foreach (var key in xmatchTables.Keys)
             {
-                if (TableStatistics.ContainsKey(key))
-                {
-                    tables.Add(xmatchTables[key]);
-                }
+                tables.Add(xmatchTables[key]);
             }
 
             tables.Sort(new XMatchTableComparer(this));
@@ -187,8 +184,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             int statmax = -1;
             for (int i = 0; i < tables.Count; i++)
             {
-                if (statmax == -1 ||
-                    TableStatistics[tables[i].TableSource.UniqueKey].RowCount > TableStatistics[tables[statmax].TableSource.UniqueKey].RowCount)
+                if (TableStatistics.ContainsKey(tables[i].TableSource.UniqueKey) &&
+                   (statmax == -1 || TableStatistics[tables[i].TableSource.UniqueKey].RowCount > TableStatistics[tables[statmax].TableSource.UniqueKey].RowCount))
                 {
                     statmax = i;
                 }

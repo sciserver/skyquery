@@ -110,12 +110,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             var matchtable = GetMatchTable(step);
             var sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
 
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             // Generate the augmented table query
             if (step.StepNumber == 0)
             {
                 var options = new AugmentedTableQueryOptions(table.TableSource, region)
                 {
-                    ColumnContext = ColumnContext.All
+                    ColumnContext = ColumnContext.None
                 };
 
                 sql.Replace("[$query]", GenerateAugmentedTableQuery(options).ToString());

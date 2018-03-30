@@ -515,8 +515,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // TODO: test
-
-            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(options.Table.TableReference));
+            var table = MapTableReference(options.Table.TableReference);
+            sql.Replace("[$tablename]", GetResolvedTableNameWithAlias(table));
             sql.Replace("[$columnlist]", columnlist.Execute());
 
             SubstituteAugmentedTableColumns(sql, options);

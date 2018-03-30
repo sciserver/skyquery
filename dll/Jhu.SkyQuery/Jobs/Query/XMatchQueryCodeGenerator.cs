@@ -447,6 +447,12 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
 
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             // Generate augmented query for select
             var query = new AugmentedTableQueryOptions(table.TableSource, table.Region)
             {
@@ -859,6 +865,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             var pstep = Partition.Steps[step.StepNumber - 1];
             var table1 = Partition.Query.XMatchTables[pstep.XMatchTable];
             var table2 = Partition.Query.XMatchTables[step.XMatchTable];
+
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
 
             // 1. Generate augmented table queries
             string query1, query2;

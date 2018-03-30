@@ -26,10 +26,35 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // Order tables by cardinality
-            var xts = queryObject.TableStatistics[x.TableSource.UniqueKey];
-            var yts = queryObject.TableStatistics[y.TableSource.UniqueKey];
+            TableStatistics xts = null;
+            TableStatistics yts = null;
 
-            return Math.Sign(xts.RowCount - yts.RowCount);
+            if (queryObject.TableStatistics.ContainsKey(x.TableSource.UniqueKey))
+            {
+                xts = queryObject.TableStatistics[x.TableSource.UniqueKey];
+            }
+
+            if (queryObject.TableStatistics.ContainsKey(y.TableSource.UniqueKey))
+            {
+                yts = queryObject.TableStatistics[y.TableSource.UniqueKey];
+            }
+
+            if (xts == null && yts == null)
+            {
+                return 0;
+            }
+            else if (xts == null)
+            {
+                return -1;
+            }
+            else if (yts == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return Math.Sign(xts.RowCount - yts.RowCount);
+            }
         }
     }
 }
