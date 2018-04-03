@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
+using Jhu.Graywulf.IO.Tasks;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
@@ -327,6 +328,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         public void DropMatchTable(XMatchQueryStep step)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+        #region Final query execution
+
+        public override void PrepareExecuteQuery(out SourceQuery sourceQuery, out DestinationTable destinationTable)
+        {
+            base.PrepareExecuteQuery(out sourceQuery, out destinationTable);
+
+            // In contrast to simple queries where PK is not necessarily important, here
+            // make sure a PK is created on the output
+            destinationTable.Options |= TableInitializationOptions.CreatePrimaryKey;
         }
 
         #endregion
