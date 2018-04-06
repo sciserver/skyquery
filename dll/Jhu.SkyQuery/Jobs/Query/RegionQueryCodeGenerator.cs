@@ -81,32 +81,17 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
             }
 
-            if (queryObject != null && queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
-            {
-                AddSystemDatabaseMappings();
-                AddSourceTableMappings(queryObject.Parameters.SourceDatabaseVersionName, null);
-                AddOutputTableMappings();
-            }
-
             for (int i = 0; i < regions.Count; i++)
             {
                 header.AppendLine(String.Format("DECLARE @r{0} dbo.Region = @region{0};", i));
             }
 
-            var source = new SourceQuery()
-            {
-                Header = header.ToString(),
-                Query = Execute(query.ParsingTree),
-            };
+            var source = base.OnGetExecuteQuery(query);
+            source.Header = header.ToString();
 
-            if (queryObject != null)
-            {
-                // Return a table source query
-                source.Dataset = queryObject.TemporaryDataset;
-
-                AppendPartitioningConditionParameters(source);
-                AppendRegionParameters(source, regions);
-            }
+            // Return a table source query
+            source.Dataset = queryObject.TemporaryDataset;
+            AppendRegionParameters(source, regions);
 
             return source;
         }
@@ -264,7 +249,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                     // Map original table reference to point to the subquery
                     TableReferenceMap.Add(tr, ntr);
-                    
+
                     // TODO: review this because ResultsTableReference logic
                     // has changed
                     ss.QueryExpression.ResultsTableReference = tr;
@@ -359,7 +344,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var sc = Jhu.Graywulf.Sql.Parsing.BooleanExpression.Create(limitssc, partialsc, LogicalOperator.CreateAnd());
 
             // Add precise filtering if necessary
-            if (partial && 
+            if (partial &&
                 (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified ||
                 fallBackToDefaultColumns && coords.IsEqColumnsAvailable ||
                 fallBackToDefaultColumns && coords.IsCartesianColumnsAvailable))
@@ -499,7 +484,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 whereregion = where;
             }
-            
+
             // 4. Rewrite SQL template by substituting tokens
 
             if (hasRegion)
@@ -510,7 +495,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
             else
             {
-                
+
                 sql.Replace("[$where]", Execute(whereregion));
             }
 
@@ -787,7 +772,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return idx;
         }
-        
+
         protected Index FindIndexWithFirstKey(ITableSource table, string columnName)
         {
             var tr = table.TableReference;
@@ -889,7 +874,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var keycol = queryObject.TableStatistics[tableSource.UniqueKey].KeyColumn;
             SubstituteSystemDatabaseNames(keycol);
             AddColumnTableReferenceMappings(keycol, tableSource.TableReference, tr);
-            
+
             var sql = new StringBuilder(RegionScripts.TableStatistics);
 
             sql.Replace("[$query]", query.ToString());
@@ -915,12 +900,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             var qs = ts.FindAscendant<RegionQuerySpecification>();
             var region = qs.Region;
             var where = base.GetTableSpecificWhereClause(ts);
-            
+
             if (region == null)
             {
                 return where;
             }
-            
+
             if (useRegion && coords != null && !coords.IsNoRegion && !coords.IsHtmIdHintSpecified)
             {
                 // If coords are null we cannot filter the table by regions
@@ -943,7 +928,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return where;
         }
-        
+
         protected void AppendRegionParameter(SqlCommand cmd, Spherical.Region region)
         {
             cmd.Parameters.Add(regionParameterName, SqlDbType.VarBinary).Value = region == null ? System.Data.SqlTypes.SqlBytes.Null : region.ToSqlBytes();
