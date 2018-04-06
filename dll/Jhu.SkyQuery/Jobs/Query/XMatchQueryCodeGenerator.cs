@@ -988,7 +988,6 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
-            // Collect tables that are part of the XMatch operation
             var xmss = query.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>();
             var qs = (XMatchQuerySpecification)xmss.QueryExpression.EnumerateQuerySpecifications().First();
 
@@ -1007,7 +1006,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             SubstituteMatchTableName(qs, xmtstr, mtr);
 
-            var nts = Jhu.Graywulf.Sql.Parsing.SimpleTableSource.Create(mtr);
+            var nts = TableSource.Create(SimpleTableSource.Create(mtr));
             xmts.ExchangeWith(nts);
         }
 
