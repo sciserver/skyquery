@@ -466,6 +466,7 @@ UNION ALL
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
 INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll]
 ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
+
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -495,6 +496,7 @@ UNION ALL
 FROM [SkyQuery_Code].[htm].[Cover](@r0) AS [__htm0]
 INNER LOOP JOIN [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll] 
 ON [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[htmId] BETWEEN [__htm0].[HtmIDStart] AND [__htm0].[HtmIDEnd] AND [__htm0].[Partial] = 1 AND @r0.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll].[cz]) = 1)) AS [__htm_t0]
+
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -517,6 +519,7 @@ REGION 'CIRCLE J2000 10 10 10'";
 SELECT [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[objId] AS [objId]
 FROM [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM]
 WHERE @r0.ContainsXyz([SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cx], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cy], [SkyNode_TEST].[dbo].[SDSSDR7PhotoObjAll_NoHTM].[cz]) = 1
+
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
@@ -538,6 +541,7 @@ REGION 'CIRCLE J2000 10 10 10'";
             var gt2 = @"
 SELECT [SkyNode_TEST].[dbo].[SampleData_PrimaryKey].[ID] AS [ID]
 FROM [SkyNode_TEST].[dbo].[SampleData_PrimaryKey]
+
 ";
 
             var res = GetExecuteQueryTestHelper(sql);
