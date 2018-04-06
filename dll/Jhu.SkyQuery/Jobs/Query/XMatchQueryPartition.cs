@@ -139,7 +139,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
-                TemporaryTables.TryAdd(zonedeftable.TableName, zonedeftable);
+                TemporaryTables.Add(zonedeftable, zonedeftable);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
-                TemporaryTables.TryAdd(linktable.TableName, linktable);
+                TemporaryTables.Add(linktable, linktable);
             }
         }
 
@@ -209,7 +209,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 zoneTable.Drop();
 
-                TemporaryTables.TryAdd(zoneTable.TableName, zoneTable);
+                TemporaryTables.Add(zoneTable, zoneTable);
 
                 using (createZoneTableCommand)
                 {
@@ -251,7 +251,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
-                TemporaryTables.TryAdd(pairtable.TableName, pairtable);
+                TemporaryTables.Add(pairtable, pairtable);
             }
         }
 
@@ -302,7 +302,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 matchTable.Drop();
 
-                TemporaryTables.TryAdd(matchTable.TableName, matchTable);
+                TemporaryTables.Add(matchTable, matchTable);
 
                 using (createMatchTableCommand)
                 {
