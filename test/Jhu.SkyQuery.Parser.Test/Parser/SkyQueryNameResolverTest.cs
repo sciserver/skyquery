@@ -6,8 +6,8 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 
 namespace Jhu.SkyQuery.Parser
 {
@@ -44,7 +44,8 @@ namespace Jhu.SkyQuery.Parser
         private string GenerateCode(QuerySpecification qs)
         {
             var cg = new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator();
-            cg.ResolveNames = true;
+            //cg.ResolveNames = true;
+            // TODO: use *Rendering properties
 
             var sw = new StringWriter();
             cg.Execute(sw, qs);

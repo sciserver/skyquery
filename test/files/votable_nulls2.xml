@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VOTABLE version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.2" xmlns="http://www.ivoa.net/xml/VOTable/v1.2">
+	<RESOURCE type="results">
+	  <INFO name="QUERY_STATUS" value="OK"/>
+	  <INFO name="PROVIDER" value="TAPVizieR">VizieR TAP service.</INFO>
+	  <INFO name="QUERY">SELECT TOP 20  "J/ApJ/678/102/table4"."S/N",  "J/ApJ/678/102/table4".OID, "J/ApJ/678/102/table4".f_OID,  "J/ApJ/678/102/table4".Off,  "J/ApJ/678/102/table4".Type,  "J/ApJ/678/102/table4".Cat,  "J/ApJ/678/102/table4".n_Cat,  "J/ApJ/678/102/table4".Ref FROM "J/ApJ/678/102/table4"</INFO>
+	  <COOSYS ID="coosys_FK5" system="eq_FK5" equinox="2000.0"/>
+	  <TABLE>
+		<FIELD ID="S/N" name="S/N" datatype="double" ucd="stat.snr">
+			<DESCRIPTION>Signal-to-Noise ratio</DESCRIPTION></FIELD>
+		<FIELD ID="OID" name="OID" datatype="char" arraysize="*" ucd="meta.id.cross">
+			<DESCRIPTION>Counterpart identification</DESCRIPTION></FIELD>
+		<FIELD ID="f_OID" name="f_OID" datatype="char" arraysize="1" ucd="meta.code">
+			<DESCRIPTION>[b] Source identified from ROSAT (1)</DESCRIPTION></FIELD>
+		<FIELD ID="Off" name="Off" datatype="double" ucd="pos;arith.diff" unit="arcmin">
+			<DESCRIPTION>? Offset from Swift and other identification positions</DESCRIPTION></FIELD>
+		<FIELD ID="Type" name="Type" datatype="char" arraysize="*" ucd="src.class">
+			<DESCRIPTION>Source type</DESCRIPTION></FIELD>
+		<FIELD ID="Cat" name="Cat" datatype="char" arraysize="*" ucd="instr.setup">
+			<DESCRIPTION>Catalog/Instrument used for identification (2)</DESCRIPTION></FIELD>
+		<FIELD ID="n_Cat" name="n_Cat" datatype="char" arraysize="1" ucd="meta.note">
+			<DESCRIPTION>[cde] Notes about associations (3)</DESCRIPTION></FIELD>
+		<FIELD ID="Ref" name="Ref" datatype="char" arraysize="1" ucd="meta.note">
+			<DESCRIPTION>Reference code for XRT position (4)</DESCRIPTION></FIELD>
+		<DATA>
+			<TABLEDATA>
+				<TR>
+					<TD>4.5</TD>
+					<TD> </TD>
+					<TD> </TD>
+					<TD/>
+					<TD> </TD>
+					<TD> </TD>
+					<TD> </TD>
+					<TD> </TD>
+				</TR>
+			</TABLEDATA>
+		</DATA>
+      </TABLE>
+    </RESOURCE>
+	<RESOURCE type="results">
+	  <INFO name="QUERY_STATUS" value="OK"/>
+	  <INFO name="PROVIDER" value="TAPVizieR">VizieR TAP service.</INFO>
+	  <INFO name="QUERY">SELECT TOP 20  "J/ApJ/678/102/table4"."S/N",  "J/ApJ/678/102/table4".OID, "J/ApJ/678/102/table4".f_OID,  "J/ApJ/678/102/table4".Off,  "J/ApJ/678/102/table4".Type,  "J/ApJ/678/102/table4".Cat,  "J/ApJ/678/102/table4".n_Cat,  "J/ApJ/678/102/table4".Ref FROM "J/ApJ/678/102/table4"</INFO>
+	  <COOSYS ID="coosys_FK5" system="eq_FK5" equinox="2000.0"/>
+	  <TABLE>
+		<FIELD ID="S/N" name="S/N" datatype="double" ucd="stat.snr">
+			<DESCRIPTION>Signal-to-Noise ratio</DESCRIPTION></FIELD>
+		<FIELD ID="OID" name="OID" datatype="char" arraysize="*" ucd="meta.id.cross">
+			<DESCRIPTION>Counterpart identification</DESCRIPTION></FIELD>
+		<FIELD ID="f_OID" name="f_OID" datatype="char" arraysize="1" ucd="meta.code">
+			<DESCRIPTION>[b] Source identified from ROSAT (1)</DESCRIPTION></FIELD>
+		<FIELD ID="Off" name="Off" datatype="double" ucd="pos;arith.diff" unit="arcmin">
+			<DESCRIPTION>? Offset from Swift and other identification positions</DESCRIPTION></FIELD>
+		<FIELD ID="Type" name="Type" datatype="char" arraysize="*" ucd="src.class">
+			<DESCRIPTION>Source type</DESCRIPTION></FIELD>
+		<FIELD ID="Cat" name="Cat" datatype="char" arraysize="*" ucd="instr.setup">
+			<DESCRIPTION>Catalog/Instrument used for identification (2)</DESCRIPTION></FIELD>
+		<FIELD ID="n_Cat" name="n_Cat" datatype="char" arraysize="1" ucd="meta.note">
+			<DESCRIPTION>[cde] Notes about associations (3)</DESCRIPTION></FIELD>
+		<FIELD ID="Ref" name="Ref" datatype="char" arraysize="1" ucd="meta.note">
+			<DESCRIPTION>Reference code for XRT position (4)</DESCRIPTION></FIELD>
+		<DATA>
+			<TABLEDATA>
+				<TR>
+					<TD>4.5</TD>
+					<TD> </TD>
+					<TD> </TD>
+					<TD/>
+					<TD> </TD>
+					<TD> </TD>
+					<TD> </TD>
+					<TD> </TD>
+				</TR>
+			</TABLEDATA>
+		</DATA>
+      </TABLE>
+    </RESOURCE>
+</VOTABLE>
+				

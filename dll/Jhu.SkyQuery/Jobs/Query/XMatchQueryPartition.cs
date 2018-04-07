@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using Jhu.Graywulf.Jobs.Query;
+using System.Data.SqlClient;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.SkyQuery.Parser;
+using Jhu.Graywulf.IO.Tasks;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
@@ -110,7 +113,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             // TODO: propagate these results to the table
         }
 
-        public abstract Task ComputeSearchRadiusAsync(XMatchQueryStep step);
+        public abstract void PrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand);
+
+        public abstract Task ComputeSearchRadiusAsync(XMatchQueryStep step, SqlCommand computeSearchRadiusCommand);
 
         #endregion
         #region ZoneDef table function
@@ -134,7 +139,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
-                TemporaryTables.TryAdd(zonedeftable.TableName, zonedeftable);
+                TemporaryTables.Add(zonedeftable, zonedeftable);
             }
         }
 
@@ -161,12 +166,30 @@ namespace Jhu.SkyQuery.Jobs.Query
                     await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
-                TemporaryTables.TryAdd(linktable.TableName, linktable);
+                TemporaryTables.Add(linktable, linktable);
             }
         }
 
         #endregion
         #region Zone table functions
+
+        public void PrepareCreateZoneTable(XMatchQueryStep step, out Graywulf.Sql.Schema.Table zoneTable, out SqlCommand createZoneTableCommand, out SqlCommand populateZoneTableCommand)
+        {
+            var table = Query.XMatchTables[step.XMatchTable];
+
+            if (CodeGenerator.IsZoneTableNecessary(table))
+            {
+                zoneTable = CodeGenerator.GetZoneTable(step);
+                createZoneTableCommand = CodeGenerator.GetCreateZoneTableCommand(step, zoneTable);
+                populateZoneTableCommand = CodeGenerator.GetPopulateZoneTableCommand(step, zoneTable);
+            }
+            else
+            {
+                zoneTable = null;
+                createZoneTableCommand = null;
+                populateZoneTableCommand = null;
+            }
+        }
 
         /// <summary>
         /// Creates a zone table without populating it.
@@ -179,28 +202,24 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Graywulf context.
         /// Call <see cref="PrepareCreateZoneTable"/> before this.
         /// </remarks>
-        public async Task CreateZoneTableAsync(XMatchQueryStep step)
+        public async Task CreateZoneTableAsync(XMatchQueryStep step, Graywulf.Sql.Schema.Table zoneTable, SqlCommand createZoneTableCommand, SqlCommand populateZoneTableCommand)
         {
-            var table = Query.XMatchTables[step.XMatchTable];
-
-            if (CodeGenerator.IsZoneTableNecessary(table))
+            if (zoneTable != null)
             {
-                var zonetable = CodeGenerator.GetZoneTable(step);
-
                 // Drop table if it exists (unlikely, but might happen during debugging)
-                zonetable.Drop();
+                zoneTable.Drop();
 
-                using (var cmd = CodeGenerator.GetCreateZoneTableCommand(step, zonetable))
+                TemporaryTables.Add(zoneTable, zoneTable);
+
+                using (createZoneTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(createZoneTableCommand, CommandTarget.Temp);
                 }
 
-                using (var cmd = CodeGenerator.GetPopulateZoneTableCommand(step, zonetable))
+                using (populateZoneTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(populateZoneTableCommand, CommandTarget.Code);
                 }
-
-                TemporaryTables.TryAdd(zonetable.TableName, zonetable);
             }
         }
 
@@ -232,12 +251,34 @@ namespace Jhu.SkyQuery.Jobs.Query
                     await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
-                TemporaryTables.TryAdd(pairtable.TableName, pairtable);
+                TemporaryTables.Add(pairtable, pairtable);
             }
         }
 
         #endregion
         #region Match table functions
+
+        public void PrepareCreateMatchTable(XMatchQueryStep step, out Table pairTable, out Table matchTable, out SqlCommand createMatchTableCommand, out SqlCommand populateMatchTableCommand, out SqlCommand buildMatchTableIndexCommand)
+        {
+            if (step.StepNumber > 0)
+            {
+                pairTable = CodeGenerator.GetPairTable(step);
+                matchTable = CodeGenerator.GetMatchTable(step);
+
+                createMatchTableCommand = CodeGenerator.GetCreateMatchTableCommand(step, matchTable);
+                populateMatchTableCommand = CodeGenerator.GetPopulateMatchTableCommand(step, pairTable, matchTable);
+                buildMatchTableIndexCommand = CodeGenerator.GetBuildMatchTableIndexCommand(step, matchTable);
+            }
+            else
+            {
+                pairTable = null;
+                matchTable = null;
+
+                createMatchTableCommand = null;
+                populateMatchTableCommand = null;
+                buildMatchTableIndexCommand = null;
+            }
+        }
 
         /// <summary>
         /// Creates a match table from a pair table or, in the first
@@ -254,32 +295,29 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// 08/27/2010: Modified not to create a view in the 0th iteration as
         ///             the non-indexes view caused wrong query plan (non-parallel)
         /// </remarks>
-        public async Task CreateMatchTableAsync(XMatchQueryStep step)
+        public async Task CreateMatchTableAsync(XMatchQueryStep step, Table pairTable, Table matchTable, SqlCommand createMatchTableCommand, SqlCommand populateMatchTableCommand, SqlCommand buildMatchTableIndexCommand)
         {
             if (step.StepNumber > 0)
             {
-                var pairtable = CodeGenerator.GetPairTable(step);
-                var matchtable = CodeGenerator.GetMatchTable(step);
-
                 // Drop table if it exists (unlikely, but might happen during debugging)
-                matchtable.Drop();
+                matchTable.Drop();
 
-                using (var cmd = CodeGenerator.GetCreateMatchTableCommand(step, matchtable))
+                TemporaryTables.Add(matchTable, matchTable);
+
+                using (createMatchTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(createMatchTableCommand, CommandTarget.Temp);
                 }
 
-                using (var cmd = CodeGenerator.GetPopulateMatchTableCommand(step, pairtable, matchtable))
+                using (populateMatchTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(populateMatchTableCommand, CommandTarget.Code);
                 }
 
-                using (var cmd = CodeGenerator.GetBuildMatchTableIndexCommand(step, matchtable))
+                using (buildMatchTableIndexCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Temp);
+                    await ExecuteSqlOnAssignedServerAsync(buildMatchTableIndexCommand, CommandTarget.Temp);
                 }
-
-                TemporaryTables.TryAdd(matchtable.TableName, matchtable);
             }
         }
 
@@ -290,6 +328,18 @@ namespace Jhu.SkyQuery.Jobs.Query
         public void DropMatchTable(XMatchQueryStep step)
         {
             throw new NotImplementedException();
+        }
+
+        #endregion
+        #region Final query execution
+
+        public override void PrepareExecuteQuery(out SourceQuery sourceQuery, out DestinationTable destinationTable)
+        {
+            base.PrepareExecuteQuery(out sourceQuery, out destinationTable);
+
+            // In contrast to simple queries where PK is not necessarily important, here
+            // make sure a PK is created on the output
+            destinationTable.Options |= TableInitializationOptions.CreatePrimaryKey;
         }
 
         #endregion

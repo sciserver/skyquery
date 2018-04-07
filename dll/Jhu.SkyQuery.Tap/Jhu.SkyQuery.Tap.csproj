@@ -56,6 +56,7 @@
       <HintPath>..\..\..\..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -88,10 +89,18 @@
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="Tap\Client\TapClient.cs" />
-    <Compile Include="Tap\Client\TapCommand.cs" />
-    <Compile Include="Tap\Client\TapConnection.cs" />
+    <Compile Include="Tap\Client\TapCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Tap\Client\TapConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tap\Client\TapConnectionStringBuilder.cs" />
+    <Compile Include="Tap\Client\TapDataAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Tap\Client\TapDataReader.cs" />
+    <Compile Include="Tap\Client\TapDataset.cs" />
     <Compile Include="Tap\Client\TapException.cs" />
     <Compile Include="Tap\Client\TapFactory.cs" />
     <Compile Include="Tap\Client\TapJob.cs" />
@@ -114,6 +123,14 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.IO\Jhu.Graywulf.IO.csproj">
       <Project>{6797ed88-1d8c-491b-a036-4c42c4bf2eaf}</Project>
       <Name>Jhu.Graywulf.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
+      <Project>{aada04ee-f578-4628-8ae0-d423bb94c738}</Project>
+      <Name>Jhu.Graywulf.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
+      <Name>Jhu.VO</Name>
     </ProjectReference>
     <ProjectReference Include="..\Jhu.SkyQuery.IO\Jhu.SkyQuery.IO.csproj">
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>

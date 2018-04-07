@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Activities;
 using System.Threading.Tasks;
+using System.Data.SqlClient;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Activities;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.Tasks;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -22,8 +23,11 @@ namespace Jhu.SkyQuery.Jobs.Query
             var activityInstanceId = activityContext.ActivityInstanceId;
             XMatchQueryStep xmatchstep = XMatchStep.Get(activityContext);
             XMatchQueryPartition xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
-
-            switch (xmqp.Query.ExecutionMode)
+            Jhu.Graywulf.Sql.Schema.Table zoneTable = null;
+            SqlCommand createZoneTableCommand = null;
+            SqlCommand populateZoneTableCommand = null;
+            
+            switch (xmqp.Parameters.ExecutionMode)
             {
                 case ExecutionMode.SingleServer:
                     xmqp.InitializeQueryObject(cancellationContext, null);
@@ -32,13 +36,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                     using (RegistryContext registryContext = ContextManager.Instance.CreateReadOnlyContext())
                     {
                         xmqp.InitializeQueryObject(cancellationContext, registryContext);
+                        xmqp.PrepareCreateZoneTable(xmatchstep, out zoneTable, out createZoneTableCommand, out populateZoneTableCommand);
                     }
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-            await xmqp.CreateZoneTableAsync(xmatchstep);
+            await xmqp.CreateZoneTableAsync(xmatchstep, zoneTable, createZoneTableCommand, populateZoneTableCommand);
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
@@ -46,16 +46,33 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             return new StringBuilder(BayesFactorXMatchScripts.SelectAugmentedTableHtm);
         }
-
-        protected override StringBuilder GenerateAugmentedTableQuery(AugmentedTableQueryOptions options)
+        
+        protected override void OnGenerateAugmentedTableQuery(AugmentedTableQueryOptions options, StringBuilder sql, ref WhereClause where)
         {
+            base.OnGenerateAugmentedTableQuery(options, sql, ref where);
+
             var coords = options.Table.Coordinates;
             var error = GetCoordinateErrorExpression(coords);
             var weight = GetWeightExpressionString(Execute(error));
 
-            var sql = base.GenerateAugmentedTableQuery(options);
+            if (options.ExcludeZeroWeight && !options.Table.Coordinates.IsConstantError)
+            {
+                var wc = GenerateExcludeZeroWeightCondition(options.Table);
 
-            sql.Replace("[$zoneid]", Execute(GetZoneIdExpression(coords)));
+                if (wc != null)
+                {
+                    if (where != null)
+                    {
+                        where.AppendCondition(wc, "AND");
+                    }
+                    else
+                    {
+                        where = WhereClause.Create(wc);
+                    }
+                }
+            }
+
+            SubstituteZoneId(sql, coords);
             sql.Replace("[$weight]", weight);
 
             // When called from HTM table statistics, there is no partition yet
@@ -68,8 +85,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 sql.Replace("[$n]", "1");
             }
-
-            return sql;
         }
 
         protected override void SubstituteAugmentedTableColumns(StringBuilder sql, AugmentedTableQueryOptions options)
@@ -95,12 +110,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             var matchtable = GetMatchTable(step);
             var sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
 
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             // Generate the augmented table query
             if (step.StepNumber == 0)
             {
                 var options = new AugmentedTableQueryOptions(table.TableSource, region)
                 {
-                    ColumnContext = ColumnContext.All
+                    ColumnContext = ColumnContext.None
                 };
 
                 sql.Replace("[$query]", GenerateAugmentedTableQuery(options).ToString());

@@ -6,7 +6,7 @@ using Jhu.Graywulf.Registry;
 
 namespace Jhu.Graywulf.Install
 {
-    public class XMatchQueryJobInstaller : Jhu.Graywulf.Jobs.Query.SqlQueryJobInstaller
+    public class XMatchQueryJobInstaller : Jhu.Graywulf.Sql.Jobs.Query.SqlQueryJobInstaller
     {
         protected override Type JobType
         {

@@ -82,12 +82,46 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tap\Client\TapClientTest.cs" />
+    <Compile Include="Tap\Client\EndpointAadcTest.cs" />
+    <Compile Include="Tap\Client\EndpointCadc.cs" />
+    <Compile Include="Tap\Client\EndpointGaiaTest.cs" />
+    <Compile Include="Tap\Client\EndpointGavoTest.cs" />
+    <Compile Include="Tap\Client\EndpointHeasarcTest.cs" />
+    <Compile Include="Tap\Client\EndpointNoaoTest.cs" />
+    <Compile Include="Tap\Client\EndpointSkymapperTest.cs" />
+    <Compile Include="Tap\Client\EndpointVizierTest.cs" />
+    <Compile Include="Tap\Client\TapTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Base.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
+      <Project>{abb4c403-720a-47e1-9485-cfaadd696656}</Project>
+      <Name>Jhu.Graywulf.Components</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Logging\Jhu.Graywulf.Logging.csproj">
+      <Project>{fd98fb58-a3e5-4d32-b6d6-3e20609c4d09}</Project>
+      <Name>Jhu.Graywulf.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
+      <Project>{aada04ee-f578-4628-8ae0-d423bb94c738}</Project>
+      <Name>Jhu.Graywulf.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Logging.Test\Jhu.Graywulf.Logging.Test.csproj">
+      <Project>{d152dc9a-004c-4851-b0e7-b81a4325c9b7}</Project>
+      <Name>Jhu.Graywulf.Logging.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
+      <Project>{ea6164ba-b283-46c2-874b-348d6bad41ad}</Project>
+      <Name>Jhu.Graywulf.Test</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\sharpvolibs\dll\Jhu.VO\Jhu.VO.csproj">
+      <Project>{0141ec6d-ccec-498c-a8e3-84c3938a8e53}</Project>
+      <Name>Jhu.VO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Tap\Jhu.SkyQuery.Tap.csproj">
       <Project>{f19bfc4d-9ed7-4555-b75f-3d84c2e4c185}</Project>
       <Name>Jhu.SkyQuery.Tap</Name>

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Jhu.Graywulf.Format;
-using Jhu.SkyQuery.Format.VOTable;
+using Jhu.SkyQuery.Format.VoTable;
 
 namespace Jhu.SkyQuery.Tap.Client
 {
@@ -13,9 +13,10 @@ namespace Jhu.SkyQuery.Tap.Client
     {
         private TapCommand command;
 
-        public TapDataReader(TapCommand command, VOTable votable)
+        public TapDataReader(TapCommand command, VoTableWrapper votable)
             : base(votable)
         {
+            this.command = command;
         }
     }
 }

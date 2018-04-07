@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.IO;
@@ -11,7 +12,7 @@ using Jhu.SkyQuery.Format.Fits;
 namespace Jhu.SkyQuery.Format.Fits.Test
 {
     [TestClass]
-    public class ImportFitsTest : Jhu.Graywulf.IO.Tasks.ImportTableTest
+    public class ImportFitsTest : Jhu.Graywulf.IO.Tasks.ImportTableTestBase
     {
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -31,29 +32,33 @@ namespace Jhu.SkyQuery.Format.Fits.Test
         }
 
         [TestMethod]
-        public void ImportSdssSpecTest()
+        public async Task ImportSdssSpecTest()
         {
             using (var cc = new CancellationContext())
             {
                 var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specsdss.fits");
-                var it = GetImportTableTask(cc, path, false, false);
-                var t = ExecuteImportTableTask(it);
-                Assert.AreEqual(8, t.Columns.Count);
-                DropTable(t);
+                using (var it = GetImportTableTask(cc, path, false, false, out var source, out var destination, out var settings))
+                {
+                    var t = await ExecuteImportTableTaskAsync(it.Value, source, destination, settings);
+                    Assert.AreEqual(8, t.Columns.Count);
+                    DropTable(t);
+                }
             }
         }
 
         [TestMethod]
-        public void ImportBossSpecTest()
+        public async Task ImportBossSpecTest()
         {
             using (var cc = new CancellationContext())
             {
                 var path = GetTestFilePath(@"modules/skyquery/test/files/sdssdr10_specboss.fits");
-                var it = GetImportTableTask(cc, path, false, false);
-                var t = ExecuteImportTableTask(it);
-                Assert.AreEqual(8, t.Columns.Count);
-                DropTable(t);
+                using (var it = GetImportTableTask(cc, path, false, false, out var source, out var destination, out var settings))
+                {
+                    var t = await ExecuteImportTableTaskAsync(it.Value, source, destination, settings);
+                    Assert.AreEqual(8, t.Columns.Count);
+                    DropTable(t);
+                }
             }
         }
-        }
     }
+}

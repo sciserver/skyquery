@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.SkyQuery.Parser;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 
 namespace Jhu.SkyQuery.Parser
 {
     public class SkyQueryNameResolver : SqlNameResolver
     {
-        private static readonly HashSet<string> SystemFunctionNames = new HashSet<string>(Jhu.Graywulf.Schema.SchemaManager.Comparer)
+        private static readonly HashSet<string> SystemFunctionNames = new HashSet<string>(SchemaManager.Comparer)
         {
             "POINT"
         };

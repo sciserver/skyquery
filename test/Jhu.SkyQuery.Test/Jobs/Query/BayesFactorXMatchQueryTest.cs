@@ -183,9 +183,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(cx, cy, cz), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -204,9 +204,9 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec), ERROR(0.1, 0.1, 0.1), HTMID(htmid), ZONEID(zoneID)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
 WHERE a.ra BETWEEN 0 AND 1 AND
-      b.ra BETWEEN 0 AND 1";
+      b.ra BETWEEN 0 AND 1
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -251,6 +251,7 @@ FROM XMATCH(
 MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid), ZONEID(zoneid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
+WHERE sigRaDec < 9999
 REGION 'CIRCLE J2000 0 0 10'
 ";
 
@@ -271,12 +272,37 @@ FROM XMATCH(
     MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(sigRaDec), HTMID(htmid), ZONEID(zoneid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
+WHERE sigRaDec < 9999
 REGION 'CIRCLE J2000 0 0 10'
 ";
 
             RunQuery(sql);
 
             // TODO: this must fail with a meaningful error message
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void VariableErrorWithLargeRegionTest()
+        {
+            // TODO: this should throw an exception because search radius is too large
+            // (due to the value of 9999 in sigRaDec) but it fails with an exception
+            // being thrown from the cancel branch of Retry. This is an async issue.
+
+            var sql =
+@"SELECT x.matchID,
+       a.objID, a.ra, a.dec, a.g, a.r, a.i, 
+       b.cntr, b.ra, b.dec, b.w1mpro, b.w2mpro, b.w3mpro
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(raErr + decErr), HTMID(htmid), ZONEID(zoneid)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(sigRaDec), HTMID(htmid), ZONEID(zoneid)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+REGION 'CIRCLE J2000 0 0 10'
+";
+
+            RunQuery(sql);
         }
 
         [TestMethod]
@@ -413,6 +439,8 @@ WHERE a.RA BETWEEN 0 AND 5 AND a.dec BETWEEN 0 AND 5
         public void ThreeWayJoinWithWhereTest2()
         {
             // Work on real databases
+            // This often throws null exception in cancellationcontext
+            // could this be an async issue (dispose called before cancellation)
 
             var sql = @"SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.ra, x.dec, t.ra, t.dec
 INTO [$into]
@@ -518,8 +546,8 @@ FROM XMATCH(
     MUST EXIST IN TEST:GalexPhotoObjAll AS c WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.2), HTMID(htmid)),
     LIMIT BAYESFACTOR TO 1e3
 ) AS x
-REGION 'CIRCLE J2000 0 0 10'
-WHERE a.g < b.w1mpro AND b.w2mpro < c.nuv_mag AND a.i < c.fuv_mag";
+WHERE a.g < b.w1mpro AND b.w2mpro < c.nuv_mag AND a.i < c.fuv_mag
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -793,6 +821,9 @@ WHERE a.ra BETWEEN 0 AND 1 AND
         [TestCategory("Query")]
         public void XMatchWithXMatchOutputTest()
         {
+            // TODO: this now creates a table without primary key
+            // Can be used to test xmatch w/o PK behavior
+
             DropUserDatabaseTable("XMatchWithXMatchOutput1");
 
             var sql = @"

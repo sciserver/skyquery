@@ -6,10 +6,10 @@ using System.Activities;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.IO.Tasks;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
@@ -64,7 +64,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var ds = new SqlServerDataset();
 
             ds.Name = name;
-            ds.DefaultSchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName;
+            ds.DefaultSchemaName = Jhu.Graywulf.Sql.Schema.SqlServer.Constants.DefaultSchemaName;
             ds.ConnectionString = GetConnectionString(server, userId, password, integratedSecurity);
             ds.DatabaseName = dscsb.InitialCatalog;
 
@@ -88,19 +88,15 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Initializes a query object for execution outside the Graywulf framework.
         /// </summary>
         /// <param name="query"></param>
-        /// <param name="queryString"></param>
         /// <param name="outputTable"></param>
         /// <param name="mydbds"></param>
         /// <param name="tempds"></param>
         /// <param name="codeds"></param>
-        protected override void InitializeQuery(SqlQuery query, string queryString)
+        protected override void OnSetParameters(SqlQuery query)
         {
-            // TODO: factor it out to a new class
+            query.Parameters.ExecutionMode = ExecutionMode.SingleServer;
 
-            query.ExecutionMode = ExecutionMode.SingleServer;
-            query.QueryString = queryString;
-
-            query.QueryTimeout = 7200;
+            query.Parameters.QueryTimeout = 7200;
 
             SqlServerDataset mydbds = null;
             SqlServerDataset tempds = null;
@@ -128,20 +124,22 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (mydbds != null)
             {
-                query.DefaultDataset = mydbds;
+                query.Parameters.DefaultSourceDataset = mydbds;
+                query.Parameters.DefaultOutputDataset = mydbds;
+
                 // Add MyDB as custom source
-                query.CustomDatasets.Add(mydbds);
+                query.Parameters.CustomDatasets.Add(mydbds);
             }
 
             // Set up temporary and code database
             query.TemporaryDataset = tempds;
             query.CodeDataset = codeds;
 
-            query.Destination = new DestinationTable()
+            query.Parameters.Destination = new DestinationTable()
             {
                 Dataset = mydbds,
                 Options = TableInitializationOptions.Create,
-                SchemaName = Jhu.Graywulf.Schema.SqlServer.Constants.DefaultSchemaName,
+                SchemaName = Jhu.Graywulf.Sql.Schema.SqlServer.Constants.DefaultSchemaName,
                 TableNamePattern = "outputtable"
             };
         }
@@ -175,7 +173,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             return new Dictionary<string, object>()
             {
-                { Jhu.Graywulf.Jobs.Constants.JobParameterQuery, query },
+                { Jhu.Graywulf.Registry.Constants.JobParameterParameters, query.Parameters },
                 { Jhu.Graywulf.Activities.Constants.ActivityParameterJobInfo, null },
             };
         }

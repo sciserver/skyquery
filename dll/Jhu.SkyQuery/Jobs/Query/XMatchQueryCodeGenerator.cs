@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.CodeGeneration;
 using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
@@ -81,6 +81,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // TODO: Figure out from metadata
+        }
+
+        protected BooleanExpression GenerateExcludeZeroWeightCondition(CoordinatesTableSource table)
+        {
+            var a = Expression.CreateNumber("0");
+            var b = GetCoordinateErrorExpression(table.Coordinates);
+            var p = Predicate.CreateGreaterThan(b, a);
+            return BooleanExpression.Create(false, p);
         }
 
         public Expression GetZoneIdExpression(TableCoordinates coords)
@@ -438,7 +446,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                     keymax = null;
                 }
             }
-            
+
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             // Generate augmented query for select
             var query = new AugmentedTableQueryOptions(table.TableSource, table.Region)
             {
@@ -841,7 +855,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// from a pair table and an older match table.
         /// </summary>
         /// <param name="step">Reference to the XMatch step.</param>
-        public SqlCommand GetPopulateMatchTableCommand(XMatchQueryStep step, Table pairtable,  Table matchtable)
+        public SqlCommand GetPopulateMatchTableCommand(XMatchQueryStep step, Table pairtable, Table matchtable)
         {
             if (step.StepNumber == 0)
             {
@@ -851,6 +865,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             var pstep = Partition.Steps[step.StepNumber - 1];
             var table1 = Partition.Query.XMatchTables[pstep.XMatchTable];
             var table2 = Partition.Query.XMatchTables[step.XMatchTable];
+
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
 
             // 1. Generate augmented table queries
             string query1, query2;
@@ -864,7 +884,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                     UseRegion = false,
                     UsePartitioning = false,
-                    UseConditions = false,
+                    UseWhereConditions = false,
                 };
                 query1 = GenerateAugmentedTableQuery(options).ToString();
             }
@@ -880,7 +900,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                 UseRegion = false,
                 UsePartitioning = false,
-                UseConditions = false,
+                UseWhereConditions = false,
             };
             query2 = GenerateAugmentedTableQuery(options2).ToString();
 
@@ -939,7 +959,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             return cmd;
         }
-        
+
         protected virtual string GetBuildMatchTableIndexScript()
         {
             throw new NotImplementedException();
@@ -966,33 +986,27 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Final query execution
 
-        protected override SourceTableQuery OnGetExecuteQuery(Graywulf.Sql.Parsing.SelectStatement selectStatement)
+        protected override SourceQuery OnGetExecuteQuery(QueryDetails query)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
-            // Collect tables that are part of the XMatch operation
-            var qs = (XMatchQuerySpecification)selectStatement.EnumerateQuerySpecifications().First();
+            var xmss = query.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>();
+            var qs = (XMatchQuerySpecification)xmss.QueryExpression.EnumerateQuerySpecifications().First();
 
             ReplaceXMatchClause(qs);
 
-            return base.OnGetExecuteQuery(selectStatement);
-            */
+            return base.OnGetExecuteQuery(query);
         }
 
         protected void ReplaceXMatchClause(XMatchQuerySpecification qs)
         {
             var xmts = qs.XMatchTableSource;
             var xmtstr = new List<TableReference>(xmts.EnumerateXMatchTableSpecifications().Select(ts => ts.TableReference));
-            
+
             var matchtable = GetMatchTable(Partition.Steps[Partition.Steps.Count - 1]);
             var mtr = new TableReference(matchtable, "__match", false);
-            
+
             SubstituteMatchTableName(qs, xmtstr, mtr);
 
-            var nts = Jhu.Graywulf.Sql.Parsing.SimpleTableSource.Create(mtr);
+            var nts = TableSource.Create(SimpleTableSource.Create(mtr));
             xmts.ExchangeWith(nts);
         }
 

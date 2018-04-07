@@ -6,7 +6,7 @@ using Jhu.Graywulf.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public partial class CoordinatesTableSource : SimpleTableSource
+    public partial class CoordinatesTableSource : SimpleTableSource, ICloneable
     {
         #region Private member variables
 

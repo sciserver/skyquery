@@ -6,8 +6,8 @@ using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Test;
-using Jhu.Graywulf.Jobs.Query;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Jobs.Query;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.SkyQuery.Jobs.Query;
 using Jhu.SkyQuery.Parser;
@@ -81,10 +81,10 @@ namespace Jhu.SkyQuery
             return schemaManager;
         }
 
-        protected virtual SelectStatement Parse(string sql)
+        protected virtual SkyQuery.Parser.StatementBlock Parse(string sql)
         {
             var p = new SkyQueryParser();
-            var ss = (SelectStatement)p.Execute(new SelectStatement(), sql);
+            var ss = p.Execute<SkyQuery.Parser.StatementBlock>(sql);
             return ss;
         }
 

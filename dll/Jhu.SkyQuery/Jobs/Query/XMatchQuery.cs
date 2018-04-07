@@ -6,8 +6,8 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
-using Jhu.Graywulf.Schema;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Schema;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using gw = Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Tasks;
 using Jhu.SkyQuery.Parser;
@@ -67,6 +67,11 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Constructors and initializers
 
+        public XMatchQuery()
+        {
+            InitializeMembers(new StreamingContext());
+        }
+
         public XMatchQuery(CancellationContext cancellationContext)
             : base(cancellationContext)
         {
@@ -79,6 +84,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers(new StreamingContext());
         }
 
+        [OnDeserializing]
         private void InitializeMembers(StreamingContext context)
         {
             this.zoneHeight = Constants.DefaultZoneHeight;
@@ -97,20 +103,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
 
-        protected override void FinishInterpret(bool forceReinitialize)
+        protected override void OnNamesResolved(bool forceReinitialize)
         {
-            // TODO: Fix, SelectStatement is likely parsingTree now.
-
-            throw new NotImplementedException();
-
-            /*
             if (xmatchTables == null || forceReinitialize)
             {
-                InterpretXMatchQuery((XMatchSelectStatement)SelectStatement);
+                var xmss = QueryDetails.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>();
+                InterpretXMatchQuery(xmss);
             }
 
-            base.FinishInterpret(forceReinitialize);
-            */
+            base.OnNamesResolved(forceReinitialize);
         }
 
         private void InterpretXMatchQuery(XMatchSelectStatement selectStatement)
@@ -134,88 +135,70 @@ namespace Jhu.SkyQuery.Jobs.Query
                 xt.TableSource.PartitioningKeyExpression = CodeGenerator.GetZoneIdExpression(xt.TableSource.Coordinates);
                 xt.TableSource.PartitioningKeyDataType = DataTypes.SqlInt;
 
-                res.Add(xt.TableReference.UniqueName, xt);
+                res.Add(xt.TableSource.UniqueKey, xt);
             }
 
             return res;
         }
 
-        public override void CollectTablesForStatistics()
+        public override void IdentifyTablesForStatistics()
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
-            TableSourceStatistics.Clear();
+            TableStatistics.Clear();
 
             // Only collect statistics for xmatch tables
+            // TODO: how to deal with remote tables?
+
             foreach (var table in xmatchTables.Values)
             {
                 var tr = table.TableReference;
+                var ts = table.TableSource;
 
-                // Statistics is only gathered for table on known servers. Skip foreign
-                // datasets here because we cannot make sure they support the necessary
-                // CLR functions.
                 if (tr.DatabaseObject.Dataset is GraywulfDataset)
                 {
                     // Collect statistics for zoneID
-                    tr.Statistics = new Graywulf.SqlParser.TableStatistics()
+                    var stat = new Graywulf.Sql.Jobs.Query.TableStatistics(ts)
                     {
                         KeyColumn = CodeGenerator.GetZoneIdExpression(table.Coordinates),
                         KeyColumnDataType = DataTypes.SqlInt,
                     };
 
-                    TableSourceStatistics.Add(table.TableSource);
+                    TableStatistics.Add(ts.UniqueKey, stat);
                 }
             }
-            */
         }
 
-        private IEnumerable<XMatchTableSpecification> SortXMatchTables(IEnumerable<XMatchTableSpecification> tables)
+        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Sql.Jobs.Query.TableStatistics stat)
         {
-            // Use the comparer defined on SortXMatchTables to sort tables by increasing cardinality
-            return xmatchTables.Values.OrderBy(i => i);
-        }
-
-        protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Jobs.Query.TableStatistics stat)
-        {
-            throw new NotImplementedException();
-
-            // TODO: update this similar to inherited class
-            /*
-
-            // XmathTables might be reinitialized, so copy statistics
-            foreach (var st in TableSourceStatistics)
-            {
-                xmatchTables[st.TableReference.UniqueName].TableReference.Statistics = st.TableReference.Statistics;
-            }
-
-            // We don't compute statistics for remote tables so we have to deal with them now
-            foreach (var xt in xmatchTables.Values)
-            {
-                if (xt.TableReference.Statistics == null)
-                {
-                    xt.TableReference.Statistics = new Graywulf.SqlParser.TableStatistics();
-                }
-            }
+            var tables = new List<XMatchTableSpecification>(); ;
 
             // Order tables based on incusion method and statistics
-            var tables = SortXMatchTables(xmatchTables.Values).ToArray();
+            foreach (var key in xmatchTables.Keys)
+            {
+                tables.Add(xmatchTables[key]);
+            }
+
+            tables.Sort(new XMatchTableComparer(this));
 
             // Find stat histogram with most bins, that will be used to generate partitions
             // instead of the very first table
             int statmax = -1;
-            for (int i = 0; i < tables.Length; i++)
+            for (int i = 0; i < tables.Count; i++)
             {
-                if (statmax == -1 ||
-                    tables[i].TableReference.Statistics.RowCount > tables[statmax].TableReference.Statistics.RowCount)
+                if (TableStatistics.ContainsKey(tables[i].TableSource.UniqueKey) &&
+                   (statmax == -1 || TableStatistics[tables[i].TableSource.UniqueKey].RowCount > TableStatistics[tables[statmax].TableSource.UniqueKey].RowCount))
                 {
                     statmax = i;
                 }
             }
 
-            stat = tables[statmax].TableReference.Statistics;
+            if (statmax >= 0)
+            {
+                stat = TableStatistics[tables[statmax].TableSource.UniqueKey];
+            }
+            else
+            {
+                stat = null;
+            }
 
             base.OnGeneratePartitions(partitionCount, stat);
 
@@ -224,8 +207,6 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 ((XMatchQueryPartition)qp).GenerateSteps(tables);
             }
-
-            */
         }
     }
 }

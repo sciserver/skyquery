@@ -1,131 +1,296 @@
-﻿<Activity mc:Ignorable="sads sap" x:Class="Jhu.SkyQuery.Jobs.Query.XMatchQueryJob"
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="Jhu.SkyQuery.Jobs.Query.XMatchQueryJob"
  xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
  xmlns:jga="clr-namespace:Jhu.Graywulf.Activities;assembly=Jhu.Graywulf.Activities"
- xmlns:jga1="clr-namespace:Jhu.Graywulf.Activities;assembly=Jhu.Graywulf.Registry"
- xmlns:jgjq="clr-namespace:Jhu.Graywulf.Jobs.Query;assembly=Jhu.Graywulf.Jobs"
- xmlns:jgr="clr-namespace:Jhu.Graywulf.Registry;assembly=Jhu.Graywulf.Registry"
- xmlns:jgr1="clr-namespace:Jhu.Graywulf.Registry;assembly=Jhu.Graywulf.Registry.Enum"
+ xmlns:jgsjq="clr-namespace:Jhu.Graywulf.Sql.Jobs.Query;assembly=Jhu.Graywulf.Sql.Jobs"
  xmlns:jgsp="clr-namespace:Jhu.Graywulf.Sql.Parsing;assembly=Jhu.Graywulf.Sql"
- xmlns:jgt="clr-namespace:Jhu.Graywulf.Tasks;assembly=Jhu.Graywulf.RemoteService"
  xmlns:local="clr-namespace:Jhu.SkyQuery.Jobs.Query"
  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
- xmlns:mv="clr-namespace:Microsoft.VisualBasic;assembly=System"
- xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities"
+ xmlns:mca="clr-namespace:Microsoft.CSharp.Activities;assembly=System.Activities"
  xmlns:s="clr-namespace:System;assembly=mscorlib"
- xmlns:s1="clr-namespace:System;assembly=System"
- xmlns:s2="clr-namespace:System;assembly=System.Xml"
- xmlns:s3="clr-namespace:System;assembly=System.Core"
- xmlns:s4="clr-namespace:System;assembly=System.ServiceModel"
- xmlns:sa="clr-namespace:System.Activities;assembly=System.Activities"
- xmlns:sad="clr-namespace:System.Activities.Debugger;assembly=System.Activities"
  xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
  xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
- xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System"
- xmlns:scg1="clr-namespace:System.Collections.Generic;assembly=System.ServiceModel"
- xmlns:scg2="clr-namespace:System.Collections.Generic;assembly=System.Core"
- xmlns:scg3="clr-namespace:System.Collections.Generic;assembly=mscorlib"
- xmlns:sd="clr-namespace:System.Data;assembly=System.Data"
- xmlns:sl="clr-namespace:System.Linq;assembly=System.Core"
- xmlns:st="clr-namespace:System.Text;assembly=mscorlib"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="JobInfo" Type="InArgument(jga:JobInfo)" />
-    <x:Property Name="Query" Type="InOutArgument(jgjq:SqlQuery)" />
+    <x:Property Name="Parameters" Type="InOutArgument(jgsjq:SqlQueryParameters)" />
   </x:Members>
-  <sap:VirtualizedContainerService.HintSize>451,3033</sap:VirtualizedContainerService.HintSize>
-  <mva:VisualBasic.Settings>Assembly references and imported namespaces for internal implementation</mva:VisualBasic.Settings>
-  <CancellationScope sad:XamlDebuggerXmlReader.FileName="C:\Data\dobos\project\skyquery-all\skyquery\dll\Jhu.SkyQuery\Jobs\Query\XMatchQueryJob.xaml" sap:VirtualizedContainerService.HintSize="411,2953">
-    <Sequence sap:VirtualizedContainerService.HintSize="375,2538">
-      <sap:WorkflowViewStateService.ViewState>
-        <scg3:Dictionary x:TypeArguments="x:String, x:Object">
-          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-        </scg3:Dictionary>
-      </sap:WorkflowViewStateService.ViewState>
-      <jgjq:InitializeQuery EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" Query="[Query]" />
-      <jgjq:CheckDestinationTable sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" Query="[Query]" />
-      <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" QueryObject="[Query]" />
-      <ParallelForEach x:TypeArguments="jgsp:ITableSource" DisplayName="ParallelForEach&lt;ITableSource&gt;" sap:VirtualizedContainerService.HintSize="353,276" Values="[Query.TableStatistics.Keys]">
-        <ActivityAction x:TypeArguments="jgsp:ITableSource">
+  <sap2010:ExpressionActivityEditor.ExpressionActivityEditor>C#</sap2010:ExpressionActivityEditor.ExpressionActivityEditor>
+  <sap2010:WorkflowViewState.IdRef>Jhu.SkyQuery.Jobs.Query.XMatchQueryJob_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Jhu.Graywulf.Activities</x:String>
+      <x:String>Jhu.Graywulf.Sql.Jobs.Query</x:String>
+      <x:String>Jhu.Graywulf.Registry</x:String>
+      <x:String>Jhu.Graywulf.Sql.Parsing</x:String>
+      <x:String>Jhu.Graywulf.Tasks</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities.Debugger</x:String>
+      <x:String>System.Activities.Debugger.Symbol</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Text</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>Jhu.SkyQuery.Jobs.Query</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Configuration</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Net.Http</AssemblyReference>
+      <AssemblyReference>System.Net.Http.Extensions</AssemblyReference>
+      <AssemblyReference>System.Net.Http.Primitives</AssemblyReference>
+      <AssemblyReference>System.Net.Http.WebRequest</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.ServiceModel.Activities</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>Microsoft.CSharp</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Plugins</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Activities</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Components</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Install</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.IO</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Logging</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Parsing</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Registry.Enum</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Registry</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.RemoteService</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Sql.Jobs</AssemblyReference>
+      <AssemblyReference>Jhu.Graywulf.Sql</AssemblyReference>
+      <AssemblyReference>Jhu.SharpFitsIO</AssemblyReference>
+      <AssemblyReference>Jhu.Spherical</AssemblyReference>
+      <AssemblyReference>Jhu.SkyQuery.IO</AssemblyReference>
+      <AssemblyReference>Jhu.SkyQuery.Parser</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>Jhu.SkyQuery</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <CancellationScope sap2010:WorkflowViewState.IdRef="CancellationScope_1">
+    <CancellationScope.Variables>
+      <Variable x:TypeArguments="jgsjq:SqlQuery" Name="Query" />
+    </CancellationScope.Variables>
+    <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3">
+      <jgsjq:InitializeQuery EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="InitializeQuery_1" JobInfo="[JobInfo]" Parameters="[Parameters]" Query="[Query]" />
+      <jga:PlaceholderActivity DisplayName="TODO: CheckDestinationTable" sap2010:WorkflowViewState.IdRef="PlaceholderActivity_1" />
+      <jgsjq:AssignServerInstance EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="AssignServerInstance_1" JobInfo="[JobInfo]" QueryObject="[Query]" />
+      <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_8">
+        <ParallelForEach.Values>
+          <InArgument x:TypeArguments="scg:IEnumerable(x:String)">
+            <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:String)">Query.TableStatistics.Keys</mca:CSharpValue>
+          </InArgument>
+        </ParallelForEach.Values>
+        <ActivityAction x:TypeArguments="x:String">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgsp:ITableSource" Name="tableSource" />
+            <DelegateInArgument x:TypeArguments="x:String" Name="key" />
           </ActivityAction.Argument>
-          <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="214,128" JobInfo="[JobInfo]" MaxRetries="3">
-            <jgjq:ComputeTableStatistics sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" Query="[Query]" TableSource="[tableSource]" />
+          <jga:Retry Finally="{x:Null}" sap2010:WorkflowViewState.IdRef="Retry_1" JobInfo="[JobInfo]" MaxRetries="3">
+            <jga:Retry.HandledExceptionTypes>
+              <InArgument x:TypeArguments="s:Type[]">
+                <mca:CSharpValue x:TypeArguments="s:Type[]">new[] { typeof(System.Data.SqlClient.SqlException)}</mca:CSharpValue>
+              </InArgument>
+            </jga:Retry.HandledExceptionTypes>
+            <jgsjq:ComputeTableStatistics sap2010:WorkflowViewState.IdRef="ComputeTableStatistics_1">
+              <jgsjq:ComputeTableStatistics.JobInfo>
+                <InArgument x:TypeArguments="jga:JobInfo">
+                  <mca:CSharpValue x:TypeArguments="jga:JobInfo">JobInfo</mca:CSharpValue>
+                </InArgument>
+              </jgsjq:ComputeTableStatistics.JobInfo>
+              <jgsjq:ComputeTableStatistics.Query>
+                <InArgument x:TypeArguments="jgsjq:SqlQuery">
+                  <mca:CSharpValue x:TypeArguments="jgsjq:SqlQuery">Query</mca:CSharpValue>
+                </InArgument>
+              </jgsjq:ComputeTableStatistics.Query>
+              <jgsjq:ComputeTableStatistics.TableSource>
+                <InArgument x:TypeArguments="jgsp:ITableSource">
+                  <mca:CSharpValue x:TypeArguments="jgsp:ITableSource">Query.TableStatistics[key].TableSource</mca:CSharpValue>
+                </InArgument>
+              </jgsjq:ComputeTableStatistics.TableSource>
+            </jgsjq:ComputeTableStatistics>
           </jga:Retry>
         </ActivityAction>
       </ParallelForEach>
-      <jgjq:GeneratePartitions EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" Query="[Query]" />
-      <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap:VirtualizedContainerService.HintSize="353,1540" Values="[Query.Partitions]">
-        <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
+      <jgsjq:GeneratePartitions EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="GeneratePartitions_1" JobInfo="[JobInfo]" Query="[Query]" />
+      <ParallelForEach x:TypeArguments="jgsjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_3">
+        <ParallelForEach.Values>
+          <InArgument x:TypeArguments="scg:IEnumerable(jgsjq:SqlQueryPartition)">
+            <mca:CSharpValue x:TypeArguments="scg:IEnumerable(jgsjq:SqlQueryPartition)">Query.Partitions</mca:CSharpValue>
+          </InArgument>
+        </ParallelForEach.Values>
+        <ActivityAction x:TypeArguments="jgsjq:SqlQueryPartition">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
+            <DelegateInArgument x:TypeArguments="jgsjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
-          <jga:Retry Finally="{x:Null}" sap:VirtualizedContainerService.HintSize="323,1392" JobInfo="[JobInfo]" MaxRetries="3">
-            <Sequence sap:VirtualizedContainerService.HintSize="309,1286">
+          <jga:Retry Finally="{x:Null}" sap2010:WorkflowViewState.IdRef="Retry_2" JobInfo="[JobInfo]" MaxRetries="3">
+            <jga:Retry.HandledExceptionTypes>
+              <InArgument x:TypeArguments="s:Type[]">
+                <mca:CSharpValue x:TypeArguments="s:Type[]" xml:space="preserve">new[] 
+{
+    typeof(System.Data.SqlClient.SqlException),
+    typeof(System.IO.IOException),
+}</mca:CSharpValue>
+              </InArgument>
+            </jga:Retry.HandledExceptionTypes>
+            <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2">
               <Sequence.Variables>
-                <Variable x:TypeArguments="scg3:List(x:String)" Name="remoteTableReferences" />
+                <Variable x:TypeArguments="scg:List(x:String)" Name="remoteTableReferences" />
               </Sequence.Variables>
-              <sap:WorkflowViewStateService.ViewState>
-                <scg3:Dictionary x:TypeArguments="x:String, x:Object">
-                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-                </scg3:Dictionary>
-              </sap:WorkflowViewStateService.ViewState>
-              <jgjq:AssignServerInstance EntityGuid="{x:Null}" sap:VirtualizedContainerService.HintSize="287,22" JobInfo="[JobInfo]" QueryObject="[queryPartition]" />
-              <jgjq:FindRemoteTables sap:VirtualizedContainerService.HintSize="287,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap:VirtualizedContainerService.HintSize="287,208" Values="[queryPartition.RemoteTableReferences.Keys]">
+              <jgsjq:AssignServerInstance EntityGuid="{x:Null}" sap2010:WorkflowViewState.IdRef="AssignServerInstance_2" JobInfo="[JobInfo]" QueryObject="[queryPartition]" />
+              <jgsjq:IdentifyRemoteSourceTables sap2010:WorkflowViewState.IdRef="IdentifyRemoteSourceTables_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
+              <jgsjq:IdentifyRemoteOutputTables sap2010:WorkflowViewState.IdRef="IdentifyRemoteOutputTables_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
+              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_2">
+                <ParallelForEach.Values>
+                  <InArgument x:TypeArguments="scg:IEnumerable(x:String)">
+                    <mca:CSharpValue x:TypeArguments="scg:IEnumerable(x:String)">queryPartition.RemoteSourceTables.Keys</mca:CSharpValue>
+                  </InArgument>
+                </ParallelForEach.Values>
                 <ActivityAction x:TypeArguments="x:String">
                   <ActivityAction.Argument>
-                    <DelegateInArgument x:TypeArguments="x:String" Name="tableReference" />
+                    <DelegateInArgument x:TypeArguments="x:String" Name="tableKey" />
                   </ActivityAction.Argument>
-                  <jgjq:CopyRemoteTable sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableReference]" />
+                  <jgsjq:CopySourceTable sap2010:WorkflowViewState.IdRef="CopySourceTable_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" />
                 </ActivityAction>
               </ParallelForEach>
-              <ForEach x:TypeArguments="local:XMatchQueryStep" sap:VirtualizedContainerService.HintSize="287,604" Values="[DirectCast(queryPartition, Jhu.SkyQuery.Jobs.Query.XMatchQueryPartition).Steps]">
+              <ForEach x:TypeArguments="local:XMatchQueryStep" sap2010:WorkflowViewState.IdRef="ForEach`1_1">
+                <ForEach.Values>
+                  <InArgument x:TypeArguments="scg:IEnumerable(local:XMatchQueryStep)">
+                    <mca:CSharpValue x:TypeArguments="scg:IEnumerable(local:XMatchQueryStep)">((Jhu.SkyQuery.Jobs.Query.XMatchQueryPartition)queryPartition).Steps</mca:CSharpValue>
+                  </InArgument>
+                </ForEach.Values>
                 <ActivityAction x:TypeArguments="local:XMatchQueryStep">
                   <ActivityAction.Argument>
                     <DelegateInArgument x:TypeArguments="local:XMatchQueryStep" Name="queryStep" />
                   </ActivityAction.Argument>
-                  <Sequence sap:VirtualizedContainerService.HintSize="222,456">
-                    <sap:WorkflowViewStateService.ViewState>
-                      <scg3:Dictionary x:TypeArguments="x:String, x:Object">
-                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-                      </scg3:Dictionary>
-                    </sap:WorkflowViewStateService.ViewState>
-                    <local:ComputeSearchRadius sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
-                    <local:CreateZoneTable DisplayName="CreateZoneTable" sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
-                    <local:CreateZoneDefTable sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
-                    <local:CreateLinkTable sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
-                    <local:CreatePairTable sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
-                    <local:CreateMatchTable sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
+                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+                    <local:ComputeSearchRadius sap2010:WorkflowViewState.IdRef="ComputeSearchRadius_1" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
+                    <local:CreateZoneTable DisplayName="CreateZoneTable" sap2010:WorkflowViewState.IdRef="CreateZoneTable_1" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
+                    <local:CreateZoneDefTable sap2010:WorkflowViewState.IdRef="CreateZoneDefTable_1" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
+                    <local:CreateLinkTable sap2010:WorkflowViewState.IdRef="CreateLinkTable_1" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
+                    <local:CreatePairTable sap2010:WorkflowViewState.IdRef="CreatePairTable_1" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
+                    <local:CreateMatchTable sap2010:WorkflowViewState.IdRef="CreateMatchTable_1" JobInfo="[JobInfo]" XMatchStep="[queryStep]" />
                   </Sequence>
                 </ActivityAction>
               </ForEach>
-              <jgjq:ExecuteQuery sap:VirtualizedContainerService.HintSize="287,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <jgjq:PrepareDestinationTable sap:VirtualizedContainerService.HintSize="287,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
-              <jgjq:CopyResultset sap:VirtualizedContainerService.HintSize="287,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
+              <jgsjq:ExecuteQuery sap2010:WorkflowViewState.IdRef="ExecuteQuery_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" />
+              <ParallelForEach x:TypeArguments="x:String" DisplayName="ParallelForEach&lt;String&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_7" Values="[queryPartition.RemoteOutputTables.Keys]">
+                <ActivityAction x:TypeArguments="x:String">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="x:String" Name="tableKey" />
+                  </ActivityAction.Argument>
+                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
+                    <jgsjq:InitializeOutputTable sap2010:WorkflowViewState.IdRef="InitializeOutputTable_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" />
+                    <jgsjq:CopyOutputTable sap2010:WorkflowViewState.IdRef="CopyOutputTable_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" RemoteTable="[tableKey]" />
+                    <jga:PlaceholderActivity DisplayName="TODO: CreateOutputTablePrimaryKey" sap2010:WorkflowViewState.IdRef="PlaceholderActivity_2" />
+                  </Sequence>
+                </ActivityAction>
+              </ParallelForEach>
             </Sequence>
           </jga:Retry>
         </ActivityAction>
       </ParallelForEach>
-      <jgjq:CreateDestinationTablePrimaryKey sap:VirtualizedContainerService.HintSize="353,22" JobInfo="[JobInfo]" Query="[Query]" />
-      <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap:VirtualizedContainerService.HintSize="353,208" Values="[Query.Partitions]">
-        <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
+      <ParallelForEach x:TypeArguments="jgsjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;SqlQueryPartition&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_4" Values="[Query.Partitions]">
+        <ActivityAction x:TypeArguments="jgsjq:SqlQueryPartition">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
+            <DelegateInArgument x:TypeArguments="jgsjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
-          <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" SuppressErrors="False" />
+          <jgsjq:DropTemporaryTables sap2010:WorkflowViewState.IdRef="DropTemporaryTables_1" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" SuppressErrors="False" />
         </ActivityAction>
       </ParallelForEach>
     </Sequence>
     <CancellationScope.CancellationHandler>
-      <ParallelForEach x:TypeArguments="jgjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap:VirtualizedContainerService.HintSize="287,208" Values="[Query.Partitions]">
-        <ActivityAction x:TypeArguments="jgjq:SqlQueryPartition">
+      <ParallelForEach x:TypeArguments="jgsjq:SqlQueryPartition" DisplayName="ParallelForEach&lt;QueryPartitionBase&gt;" sap2010:WorkflowViewState.IdRef="ParallelForEach`1_5">
+        <ParallelForEach.Values>
+          <InArgument x:TypeArguments="scg:IEnumerable(jgsjq:SqlQueryPartition)">
+            <mca:CSharpValue x:TypeArguments="scg:IEnumerable(jgsjq:SqlQueryPartition)">Query.Partitions</mca:CSharpValue>
+          </InArgument>
+        </ParallelForEach.Values>
+        <ActivityAction x:TypeArguments="jgsjq:SqlQueryPartition">
           <ActivityAction.Argument>
-            <DelegateInArgument x:TypeArguments="jgjq:SqlQueryPartition" Name="queryPartition" />
+            <DelegateInArgument x:TypeArguments="jgsjq:SqlQueryPartition" Name="queryPartition" />
           </ActivityAction.Argument>
-          <jgjq:DropTemporaryTables sap:VirtualizedContainerService.HintSize="200,22" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" SuppressErrors="True" />
+          <jgsjq:DropTemporaryTables sap2010:WorkflowViewState.IdRef="DropTemporaryTables_2" JobInfo="[JobInfo]" QueryPartition="[queryPartition]" SuppressErrors="True" />
         </ActivityAction>
       </ParallelForEach>
     </CancellationScope.CancellationHandler>
+    <sads:DebugSymbol.Symbol>d2hDOlxEYXRhXGRvYm9zXHByb2plY3Rcc2t5cXVlcnktYWxsLXYxLjRcbW9kdWxlc1xza3lxdWVyeVxkbGxcSmh1LlNreVF1ZXJ5XEpvYnNcUXVlcnlcWE1hdGNoUXVlcnlKb2IueGFtbF1UA+cBFwIBAVgF1gEQAgEN2AEH5AEZAgECWQdZqAEDAagBWgdahAEDAacBWwdbngEDAaIBXAd/GQMBhAGAAQeAAZQBAgF/gQEHzQEZAgEWzgEH1QEZAgEO2wEN2wF7AgEJ4gEL4gGsAQIBA1mHAVmVAQMBrQFZcFl7AwGrAVmcAVmlAQMBqQFbeluFAQMBpQFbkgFbmwEDAaMBXw1fdgMBngFmC30XAwGFAYABdoABgQEDAYIBgAGIAYABkQEDAYABhAENhAF7AgF7iwELywEXAgEXzgG2Ac4BygECARXTAQvTAa0BAgEP4gGBAeIBkwECAQfiAaMB4gGpAQIBBuIBZuIBcQIBBGZyZnUDAY0BZltmZgMBiwFpEWmCAQMBhgFsDXwsAwGOAYsBcosBdQIBH4sBW4sBZgIBHY4BEZIBFAIBGJUBDcoBGAIBINMBgQHTAZMBAgET0wGjAdMBqgECARLTAWbTAXECARBvE29bAwGZAXkTeYABAwGUAXQTdFwDAY8BmQEPmQGvAQIBdpoBD5oBqAECAXGbAQ+bAagBAgFsnAEPqAEhAgFeqQEPvAEZAgE4vQEPvQGMAQIBM74BD8kBIQIBIZkBggGZAY0BAgF5mQGaAZkBrAECAXeaAZMBmgGlAQIBdJoBeJoBgwECAXKbAZMBmwGlAQIBb5sBeJsBgwECAW2fARWfAYoBAgFmpgETpgGvAQIBX6wBFawBtQECAVizARO6AR4CATm9AXe9AYkBAgE2vQFcvQFnAgE0vgGkAb4BzgECATLDARPHAR4CASKmAYEBpgGTAQIBZKYBoAGmAawBAgFipgFmpgFxAgFgtAEVtAGXAQIBU7UBFbUBrQECAU62ARW2AZUBAgFJtwEVtwGPAQIBRLgBFbgBjwECAT+5ARW5AZEBAgE6xAEVxAG9AQIBK8UBFcUBsQECASTGARXGAZgBAgEjtAFwtAF7AgFWtAGHAbQBlAECAVS1AYYBtQGRAQIBUbUBnQG1AaoBAgFPtgFutgF5AgFMtgGFAbYBkgECAUq3AWi3AXMCAUe3AX+3AYwBAgFFuAFouAFzAgFCuAF/uAGMAQIBQLkBarkBdQIBPbkBgQG5AY4BAgE7xAGPAcQBoQECATDEAa4BxAG6AQIBLsQBdMQBfwIBLMUBgwHFAZUBAgEpxQGiAcUBrgECASfFAWjFAXMCASU=</sads:DebugSymbol.Symbol>
   </CancellationScope>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="InitializeQuery_1" sap:VirtualizedContainerService.HintSize="350.857142857143,21.7142857142857" />
+      <sap2010:ViewStateData Id="PlaceholderActivity_1" sap:VirtualizedContainerService.HintSize="350.857142857143,21.7142857142857" />
+      <sap2010:ViewStateData Id="AssignServerInstance_1" sap:VirtualizedContainerService.HintSize="350.857142857143,21.7142857142857" />
+      <sap2010:ViewStateData Id="ComputeTableStatistics_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="Retry_1" sap:VirtualizedContainerService.HintSize="213.714285714286,134.285714285714" />
+      <sap2010:ViewStateData Id="ParallelForEach`1_8" sap:VirtualizedContainerService.HintSize="350.857142857143,286.285714285714" />
+      <sap2010:ViewStateData Id="GeneratePartitions_1" sap:VirtualizedContainerService.HintSize="350.857142857143,21.7142857142857" />
+      <sap2010:ViewStateData Id="AssignServerInstance_2" sap:VirtualizedContainerService.HintSize="285.714285714286,21.7142857142857" />
+      <sap2010:ViewStateData Id="IdentifyRemoteSourceTables_1" sap:VirtualizedContainerService.HintSize="285.714285714286,21.7142857142857" />
+      <sap2010:ViewStateData Id="IdentifyRemoteOutputTables_1" sap:VirtualizedContainerService.HintSize="285.714285714286,21.7142857142857" />
+      <sap2010:ViewStateData Id="CopySourceTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="ParallelForEach`1_2" sap:VirtualizedContainerService.HintSize="285.714285714286,212" />
+      <sap2010:ViewStateData Id="ComputeSearchRadius_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="CreateZoneTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="CreateZoneDefTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="CreateLinkTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="CreatePairTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="CreateMatchTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="221.714285714286,453.714285714286">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ForEach`1_1" sap:VirtualizedContainerService.HintSize="285.714285714286,605.714285714286" />
+      <sap2010:ViewStateData Id="ExecuteQuery_1" sap:VirtualizedContainerService.HintSize="285.714285714286,21.7142857142857" />
+      <sap2010:ViewStateData Id="InitializeOutputTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="CopyOutputTable_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="PlaceholderActivity_2" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="221.714285714286,268.571428571429">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ParallelForEach`1_7" sap:VirtualizedContainerService.HintSize="285.714285714286,420.571428571429" />
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="307.428571428571,1688.57142857143">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Retry_2" sap:VirtualizedContainerService.HintSize="321.142857142857,1801.14285714286" />
+      <sap2010:ViewStateData Id="ParallelForEach`1_3" sap:VirtualizedContainerService.HintSize="350.857142857143,1953.14285714286" />
+      <sap2010:ViewStateData Id="DropTemporaryTables_1" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="ParallelForEach`1_4" sap:VirtualizedContainerService.HintSize="350.857142857143,212" />
+      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="372.571428571429,2901.71428571429">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="DropTemporaryTables_2" sap:VirtualizedContainerService.HintSize="200,21.7142857142857" />
+      <sap2010:ViewStateData Id="ParallelForEach`1_5" sap:VirtualizedContainerService.HintSize="285.714285714286,212" />
+      <sap2010:ViewStateData Id="CancellationScope_1" sap:VirtualizedContainerService.HintSize="409.142857142857,3326.28571428571" />
+      <sap2010:ViewStateData Id="Jhu.SkyQuery.Jobs.Query.XMatchQueryJob_1" sap:VirtualizedContainerService.HintSize="449.142857142857,3406.28571428571" />
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
 </Activity>

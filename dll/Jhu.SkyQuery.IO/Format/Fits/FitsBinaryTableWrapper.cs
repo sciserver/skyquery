@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.SharpFitsIO;
-using Jhu.Graywulf.Schema;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Data;
 using Jhu.Graywulf.Format;
 using System.Threading.Tasks;
@@ -102,9 +102,28 @@ namespace Jhu.SkyQuery.Format.Fits
         /// <returns></returns>
         private DataType ConvertDataTypeToDatabase(FitsTableColumn column)
         {
-            // TODO: needs testing
-            // TODO: what to do with varchar(max) etc?
-            var dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            DataType dt;
+
+            if (column.DataType.Repeat == 1)
+            {
+                // Primitive types
+                dt = DataType.Create(column.DataType.Type, 1);
+            }
+            else if (column.DataType.Type == typeof(string))
+            {
+                // Strings
+                dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            }
+            else if (column.DataType.Repeat > 0)
+            {
+                // Arrays
+                dt = DataType.Create(column.DataType.Type, column.DataType.Repeat);
+            }
+            else
+            {
+                // TODO: max arrays?
+                throw new NotImplementedException();
+            }
 
             dt.IsNullable = column.DataType.IsNullable;
 
@@ -203,28 +222,28 @@ namespace Jhu.SkyQuery.Format.Fits
                     }
                 };
             }
-            else if (column.DataType.Type == typeof(Jhu.Graywulf.Schema.SingleComplex))
+            else if (column.DataType.Type == typeof(Jhu.Graywulf.Sql.Schema.SingleComplex))
             {
                 return new TypeMapping()
                 {
-                    From = typeof(Jhu.Graywulf.Schema.SingleComplex),
+                    From = typeof(Jhu.Graywulf.Sql.Schema.SingleComplex),
                     To = typeof(Jhu.SharpFitsIO.SingleComplex),
                     Mapping = delegate(object value)
                     {
-                        var s = (Jhu.Graywulf.Schema.SingleComplex)value;
+                        var s = (Jhu.Graywulf.Sql.Schema.SingleComplex)value;
                         return new Jhu.SharpFitsIO.SingleComplex(s.A, s.B);
                     }
                 };
             }
-            else if (column.DataType.Type == typeof(Jhu.Graywulf.Schema.DoubleComplex))
+            else if (column.DataType.Type == typeof(Jhu.Graywulf.Sql.Schema.DoubleComplex))
             {
                 return new TypeMapping()
                 {
-                    From = typeof(Jhu.Graywulf.Schema.DoubleComplex),
+                    From = typeof(Jhu.Graywulf.Sql.Schema.DoubleComplex),
                     To = typeof(Jhu.SharpFitsIO.DoubleComplex),
                     Mapping = delegate(object value)
                     {
-                        var s = (Jhu.Graywulf.Schema.DoubleComplex)value;
+                        var s = (Jhu.Graywulf.Sql.Schema.DoubleComplex)value;
                         return new Jhu.SharpFitsIO.DoubleComplex(s.A, s.B);
                     }
                 };
@@ -347,7 +366,6 @@ namespace Jhu.SkyQuery.Format.Fits
 
         protected override Task<bool> OnReadNextRowAsync(object[] values)
         {
-            // TODO: convert to async
             return this.hdu.ReadNextRowAsync(values, File.GenerateIdentityColumn ? 1 : 0);
         }
 

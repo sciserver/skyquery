@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Sql.Parsing;
-using Jhu.Graywulf.Schema.SqlServer;
+using Jhu.Graywulf.Sql.Schema.SqlServer;
 
 namespace Jhu.SkyQuery.Parser
 {
@@ -39,7 +39,8 @@ namespace Jhu.SkyQuery.Parser
             {
                 return new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator()
                 {
-                    ResolveNames = true
+                    //ResolveNames = true
+                    // TODO: use *Rendering properties
                 };
             }
         }

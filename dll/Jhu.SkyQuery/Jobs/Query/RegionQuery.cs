@@ -7,7 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Runtime.Serialization;
 using Jhu.Graywulf.Tasks;
-using Jhu.Graywulf.Jobs.Query;
+using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.Registry;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -28,6 +28,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
         #region Constructors and initializers
+
+        public RegionQuery()
+        {
+        }
 
         protected RegionQuery(CancellationContext cancellationContext)
             : base(cancellationContext)
