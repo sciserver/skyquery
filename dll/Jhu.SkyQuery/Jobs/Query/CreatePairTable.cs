@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Data.SqlClient;
 using System.Activities;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Activities;
 using Jhu.Graywulf.Sql.Jobs.Query;
+using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Tasks;
 
 namespace Jhu.SkyQuery.Jobs.Query
@@ -22,6 +24,9 @@ namespace Jhu.SkyQuery.Jobs.Query
             var activityInstanceId = activityContext.ActivityInstanceId;
             XMatchQueryStep xmatchstep = XMatchStep.Get(activityContext);
             XMatchQueryPartition xmqp = (XMatchQueryPartition)xmatchstep.QueryPartition;
+            Table pairTable = null;
+            Table linkTable = null;
+            SqlCommand createPairTableCommand = null;
 
             switch (xmqp.Parameters.ExecutionMode)
             {
@@ -32,13 +37,14 @@ namespace Jhu.SkyQuery.Jobs.Query
                     using (RegistryContext registryContext = ContextManager.Instance.CreateReadOnlyContext())
                     {
                         xmqp.InitializeQueryObject(cancellationContext, registryContext);
+                        xmqp.PrepareCreatePairTable(xmatchstep, out linkTable, out pairTable, out createPairTableCommand);
                     }
                     break;
                 default:
                     throw new NotImplementedException();
             }
 
-            await xmqp.CreatePairTableAsync(xmatchstep);
+            await xmqp.CreatePairTableAsync(xmatchstep, linkTable, pairTable, createPairTableCommand);
         }
     }
 }

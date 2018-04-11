@@ -430,14 +430,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             // 1. Generate column list
 
             var columnlist = new SqlServerColumnListGenerator(
-                options.Table.TableReference,
+                MapTableReference(options.Table.TableReference),
                 options.ColumnContext,
                 options.EscapeColumnNames ?
                     ColumnListType.SelectWithOriginalName :
                     ColumnListType.SelectWithOriginalNameNoAlias)
             {
                 TableAlias = null,
-                LeadingSeparator = true,
+                SeparatorRendering = ColumnListSeparatorRendering.Leading,
             };
 
             // 2. Load template

@@ -24,7 +24,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             get { return table; }
             set { table = value; }
         }
-
+        
         public Region Region
         {
             get { return region; }

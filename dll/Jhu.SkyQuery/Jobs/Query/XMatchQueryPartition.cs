@@ -226,6 +226,22 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Pair table functions
 
+        public void PrepareCreatePairTable(XMatchQueryStep step, out Table linkTable, out Table pairTable, out SqlCommand createPairTableCommand)
+        {
+            if (step.StepNumber > 0)
+            {
+                linkTable = CodeGenerator.GetLinkTable(step);
+                pairTable = CodeGenerator.GetPairTable(step);
+                createPairTableCommand = CodeGenerator.GetPopulatePairTableCommand(step, linkTable, pairTable);
+            }
+            else
+            {
+                linkTable = null;
+                pairTable = null;
+                createPairTableCommand = null;
+            }
+        }
+
         /// <summary>
         /// Creates a pair table from a link table.
         /// </summary>
@@ -235,23 +251,19 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Function calls <see cref="PopulatePairTable"/> to populate
         /// pair table form a link table.
         /// </remarks>
-        public async Task CreatePairTableAsync(XMatchQueryStep step)
+        public async Task CreatePairTableAsync(XMatchQueryStep step, Table linkTable, Table pairTable, SqlCommand createPairTableCommand)
         {
             if (step.StepNumber > 0)
             {
-                var table = Query.XMatchTables[step.XMatchTable];
-                var linktable = CodeGenerator.GetLinkTable(step);
-                var pairtable = CodeGenerator.GetPairTable(step);
-
                 // Drop table if it exists (unlikely, but might happen during debugging)
-                pairtable.Drop();
+                pairTable.Drop();
 
-                using (var cmd = CodeGenerator.GetPopulatePairTableCommand(step, linktable, pairtable))
+                using (createPairTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
+                    await ExecuteSqlOnAssignedServerAsync(createPairTableCommand, CommandTarget.Code);
                 }
 
-                TemporaryTables.Add(pairtable, pairtable);
+                TemporaryTables.Add(pairTable, pairTable);
             }
         }
 

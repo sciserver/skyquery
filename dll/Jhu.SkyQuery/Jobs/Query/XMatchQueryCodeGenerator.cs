@@ -372,8 +372,18 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public SqlCommand GetCreateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             var table = Query.XMatchTables[step.XMatchTable];
-            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.CreateTableWithEscapedName);
+            var tr = MapTableReference(table.TableReference);
+            var columnlist = new SqlServerColumnListGenerator(tr, ColumnContext.PrimaryKey, ColumnListType.CreateTableWithEscapedName)
+            {
+                IdentityRendering = ColumnListIdentityRendering.Never,
+            };
 
             var sql = new StringBuilder(XMatchScripts.CreateZoneTable);
 
@@ -396,8 +406,15 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public SqlCommand GetPopulateZoneTableCommand(XMatchQueryStep step, Table zonetable)
         {
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             var table = Query.XMatchTables[step.XMatchTable];
             var coords = table.Coordinates;
+            var tr = MapTableReference(table.TableReference);
 
             // Strict partitioning conditions are applied on the very first table and buffering
             // is used for the rest of the tables. Buffering depends on the search radius.
@@ -460,10 +477,10 @@ namespace Jhu.SkyQuery.Jobs.Query
             };
 
             // Generate primary key list for insert
-            var columnlist = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            var columnlist = new SqlServerColumnListGenerator(tr, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = "__t",
-                LeadingSeparator = true
+                SeparatorRendering = ColumnListSeparatorRendering.Leading
             };
 
             var sql = new StringBuilder(XMatchScripts.PopulateZoneTable);
@@ -519,6 +536,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="step">Reference to the XMatch step.</param>
         public SqlCommand GetCreatePairTableCommand(XMatchQueryStep step, Table pairtable)
         {
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             var pstep = Partition.Steps[step.StepNumber - 1];
 
             string columnlist1, columnlist2;
@@ -571,7 +594,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // To be used in the pairs select
             var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.CreateTableWithEscapedName)
             {
-                NullType = ColumnListNullType.NotNull,
+                NullRendering = ColumnListNullRendering.NotNull,
             };
 
             columnlist = clg.Execute();
@@ -594,6 +617,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="step"></param>
         public SqlCommand GetPopulatePairTableCommand(XMatchQueryStep step, Table linktable, Table pairtable)
         {
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             // Table 1 is, with the exception of the very first step, the match table of a previous xmatch step.
             // In this case the match table contains all necessary columns and includes a zone index.
             // In the very first step Table 1 can either be a catalog table with a zone index that contains all
@@ -690,6 +719,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void GenerateSourceQueryFromSourceTableForPopulatePairTable(XMatchQueryStep step, bool usePartitioning, string alias, out string query, out string columnlist, out string selectlist)
         {
             var table = Query.XMatchTables[step.XMatchTable];
+            var tr = MapTableReference(table.TableReference);
 
             // Directly use a source table for pair table building
             var tqoptions = new AugmentedTableQueryOptions(table.TableSource, table.Region)
@@ -701,7 +731,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             query = GenerateAugmentedTableQuery(tqoptions).ToString();
 
             // To be used in the pairs select
-            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            var clg = new SqlServerColumnListGenerator(tr, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = alias,
             };
@@ -709,7 +739,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             columnlist = clg.Execute();
 
             // To be used in the final select that goes into the insert
-            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            var slg = new SqlServerColumnListGenerator(tr, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = ""
             };
@@ -720,19 +750,20 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void GenerateSourceQueryFromZoneTableForPopulatePairTable(XMatchQueryStep step, string alias, out string query, out string columnlist, out string selectlist)
         {
             var table = Query.XMatchTables[step.XMatchTable];
+            var tr = MapTableReference(table.TableReference);
 
             // Use a zone table computed earlier for pair table building
             query = GenerateSelectStarQuery(GetZoneTable(step), -1);
 
             // PK needs to be figured out from catalog table
-            var clg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            var clg = new SqlServerColumnListGenerator(tr, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = alias,
             };
 
             columnlist = clg.Execute();
 
-            var slg = new SqlServerColumnListGenerator(table.TableReference, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
+            var slg = new SqlServerColumnListGenerator(tr, ColumnContext.PrimaryKey, ColumnListType.SelectWithEscapedNameNoAlias)
             {
                 TableAlias = ""
             };
@@ -814,7 +845,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 {
                     var columns = new SqlServerColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference, ColumnContext.Default, listType)
                     {
-                        LeadingSeparator = true,
+                        SeparatorRendering = ColumnListSeparatorRendering.Leading,
                     };
 
                     if (useTableAlias)
@@ -862,15 +893,17 @@ namespace Jhu.SkyQuery.Jobs.Query
                 throw new InvalidOperationException();
             }
 
-            var pstep = Partition.Steps[step.StepNumber - 1];
-            var table1 = Partition.Query.XMatchTables[pstep.XMatchTable];
-            var table2 = Partition.Query.XMatchTables[step.XMatchTable];
-
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
                 AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
+
+            var pstep = Partition.Steps[step.StepNumber - 1];
+            var table1 = Partition.Query.XMatchTables[pstep.XMatchTable];
+            var table2 = Partition.Query.XMatchTables[step.XMatchTable];
+            var tr1 = MapTableReference(table1.TableReference);
+            var tr2 = MapTableReference(table2.TableReference);
 
             // 1. Generate augmented table queries
             string query1, query2;
@@ -917,7 +950,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             if (step.StepNumber == 1)
             {
                 // The first table is a source table.
-                var jlg1 = new SqlServerColumnListGenerator(table1.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinConditionWithEscapedName)
+                var jlg1 = new SqlServerColumnListGenerator(tr1, ColumnContext.PrimaryKey, ColumnListType.JoinConditionWithEscapedName)
                 {
                     TableAlias = "__t1",
                     JoinedTableAlias = "__pair",
@@ -931,7 +964,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // The second table is always the next source table
-            var jlg2 = new SqlServerColumnListGenerator(table2.TableReference, ColumnContext.PrimaryKey, ColumnListType.JoinConditionWithEscapedName)
+            var jlg2 = new SqlServerColumnListGenerator(tr2, ColumnContext.PrimaryKey, ColumnListType.JoinConditionWithEscapedName)
             {
                 TableAlias = "__t2",
                 JoinedTableAlias = "__pair",

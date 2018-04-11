@@ -96,6 +96,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Jobs\Query\AppSettings.cs" />
+    <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
@@ -132,7 +133,6 @@
     </Compile>
     <Compile Include="Jobs\Query\SingleServerQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
-    <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
     <Compile Include="Jobs\Query\XMatchException.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\XMatchQueryJob.cs" />

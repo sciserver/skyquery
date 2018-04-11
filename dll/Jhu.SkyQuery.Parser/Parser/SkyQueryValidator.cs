@@ -105,10 +105,14 @@ namespace Jhu.SkyQuery.Parser
                         // This is unlikely to happen as limited by the grammar
                         throw new ValidatorException(ExceptionMessages.OnlyTablesAllowed);
                     }
-                    else if (((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
+
+                    // TODO: allow no-PK logic for tables only that will be copied to the worker nodes
+                    // Use logic from QueryObject.IsRemoteDataset
+                    /*else if (((TableOrView)xt.TableReference.DatabaseObject).Dataset ....
+                        ((TableOrView)xt.TableReference.DatabaseObject).PrimaryKey == null)
                     {
                         throw new ValidatorException(ExceptionMessages.PrimaryKeyRequired);
-                    }
+                    }*/
                 }
 
                 xmi++;
