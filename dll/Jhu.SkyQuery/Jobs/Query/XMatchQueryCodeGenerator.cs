@@ -816,6 +816,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public SqlCommand GetCreateMatchTableCommand(XMatchQueryStep step, Table matchtable)
         {
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             var indexname = String.Format("[PK_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
             var columnlist = GenerateMatchTableColumns(step, ColumnListType.CreateTableWithEscapedName, false);
 
@@ -843,7 +849,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 if (Query.XMatchTables[Partition.Steps[i].XMatchTable].InclusionMethod != XMatchInclusionMethod.Drop)
                 {
-                    var columns = new SqlServerColumnListGenerator(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference, ColumnContext.Default, listType)
+                    var tr = MapTableReference(Query.XMatchTables[Partition.Steps[i].XMatchTable].TableReference);
+                    var columns = new SqlServerColumnListGenerator(tr, ColumnContext.Default, listType)
                     {
                         SeparatorRendering = ColumnListSeparatorRendering.Leading,
                     };
@@ -1000,6 +1007,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public SqlCommand GetBuildMatchTableIndexCommand(XMatchQueryStep step, Table matchtable)
         {
+            if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
+            {
+                AddSystemDatabaseMappings();
+                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+            }
+
             var indexname = GetMatchTableZoneIndexName(step);
 
             // The zone index has to contain the primary key columns of all previously
@@ -1048,7 +1061,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var cg = new SqlServerColumnListGenerator();
 
             // Replace table references and substitute column names with escaped version
-            foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Jhu.Graywulf.Sql.Parsing.Subquery)))
+            foreach (var ci in qs.EnumerateDescendantsRecursive<ColumnIdentifier>(typeof(Subquery)))
             {
                 var cr = ci.ColumnReference;
 
@@ -1060,7 +1073,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 else if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
                 {
                     // In case of other tables
-                    cr.ColumnName = cg.EscapePropagatedColumnName(cr.TableReference, cr.ColumnName);
+                    var tr = MapTableReference(cr.TableReference);
+                    cr.ColumnName = cg.EscapePropagatedColumnName(tr, cr.ColumnName);
                     cr.TableReference = matchtr;
                 }
             }
