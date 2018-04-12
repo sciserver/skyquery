@@ -892,5 +892,21 @@ FROM XMATCH(
 
             RunQuery(sql, QueueType.Quick, JobExecutionState.TimedOut, 0, new TimeSpan(0, 5, 0), false);
         }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void BayesFactorTest()
+        {
+            var sql = @"
+SELECT s.objid, s.ra, s.dec, g.objid, g.ra, g.dec, x.* 
+INTO [$into] 
+FROM XMATCH
+    (MUST EXIST IN MyDB:BayesFactorTest AS s WITH(POINT(s.ra, s.dec), ERROR(1)),
+     MUST EXIST IN MyDB:BayesFactorTest AS g WITH(POINT(g.ra, g.dec), ERROR(3)),
+     LIMIT BAYESFACTOR TO 1e3) AS x
+";
+
+            RunQuery(sql);
+        }
     }
 }

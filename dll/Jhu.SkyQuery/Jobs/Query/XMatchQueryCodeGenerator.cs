@@ -180,7 +180,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected string GetWeightExpressionString(string sigmaExpression)
         {
-            return String.Format("POWER(CONVERT(float,{0}) / 3600.0 / 180.0 * PI(), -2)", sigmaExpression);
+            return String.Format("POWER(RADIANS(CONVERT(float, {0}) / 3600.00000000), -2)", sigmaExpression);
         }
 
         protected string GetZoneIDExpressionString(string dec)

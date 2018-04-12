@@ -394,6 +394,34 @@ WHERE ra BETWEEN 0 AND 0.1 AND dec BETWEEN 0 AND 0.1
 */
 
 
+GO
+
+SELECT *
+INTO mydb.MyCatalog_NoPK
+FROM mydb.MyCatalog
+
+GO
+
+CREATE TABLE mydb.BayesFactorTest
+(
+	objID int NOT NULL PRIMARY KEY,
+	RA float NOT NULL,
+	Dec float NOT NULL
+)
+
+GO
+
+WITH l AS
+(
+	SELECT 0 AS d
+	UNION ALL
+	SELECT d + 1 FROM l WHERE d < 30
+)
+INSERT mydb.BayesFactorTest
+SELECT d, 0, CAST(d as float)/3600.0
+FROM l
+
+GO
 
 CREATE TABLE [mydb].[SampleData](
 	[float] [real] NULL,
