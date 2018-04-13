@@ -69,7 +69,7 @@ namespace Jhu.SkyQuery.SqlClrLib
 
                     // Calculate the updated bayes factor
                     // log of Eq. 33 and 32
-                    var logBF = n * log2 + l_k - Math.Log(a_k) - 0.5 * q_k;
+                    logBF = n * log2 + l_k - Math.Log(a_k) - 0.5 * q_k;
 
                     // Update best match coordinates Eq. 40
                     var wc = w_k / a_k;
