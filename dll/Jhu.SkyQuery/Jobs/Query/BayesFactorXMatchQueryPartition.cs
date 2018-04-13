@@ -123,7 +123,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 // the previous match
                 var pstep = Steps[step.StepNumber - 1];
 
-                computeSearchRadiusCommand = CodeGenerator.GetComputeSearchRadiusCommand(pstep);
+                computeSearchRadiusCommand = CodeGenerator.GetComputeSearchRadiusCommand(pstep, step);
             }
             else
             {

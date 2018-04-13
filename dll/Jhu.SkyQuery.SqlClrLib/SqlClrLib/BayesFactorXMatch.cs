@@ -36,7 +36,11 @@ namespace Jhu.SkyQuery.SqlClrLib
                 this.logBF = 0;
             }
 
-            public bool Update(double cx_k, double cy_k, double cz_k, int k, double w_k, short n_max, double a_max, double l_min, double logBF_limit)
+            public bool Update(
+                double cx_k, double cy_k, double cz_k, 
+                int k, double w_k,
+                short n_max, double a_max, double l_min, 
+                double logBF_limit)
             {
                 // Separation (Eq. 35)
                 var dx = cx - cx_k;
@@ -55,19 +59,17 @@ namespace Jhu.SkyQuery.SqlClrLib
                 // TODO: update this to implement outer match
                 var n_k = (short)(n + 1);
 
-                // Cut on Bayes factor
-                // The formula is an upper limit on the Bayes factor, considering the weights of all remaining catalogs
-                // n is now the number of previously matched catalogs
-                var q_max = 2 * (log2 * (n_max - k + n_k) + l_k + l_min - Math.Log(a_k + a_max)) - logBF_limit;
+                // Calculate a lower limit on the achievable bayes factor assuming that all
+                // subsequent matches are perfect (i.e. D2 = 0)
+                var logBF_min = (n_max - 1) * log2 + (l_k + l_min) - Math.Log(a_k + a_max) - 0.5 * q_k;
 
-                if (q_k < q_max)
+                if (logBF_min >= logBF_limit)
                 {
                     // This is a match as we are inside the limit
-                    
-                    // Calculate updated bayes factor
+
+                    // Calculate the updated bayes factor
                     // log of Eq. 33 and 32
-                    var logN_k = n * log2 + l_k - Math.Log(a_k);
-                    logBF = logN_k - 0.5 * q_k;
+                    var logBF = n * log2 + l_k - Math.Log(a_k) - 0.5 * q_k;
 
                     // Update best match coordinates Eq. 40
                     var wc = w_k / a_k;
@@ -138,8 +140,8 @@ namespace Jhu.SkyQuery.SqlClrLib
             SqlDouble s_cx_k, SqlDouble s_cy_k, SqlDouble s_cz_k,       // c_k
             SqlDouble s_w_k,            // w_k from Eq. 39
             SqlInt16 s_k,               // step number (kth catalog being matched)
-            SqlDouble s_a_max,
-            SqlDouble s_l_min,
+            SqlDouble s_a_max,          // max of sum of weights for remaining catalogs
+            SqlDouble s_l_min,          // min of sum of log weights for remaining catalogs
             SqlInt16 s_n_max,           // total number of catalogs
             SqlDouble s_logBF_limit
             )
@@ -208,13 +210,11 @@ namespace Jhu.SkyQuery.SqlClrLib
             var n_max = s_n_max.Value;
             var logBF_limit = s_logBF_limit.Value;
 
-            var logN = log2 * (n_max - 1) + l + l_max - Math.Log(a + a_min);
-            var b = 1 / a + 1 / w_min;
-            var r = b * (2 * (logN - logBF_limit) - q);
+            var logN = log2 * (n_max - 1) + l + l_max - Math.Log(a + a_min);    // Eq. 33
+            var b = a * w_min / (a + w_min);       // Eq. 37
+            var r2 = (2 * (logN - logBF_limit) - q) / b;
 
-            //(1 / a + 1 / @weightMin) * (2 * (@factor + l + @lmax - LOG(a + @amin) - @limit) - q)
-
-            return new SqlDouble(r);
+            return new SqlDouble(r2);
         }
     }
 }

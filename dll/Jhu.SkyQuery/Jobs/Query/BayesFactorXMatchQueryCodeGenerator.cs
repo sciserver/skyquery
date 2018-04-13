@@ -99,15 +99,15 @@ namespace Jhu.SkyQuery.Jobs.Query
         #endregion
         #region Search radius functions
 
-        public SqlCommand GetComputeSearchRadiusCommand(XMatchQueryStep step)
+        public SqlCommand GetComputeSearchRadiusCommand(XMatchQueryStep pstep, XMatchQueryStep step)
         {
             // Partitioning is applied on the very first table only. The rest of steps
             // uses the previous match table.
 
-            var table = Partition.Query.XMatchTables[step.XMatchTable];
+            var table = Partition.Query.XMatchTables[pstep.XMatchTable];
             var coords = table.Coordinates;
             var region = table.Region;
-            var matchtable = GetMatchTable(step);
+            var matchtable = GetMatchTable(pstep);
             var sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
 
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
@@ -117,7 +117,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // Generate the augmented table query
-            if (step.StepNumber == 0)
+            if (pstep.StepNumber == 0)
             {
                 var options = new AugmentedTableQueryOptions(table.TableSource, region)
                 {
@@ -149,9 +149,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// <param name="cmd"></param>
         private void AppendComputeSearchRadiusCommandParameters(XMatchQueryStep step, SqlCommand cmd)
         {
+            double wmin = 0;
             double lmax = 0;
             double amin = 0;
-            double stepmax = 0;
 
             // Compute search radius based on the error limits specified for
             // all xmatch tables that have been processed so far
@@ -193,20 +193,19 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 if (i == step.StepNumber)
                 {
-                    stepmax = max;
+                    wmin = GetWeight(max);
                 }
 
                 // Swap max/min because w = 1 / s^2
                 lmax += Math.Log(GetWeight(min));
                 amin += GetWeight(max);
             }
-
-            double wmin = GetWeight(stepmax);
-
+            
             AppendZoneHeightParameter(cmd);
-            cmd.Parameters.Add("@weightMin", SqlDbType.Float).Value = wmin;
-            cmd.Parameters.Add("@lmax", SqlDbType.Float).Value = lmax;
-            cmd.Parameters.Add("@amin", SqlDbType.Float).Value = amin;
+
+            cmd.Parameters.Add("@weightMin", SqlDbType.Float).Value = wmin;     // min weight from max error of current step
+            cmd.Parameters.Add("@lmax", SqlDbType.Float).Value = lmax;          // sum of max log weight of all subsequent steps
+            cmd.Parameters.Add("@amin", SqlDbType.Float).Value = amin;          // sum of min weight of all subsequent steps
             cmd.Parameters.Add("@stepCount", SqlDbType.SmallInt).Value = Partition.Steps.Count;
             cmd.Parameters.Add("@limit", SqlDbType.Float).Value = Math.Log(Partition.Query.Limit);
         }
@@ -252,11 +251,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                     // TODO: return maybe 1?
                     throw new NotImplementedException();
                 }
-                
+
                 // TODO: add logic to handle case when no min/max specified
 
-                lmin += Math.Log(GetWeight(double.Parse(SqlServerCodeGenerator.GetCode(maxexp, false))));
-                amax += GetWeight(double.Parse(SqlServerCodeGenerator.GetCode(minexp, false)));
+                lmin += Math.Log(GetWeight(double.Parse(GetCode(maxexp, false))));
+                amax += GetWeight(double.Parse(GetCode(minexp, false)));
             }
 
             cmd.Parameters.Add("@stepNumber", SqlDbType.SmallInt).Value = step.StepNumber + 1;
