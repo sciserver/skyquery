@@ -247,7 +247,11 @@ namespace Jhu.SkyQuery.Jobs.Query
                         DatabaseObjectName = null
                     };
 
-                    // Map original table reference to point to the subquery
+                    // Re-map table reference to point to the subquery
+                    if (TableReferenceMap.ContainsKey(tr))
+                    {
+                        TableReferenceMap.Remove(tr);
+                    }
                     TableReferenceMap.Add(tr, ntr);
 
                     // TODO: review this because ResultsTableReference logic
@@ -288,7 +292,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             var jt = JoinedTable.Create(JoinType.CreateInnerLoop(), ts2, jc);
             var tse = TableSourceExpression.Create(fts, jt);
             var fro = FromClause.Create(tse);
-            var qs = QuerySpecification.Create(SelectList.CreateStar(ts.TableReference), fro);
+            var tr = MapTableReference(ts.TableReference);
+            var qs = QuerySpecification.Create(SelectList.CreateStar(tr), fro);
 
             return qs;
         }
