@@ -35,7 +35,7 @@ namespace Jhu.SkyQuery.Jobs.Query.Test
             var sql = @"
 SELECT objid, ra, dec INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll
-REGION 'CIRCLE J2000 20 30 10'";
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -47,7 +47,7 @@ REGION 'CIRCLE J2000 20 30 10'";
             var sql = @"
 SELECT objid, ra, dec INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll WITH(POINT(ra, dec, cx, cy, cz), HTMID(htmid))
-REGION 'CIRCLE J2000 20 30 10'";
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -59,7 +59,7 @@ REGION 'CIRCLE J2000 20 30 10'";
             var sql = @"
 SELECT objid, ra, dec INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll a WITH (POINT(ra, dec), HTMID(htmid))
-REGION 'CIRCLE J2000 20 30 10'";
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -102,7 +102,7 @@ REGION 'CIRCLE J2000 0 0 60'";
             var sql = @"
 SELECT objid, ra, dec INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll WITH (HTMID(htmid))
-REGION 'CIRCLE J2000 20 30 10'";
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
@@ -114,7 +114,7 @@ REGION 'CIRCLE J2000 20 30 10'";
             var sql = @"
 SELECT objid, ra, dec INTO [$into]
 FROM TEST:SDSSDR7PhotoObjAll WITH (POINT(ra, dec))
-REGION 'CIRCLE J2000 20 30 10'";
+REGION 'CIRCLE J2000 0 0 10'";
 
             RunQuery(sql);
         }
