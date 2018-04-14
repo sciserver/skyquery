@@ -51,22 +51,6 @@ WHERE     p.RA BETWEEN 0 AND 5 AND p.Dec BETWEEN 0 AND 5
 
         [TestMethod]
         [TestCategory("Query")]
-        public void RunXMatchQueryTest()
-        {
-            using (SchedulerTester.Instance.GetToken())
-            {
-                SchedulerTester.Instance.EnsureRunning();
-
-                var guid = ScheduleQueryJob(
-                    sampleQuery.Replace("[$targettable]", "XMatchQueryTest_RunXMatchQueryTest"),
-                    QueueType.Long);
-
-                FinishQueryJob(guid);
-            }
-        }
-
-        [TestMethod]
-        [TestCategory("Query")]
         public void CancelXMatchQueryTest()
         {
             using (SchedulerTester.Instance.GetToken())

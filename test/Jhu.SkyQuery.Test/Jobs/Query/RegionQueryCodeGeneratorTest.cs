@@ -276,7 +276,7 @@ CROSS JOIN [SkyNode_TEST].[dbo].[SampleData_NumericTypes]
         [TestMethod]
         public void AppendRegionJoinsAndConditionsWithJoinedTable2Test()
         {
-            // Append HTM to the last table
+            // HTMID in itself is not enough for filtering, POINT must also be specified
 
             var sql = @"
 SELECT TEST:SampleData.*
@@ -292,7 +292,27 @@ CROSS JOIN [SkyNode_TEST].[dbo].[SampleData]
 
             var res = AppendRegionJoinsAndConditionsTestHelper(sql, false);
             Assert.AreEqual(gt, res);
-            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void AppendRegionJoinsAndConditionsWithJoinedTable3Test()
+        {
+            // HTMID in itself is not enough for filtering, POINT must also be specified
+
+            var sql = @"
+SELECT TEST:SampleData.*
+FROM TEST:SampleData_NumericTypes
+CROSS JOIN TEST:SampleData WITH (POINT([float], [float]), HTMID([bigint]))
+REGION 'CIRCLE J2000 10 10 10'";
+
+            var gt = @"
+SELECT [SkyNode_TEST].[dbo].[SampleData].[float] AS [float], [SkyNode_TEST].[dbo].[SampleData].[double] AS [double], [SkyNode_TEST].[dbo].[SampleData].[decimal] AS [decimal], [SkyNode_TEST].[dbo].[SampleData].[nvarchar(50)] AS [nvarchar(50)], [SkyNode_TEST].[dbo].[SampleData].[bigint] AS [bigint], [SkyNode_TEST].[dbo].[SampleData].[int] AS [int], [SkyNode_TEST].[dbo].[SampleData].[tinyint] AS [tinyint], [SkyNode_TEST].[dbo].[SampleData].[smallint] AS [smallint], [SkyNode_TEST].[dbo].[SampleData].[bit] AS [bit], [SkyNode_TEST].[dbo].[SampleData].[ntext] AS [ntext], [SkyNode_TEST].[dbo].[SampleData].[char] AS [char], [SkyNode_TEST].[dbo].[SampleData].[datetime] AS [datetime], [SkyNode_TEST].[dbo].[SampleData].[guid] AS [guid]
+FROM [SkyNode_TEST].[dbo].[SampleData_NumericTypes]
+CROSS JOIN [SkyNode_TEST].[dbo].[SampleData] 
+";
+
+            var res = AppendRegionJoinsAndConditionsTestHelper(sql, false);
+            Assert.AreEqual(gt, res);
         }
 
         [TestMethod]
