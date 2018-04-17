@@ -41,6 +41,10 @@ namespace Jhu.SkyQuery.Parser
                 {
                     //ResolveNames = true
                     // TODO: use *Rendering properties
+                    TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                    TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
+                    ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                    ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
                 };
             }
         }

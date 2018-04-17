@@ -19,13 +19,8 @@ namespace Jhu.SkyQuery.Parser
             return new SqlServerSchemaManager();
         }
 
-        private XMatchSelectStatement Parse(string query)
+        private StatementBlock Parse(string query)
         {
-            // TODO: upgrade
-
-            throw new NotImplementedException();
-
-            /*
             var script = new SkyQueryParser().Execute<StatementBlock>(query);
             var statement = script.FindDescendantRecursive<Statement>();
             var select = statement.FindDescendant<XMatchSelectStatement>();
@@ -35,22 +30,15 @@ namespace Jhu.SkyQuery.Parser
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
             nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
-            nr.Execute(select);
+            var q = nr.Execute(script);
 
-            return select;
-            */
+            return script;
         }
 
-        private void Validate(SelectStatement ss)
+        private void Validate(StatementBlock script)
         {
-            // TODO: Use ScriptBlock
-
-            throw new NotImplementedException();
-
-            /*
             var v = new SkyQueryValidator();
-            v.Execute(ss);
-            */
+            v.Execute(script);
         }
 
         [TestMethod]
@@ -111,6 +99,9 @@ SELECT * FROM
         [ExpectedException(typeof(ValidatorException))]
         public void CatalogWithNoPrimaryKeyTest()
         {
+            // TODO: modify this so that it doesn't use a remote table
+            // because PK is now automatically generated for remote tables.
+
             var sql =
 @"SELECT a.ra, a.dec
 FROM XMATCH

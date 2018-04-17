@@ -19,13 +19,8 @@ namespace Jhu.SkyQuery.Parser
             return new SqlServerSchemaManager();
         }
 
-        protected QuerySpecification Parse(string query)
+        protected new QuerySpecification Parse(string query)
         {
-            // TODO: upgrade to ScriptBlock
-
-            throw new NotImplementedException();
-
-            /*
             var script = new SkyQueryParser().Execute<StatementBlock>(query);
             var statement = script.FindDescendantRecursive<Statement>();
             var select = statement.FindDescendant<SelectStatement>();
@@ -35,17 +30,20 @@ namespace Jhu.SkyQuery.Parser
             nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
             nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
             nr.SchemaManager = CreateSchemaManager();
-            nr.Execute(select);
+            nr.Execute(script);
 
             return qs;
-            */
         }
 
         private string GenerateCode(QuerySpecification qs)
         {
-            var cg = new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator();
-            //cg.ResolveNames = true;
-            // TODO: use *Rendering properties
+            var cg = new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator()
+            {
+                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
+                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
+            };
 
             var sw = new StringWriter();
             cg.Execute(sw, qs);
