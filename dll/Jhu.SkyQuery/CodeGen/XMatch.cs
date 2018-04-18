@@ -140,7 +140,7 @@ namespace Jhu.SkyQuery.CodeGen
                 var ds = schemaManager.Datasets[catalog.DatasetName];
                 var t = (TableOrView)ds.GetObject(catalog.TableUniqueKey);
 
-                if (t.PrimaryKey == null)
+                if (!ds.IsMutable && t.PrimaryKey == null)
                 {
                     throw CreateException(String.Format(ExceptionMessages.PrimaryKeyRequired, catalog.Alias));
                 }
