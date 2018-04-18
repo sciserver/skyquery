@@ -1,4 +1,7 @@
-﻿$ErrorActionPreference='Stop'
+﻿rm $ProjectDir$OutDir\Microsoft.SqlServer.*.dll
+rm $ProjectDir$OutDir\Microsoft.SqlServer.*.xml
+
+$ErrorActionPreference='Stop'
 
 . ${SolutionDir}modules/graywulf/web/web-build.ps1
 
