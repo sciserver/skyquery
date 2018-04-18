@@ -853,6 +853,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                     var columns = new SqlServerColumnListGenerator(tr, ColumnContext.Default, listType)
                     {
                         SeparatorRendering = ColumnListSeparatorRendering.Leading,
+                        IdentityRendering = ColumnListIdentityRendering.Never,
                     };
 
                     if (useTableAlias)

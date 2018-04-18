@@ -839,7 +839,7 @@ WHERE a.ra BETWEEN 0 AND 1 AND
         [TestCategory("Query")]
         public void XMatchWithXMatchOutputTest()
         {
-            // TODO: this now creates a table without primary key
+            // this now creates a table without primary key
             // Can be used to test xmatch w/o PK behavior
 
             DropUserDatabaseTable("XMatchWithXMatchOutput1");
@@ -861,6 +861,46 @@ WHERE a.ra BETWEEN 0 AND 1 AND
 
             sql = @"
 SELECT x.matchID,
+       a.objID, a.ra, a.dec, 
+       b.ra, b.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN MYDB:XMatchWithXMatchOutput1 AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void XMatchWithXMatchOutputTest2()
+        {
+            // this test creates a table with an automatic PK that has identity definition set
+            // make sure the second query works which selects the match id
+
+            DropUserDatabaseTable("XMatchWithXMatchOutput1");
+
+            var sql = @"
+SELECT x.ra AS ra, x.dec AS dec,
+        x.cx AS cx, x.cy AS cy, x.cz AS cz
+INTO XMatchWithXMatchOutput1
+FROM XMATCH(
+    MUST EXIST IN TEST:SDSSDR7PhotoObjAll AS a WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    MUST EXIST IN TEST:WISEPhotoObj AS b WITH(POINT(ra, dec, cx, cy, cz), ERROR(0.1, 0.1, 0.1), ZONEID(zoneID)),
+    LIMIT BAYESFACTOR TO 1e3
+) AS x
+WHERE a.ra BETWEEN 0 AND 1 AND
+      b.ra BETWEEN 0 AND 1";
+
+            RunQuery(sql);
+
+            sql = @"
+SELECT b.__ID,
        a.objID, a.ra, a.dec, 
        b.ra, b.dec
 INTO [$into]
