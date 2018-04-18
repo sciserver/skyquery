@@ -120,6 +120,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Jobs\Query\LogMessages.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LogMessages.resx</DependentUpon>
+    </Compile>
     <Compile Include="Jobs\Query\RegionQuery.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\RegionQueryPartition.cs" />
@@ -257,6 +262,10 @@
     <EmbeddedResource Include="Jobs\Query\ExceptionMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Jobs\Query\LogMessages.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LogMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\RegionScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>

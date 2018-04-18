@@ -122,10 +122,12 @@ namespace Jhu.SkyQuery.Jobs.Query
             var xts = qs.XMatchTableSource;
 
             limit = xts.XMatchLimit;
-            xmatchTables = InterpretXMatchTables(qs);
+            xmatchTables = IdentifyXMatchTables(qs);
+
+            LogOperation(LogMessages.XMatchInterpreted, xmatchTables.Count, this.GetType().Name);
         }
 
-        private Dictionary<string, XMatchTableSpecification> InterpretXMatchTables(XMatchQuerySpecification qs)
+        private Dictionary<string, XMatchTableSpecification> IdentifyXMatchTables(XMatchQuerySpecification qs)
         {
             var res = new Dictionary<string, XMatchTableSpecification>(SchemaManager.Comparer);
 
@@ -136,6 +138,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 xt.TableSource.PartitioningKeyDataType = DataTypes.SqlInt;
 
                 res.Add(xt.TableSource.UniqueKey, xt);
+
+                LogOperation(LogMessages.XMatchTableIdentified, xt.TableSource.TableReference.DatabaseObject.FullyResolvedName);
+
+                if (CodeGenerator.IsZoneTableNecessary(xt, out CreateZoneTableReason reason))
+                {
+                    LogWarning(LogMessages.ZoneTableNecessary, xt.TableSource.TableReference.DatabaseObject.FullyResolvedName, reason);
+                }
             }
 
             return res;
@@ -163,6 +172,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                     };
 
                     TableStatistics.Add(ts.UniqueKey, stat);
+
+                    LogOperation(Jhu.Graywulf.Sql.Jobs.Query.LogMessages.StatisticsTableIdentified, ts.TableReference.DatabaseObject.FullyResolvedName);
                 }
             }
         }
@@ -207,6 +218,8 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 ((XMatchQueryPartition)qp).GenerateSteps(tables);
             }
+
+            LogOperation(LogMessages.XMatchStepsGenerated, ((XMatchQueryPartition)Partitions[0]).Steps.Count);
         }
     }
 }

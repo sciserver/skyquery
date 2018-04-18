@@ -5,5 +5,10 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Jobs.Query
 {
-
+    public enum CreateZoneTableReason
+    {
+        None,
+        NoZoneIndexFound,
+        RegionFilterSpecified
+    }
 }

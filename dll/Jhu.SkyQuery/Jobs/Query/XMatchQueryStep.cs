@@ -42,6 +42,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             set { searchRadius = value; }
         }
 
+        public long ZoneBuffer
+        {
+            get
+            {
+                return (long)Math.Ceiling(searchRadius / ((XMatchQuery)queryPartition.Query).ZoneHeight);
+            }
+        }
+
         public XMatchQueryStep()
             : base()
         {

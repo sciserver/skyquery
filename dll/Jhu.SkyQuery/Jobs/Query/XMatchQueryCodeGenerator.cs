@@ -149,7 +149,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// Returns true if building a zone table on the fly is necessary
         /// </summary>
         /// <returns></returns>
-        public bool IsZoneTableNecessary(XMatchTableSpecification table)
+        public bool IsZoneTableNecessary(XMatchTableSpecification table, out CreateZoneTableReason reason)
         {
             // It might be worth building a zone table if:
             // - the doesn't have a zoneID or it's not indexed
@@ -161,6 +161,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (FindZoneIndex(table.Coordinates) == null)
             {
+                reason = CreateZoneTableReason.NoZoneIndexFound;
                 return true;
             }
 
@@ -169,12 +170,14 @@ namespace Jhu.SkyQuery.Jobs.Query
             // at the same time
             if (table.Region != null)
             {
+                reason = CreateZoneTableReason.RegionFilterSpecified;
                 return true;
             }
 
             // TODO: compare statistics with total row count to find tables with strong
             // where clause conditions and consider building a zone table for them
 
+            reason = CreateZoneTableReason.None;
             return false;
         }
 
@@ -425,7 +428,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             if (step.StepNumber > 0)
             {
-                long buffer = (long)Math.Ceiling(step.SearchRadius / Query.ZoneHeight);
+                long buffer = step.ZoneBuffer;
 
                 if (!IsPartitioningKeyUnbound(Partition.PartitioningKeyMin))
                 {
@@ -671,7 +674,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t1";
 
-                if (step.StepNumber == 0 && !IsZoneTableNecessary(table))
+                if (step.StepNumber == 0 && !IsZoneTableNecessary(table, out CreateZoneTableReason reason))
                 {
                     // Partitioning constraints need to be applied on the very first MUST catalog only, as further
                     // matches might cross the partition boundary. On the other hand, in case of MAY catalogs,
@@ -699,7 +702,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var alias = "__t2";
 
-                if (!IsZoneTableNecessary(table))
+                if (!IsZoneTableNecessary(table, out CreateZoneTableReason reason))
                 {
                     // Directly use a source table for pair table building
                     GenerateSourceQueryFromSourceTableForPopulatePairTable(step, false, alias, out query, out columnlist, out selectlist);

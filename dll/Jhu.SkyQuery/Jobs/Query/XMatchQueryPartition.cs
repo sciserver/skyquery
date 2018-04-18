@@ -94,6 +94,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         public async Task ComputeMinMaxError(XMatchQueryStep step)
         {
             // TODO: implement min/max compute if no error is specified
+            // TODO: add logging
 
             double min, max;
 
@@ -113,9 +114,33 @@ namespace Jhu.SkyQuery.Jobs.Query
             // TODO: propagate these results to the table
         }
 
-        public abstract void PrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand);
+        public void PrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand)
+        {
+            if (step.StepNumber > 0)
+            {
+                OnPrepareComputeSearchRadius(step, out computeSearchRadiusCommand);
+            }
+            else
+            {
+                computeSearchRadiusCommand = null;
+            }
+        }
 
-        public abstract Task ComputeSearchRadiusAsync(XMatchQueryStep step, SqlCommand computeSearchRadiusCommand);
+        public abstract void OnPrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand);
+
+        public async Task ComputeSearchRadiusAsync(XMatchQueryStep step, SqlCommand computeSearchRadiusCommand)
+        {
+            if (step.StepNumber > 0)
+            {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+
+                await OnComputeSearchRadiusAsync(step, computeSearchRadiusCommand);
+
+                LogOperation(LogMessages.SearchRadiusComputed, step.StepNumber, this.ID, w.Elapsed.TotalSeconds, step.SearchRadius, step.ZoneBuffer);
+            }
+        }
+
+        public abstract Task OnComputeSearchRadiusAsync(XMatchQueryStep step, SqlCommand computeSearchRadiusCommand);
 
         #endregion
         #region ZoneDef table function
@@ -124,6 +149,8 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber > 0)
             {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+
                 var zonedeftable = CodeGenerator.GetZoneDefTable(step);
 
                 // Drop table if it exists (unlikely, but might happen during debugging)
@@ -140,6 +167,8 @@ namespace Jhu.SkyQuery.Jobs.Query
                 }
 
                 TemporaryTables.Add(zonedeftable, zonedeftable);
+
+                LogOperation(LogMessages.ZoneDefTableCreated, step.StepNumber, this.ID, w.Elapsed.TotalSeconds);
             }
         }
 
@@ -150,6 +179,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber > 0)
             {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+
+                int res;
                 var zonedeftable = CodeGenerator.GetZoneDefTable(step);
                 var linktable = CodeGenerator.GetLinkTable(step);
 
@@ -163,10 +195,12 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (var cmd = CodeGenerator.GetPopulateLinkTableCommand(step, zonedeftable, linktable))
                 {
-                    await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
+                    res = await ExecuteSqlOnAssignedServerAsync(cmd, CommandTarget.Code);
                 }
 
                 TemporaryTables.Add(linktable, linktable);
+
+                LogOperation(LogMessages.LinkTableCreated, step.StepNumber, this.ID, w.Elapsed.TotalSeconds, res);
             }
         }
 
@@ -177,7 +211,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var table = Query.XMatchTables[step.XMatchTable];
 
-            if (CodeGenerator.IsZoneTableNecessary(table))
+            if (CodeGenerator.IsZoneTableNecessary(table, out CreateZoneTableReason reason))
             {
                 zoneTable = CodeGenerator.GetZoneTable(step);
                 createZoneTableCommand = CodeGenerator.GetCreateZoneTableCommand(step, zoneTable);
@@ -206,6 +240,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (zoneTable != null)
             {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+                int res;
+
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 zoneTable.Drop();
 
@@ -218,8 +255,10 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (populateZoneTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(populateZoneTableCommand, CommandTarget.Code);
+                    res = await ExecuteSqlOnAssignedServerAsync(populateZoneTableCommand, CommandTarget.Code);
                 }
+
+                LogOperation(LogMessages.ZoneTableCreated, step.StepNumber, this.ID, w.Elapsed.TotalSeconds, Query.XMatchTables[step.XMatchTable].TableReference.DatabaseObject.FullyResolvedName, res);
             }
         }
 
@@ -255,15 +294,20 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber > 0)
             {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+                int res;
+
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 pairTable.Drop();
 
                 using (createPairTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(createPairTableCommand, CommandTarget.Code);
+                    res = await ExecuteSqlOnAssignedServerAsync(createPairTableCommand, CommandTarget.Code);
                 }
 
                 TemporaryTables.Add(pairTable, pairTable);
+
+                LogOperation(LogMessages.PairTableCreated, step.StepNumber, this.ID, w.Elapsed.TotalSeconds, Query.XMatchTables[step.XMatchTable].TableReference.DatabaseObject.FullyResolvedName, res);
             }
         }
 
@@ -311,6 +355,9 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             if (step.StepNumber > 0)
             {
+                var w = System.Diagnostics.Stopwatch.StartNew();
+                int res;
+
                 // Drop table if it exists (unlikely, but might happen during debugging)
                 matchTable.Drop();
 
@@ -323,13 +370,15 @@ namespace Jhu.SkyQuery.Jobs.Query
 
                 using (populateMatchTableCommand)
                 {
-                    await ExecuteSqlOnAssignedServerAsync(populateMatchTableCommand, CommandTarget.Code);
+                    res = await ExecuteSqlOnAssignedServerAsync(populateMatchTableCommand, CommandTarget.Code);
                 }
 
                 using (buildMatchTableIndexCommand)
                 {
                     await ExecuteSqlOnAssignedServerAsync(buildMatchTableIndexCommand, CommandTarget.Temp);
                 }
+
+                LogOperation(LogMessages.MatchTableCreated, step.StepNumber, this.ID, w.Elapsed.TotalSeconds, Query.XMatchTables[step.XMatchTable].TableReference.DatabaseObject.FullyResolvedName, res);
             }
         }
 
