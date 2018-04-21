@@ -116,21 +116,14 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public void PrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand)
         {
-            if (step.StepNumber > 0)
-            {
-                OnPrepareComputeSearchRadius(step, out computeSearchRadiusCommand);
-            }
-            else
-            {
-                computeSearchRadiusCommand = null;
-            }
+            OnPrepareComputeSearchRadius(step, out computeSearchRadiusCommand);
         }
 
         public abstract void OnPrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand);
 
         public async Task ComputeSearchRadiusAsync(XMatchQueryStep step, SqlCommand computeSearchRadiusCommand)
         {
-            if (step.StepNumber > 0)
+            if (computeSearchRadiusCommand != null)
             {
                 var w = System.Diagnostics.Stopwatch.StartNew();
 

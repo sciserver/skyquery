@@ -94,8 +94,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Parser\ConeXMatchQuerySpecification.cs" />
     <Compile Include="Parser\BayesFactorXMatchQuerySpecification.cs" />
+    <Compile Include="Parser\ConeXMatchTableReference.cs" />
     <Compile Include="Parser\BayesFactorXMatchTableReference.cs" />
+    <Compile Include="Parser\ConeXMatchTableSource.cs" />
     <Compile Include="Parser\BayesFactorXMatchTableSource.cs" />
     <Compile Include="Parser\Constants.cs" />
     <Compile Include="Parser\CoordinatesTableSource.cs" />
@@ -115,6 +118,7 @@
     <Compile Include="Parser\TableCoordinates.cs" />
     <Compile Include="Parser\XMatchQuerySpecification.cs" />
     <Compile Include="Parser\XMatchSelectStatement.cs" />
+    <Compile Include="Parser\XMatchTableReference.cs" />
     <Compile Include="Parser\XMatchTableSource.cs" />
     <Compile Include="Parser\XMatchTableSpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

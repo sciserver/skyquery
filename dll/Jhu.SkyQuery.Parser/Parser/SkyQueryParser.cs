@@ -18,11 +18,14 @@ namespace Jhu.SkyQuery.Parser
             else if (node is XMatchTableSource)
             {
                 var xts = (XMatchTableSource)node;
+                var algorithm = xts.Algorithm;
 
-                switch (xts.XMatchAlgorithm.ToUpperInvariant())
+                switch (algorithm.ToUpperInvariant())
                 {
                     case Constants.AlgorithmBayesFactor:
                         return new BayesFactorXMatchTableSource(xts);
+                    case Constants.AlgorithmCone:
+                        return new ConeXMatchTableSource(xts);
                     default:
                         throw new NotImplementedException();
                 }

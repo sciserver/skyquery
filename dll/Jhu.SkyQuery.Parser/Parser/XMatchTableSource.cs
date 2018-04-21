@@ -40,19 +40,11 @@ namespace Jhu.SkyQuery.Parser
             get { return true; }
         }
 
-        public string XMatchAlgorithm
+        public string Algorithm
         {
             get { return FindDescendantRecursive<XMatchAlgorithm>().Value; }
         }
-
-        public double XMatchLimit
-        {
-            get
-            {
-                return double.Parse(FindDescendant<XMatchConstraint>().FindDescendant<Number>().Value, System.Globalization.CultureInfo.InvariantCulture);
-            }
-        }
-
+        
         public string Alias
         {
             get { return FindDescendant<TableAlias>().Value; }

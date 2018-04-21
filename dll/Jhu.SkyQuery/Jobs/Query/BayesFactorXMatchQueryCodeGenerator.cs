@@ -12,12 +12,10 @@ using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Parser;
 using Jhu.Spherical;
 
-
 namespace Jhu.SkyQuery.Jobs.Query
 {
     public class BayesFactorXMatchQueryCodeGenerator : XMatchQueryCodeGenerator
     {
-
         #region Constructors and initializers
 
         private BayesFactorXMatchQueryPartition Partition
@@ -110,6 +108,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var matchtable = GetMatchTable(pstep);
             var sql = new StringBuilder(BayesFactorXMatchScripts.ComputeRSquared);
 
+            // TODO: try to merge these calls with the rest
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
@@ -119,7 +118,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Generate the augmented table query
             if (pstep.StepNumber == 0)
             {
-                var options = new AugmentedTableQueryOptions(table.TableSource, region)
+                var options = new AugmentedTableQueryOptions(pstep, table.TableSource, region)
                 {
                     ColumnContext = ColumnContext.None
                 };

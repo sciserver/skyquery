@@ -8,7 +8,6 @@ namespace Jhu.SkyQuery.Parser
 {
     public class BayesFactorXMatchQuerySpecification : XMatchQuerySpecification
     {
-
         #region Constructors and initializers
 
         public BayesFactorXMatchQuerySpecification()

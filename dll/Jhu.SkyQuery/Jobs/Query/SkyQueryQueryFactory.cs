@@ -10,8 +10,6 @@ using Jhu.SkyQuery.Parser;
 namespace Jhu.SkyQuery.Jobs.Query
 {
     [Serializable]
-    // TODO: Rename to SkyQueryQueryFactory once build is stable enough for
-    // testing so that config can be safely changed.
     public class SkyQueryQueryFactory : SqlQueryFactory
     {
         #region Constructors and initializers
@@ -39,7 +37,8 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             return new Type[] {
                 typeof(SqlQuery),
-                typeof(BayesFactorXMatchQuery)
+                typeof(BayesFactorXMatchQuery),
+                typeof(ConeXMatchQuery)
             };
         }
 
@@ -47,8 +46,8 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             SqlQuery res;
             StatementType type = StatementType.Unknown;
-            bool region = false;
-            bool xmatch = false;
+            RegionSelectStatement region = null;
+            XMatchSelectStatement xmatch = null;
             int count = 0;
 
             foreach (var s in parsingTree.EnumerateDescendantsRecursive<IStatement>())
@@ -56,35 +55,58 @@ namespace Jhu.SkyQuery.Jobs.Query
                 if (s.StatementType != StatementType.Block)
                 {
                     type |= s.StatementType;
-                    region |= (s is RegionSelectStatement);
-                    xmatch |= (s is XMatchSelectStatement);
                     count++;
+
+                    switch (s)
+                    {
+                        case XMatchSelectStatement xm:
+                            if (xmatch != null)
+                            {
+                                throw Error.XMatchMultipleStatementsNotSupported();
+                            }
+                            else
+                            {
+                                xmatch = xm;
+                            }
+                            break;
+                        case RegionSelectStatement rs:
+                            if (region == null)
+                            {
+                                region = rs;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
             // TODO: do we need the cancellation context here?
             using (var cancellationContext = new CancellationContext())
             {
-                if (xmatch && count == 1)
+                if (xmatch != null)
                 {
-                    // TODO: differentiate here when other xmatch alrogithms are added
-                    res = new BayesFactorXMatchQuery(cancellationContext, RegistryContext);
+                    var xmts = xmatch.FindDescendantRecursive<XMatchTableSource>();
+
+                    switch (xmts.Algorithm.ToUpperInvariant())
+                    {
+                        case SkyQuery.Parser.Constants.AlgorithmBayesFactor:
+                            return new BayesFactorXMatchQuery(cancellationContext, RegistryContext);
+                        case SkyQuery.Parser.Constants.AlgorithmCone:
+                            return new ConeXMatchQuery(cancellationContext, RegistryContext);
+                        default:
+                            throw new NotImplementedException();
+                    }
                 }
-                else if (xmatch && count > 1)
+                else if (region != null)
                 {
-                    throw Error.XMatchMultipleStatementsNotSupported();
-                }
-                else if (region)
-                {
-                    res = new RegionQuery(cancellationContext, RegistryContext);
+                    return new RegionQuery(cancellationContext, RegistryContext);
                 }
                 else
                 {
-                    res = new SqlQuery(cancellationContext, RegistryContext);
+                    return new SqlQuery(cancellationContext, RegistryContext);
                 }
             }
-
-            return res;
         }
 
         public override Jhu.Graywulf.Parsing.Parser CreateParser()

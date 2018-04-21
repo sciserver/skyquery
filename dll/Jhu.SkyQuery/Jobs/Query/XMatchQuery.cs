@@ -21,8 +21,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         #region Private member variables
 
         // --- cross-match parameters
-        protected double zoneHeight;
-        protected double limit;
+        private double zoneHeight;
 
         // --- cache for table specifications
         [NonSerialized]
@@ -30,7 +29,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         #endregion
         #region Properties
-
+        
         private XMatchQueryCodeGenerator CodeGenerator
         {
             get { return (XMatchQueryCodeGenerator)CreateCodeGenerator(); }
@@ -50,13 +49,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             get { return zoneHeight; }
             set { zoneHeight = value; }
-        }
-
-        [DataMember]
-        public double Limit
-        {
-            get { return limit; }
-            set { limit = value; }
         }
 
         public Dictionary<string, XMatchTableSpecification> XMatchTables
@@ -88,16 +80,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         private void InitializeMembers(StreamingContext context)
         {
             this.zoneHeight = Constants.DefaultZoneHeight;
-            this.limit = -1;
-
             this.xmatchTables = null;
         }
 
         private void CopyMembers(XMatchQuery old)
         {
             this.zoneHeight = old.zoneHeight;
-            this.limit = old.limit;
-
             this.xmatchTables = old.xmatchTables;
         }
 
@@ -119,13 +107,16 @@ namespace Jhu.SkyQuery.Jobs.Query
             // Interpret xmatch parameters
             // Bayes factor or probability limit
             var qs = selectStatement.XMatchQuerySpecification;
-            var xts = qs.XMatchTableSource;
+            var xmts = qs.XMatchTableSource;
 
-            limit = xts.XMatchLimit;
             xmatchTables = IdentifyXMatchTables(qs);
+
+            InterpretLimit(xmts);
 
             LogOperation(LogMessages.XMatchInterpreted, xmatchTables.Count, this.GetType().Name);
         }
+
+        protected abstract void InterpretLimit(XMatchTableSource xmts);
 
         private Dictionary<string, XMatchTableSpecification> IdentifyXMatchTables(XMatchQuerySpecification qs)
         {
@@ -180,15 +171,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected override void OnGeneratePartitions(int partitionCount, Jhu.Graywulf.Sql.Jobs.Query.TableStatistics stat)
         {
-            var tables = new List<XMatchTableSpecification>(); ;
-
-            // Order tables based on incusion method and statistics
-            foreach (var key in xmatchTables.Keys)
-            {
-                tables.Add(xmatchTables[key]);
-            }
-
-            tables.Sort(new XMatchTableComparer(this));
+            var tables = SortXMatchTableSpecifications();
 
             // Find stat histogram with most bins, that will be used to generate partitions
             // instead of the very first table
@@ -221,5 +204,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             LogOperation(LogMessages.XMatchStepsGenerated, ((XMatchQueryPartition)Partitions[0]).Steps.Count);
         }
+
+        protected abstract List<XMatchTableSpecification> SortXMatchTableSpecifications();
     }
 }

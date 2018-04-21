@@ -99,6 +99,7 @@
     <Compile Include="Jobs\Query\AugmentedTableQueryOptions.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryCodeGenerator.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryPartition.cs" />
+    <Compile Include="Jobs\Query\ConeXMatchQueryStep.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryStep.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchScripts.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -136,6 +137,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>RegionScripts.resx</DependentUpon>
     </Compile>
+    <Compile Include="Jobs\Query\ConeXMatchQuery.cs" />
+    <Compile Include="Jobs\Query\ConeXMatchQueryCodeGenerator.cs" />
+    <Compile Include="Jobs\Query\ConeXMatchQueryPartition.cs" />
+    <Content Include="Jobs\Query\ConeXMatchResources\ComputeSearchRadius.sql" />
+    <Compile Include="Jobs\Query\ConeXMatchScripts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ConeXMatchScripts.resx</DependentUpon>
+    </Compile>
     <Compile Include="Jobs\Query\SingleServerQueryFactory.cs" />
     <Compile Include="Jobs\Query\SkyQueryQueryFactory.cs" />
     <Compile Include="Jobs\Query\XMatchException.cs" />
@@ -148,6 +158,11 @@
     <Compile Include="Jobs\Query\XMatchQueryStep.cs" />
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTable.sql" />
     <Content Include="Jobs\Query\RegionResources\SelectAugmentedTableHtm.sql" />
+    <None Include="Jobs\Query\ConeXMatchResources\PopulateMatchTable.sql" />
+    <None Include="Jobs\Query\ConeXMatchResources\CreateMatchTable.sql" />
+    <None Include="Jobs\Query\ConeXMatchResources\BuildMatchTableIndex.sql" />
+    <Content Include="Jobs\Query\ConeXMatchResources\SelectAugmentedTable.sql" />
+    <Content Include="Jobs\Query\ConeXMatchResources\SelectAugmentedTableHtm.sql" />
     <Content Include="Jobs\Query\XMatchResources\ComputeMinMaxError.sql" />
     <None Include="app.config" />
     <None Include="Jobs\Query\XMatchResources\CreateZoneTable.sql" />
@@ -253,6 +268,11 @@
     <EmbeddedResource Include="CodeGen\ExceptionMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Jobs\Query\ConeXMatchScripts.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>ConeXMatchScripts.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Jobs\Query\BayesFactorXMatchScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>

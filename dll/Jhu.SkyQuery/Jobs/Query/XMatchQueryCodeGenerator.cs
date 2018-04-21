@@ -474,7 +474,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // Generate augmented query for select
-            var query = new AugmentedTableQueryOptions(table.TableSource, table.Region)
+            var query = new AugmentedTableQueryOptions(step, table.TableSource, table.Region)
             {
                 ColumnContext = ColumnContext.PrimaryKey,
             };
@@ -725,7 +725,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var tr = MapTableReference(table.TableReference);
 
             // Directly use a source table for pair table building
-            var tqoptions = new AugmentedTableQueryOptions(table.TableSource, table.Region)
+            var tqoptions = new AugmentedTableQueryOptions(step, table.TableSource, table.Region)
             {
                 ColumnContext = ColumnContext.PrimaryKey,
                 EscapeColumnNames = true,
@@ -923,7 +923,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 // The first table is a source table. We don't apply conditions here, that
                 // has been done at creating the pair table already
-                var options = new AugmentedTableQueryOptions(table1.TableSource, table1.Region)
+                var options = new AugmentedTableQueryOptions(pstep, table1.TableSource, table1.Region)
                 {
                     ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                     UseRegion = false,
@@ -939,7 +939,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             // The second table is always the next source table
-            var options2 = new AugmentedTableQueryOptions(table2.TableSource, table2.Region)
+            var options2 = new AugmentedTableQueryOptions(step, table2.TableSource, table2.Region)
             {
                 ColumnContext = ColumnContext.Default | ColumnContext.PrimaryKey,
                 UseRegion = false,

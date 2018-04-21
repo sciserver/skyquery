@@ -855,7 +855,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 AddOutputTableMappings();
             }
 
-            var options = new AugmentedTableQueryOptions((SkyQuery.Parser.CoordinatesTableSource)tableSource, region)
+            var options = new AugmentedTableQueryOptions(null, (SkyQuery.Parser.CoordinatesTableSource)tableSource, region)
             {
                 UseHtm = coords.IsHtmIdHintSpecified || fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable,
                 UsePartitioning = false,

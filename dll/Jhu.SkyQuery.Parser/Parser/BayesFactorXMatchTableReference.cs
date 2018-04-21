@@ -7,10 +7,9 @@ using Jhu.Graywulf.Sql.Schema;
 
 namespace Jhu.SkyQuery.Parser
 {
-    public class BayesFactorXMatchTableReference : TableReference
+    public class BayesFactorXMatchTableReference : XMatchTableReference
     {
         public BayesFactorXMatchTableReference()
-            : base()
         {
             InitializeMembers();
         }
@@ -33,22 +32,6 @@ namespace Jhu.SkyQuery.Parser
             AddColumn("L", DataTypes.SqlFloat);
             AddColumn("Q", DataTypes.SqlFloat);
             AddColumn("LogBF", DataTypes.SqlFloat);
-        }
-
-        private Column AddColumn(string name, Jhu.Graywulf.Sql.Schema.DataType type)
-        {
-            var col = new Column();
-            col.Name = name;
-            col.DataType = type;
-            ((IColumns)this.DatabaseObject).Columns.TryAdd(col.Name, col);
-
-            ColumnReference cr = new ColumnReference();
-            cr.ColumnName = name;
-            cr.DataType = type;
-            cr.TableReference = this;
-            this.ColumnReferences.Add(cr);
-
-            return col;
         }
     }
 }

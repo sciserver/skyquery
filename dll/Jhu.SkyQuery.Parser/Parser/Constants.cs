@@ -8,6 +8,8 @@ namespace Jhu.SkyQuery.Parser
     public class Constants
     {
         public const string AlgorithmBayesFactor = "BAYESFACTOR";
+        public const string AlgorithmCone = "CONE";
+        public const string AlgorithmChi2 = "CHI2";
         public const string InclusionMethodMust = "MUST";
         public const string InclusionMethodMay = "MAY";
         public const string InclusionMethodNot = "NOT";

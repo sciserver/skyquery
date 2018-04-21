@@ -376,7 +376,7 @@ namespace Jhu.SkyQuery.Parser
         private void InterpretPointHint(TableHint hint)
         {
             pointHint = hint;
-            pointHintArguments = GetHintArguments(hint);
+            pointHintArguments = hint.GetArguments();
 
             if (pointHintArguments.Length == 2)
             {
@@ -406,7 +406,7 @@ namespace Jhu.SkyQuery.Parser
         private void InterpretHtmIdHint(TableHint hint)
         {
             htmIdHint = hint;
-            htmIdHintArguments = GetHintArguments(hint);
+            htmIdHintArguments = hint.GetArguments();
 
             if (htmIdHintArguments.Length != 1)
             {
@@ -424,7 +424,7 @@ namespace Jhu.SkyQuery.Parser
         private void InterpretZoneIdHint(TableHint hint)
         {
             zoneIdHint = hint;
-            zoneIdHintArguments = GetHintArguments(hint);
+            zoneIdHintArguments = hint.GetArguments();
 
             if (zoneIdHintArguments.Length != 1)
             {
@@ -442,7 +442,7 @@ namespace Jhu.SkyQuery.Parser
         private void InterpretErrorHint(TableHint hint)
         {
             errorHint = hint;
-            errorHintArguments = GetHintArguments(hint);
+            errorHintArguments = hint.GetArguments();
 
             if (errorHintArguments.Length == 1)
             {
@@ -458,15 +458,6 @@ namespace Jhu.SkyQuery.Parser
             {
                 throw CreateException(ExceptionMessages.InvalidErrorFormat);
             }
-        }
-
-        private Expression[] GetHintArguments(TableHint hint)
-        {
-            return hint.FindDescendant<FunctionArguments>()
-                       .FindDescendant<ArgumentList>()
-                       .EnumerateDescendants<Argument>()
-                       .Select(a => (Expression)a.Expression)
-                       .ToArray();
         }
 
         #endregion

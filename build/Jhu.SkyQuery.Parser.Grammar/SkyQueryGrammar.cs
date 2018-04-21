@@ -56,7 +56,7 @@ namespace Jhu.SkyQuery.Parser.Grammar
 
         #region Region grammar
 
-        public static Expression<Rule> RegionSelectStatement = () => 
+        public static Expression<Rule> RegionSelectStatement = () =>
             Inherit
             (
                 SelectStatement,
@@ -116,9 +116,10 @@ namespace Jhu.SkyQuery.Parser.Grammar
             (
                 Keyword("REGION"),
                 CommentOrWhitespace,
-                Must(StringConstant, RegionExpression)
+                Must(StringConstant) //, RegionExpression)
             );
 
+        /*
         public static Expression<Rule> RegionExpression = () =>
             Sequence
             (
@@ -154,10 +155,10 @@ namespace Jhu.SkyQuery.Parser.Grammar
         public static Expression<Rule> RegionShapeType = () =>
             Must
             (
-                Keyword("CIRCLE"), Keyword("CIRC"),
-                Keyword("RECTANGLE"), Keyword("RECT"),
-                Keyword("POLYGON"), Keyword("POLY"),
-                Keyword("CONVEX_HULL"), Keyword("CHULL")
+                Literal("CIRCLE"), Literal("CIRC"),
+                Literal("RECTANGLE"), Literal("RECT"),
+                Literal("POLYGON"), Literal("POLY"),
+                Literal("CONVEX_HULL"), Literal("CHULL")
             );
 
         public static Expression<Rule> RegionArgument = () =>
@@ -173,6 +174,7 @@ namespace Jhu.SkyQuery.Parser.Grammar
                 RegionArgument,
                 May(Sequence(May(CommentOrWhitespace), Comma, RegionArgumentList))
             );
+        */
 
         #endregion
         #region XMatch grammar
@@ -235,7 +237,7 @@ namespace Jhu.SkyQuery.Parser.Grammar
                     May(Sequence(May(CommentOrWhitespace), JoinedTable))
                 )
             );
-        
+
         public static Expression<Rule> XMatchTableSource = () =>
             Inherit
             (
@@ -289,11 +291,12 @@ namespace Jhu.SkyQuery.Parser.Grammar
                 Literal("LIMIT"),
                 CommentOrWhitespace, XMatchAlgorithm,
                 CommentOrWhitespace, Literal("TO"),
-                CommentOrWhitespace, Number
+                CommentOrWhitespace, 
+                Must(Number, TableHint)
             );
 
         public static Expression<Rule> XMatchAlgorithm = () =>
-            Must(Literal("BAYESFACTOR"), Literal("DISTANCE"));
+            Must(Literal("BAYESFACTOR"), Literal("CONE"));
 
         #endregion
     }

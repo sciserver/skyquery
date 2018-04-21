@@ -96,8 +96,6 @@ namespace Jhu.SkyQuery.Jobs.Query
         /// </remarks>
         public override void GenerateSteps(IEnumerable<XMatchTableSpecification> tables)
         {
-            System.Diagnostics.Debug.Assert(steps.Count == 0);
-
             int i = 0;
             foreach (var t in tables)
             {
@@ -117,11 +115,18 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         public override void OnPrepareComputeSearchRadius(XMatchQueryStep step, out SqlCommand computeSearchRadiusCommand)
         {
-            // Calculate search radius from the first sourca table our the output of
-            // the previous match
-            var pstep = Steps[step.StepNumber - 1];
+            if (step.StepNumber > 0)
+            {
+                // Calculate search radius from the first source table our the output of
+                // the previous match
+                var pstep = Steps[step.StepNumber - 1];
 
-            computeSearchRadiusCommand = CodeGenerator.GetComputeSearchRadiusCommand(pstep, step);
+                computeSearchRadiusCommand = CodeGenerator.GetComputeSearchRadiusCommand(pstep, step);
+            }
+            else
+            {
+                computeSearchRadiusCommand = null;
+            }
         }
 
         /// <summary>
@@ -139,7 +144,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             {
                 var res = await ExecuteSqlOnAssignedServerScalarAsync(computeSearchRadiusCommand, CommandTarget.Code);
                 var theta = res != DBNull.Value ? (double)res : 0;
-                var radius = Math.Sqrt(theta) * 180.0 / Math.PI;
+                var radius = Math.Sqrt(theta) * 180.0 / Math.PI;       // radius in degrees
 
                 if (radius / Query.ZoneHeight > 100)
                 {

@@ -88,6 +88,7 @@
   <ItemGroup>
     <Compile Include="AppSettings.cs" />
     <Compile Include="CodeGen\SkyQueryCodeGeneratorTest.cs" />
+    <Compile Include="Jobs\Query\ConeXMatchQueryTest.cs" />
     <Compile Include="Jobs\Query\BayesFactorXMatchQueryTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryCodeGeneratorTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryTest.cs" />

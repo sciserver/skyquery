@@ -9,6 +9,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 {
     public class AugmentedTableQueryOptions
     {
+        private XMatchQueryStep step;
         private SkyQuery.Parser.CoordinatesTableSource table;
         private Region region;
         private bool useRegion;
@@ -18,6 +19,12 @@ namespace Jhu.SkyQuery.Jobs.Query
         private bool usePartitioning;
         private ColumnContext columnContext;
         private bool escapeColumnNames;
+
+        public XMatchQueryStep Step
+        {
+            get { return step; }
+            set { step = value; }
+        }
 
         public SkyQuery.Parser.CoordinatesTableSource Table
         {
@@ -77,16 +84,18 @@ namespace Jhu.SkyQuery.Jobs.Query
             InitializeMembers();
         }
 
-        public AugmentedTableQueryOptions(SkyQuery.Parser.CoordinatesTableSource table, Region region)
+        public AugmentedTableQueryOptions(XMatchQueryStep step, SkyQuery.Parser.CoordinatesTableSource table, Region region)
         {
             InitializeMembers();
 
+            this.step = step;
             this.table = table;
             this.region = region;
         }
 
         private void InitializeMembers()
         {
+            this.step = null;
             this.table = null;
             this.region = null;
             this.useRegion = true;
