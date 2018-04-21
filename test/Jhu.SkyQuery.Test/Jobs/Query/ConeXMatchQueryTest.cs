@@ -117,5 +117,39 @@ FROM XMATCH(
 
             RunQuery(sql);
         }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void MyDbJoinTest()
+        {
+            var sql = @"
+SELECT x.matchID, x.ra, x.dec, m1.ra, m1.dec, m2.ra, m2.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN MYDB:MyCatalog AS m1 WITH(POINT(ra, dec)),
+    MUST EXIST IN MYDB:MyCatalog2 AS m2 WITH(POINT(ra, dec)),
+    LIMIT CONE TO CIRCLE(m1.RA, m1.Dec, 2)
+) AS x
+";
+
+            RunQuery(sql);
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void MyDbSelfJoinTest()
+        {
+            var sql = @"
+SELECT x.matchID, x.ra, x.dec, m1.ra, m1.dec, m2.ra, m2.dec
+INTO [$into]
+FROM XMATCH(
+    MUST EXIST IN MYDB:MyCatalog AS m1 WITH(POINT(ra, dec)),
+    MUST EXIST IN MYDB:MyCatalog AS m2 WITH(POINT(ra, dec)),
+    LIMIT CONE TO CIRCLE(m1.RA, m1.Dec, 2)
+) AS x
+";
+
+            RunQuery(sql);
+        }
     }
 }
