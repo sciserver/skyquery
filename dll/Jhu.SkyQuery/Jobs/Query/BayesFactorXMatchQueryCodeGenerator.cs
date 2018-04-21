@@ -200,7 +200,7 @@ namespace Jhu.SkyQuery.Jobs.Query
                 amin += GetWeight(max);
             }
             
-            AppendZoneHeightParameter(cmd);
+            AppendZoneParameters(cmd);
 
             cmd.Parameters.Add("@weightMin", SqlDbType.Float).Value = wmin;     // min weight from max error of current step
             cmd.Parameters.Add("@lmax", SqlDbType.Float).Value = lmax;          // sum of max log weight of all subsequent steps

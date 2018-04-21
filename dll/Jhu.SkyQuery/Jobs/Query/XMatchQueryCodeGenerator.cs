@@ -196,12 +196,7 @@ namespace Jhu.SkyQuery.Jobs.Query
             var a = sigma / 3600.0 / 180.0 * Math.PI;
             return 1.0 / (a * a);
         }
-
-        protected void AppendZoneHeightParameter(SqlCommand cmd)
-        {
-            cmd.Parameters.Add(zoneHeightParameterName, SqlDbType.Float).Value = Query.ZoneHeight;
-        }
-
+        
         #region Search radius functions
 
         public SqlCommand GetComputeMinMaxErrorCommand(XMatchQueryStep step)
@@ -262,7 +257,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var cmd = new SqlCommand(sql.ToString());
 
-            AppendZoneHeightParameter(cmd);
+            AppendZoneParameters(cmd);
             cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = step.SearchRadius;
 
             return cmd;
@@ -347,12 +342,17 @@ namespace Jhu.SkyQuery.Jobs.Query
             }
 
             var cmd = new SqlCommand(sql.ToString());
-
-            cmd.Parameters.Add("@H", SqlDbType.Float).Value = Query.ZoneHeight;
+            
             cmd.Parameters.Add("@Theta", SqlDbType.Float).Value = Partition.Steps[step.StepNumber].SearchRadius;
+            AppendZoneParameters(cmd);
             AppendPartitioningConditionParameters(cmd);
 
             return cmd;
+        }
+
+        protected void AppendZoneParameters(SqlCommand cmd)
+        {
+            cmd.Parameters.Add(zoneHeightParameterName, SqlDbType.Float).Value = Query.ZoneHeight;
         }
 
         #endregion
@@ -496,7 +496,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             AppendPartitioningConditionParameters(cmd, keymin, keymax);
             AppendRegionParameter(cmd, table.Region);
-            AppendZoneHeightParameter(cmd);
+            AppendZoneParameters(cmd);
 
             return cmd;
         }
@@ -997,7 +997,7 @@ namespace Jhu.SkyQuery.Jobs.Query
 
             var cmd = new SqlCommand(sql.ToString());
 
-            AppendZoneHeightParameter(cmd);
+            AppendZoneParameters(cmd);
             AppendRegionParameter(cmd, table1.Region);
             AppendPopulateMatchTableParameters(step, cmd);
 
@@ -1091,7 +1091,7 @@ namespace Jhu.SkyQuery.Jobs.Query
         {
             var cmd = base.GetTableStatisticsCommand(tableSource, statisticsDataset);
 
-            AppendZoneHeightParameter(cmd);
+            AppendZoneParameters(cmd);
 
             return cmd;
         }

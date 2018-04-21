@@ -24,12 +24,12 @@ __match AS
 	INNER JOIN __t2 ON [$tablejoin2]
 )
 INSERT [$matchtable] WITH (TABLOCKX)
-	([RA], [Dec], [Cx], [Cy], [Cz], [ZoneID]
+	([RA], [Dec], [Cx], [Cy], [Cz], [ZoneID], [Radius]
 	[$columnlist2])
 SELECT
 	[Ra], [Dec],
 	[Cx], [Cy], [Cz],
-	CONVERT(INT,FLOOR(([Dec] + 90.0) / @H)) as [ZoneID]
+	CONVERT(INT,FLOOR(([Dec] + 90.0) / @H)) as [ZoneID], [radius]
 	[$columnlist2]
 FROM __match
 WHERE __arc <= [radius]

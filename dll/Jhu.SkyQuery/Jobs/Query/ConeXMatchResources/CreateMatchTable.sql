@@ -8,7 +8,8 @@ CREATE TABLE [$tablename]
 	   [Cx] [float],
 	   [Cy] [float],
 	   [Cz] [float],
-	   [ZoneID] [int]
+	   [ZoneID] [int],
+	   [Radius] [float]
 	   [$columnlist]
 )
 
