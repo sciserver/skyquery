@@ -66,6 +66,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Channels" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
@@ -81,6 +84,7 @@
     <Compile Include="Format\Fits\FitsWriterTest.cs" />
     <Compile Include="Format\Fits\ImportFitsTest.cs" />
     <Compile Include="Format\Fits\ExportFitsTest.cs" />
+    <Compile Include="Format\Fits\UploadFitsTest.cs" />
     <Compile Include="Format\VOTable\VOTableReaderTest.cs" />
     <Compile Include="Format\VOTable\VOTableTestBase.cs" />
     <Compile Include="Format\VOTable\VOTableWriterTest.cs" />
@@ -115,6 +119,14 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{aada04ee-f578-4628-8ae0-d423bb94c738}</Project>
       <Name>Jhu.Graywulf.Sql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Web.Api\Jhu.Graywulf.Web.Api.csproj">
+      <Project>{975ee996-a41b-4c73-8562-e2b2035e8899}</Project>
+      <Name>Jhu.Graywulf.Web.Api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Web\Jhu.Graywulf.Web.csproj">
+      <Project>{e9d182cf-746e-4e40-b01c-74a32fb70749}</Project>
+      <Name>Jhu.Graywulf.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.IO.Test\Jhu.Graywulf.IO.Test.csproj">
       <Project>{672333ce-f524-4d0c-b1a7-401170c9f212}</Project>
