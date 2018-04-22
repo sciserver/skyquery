@@ -43,14 +43,14 @@ namespace Jhu.SkyQuery.Parser.Grammar
 
                     CreateIndexStatement,
                     DropIndexStatement,
-                    
+
+                    XMatchSelectStatement,      //
+                    RegionSelectStatement,      //
+
                     SelectStatement,
                     InsertStatement,
                     UpdateStatement,
-                    DeleteStatement,
-
-                    XMatchSelectStatement,      //
-                    RegionSelectStatement      //
+                    DeleteStatement
                 )
             );
 
@@ -114,7 +114,7 @@ namespace Jhu.SkyQuery.Parser.Grammar
         public static Expression<Rule> RegionClause = () =>
             Sequence
             (
-                Literal("REGION"),
+                Keyword("REGION"),
                 CommentOrWhitespace,
                 Must(StringConstant) //, RegionExpression)
             );
