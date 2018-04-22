@@ -93,6 +93,7 @@
     <Compile Include="Jobs\Query\RegionQueryCodeGeneratorTest.cs" />
     <Compile Include="Jobs\Query\RegionQueryTest.cs" />
     <Compile Include="Jobs\Query\SqlQueryTest.cs" />
+    <Compile Include="Jobs\Query\SqlScriptTest.cs" />
     <Compile Include="Jobs\Query\XMatchQueryCodeGeneratorTest.cs">
       <SubType>Code</SubType>
     </Compile>

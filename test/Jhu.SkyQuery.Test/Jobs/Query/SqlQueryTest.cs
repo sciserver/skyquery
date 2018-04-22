@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Jhu.Graywulf.Registry;
 
-namespace Jhu.SkyQuery.Jobs.Query.Test
+namespace Jhu.SkyQuery.Jobs.Query
 {
     [TestClass]
     public class SqlQueryTest : SkyQueryTestBase

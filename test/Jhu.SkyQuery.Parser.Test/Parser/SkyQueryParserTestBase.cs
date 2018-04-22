@@ -23,6 +23,12 @@ namespace Jhu.SkyQuery.Parser
             get { return new SkyQueryParser(); }
         }
 
+        protected StatementBlock ParseScript(string query)
+        {
+            var script = Parser.Execute<StatementBlock>(query);
+            return script;
+        }
+
         protected QuerySpecification Parse(string query)
         {
             var script = Parser.Execute<StatementBlock>(query);
