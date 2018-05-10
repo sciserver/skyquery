@@ -755,7 +755,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected string GetMatchTableZoneIndexName(XMatchQueryStep step)
         {
-            return String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
+            var indexname = String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
+            return GetQuotedIdentifier(indexname);
         }
 
         protected string GetEscapedMatchIDString(int stepNumber)
