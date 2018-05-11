@@ -948,5 +948,21 @@ FROM XMATCH
 
             RunQuery(sql);
         }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void DotInUsernameTest()
+        {
+            var sql =
+@"SELECT [x].[MatchID], [x].[RA], [x].[Dec], [s1].[objID], [s1].[ra], [s1].[dec], [m].[objID], [m].[ra], [m].[dec]
+INTO MYDB:[$into]
+FROM XMATCH (
+    MUST EXIST IN [SDSSDR12]:[dbo].[PhotoObjAll] AS [s1] WITH(ERROR(0.1)),
+    MUST EXIST IN [MYDB]:[MyCatalog] AS [m] WITH(ERROR(0.1)),
+    LIMIT BAYESFACTOR TO 1000) AS x
+REGION 'CIRCLE J2000 0.0 0.0 10.0'";
+
+            RunQuery(sql);
+        }
     }
 }

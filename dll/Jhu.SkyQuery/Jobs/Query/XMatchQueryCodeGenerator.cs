@@ -804,7 +804,8 @@ namespace Jhu.SkyQuery.Jobs.Query
 
         protected string GetMatchTableZoneIndexName(XMatchQueryStep step)
         {
-            return String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
+            var indexname =  String.Format("IX_{0}_Zone", GetMatchTable(step).TableName);
+            return QuoteIdentifier(indexname);
         }
 
         protected string GetEscapedMatchIDString(int stepNumber)
@@ -1017,15 +1018,13 @@ namespace Jhu.SkyQuery.Jobs.Query
                 AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
-            var indexname = GetMatchTableZoneIndexName(step);
-
             // The zone index has to contain the primary key columns of all previously
             // matched tables
             var columnlist = GenerateMatchTableColumns(step, ColumnListType.SelectWithEscapedNameNoAlias, false);
 
             StringBuilder sql = new StringBuilder(GetBuildMatchTableIndexScript());
 
-            sql.Replace("[$indexname]", indexname);
+            sql.Replace("[$indexname]", GetMatchTableZoneIndexName(step));
             sql.Replace("[$tablename]", GetResolvedTableName(matchtable));
             sql.Replace("[$columnlist]", columnlist);
 
