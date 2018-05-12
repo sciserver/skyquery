@@ -139,14 +139,6 @@
       <Project>{abb4c403-720a-47e1-9485-cfaadd696656}</Project>
       <Name>Jhu.Graywulf.Components</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
-      <Project>{8d422c6a-5e21-48a0-9b05-1bca4c71c6d5}</Project>
-      <Name>Jhu.SkyQuery.Parser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
-      <Project>{2887f181-7f61-4df5-bd89-2800503d5f84}</Project>
-      <Name>Jhu.SkyQuery</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <Import Project="$(MSBuildToolsPath)\Workflow.Targets" />

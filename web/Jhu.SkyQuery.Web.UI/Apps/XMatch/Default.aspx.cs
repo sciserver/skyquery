@@ -8,7 +8,7 @@ using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Web.UI;
 using Jhu.Graywulf.Web.Api.V1;
 using Jhu.Graywulf.Sql.Jobs.Query;
-using Jhu.SkyQuery.CodeGen;
+using Jhu.SkyQuery.Sql.CodeGeneration;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
@@ -19,7 +19,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
             return "~/Apps/XMatch/Default.aspx";
         }
 
-        private CodeGen.XMatch xmatch;
+        private Sql.CodeGeneration.XMatch xmatch;
         private SqlQuery query;
 
         protected void Page_Init(object sender, EventArgs e)
@@ -136,7 +136,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         private void LoadSessionXMatch()
         {
-            xmatch = (CodeGen.XMatch)(Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] ?? new CodeGen.XMatch());
+            xmatch = (Sql.CodeGeneration.XMatch)(Session["Jhu.SkyQuery.Web.UI.Apps.XMatch"] ?? new Sql.CodeGeneration.XMatch());
         }
 
         private void SaveSessionXMatch()
