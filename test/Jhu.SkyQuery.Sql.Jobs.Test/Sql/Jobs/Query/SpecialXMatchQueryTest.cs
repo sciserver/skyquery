@@ -9,7 +9,7 @@ using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.Scheduler;
 using Jhu.Graywulf.RemoteService;
 
-namespace Jhu.SkyQuery.Sql.Jobs.Query.Test
+namespace Jhu.SkyQuery.Sql.Jobs.Query
 {
     [TestClass]
     public class SpecialXMatchQueryTest : SkyQueryTestBase

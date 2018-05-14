@@ -24,15 +24,18 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
         [TestMethod]
         public void AggregateRegionsTest()
         {
+            // TODO: this test actually makes sure that the REGION keyword
+            // can be used as schema name
+
             var sql = @"
 DECLARE @r varbinary(max)
 DECLARE @a float = 0
 
-SELECT @r = [region].UnionEvery([region].CircleEq(ra, dec, 0.5)),
-       @a = SUM([region].Area([region].CircleEq(ra, dec, 0.5)))
+SELECT @r = region.UnionEvery(region.CircleEq(ra, dec, 0.5)),
+       @a = SUM(region.Area(region.CircleEq(ra, dec, 0.5)))
 FROM MYDB:MyCatalog
 
-SELECT [region].Area(@r), @a
+SELECT region.Area(@r), @a
 ";
 
             RunQuery(sql);

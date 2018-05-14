@@ -7,8 +7,11 @@ using Jhu.Graywulf.Parsing.Generator;
 
 namespace Jhu.SkyQuery.Sql.Parsing.Grammar
 {
-    [Grammar(Namespace = "Jhu.SkyQuery.Sql.Parsing", ParserName = "SkyQueryParser",
-        Comparer = "StringComparer.InvariantCultureIgnoreCase", RootToken = "Jhu.SkyQuery.Sql.Parsing.StatementBlock")]
+    [Grammar(
+        Namespace = "Jhu.SkyQuery.Sql.Parsing", 
+        ParserName = "SkyQueryParser",
+        Comparer = "StringComparer.InvariantCultureIgnoreCase", 
+        RootToken = "Jhu.SkyQuery.Sql.Parsing.StatementBlock")]
     public class SkyQueryGrammar : Jhu.Graywulf.Sql.Parser.Grammar.SqlGrammar
     {
         public static new Expression<Rule> Statement = () =>
@@ -114,7 +117,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
         public static Expression<Rule> RegionClause = () =>
             Sequence
             (
-                Keyword("REGION"),
+                Keyword("REGION", true),
                 CommentOrWhitespace,
                 Must(StringConstant) //, RegionExpression)
             );
