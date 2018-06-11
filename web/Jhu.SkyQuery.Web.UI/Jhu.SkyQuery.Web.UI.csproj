@@ -177,6 +177,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Api\V1\Auth.svc" />
     <Content Include="Api\V1\Data.svc" />
     <Content Include="Api\V1\Jobs.svc" />
     <Content Include="Api\V1\Manage.svc" />
