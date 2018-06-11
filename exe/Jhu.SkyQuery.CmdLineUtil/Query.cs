@@ -9,7 +9,7 @@ using Jhu.Graywulf.CommandLineParser;
 using Jhu.Graywulf.Activities;
 using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Scheduler;
-using Jhu.SkyQuery.Jobs.Query;
+using Jhu.SkyQuery.Sql.Jobs.Query;
 
 namespace Jhu.SkyQuery.CmdLineUtil
 {

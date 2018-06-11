@@ -11,7 +11,7 @@ namespace Jhu.SkyQuery.Web.UI
         {
             base.OnApplicationStart();
 
-            var a = Assembly.GetAssembly(typeof(Jhu.SkyQuery.Jobs.Query.XMatchQuery));
+            var a = Assembly.GetAssembly(typeof(Jhu.SkyQuery.Sql.Jobs.Query.XMatchQuery));
             var v = a.GetName().Version.ToString();
             Application[Jhu.Graywulf.Web.UI.Constants.ApplicationVersion] = v;
         }

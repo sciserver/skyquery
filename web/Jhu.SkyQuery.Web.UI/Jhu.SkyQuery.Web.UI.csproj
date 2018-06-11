@@ -993,13 +993,13 @@
       <Project>{e7744e98-575f-4183-b3b9-9b491c053c18}</Project>
       <Name>Jhu.SkyQuery.IO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Parser\Jhu.SkyQuery.Parser.csproj">
-      <Project>{8d422c6a-5e21-48a0-9b05-1bca4c71c6d5}</Project>
-      <Name>Jhu.SkyQuery.Parser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery\Jhu.SkyQuery.csproj">
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Sql.Jobs\Jhu.SkyQuery.Sql.Jobs.csproj">
       <Project>{2887f181-7f61-4df5-bd89-2800503d5f84}</Project>
-      <Name>Jhu.SkyQuery</Name>
+      <Name>Jhu.SkyQuery.Sql.Jobs</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Sql\Jhu.SkyQuery.Sql.csproj">
+      <Project>{8d422c6a-5e21-48a0-9b05-1bca4c71c6d5}</Project>
+      <Name>Jhu.SkyQuery.Sql</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

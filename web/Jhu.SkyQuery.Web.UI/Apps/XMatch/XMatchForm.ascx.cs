@@ -6,15 +6,15 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Web.UI;
-using Jhu.SkyQuery.CodeGen;
+using Jhu.SkyQuery.Sql.CodeGeneration;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
     public partial class XMatchForm : FederationUserControlBase
     {
-        private CodeGen.XMatch xmatch;
+        private Sql.CodeGeneration.XMatch xmatch;
 
-        public CodeGen.XMatch XMatch
+        public Sql.CodeGeneration.XMatch XMatch
         {
             get { return xmatch; }
             set
@@ -43,7 +43,7 @@ namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 
         private void RefreshXMatchColumnList()
         {
-            var tr = new SkyQuery.Parser.BayesFactorXMatchTableReference();
+            var tr = new SkyQuery.Sql.Parsing.BayesFactorXMatchTableReference();
 
             xmatchColumnList.Items.Clear();
 

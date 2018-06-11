@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using System.Data;
 using System.Data.SqlClient;
-using Jhu.SkyQuery.Parser;
+using Jhu.SkyQuery.Sql.Parsing;
 using Jhu.Graywulf.Registry;
 using Jhu.Graywulf.CommandLineParser;
 

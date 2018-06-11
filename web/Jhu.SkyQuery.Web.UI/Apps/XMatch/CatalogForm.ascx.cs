@@ -6,7 +6,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Web.UI;
-using Jhu.SkyQuery.CodeGen;
+using Jhu.SkyQuery.Sql.CodeGeneration;
 
 namespace Jhu.SkyQuery.Web.UI.Apps.XMatch
 {
