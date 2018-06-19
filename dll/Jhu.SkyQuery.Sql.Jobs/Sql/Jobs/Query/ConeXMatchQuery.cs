@@ -81,6 +81,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
                 ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
+                DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified
             };
         }

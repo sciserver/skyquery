@@ -66,6 +66,7 @@ namespace Jhu.SkyQuery.Sql.CodeGeneration
             var cg = new SkyQueryCodeGenerator()
             {
                 ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
             };

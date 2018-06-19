@@ -75,6 +75,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 CodeDataset = GetCodeDataset(),
                 ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
+                DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
                 FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,

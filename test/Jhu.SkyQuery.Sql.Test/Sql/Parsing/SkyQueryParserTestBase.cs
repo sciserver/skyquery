@@ -51,6 +51,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                     TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
                     ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                     ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
+                    DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
                 };
             }
         }

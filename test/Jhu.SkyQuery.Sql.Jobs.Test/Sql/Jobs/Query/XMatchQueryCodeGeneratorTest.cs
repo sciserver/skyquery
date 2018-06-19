@@ -120,6 +120,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 {
                     ColumnNameRendering = NameRendering.FullyQualified,
                     ColumnAliasRendering = AliasRendering.Always,
+                    DataTypeNameRendering = NameRendering.FullyQualified,
                     TableNameRendering = NameRendering.FullyQualified,
                     FunctionNameRendering = NameRendering.FullyQualified,
                 };

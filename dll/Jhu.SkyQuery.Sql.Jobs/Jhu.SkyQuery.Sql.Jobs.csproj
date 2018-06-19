@@ -144,7 +144,6 @@
       <DependentUpon>XMatchScripts.resx</DependentUpon>
     </Compile>
     <Compile Include="Sql\Jobs\Query\XMatchTableComparer.cs" />
-    <None Include="app.config" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="packages.config" />
     <None Include="post-build.ps1" />
