@@ -119,10 +119,9 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
             (
                 Keyword("REGION", true),
                 CommentOrWhitespace,
-                Must(StringConstant) //, RegionExpression)
+                Must(StringConstant , RegionExpression)
             );
 
-        /*
         public static Expression<Rule> RegionExpression = () =>
             Sequence
             (
@@ -177,7 +176,6 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 RegionArgument,
                 May(Sequence(May(CommentOrWhitespace), Comma, RegionArgumentList))
             );
-        */
 
         #endregion
         #region XMatch grammar

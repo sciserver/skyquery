@@ -57,7 +57,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             var sql = "SELECT objId, ra, dec FROM CatalogA";
 
             var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
 
             Assert.AreEqual("CatalogA", ts[0].DatabaseObjectName);
         }
@@ -75,7 +75,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
@@ -103,7 +103,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
@@ -151,7 +151,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
@@ -174,7 +174,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
@@ -197,7 +197,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSource>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
