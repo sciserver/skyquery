@@ -28,7 +28,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
             ColumnReference cr = new ColumnReference();
             cr.ColumnName = name;
-            cr.DataType = type;
+            cr.DataTypeReference = new DataTypeReference(type);
             cr.TableReference = this;
             this.ColumnReferences.Add(cr);
 

@@ -464,7 +464,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         private Expression CreateColumnExpression(string column)
         {
-            var cr = new ColumnReference(table.TableReference, table.TableReference.TableOrView.Columns[column]);
+            var c = table.TableReference.TableOrView.Columns[column];
+            var tr = table.TableReference;
+            var cr = new ColumnReference(c, tr, new DataTypeReference(c.DataType));
             return Expression.Create(cr);
         }
 

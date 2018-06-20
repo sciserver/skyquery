@@ -86,7 +86,8 @@ FROM XMATCH (
 
                 foreach (var column in catalog.Columns)
                 {
-                    var cr = new ColumnReference(tr, t.Columns[column]);
+                    var c = t.Columns[column];
+                    var cr = new ColumnReference(c, tr, new DataTypeReference(c.DataType));
                     columns.Add(cr);
                 }
             }

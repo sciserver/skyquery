@@ -331,8 +331,8 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
         {
             var coords = ts.Coordinates;
 
-            var htmidstart = new ColumnReference(htmTable, "HtmIDStart", DataTypes.SqlBigInt);
-            var htmidend = new ColumnReference(htmTable, "HtmIDEnd", DataTypes.SqlBigInt);
+            var htmidstart = new ColumnReference(htmTable, "HtmIDStart", new DataTypeReference(DataTypes.SqlBigInt));
+            var htmidend = new ColumnReference(htmTable, "HtmIDEnd", new DataTypeReference(DataTypes.SqlBigInt));
 
             var limitsp = Jhu.Graywulf.Sql.Parsing.Predicate.CreateBetween(
                 GetHtmIdExpression(coords),
@@ -340,7 +340,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 Expression.Create(ColumnIdentifier.Create(htmidend)));
             var limitssc = Jhu.Graywulf.Sql.Parsing.BooleanExpression.Create(false, limitsp);
 
-            var htmpartial = new ColumnReference(htmTable, "Partial", DataTypes.SqlBit);
+            var htmpartial = new ColumnReference(htmTable, "Partial", new DataTypeReference(DataTypes.SqlBit));
             var partialp = Jhu.Graywulf.Sql.Parsing.Predicate.CreateEquals(
                 Expression.Create(htmpartial),
                 Expression.CreateNumber(partial ? "1" : "0"));
