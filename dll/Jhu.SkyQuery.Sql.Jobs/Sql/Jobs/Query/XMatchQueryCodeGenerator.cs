@@ -1068,17 +1068,17 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             {
                 var cr = ci.ColumnReference;
 
-                if (cr.TableReference != null && cr.TableReference.IsComputed)
+                if (cr.ParentTableReference != null && cr.ParentTableReference.IsComputed)
                 {
                     // In case of a computed table (typically xmatch results table)
-                    cr.TableReference = matchtr;
+                    cr.ParentTableReference = matchtr;
                 }
-                else if (xmtstr.Where(tri => tri.Compare(cr.TableReference)).FirstOrDefault() != null)
+                else if (xmtstr.Where(tri => tri.Compare(cr.ParentTableReference)).FirstOrDefault() != null)
                 {
                     // In case of other tables
-                    var tr = MapTableReference(cr.TableReference);
+                    var tr = MapTableReference(cr.ParentTableReference);
                     cr.ColumnName = cg.EscapePropagatedColumnName(tr, cr.ColumnName);
-                    cr.TableReference = matchtr;
+                    cr.ParentTableReference = matchtr;
                 }
             }
         }
