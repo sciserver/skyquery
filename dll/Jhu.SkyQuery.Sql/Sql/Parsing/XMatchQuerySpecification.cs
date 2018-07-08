@@ -8,9 +8,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
     public partial class XMatchQuerySpecification
     {
 
-        public XMatchTableSource XMatchTableSource
+        public XMatchTableSourceSpecification XMatchTableSource
         {
-            get { return this.FindDescendantRecursive<XMatchTableSource>(); }
+            get { return this.FindDescendantRecursive<XMatchTableSourceSpecification>(); }
         }
     }
 }

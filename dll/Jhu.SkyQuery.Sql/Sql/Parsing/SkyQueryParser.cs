@@ -15,17 +15,17 @@ namespace Jhu.SkyQuery.Sql.Parsing
             {
                 return new CoordinatesTableSource((SimpleTableSource)node);
             }
-            else if (node is XMatchTableSource)
+            else if (node is XMatchTableSourceSpecification)
             {
-                var xts = (XMatchTableSource)node;
+                var xts = (XMatchTableSourceSpecification)node;
                 var algorithm = xts.Algorithm;
 
                 switch (algorithm.ToUpperInvariant())
                 {
                     case Constants.AlgorithmBayesFactor:
-                        return new BayesFactorXMatchTableSource(xts);
+                        return new BayesFactorXMatchTableSourceSpecification(xts);
                     case Constants.AlgorithmCone:
-                        return new ConeXMatchTableSource(xts);
+                        return new XMatchTableSourceSpecification(xts);
                     default:
                         throw new NotImplementedException();
                 }

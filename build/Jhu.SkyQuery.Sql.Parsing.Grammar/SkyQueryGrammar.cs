@@ -234,15 +234,15 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 TableSourceExpression,
                 Sequence
                 (
-                    XMatchTableSource,
+                    XMatchTableSourceSpecification,
                     May(Sequence(May(CommentOrWhitespace), JoinedTable))
                 )
             );
 
-        public static Expression<Rule> XMatchTableSource = () =>
+        public static Expression<Rule> XMatchTableSourceSpecification = () =>
             Inherit
             (
-                TableSource,
+                TableSourceSpecification,
                 Sequence
                 (
                     Keyword("XMATCH"),

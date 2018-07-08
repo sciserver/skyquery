@@ -84,7 +84,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         private void ValidateSourceTable(ITableSource ts, ref int xmi, int depth)
         {
-            if (ts is XMatchTableSource)
+            if (ts is XMatchTableSourceSpecification)
             {
                 if (xmi > 0)
                 {
@@ -98,7 +98,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                 }
 
                 // Make sure xmatch table sources don't contain any subqueries or functions.
-                foreach (var xt in ((XMatchTableSource)ts).EnumerateXMatchTableSpecifications())
+                foreach (var xt in ((XMatchTableSourceSpecification)ts).EnumerateXMatchTableSpecifications())
                 {
                     if (!(xt.TableReference.DatabaseObject is TableOrView))
                     {

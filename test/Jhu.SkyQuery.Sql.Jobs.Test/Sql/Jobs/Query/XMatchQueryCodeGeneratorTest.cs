@@ -113,8 +113,8 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 };
 
                 var qs = xmqp.Query.QueryDetails.ParsingTree.FindDescendantRecursive<XMatchSelectStatement>().QueryExpression.EnumerateQuerySpecifications().First();
-                var fc = qs.FindDescendant<Jhu.Graywulf.Sql.Parsing.FromClause>();
-                var xmtables = qs.FindDescendantRecursive<Jhu.SkyQuery.Sql.Parsing.XMatchTableSource>().EnumerateXMatchTableSpecifications().ToArray();
+                var fc = qs.FindDescendant<FromClause>();
+                var xmtables = qs.FindDescendantRecursive<XMatchTableSourceSpecification>().EnumerateXMatchTableSpecifications().ToArray();
                 xmqp.GenerateSteps(xmtables);
 
                 var cg = new XMatchQueryCodeGenerator(xmqp)

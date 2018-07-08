@@ -110,10 +110,10 @@
     <Compile Include="Sql\CodeGeneration\XMatch.cs" />
     <Compile Include="Sql\Parsing\BayesFactorXMatchQuerySpecification.cs" />
     <Compile Include="Sql\Parsing\BayesFactorXMatchTableReference.cs" />
-    <Compile Include="Sql\Parsing\BayesFactorXMatchTableSource.cs" />
+    <Compile Include="Sql\Parsing\BayesFactorXMatchTableSourceSpecification.cs" />
     <Compile Include="Sql\Parsing\ConeXMatchQuerySpecification.cs" />
     <Compile Include="Sql\Parsing\ConeXMatchTableReference.cs" />
-    <Compile Include="Sql\Parsing\ConeXMatchTableSource.cs" />
+    <Compile Include="Sql\Parsing\ConeXMatchTableSourceSpecification.cs" />
     <Compile Include="Sql\Parsing\Constants.cs" />
     <Compile Include="Sql\Parsing\CoordinatesTableSource.cs" />
     <Compile Include="Sql\Parsing\Enum.cs" />
@@ -133,7 +133,7 @@
     <Compile Include="Sql\Parsing\XMatchQuerySpecification.cs" />
     <Compile Include="Sql\Parsing\XMatchSelectStatement.cs" />
     <Compile Include="Sql\Parsing\XMatchTableReference.cs" />
-    <Compile Include="Sql\Parsing\XMatchTableSource.cs" />
+    <Compile Include="Sql\Parsing\XMatchTableSourceSpecification.cs" />
     <Compile Include="Sql\Parsing\XMatchTableSpecification.cs" />
     <EmbeddedResource Include="Sql\CodeGeneration\ExceptionMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>

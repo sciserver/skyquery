@@ -66,7 +66,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
 
         protected Expression CreateZoneHeightParameter()
         {
-            return Expression.Create(Jhu.Graywulf.Sql.Parsing.Variable.Create("@H"));
+            return Expression.Create(UserVariable.Create("@H"));
         }
 
         public Expression GetCoordinateErrorExpression(TableCoordinates coords)
@@ -130,7 +130,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
 
             if (coords.IsZoneIdHintSpecified)
             {
-                var cr = coords.ZoneIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                var cr = coords.ZoneIdHintExpression.FindDescendant<ColumnIdentifier>().ColumnReference;
                 idx = FindIndexWithFirstKey(coords.Table, cr.ColumnName);
             }
             else if (coords.IsEqHintSpecified || coords.IsCartesianHintSpecified)
@@ -327,7 +327,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
 
             // Partitioning is done on the ZoneID of the first table
             var tr = new TableReference("D1");
-            var cr = new ColumnReference(tr, "ZoneID", new DataTypeReference(DataTypes.SqlInt));
+            var cr = new ColumnReference(null, tr, "ZoneID", new DataTypeReference(DataTypes.SqlInt));
             var exp = Expression.Create(ColumnIdentifier.Create(cr));
             var sc = GetPartitioningConditions(exp);
 

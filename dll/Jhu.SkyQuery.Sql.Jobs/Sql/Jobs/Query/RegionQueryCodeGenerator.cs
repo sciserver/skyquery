@@ -257,10 +257,15 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                     // TODO: review this because ResultsTableReference logic
                     // has changed
                     ss.QueryExpression.ResultsTableReference = tr;
+
+                    throw new NotImplementedException();
+                    // TODO: review
+                    /*
                     tr.InterpretTableSource(sqts);
 
                     // Replace table source with subquery
                     ts.ExchangeWith(sqts);
+                    */
 
                     tsi++;
                 }
@@ -310,7 +315,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 DatabaseObjectName = "Cover"
             };
             var udt = regionUdtVariableName + qsi.ToString();
-            var var = Graywulf.Sql.Parsing.Variable.Create(udt);
+            var var = Graywulf.Sql.Parsing.UserVariable.Create(udt);
             var exp = Expression.Create(var);
             var fc = TableValuedFunctionCall.Create(fr, exp);
             var fts = FunctionTableSource.Create(fc, "__htm" + qsi.ToString());
@@ -331,8 +336,8 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
         {
             var coords = ts.Coordinates;
 
-            var htmidstart = new ColumnReference(htmTable, "HtmIDStart", new DataTypeReference(DataTypes.SqlBigInt));
-            var htmidend = new ColumnReference(htmTable, "HtmIDEnd", new DataTypeReference(DataTypes.SqlBigInt));
+            var htmidstart = new ColumnReference(null, htmTable, "HtmIDStart", new DataTypeReference(DataTypes.SqlBigInt));
+            var htmidend = new ColumnReference(null, htmTable, "HtmIDEnd", new DataTypeReference(DataTypes.SqlBigInt));
 
             var limitsp = Jhu.Graywulf.Sql.Parsing.Predicate.CreateBetween(
                 GetHtmIdExpression(coords),
@@ -340,7 +345,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 Expression.Create(ColumnIdentifier.Create(htmidend)));
             var limitssc = Jhu.Graywulf.Sql.Parsing.BooleanExpression.Create(false, limitsp);
 
-            var htmpartial = new ColumnReference(htmTable, "Partial", new DataTypeReference(DataTypes.SqlBit));
+            var htmpartial = new ColumnReference(null, htmTable, "Partial", new DataTypeReference(DataTypes.SqlBit));
             var partialp = Jhu.Graywulf.Sql.Parsing.Predicate.CreateEquals(
                 Expression.Create(htmpartial),
                 Expression.CreateNumber(partial ? "1" : "0"));
@@ -361,37 +366,33 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             return sc;
         }
 
-        protected Jhu.Graywulf.Sql.Parsing.BooleanExpression GenerateRegionContainsCondition(CoordinatesTableSource ts, int qsi)
+        protected BooleanExpression GenerateRegionContainsCondition(CoordinatesTableSource ts, int qsi)
         {
-            string udt;
+            var vr = new VariableReference();
+            var mr = new MethodReference();
+            Expression[] args;
             var coords = ts.Coordinates;
 
             if (qsi >= 0)
             {
-                udt = regionUdtVariableName + qsi.ToString();
+                vr.VariableName = regionUdtVariableName + qsi.ToString();
             }
             else
             {
-                udt = regionUdtVariableName;
+                vr.VariableName = regionUdtVariableName;
             }
 
-            UdtFunctionCall udtf;
-
-            if (coords.IsCartesianHintSpecified)
+            if (coords.IsCartesianHintSpecified ||
+                fallBackToDefaultColumns && !coords.IsEqHintSpecified && coords.IsCartesianColumnsAvailable)
             {
-                udtf = UdtFunctionCall.Create(udt, "ContainsXyz", GetXyzExpressions(coords));
+                mr.MethodName = "ContainsXyz";
+                args = GetXyzExpressions(coords);
             }
-            else if (coords.IsEqHintSpecified)
+            else if (coords.IsEqHintSpecified ||
+                fallBackToDefaultColumns && !coords.IsCartesianHintSpecified && coords.IsEqColumnsAvailable)
             {
-                udtf = UdtFunctionCall.Create(udt, "ContainsEq", GetEqExpressions(coords));
-            }
-            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
-            {
-                udtf = UdtFunctionCall.Create(udt, "ContainsXyz", GetXyzExpressions(coords));
-            }
-            else if (fallBackToDefaultColumns && coords.IsEqColumnsAvailable)
-            {
-                udtf = UdtFunctionCall.Create(udt, "ContainsEq", GetEqExpressions(coords));
+                mr.MethodName = "ContainsEq";
+                args = GetEqExpressions(coords);
             }
             else
             {
@@ -399,8 +400,9 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 throw Error.NoCoordinateColumnsFound(coords);
             }
 
-            var p = Jhu.Graywulf.Sql.Parsing.Predicate.CreateEquals(Expression.Create(udtf), Expression.CreateNumber("1"));
-            var sc = Jhu.Graywulf.Sql.Parsing.BooleanExpression.Create(false, p);
+            var mc = Expression.Create(vr, mr, args);
+            var p = Predicate.CreateEquals(mc, Expression.CreateNumber("1"));
+            var sc = BooleanExpression.Create(false, p);
 
             return sc;
         }
@@ -574,7 +576,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                 DatabaseObjectName = name
             };
 
-            return Expression.Create(FunctionCall.Create(fr, args));
+            return Expression.Create(ScalarFunctionCall.Create(fr, args));
         }
 
         public Expression GetRAExpression(TableCoordinates coords)
@@ -767,7 +769,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
 
             if (coords.IsHtmIdHintSpecified)
             {
-                var cr = coords.HtmIdHintExpression.FindDescendant<AnyVariable>().FindDescendant<ColumnIdentifier>().ColumnReference;
+                var cr = coords.HtmIdHintExpression.FindDescendant<ColumnIdentifier>().ColumnReference;
                 idx = FindIndexWithFirstKey(coords.Table, cr.ColumnName);
             }
             else if (fallBackToDefaultColumns && coords.IsHtmIdColumnAvailable)

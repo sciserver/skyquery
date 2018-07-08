@@ -91,7 +91,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             return new ConeXMatchQueryPartition(this);
         }
 
-        protected override void InterpretLimit(XMatchTableSource xmts)
+        protected override void InterpretLimit(XMatchTableSourceSpecification xmts)
         {
             var xmc = xmts.FindDescendant<XMatchConstraint>();
             regionHint = xmc.FindDescendant<TableHint>();

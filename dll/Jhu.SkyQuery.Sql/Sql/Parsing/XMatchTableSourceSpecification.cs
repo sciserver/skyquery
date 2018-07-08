@@ -8,7 +8,7 @@ using Jhu.Graywulf.Sql.NameResolution;
 namespace Jhu.SkyQuery.Sql.Parsing
 {
 
-    public partial class XMatchTableSource : ITableReference, ITableSource
+    public partial class XMatchTableSourceSpecification : ITableReference, ITableSource
     {
         private TableReference tableReference;
         private string uniqueKey;
@@ -61,7 +61,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
             base.OnCopyMembers(other);
 
-            var old = (XMatchTableSource)other;
+            var old = (XMatchTableSourceSpecification)other;
 
             if (old != null)
             {

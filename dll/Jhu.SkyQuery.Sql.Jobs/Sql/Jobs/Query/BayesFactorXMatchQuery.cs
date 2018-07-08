@@ -79,9 +79,9 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             return new BayesFactorXMatchQueryPartition(this);
         }
 
-        protected override void InterpretLimit(XMatchTableSource xmts)
+        protected override void InterpretLimit(XMatchTableSourceSpecification xmts)
         {
-            var number = xmts.FindDescendant<XMatchConstraint>().FindDescendant<Number>().Value;
+            var number = xmts.FindDescendant<XMatchConstraint>().FindDescendant<NumericConstant>().Value;
             limit = double.Parse(number, System.Globalization.CultureInfo.InvariantCulture);
         }
 

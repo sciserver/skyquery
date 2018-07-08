@@ -85,7 +85,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             {
                 if (xmatch != null)
                 {
-                    var xmts = xmatch.FindDescendantRecursive<XMatchTableSource>();
+                    var xmts = xmatch.FindDescendantRecursive<XMatchTableSourceSpecification>();
 
                     switch (xmts.Algorithm.ToUpperInvariant())
                     {

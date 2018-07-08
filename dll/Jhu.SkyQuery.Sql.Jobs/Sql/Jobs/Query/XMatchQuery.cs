@@ -116,7 +116,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             LogOperation(LogMessages.XMatchInterpreted, xmatchTables.Count, this.GetType().Name);
         }
 
-        protected abstract void InterpretLimit(XMatchTableSource xmts);
+        protected abstract void InterpretLimit(XMatchTableSourceSpecification xmts);
 
         private Dictionary<string, XMatchTableSpecification> IdentifyXMatchTables(XMatchQuerySpecification qs)
         {
