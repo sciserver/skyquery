@@ -166,7 +166,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
         public static Expression<Rule> RegionArgument = () =>
             Sequence
             (
-                Number
+                NumericConstant
             );
 
         public static Expression<Rule> RegionArgumentList = () =>
@@ -293,7 +293,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 CommentOrWhitespace, XMatchAlgorithm,
                 CommentOrWhitespace, Literal("TO"),
                 CommentOrWhitespace, 
-                Must(Number, TableHint)
+                Must(NumericConstant, TableHint)
             );
 
         public static Expression<Rule> XMatchAlgorithm = () =>

@@ -1055,7 +1055,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
 
             SubstituteMatchTableName(qs, xmtstr, mtr);
 
-            var nts = TableSource.Create(SimpleTableSource.Create(mtr));
+            var nts = TableSourceSpecification.Create(SimpleTableSource.Create(mtr));
             xmts.ExchangeWith(nts);
         }
 
@@ -1068,17 +1068,17 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             {
                 var cr = ci.ColumnReference;
 
-                if (cr.ParentTableReference != null && cr.ParentTableReference.IsComputed)
+                if (cr.TableReference != null && cr.TableReference.IsComputed)
                 {
                     // In case of a computed table (typically xmatch results table)
-                    cr.ParentTableReference = matchtr;
+                    cr.TableReference = matchtr;
                 }
-                else if (xmtstr.Where(tri => tri.Compare(cr.ParentTableReference)).FirstOrDefault() != null)
+                else if (xmtstr.Where(tri => tri.TryMatch(cr.TableReference)).FirstOrDefault() != null)
                 {
                     // In case of other tables
-                    var tr = MapTableReference(cr.ParentTableReference);
+                    var tr = MapTableReference(cr.TableReference);
                     cr.ColumnName = cg.EscapePropagatedColumnName(tr, cr.ColumnName);
-                    cr.ParentTableReference = matchtr;
+                    cr.TableReference = matchtr;
                 }
             }
         }

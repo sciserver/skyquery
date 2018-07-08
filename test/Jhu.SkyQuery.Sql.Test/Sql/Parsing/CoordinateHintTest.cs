@@ -22,7 +22,7 @@ FROM dummytable WITH(POINT(ra,dec), ERROR(1.0))
 REGION 'CIRCLE J2000 10 10 0'";
             var ss = Parser.Execute<RegionSelectStatement>(sql);
             var qs = ss.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
-            var t = (TableSource)qs.FindDescendantRecursive<TableSource>();
+            var t = (TableSourceSpecification)qs.FindDescendantRecursive<TableSourceSpecification>();
 
             var coords = new TableCoordinates((CoordinatesTableSource)t.SpecificTableSource);
         }

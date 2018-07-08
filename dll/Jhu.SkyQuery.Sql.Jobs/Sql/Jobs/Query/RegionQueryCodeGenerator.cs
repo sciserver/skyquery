@@ -179,7 +179,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
                     regions.Add(region);
 
                     // Descend on table sources and append htm constraint to each of them
-                    var ts = from.FindDescendantRecursive<TableSource>();
+                    var ts = from.FindDescendantRecursive<TableSourceSpecification>();
                     if (ts != null)
                     {
                         AppendRegionJoinsAndConditions(ts, qsi, ref tsi);
@@ -196,10 +196,10 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
         /// <param name="tableSource"></param>
         /// <param name="qsi"></param>
         /// <param name="tsi"></param>
-        private void AppendRegionJoinsAndConditions(TableSource tableSource, int qsi, ref int tsi)
+        private void AppendRegionJoinsAndConditions(TableSourceSpecification tableSource, int qsi, ref int tsi)
         {
             // Descend on table sources and append htm constraint to each of them
-            var rts = tableSource.FindDescendant<TableSource>();
+            var rts = tableSource.FindDescendant<TableSourceSpecification>();
             if (rts != null)
             {
                 AppendRegionJoinsAndConditions(rts, qsi, ref tsi);
@@ -287,7 +287,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             var coords = ts.Coordinates;
 
             var fts = GenerateHtmCoverFunctionCall(qsi);
-            var ts2 = TableSource.Create(ts);
+            var ts2 = TableSourceSpecification.Create(ts);
             var jc = GenerateHtmJoinCondition(ts, fts.TableReference, partial, qsi);
             var jt = JoinedTable.Create(JoinType.CreateInnerLoop(), ts2, jc);
             var tse = TableSourceExpression.Create(fts, jt);
@@ -301,7 +301,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
         #endregion
         #region HTM search and join conditions generation
 
-        private Jhu.Graywulf.Sql.Parsing.TableSource GenerateHtmCoverFunctionCall(int qsi)
+        private Jhu.Graywulf.Sql.Parsing.TableSourceSpecification GenerateHtmCoverFunctionCall(int qsi)
         {
             var fr = new FunctionReference()
             {
@@ -314,7 +314,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             var exp = Expression.Create(var);
             var fc = TableValuedFunctionCall.Create(fr, exp);
             var fts = FunctionTableSource.Create(fc, "__htm" + qsi.ToString());
-            var ts = TableSource.Create(fts);
+            var ts = TableSourceSpecification.Create(fts);
 
             return ts;
         }
