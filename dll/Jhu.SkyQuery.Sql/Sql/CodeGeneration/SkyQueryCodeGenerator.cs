@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Sql.Schema;
-using Jhu.Graywulf.Sql.CodeGeneration;
-using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
+using Jhu.Graywulf.Sql.QueryGeneration;
+using Jhu.Graywulf.Sql.QueryGeneration.SqlServer;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.SkyQuery.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Sql.CodeGeneration
 {
-    public class SkyQueryCodeGenerator : SqlServerCodeGenerator
+    public class SkyQueryCodeGenerator : SqlServerQueryGenerator
     {
         public override ColumnListGeneratorBase CreateColumnListGenerator()
         {
@@ -20,7 +20,7 @@ namespace Jhu.SkyQuery.Sql.CodeGeneration
 
         public static new string QuoteIdentifier(string identifier)
         {
-            return SqlServerCodeGenerator.QuoteIdentifier(identifier);
+            return SqlServerQueryGenerator.QuoteIdentifier(identifier);
         }
 
         public string GenerateXMatchQuery(XMatch xmatch, SchemaManager schemaManager)
@@ -115,7 +115,7 @@ FROM XMATCH (
 
         private string GenerateXMatchCatalogTableSource(Catalog catalog, SchemaManager schemaManager)
         {
-            var cg = new SqlServerCodeGenerator();
+            var cg = new SqlServerQueryGenerator();
             var ds = schemaManager.Datasets[catalog.DatasetName];
             var table = (TableOrView)ds.GetObject(catalog.TableUniqueKey);
             string with = "";
@@ -129,8 +129,8 @@ FROM XMATCH (
                 case CoordinateMode.Manual:
                     with += String.Format(
                         ", POINT({0}, {1})",
-                        SqlServerCodeGenerator.QuoteIdentifier(catalog.RaColumn),
-                        SqlServerCodeGenerator.QuoteIdentifier(catalog.DecColumn));
+                        SqlServerQueryGenerator.QuoteIdentifier(catalog.RaColumn),
+                        SqlServerQueryGenerator.QuoteIdentifier(catalog.DecColumn));
                     break;
                 default:
                     throw new NotImplementedException();
@@ -146,7 +146,7 @@ FROM XMATCH (
                 case ErrorMode.Column:
                     with += String.Format(
                         ", ERROR({0}, {1}, {2})",
-                        SqlServerCodeGenerator.QuoteIdentifier(catalog.ErrorColumn),
+                        SqlServerQueryGenerator.QuoteIdentifier(catalog.ErrorColumn),
                         catalog.ErrorMin.ToString(System.Globalization.CultureInfo.InvariantCulture),
                         catalog.ErrorMax.ToString(System.Globalization.CultureInfo.InvariantCulture));
                     break;
@@ -160,10 +160,10 @@ FROM XMATCH (
             }
 
             sql = String.Format(sql,
-                SqlServerCodeGenerator.QuoteIdentifier(ds.Name),
-                SqlServerCodeGenerator.QuoteIdentifier(table.SchemaName),
-                SqlServerCodeGenerator.QuoteIdentifier(table.ObjectName),
-                SqlServerCodeGenerator.QuoteIdentifier(catalog.Alias),
+                SqlServerQueryGenerator.QuoteIdentifier(ds.Name),
+                SqlServerQueryGenerator.QuoteIdentifier(table.SchemaName),
+                SqlServerQueryGenerator.QuoteIdentifier(table.ObjectName),
+                SqlServerQueryGenerator.QuoteIdentifier(catalog.Alias),
                 with);
 
             return sql;

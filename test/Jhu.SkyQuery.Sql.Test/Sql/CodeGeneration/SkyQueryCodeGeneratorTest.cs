@@ -65,10 +65,10 @@ namespace Jhu.SkyQuery.Sql.CodeGeneration
 
             var cg = new SkyQueryCodeGenerator()
             {
-                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                FunctionNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
             };
             var q = cg.GenerateXMatchQuery(xmatch, CreateSchemaManager());
 

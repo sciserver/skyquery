@@ -8,8 +8,8 @@ using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Sql.Schema.SqlServer;
 using Jhu.Graywulf.Sql.Parsing;
 using Jhu.Graywulf.Sql.NameResolution;
-using Jhu.Graywulf.Sql.CodeGeneration;
-using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
+using Jhu.Graywulf.Sql.QueryGeneration;
+using Jhu.Graywulf.Sql.QueryGeneration.SqlServer;
 using Jhu.Graywulf.Sql.Jobs.Query;
 using Jhu.Graywulf.IO.Tasks;
 using Jhu.SkyQuery.Sql.Parsing;
@@ -1056,7 +1056,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             SubstituteMatchTableName(qs, xmtstr, mtr);
 
             var nts = TableSourceSpecification.Create(SimpleTableSource.Create(mtr));
-            xmts.ExchangeWith(nts);
+            xmts.ReplaceWith(nts);
         }
 
         private void SubstituteMatchTableName(Jhu.Graywulf.Sql.Parsing.QuerySpecification qs, List<TableReference> xmtstr, TableReference matchtr)

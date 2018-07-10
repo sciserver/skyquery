@@ -123,6 +123,7 @@
     <Compile Include="Sql\Jobs\Query\RegionQuery.cs" />
     <Compile Include="Sql\Jobs\Query\RegionQueryCodeGenerator.cs" />
     <Compile Include="Sql\Jobs\Query\RegionQueryPartition.cs" />
+    <Compile Include="Sql\Jobs\Query\RegionQueryRewriter.cs" />
     <Compile Include="Sql\Jobs\Query\RegionScripts.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

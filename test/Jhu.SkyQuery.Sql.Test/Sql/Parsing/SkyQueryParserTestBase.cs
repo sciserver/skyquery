@@ -39,19 +39,19 @@ namespace Jhu.SkyQuery.Sql.Parsing
             return qs;
         }
 
-        protected Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator CodeGenerator
+        protected Jhu.Graywulf.Sql.QueryGeneration.SqlServer.SqlServerQueryGenerator CodeGenerator
         {
             get
             {
-                return new Jhu.Graywulf.Sql.CodeGeneration.SqlServer.SqlServerCodeGenerator()
+                return new Jhu.Graywulf.Sql.QueryGeneration.SqlServer.SqlServerQueryGenerator()
                 {
                     //ResolveNames = true
                     // TODO: use *Rendering properties
-                    TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                    TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
-                    ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                    ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
-                    DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                    TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                    TableAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Default,
+                    ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                    ColumnAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Default,
+                    DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
                 };
             }
         }

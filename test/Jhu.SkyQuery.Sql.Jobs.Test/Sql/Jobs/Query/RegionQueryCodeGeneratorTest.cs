@@ -73,12 +73,12 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             return new RegionQueryCodeGenerator(query)
             {
                 CodeDataset = GetCodeDataset(),
-                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
-                DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
-                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
+                ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                ColumnAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Always,
+                DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                TableAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Always,
+                FunctionNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
             };
         }
 

@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Sql.Schema;
 using Jhu.Graywulf.Sql.NameResolution;
-using Jhu.Graywulf.Sql.CodeGeneration;
-using Jhu.Graywulf.Sql.CodeGeneration.SqlServer;
+using Jhu.Graywulf.Sql.QueryGeneration;
+using Jhu.Graywulf.Sql.QueryGeneration.SqlServer;
 
 namespace Jhu.SkyQuery.Sql.CodeGeneration
 {

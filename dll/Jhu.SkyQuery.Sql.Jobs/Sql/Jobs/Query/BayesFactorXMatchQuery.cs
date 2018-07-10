@@ -65,12 +65,12 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
         {
             return new BayesFactorXMatchQueryCodeGenerator(this)
             {
-                TableNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                TableAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Default,
-                ColumnNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                ColumnAliasRendering = Graywulf.Sql.CodeGeneration.AliasRendering.Always,
-                DataTypeNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified,
-                FunctionNameRendering = Graywulf.Sql.CodeGeneration.NameRendering.FullyQualified
+                TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                TableAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Default,
+                ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                ColumnAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Always,
+                DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                FunctionNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified
             };
         }
 
