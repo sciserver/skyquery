@@ -12,7 +12,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
         ParserName = "SkyQueryParser",
         Comparer = "StringComparer.InvariantCultureIgnoreCase", 
         RootToken = "Jhu.SkyQuery.Sql.Parsing.StatementBlock")]
-    public class SkyQueryGrammar : Jhu.Graywulf.Sql.Parser.Grammar.SqlGrammar
+    public class SkyQueryGrammar : Jhu.Graywulf.Sql.Extensions.Grammar.GraywulfSqlGrammar
     {
         public static new Expression<Rule> Statement = () =>
             Override
@@ -47,6 +47,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                     CreateIndexStatement,
                     DropIndexStatement,
 
+                    PartitionedSelectStatement,
                     XMatchSelectStatement,      //
                     RegionSelectStatement,      //
 
@@ -91,7 +92,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
             Inherit
             (
                 QueryExpressionBrackets,
-                Sequence(BracketOpen, May(CommentOrWhitespace), QueryExpression, May(CommentOrWhitespace), BracketClose)
+                Sequence(BracketOpen, May(CommentOrWhitespace), RegionQueryExpression, May(CommentOrWhitespace), BracketClose)
             );
 
         public static Expression<Rule> RegionQuerySpecification = () =>

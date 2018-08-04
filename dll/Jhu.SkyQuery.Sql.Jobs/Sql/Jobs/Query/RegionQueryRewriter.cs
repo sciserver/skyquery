@@ -7,7 +7,7 @@ using Jhu.Graywulf.Sql.Jobs.Query;
 
 namespace Jhu.SkyQuery.Sql.Jobs.Query
 {
-    public class RegionQueryRewriter : SqlQueryRewriter
+    public class RegionQueryRewriter : PartitionedSqlQueryRewriter
     {
 
         #region Properties

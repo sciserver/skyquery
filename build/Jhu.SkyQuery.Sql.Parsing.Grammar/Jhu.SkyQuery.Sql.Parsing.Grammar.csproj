@@ -110,9 +110,13 @@
     <Compile Include="SkyQueryGrammar.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\graywulf\build\Jhu.Graywulf.Sql.Parser.Grammar\Jhu.Graywulf.Sql.Parser.Grammar.csproj">
+    <ProjectReference Include="..\..\..\graywulf\build\Jhu.Graywulf.Sql.Extensions.Grammar\Jhu.Graywulf.Sql.Extensions.Grammar.csproj">
+      <Project>{ca563411-f54e-41ad-b2ae-cc92fc76dc55}</Project>
+      <Name>Jhu.Graywulf.Sql.Extensions.Grammar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\build\Jhu.Graywulf.Sql.Grammar\Jhu.Graywulf.Sql.Grammar.csproj">
       <Project>{77be21a2-3af7-478a-8279-3c741bf3bd59}</Project>
-      <Name>Jhu.Graywulf.Sql.Parser.Grammar</Name>
+      <Name>Jhu.Graywulf.Sql.Grammar</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Components\Jhu.Graywulf.Components.csproj">
       <Project>{ABB4C403-720A-47E1-9485-CFAADD696656}</Project>
@@ -121,10 +125,6 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Parsing.Generator\Jhu.Graywulf.Parsing.Generator.csproj">
       <Project>{f4bb3377-5edc-4989-899d-ef7c89ba1632}</Project>
       <Name>Jhu.Graywulf.Parsing.Generator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Parsing\Jhu.Graywulf.Parsing.csproj">
-      <Project>{6215a919-1626-4f32-8c16-5764243b2748}</Project>
-      <Name>Jhu.Graywulf.Parsing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

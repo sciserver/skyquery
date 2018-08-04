@@ -5,20 +5,20 @@ using System.Text.RegularExpressions;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
-    public partial class SkyQueryParser : Jhu.Graywulf.Sql.Parsing.SqlParser
+    public partial class SkyQueryParser : Jhu.Graywulf.Sql.Extensions.Parsing.GraywulfSqlParser
     {
         private static HashSet<string> keywords = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
         {
             "ABSOLUTE", "ALL", "AND", "ANY", "APPLY", "AS", "ASC", "BEGIN", "BETWEEN", 
-            "BREAK", "BY", "CASE", "CATCH", "CLOSE", "CLUSTERED", "CONSTRAINT", "CONTINUE", "COUNT", "CREATE", 
-            "CROSS", "CURSOR", "DEALLOCATE", "DECLARE", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DROP", "ELSE", 
-            "END", "ESCAPE", "EXCEPT", "EXIST", "EXISTS", "FETCH", "FIRST", "FOR", "FROM", "FULL", 
-            "GOTO", "GROUP", "HASH", "HAVING", "IDENTITY", "IF", "IN", "INCLUDE", "INDEX", "INNER", 
-            "INSERT", "INTERSECT", "INTO", "IS", "JOIN", "KEY", "LAST", "LEFT", "LIKE", "LOOP", 
-            "MAY", "MERGE", "MUST", "NEXT", "NONCLUSTERED", "NOT", "NULL", "ON", "OPEN", "OPTION", 
-            "OR", "ORDER", "OUTER", "OVER", "PARTITION", "PERCENT", "PRIMARY", "PRINT", "PRIOR", "RELATIVE", 
-            "REMOTE", "REPEATABLE", "RETURN", "RIGHT", "ROWS", "SELECT", "SET", "SOME", "SYSTEM", "TABLE", 
-            "TABLESAMPLE", "THEN", "THROW", "TIES", "TOP", "TRUNCATE", "TRY", "UNION", "UNIQUE", "UPDATE", 
+            "BREAK", "BY", "CASE", "CATCH", "CLOSE", "CLUSTERED", "CONSTRAINT", "CONTINUE", "CREATE", "CROSS", 
+            "CURSOR", "DEALLOCATE", "DECLARE", "DEFAULT", "DELETE", "DESC", "DISTINCT", "DROP", "ELSE", "END", 
+            "ESCAPE", "EXCEPT", "EXIST", "EXISTS", "FETCH", "FIRST", "FOR", "FROM", "FULL", "GOTO", 
+            "GROUP", "HASH", "HAVING", "IDENTITY", "IF", "IN", "INCLUDE", "INDEX", "INNER", "INSERT", 
+            "INTERSECT", "INTO", "IS", "JOIN", "KEY", "LAST", "LEFT", "LIKE", "LOOP", "MAY", 
+            "MERGE", "MUST", "NEXT", "NONCLUSTERED", "NOT", "NULL", "ON", "OPEN", "OPTION", "OR", 
+            "ORDER", "OUTER", "OVER", "PARTITION", "PERCENT", "PRIMARY", "PRINT", "PRIOR", "RELATIVE", "REMOTE", 
+            "REPEATABLE", "RETURN", "RIGHT", "ROWS", "SELECT", "SET", "SOME", "SYSTEM", "TABLE", "TABLESAMPLE", 
+            "THEN", "THROW", "TIES", "TOP", "TRUNCATE", "TRY", "UNION", "UNIQUE", "UPDATE", "USING", 
             "VALUES", "WHEN", "WHERE", "WHILE", "WITH", "XMATCH", 
 
         };
@@ -48,7 +48,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
 
 
-    public partial class Statement : Jhu.Graywulf.Sql.Parsing.Statement, ICloneable
+    public partial class Statement : Jhu.Graywulf.Sql.Extensions.Parsing.Statement, ICloneable
     {
         public Statement()
             :base()
@@ -106,7 +106,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r5
 
                         bool r5 = true;
-                        r5 = r5 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.BeginEndStatement());
+                        r5 = r5 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BeginEndStatement());
                         CommitOrRollback(r5, parser);
                         a2 = r5;
                     }
@@ -116,7 +116,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r6
 
                         bool r6 = true;
-                        r6 = r6 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.WhileStatement());
+                        r6 = r6 && Match(parser, new Jhu.Graywulf.Sql.Parsing.WhileStatement());
                         CommitOrRollback(r6, parser);
                         a2 = r6;
                     }
@@ -156,7 +156,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r10
 
                         bool r10 = true;
-                        r10 = r10 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.IfStatement());
+                        r10 = r10 && Match(parser, new Jhu.Graywulf.Sql.Parsing.IfStatement());
                         CommitOrRollback(r10, parser);
                         a2 = r10;
                     }
@@ -166,7 +166,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r11
 
                         bool r11 = true;
-                        r11 = r11 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.TryCatchStatement());
+                        r11 = r11 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TryCatchStatement());
                         CommitOrRollback(r11, parser);
                         a2 = r11;
                     }
@@ -306,7 +306,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r25
 
                         bool r25 = true;
-                        r25 = r25 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchSelectStatement());
+                        r25 = r25 && Match(parser, new Jhu.Graywulf.Sql.Extensions.Parsing.PartitionedSelectStatement());
                         CommitOrRollback(r25, parser);
                         a2 = r25;
                     }
@@ -316,7 +316,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r26
 
                         bool r26 = true;
-                        r26 = r26 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionSelectStatement());
+                        r26 = r26 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchSelectStatement());
                         CommitOrRollback(r26, parser);
                         a2 = r26;
                     }
@@ -326,7 +326,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r27
 
                         bool r27 = true;
-                        r27 = r27 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SelectStatement());
+                        r27 = r27 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionSelectStatement());
                         CommitOrRollback(r27, parser);
                         a2 = r27;
                     }
@@ -336,7 +336,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r28
 
                         bool r28 = true;
-                        r28 = r28 && Match(parser, new Jhu.Graywulf.Sql.Parsing.InsertStatement());
+                        r28 = r28 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SelectStatement());
                         CommitOrRollback(r28, parser);
                         a2 = r28;
                     }
@@ -346,7 +346,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r29
 
                         bool r29 = true;
-                        r29 = r29 && Match(parser, new Jhu.Graywulf.Sql.Parsing.UpdateStatement());
+                        r29 = r29 && Match(parser, new Jhu.Graywulf.Sql.Parsing.InsertStatement());
                         CommitOrRollback(r29, parser);
                         a2 = r29;
                     }
@@ -356,9 +356,19 @@ namespace Jhu.SkyQuery.Sql.Parsing
                         Checkpoint(parser); // r30
 
                         bool r30 = true;
-                        r30 = r30 && Match(parser, new Jhu.Graywulf.Sql.Parsing.DeleteStatement());
+                        r30 = r30 && Match(parser, new Jhu.Graywulf.Sql.Parsing.UpdateStatement());
                         CommitOrRollback(r30, parser);
                         a2 = r30;
+                    }
+
+                    if (!a2)
+                    {
+                        Checkpoint(parser); // r31
+
+                        bool r31 = true;
+                        r31 = r31 && Match(parser, new Jhu.Graywulf.Sql.Parsing.DeleteStatement());
+                        CommitOrRollback(r31, parser);
+                        a2 = r31;
                     }
 
                     r1 &= a2;
@@ -402,72 +412,72 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r31
+                Checkpoint(parser); // r32
 
-                bool r31 = true;
-                r31 = r31 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpression());
-                if (r31)
-                { // may a32
-                    bool a32 = false;
+                bool r32 = true;
+                r32 = r32 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpression());
+                if (r32)
+                { // may a33
+                    bool a33 = false;
                     {
-                        Checkpoint(parser); // r33
+                        Checkpoint(parser); // r34
 
-                        bool r33 = true;
-                        if (r33)
-                        { // may a34
-                            bool a34 = false;
+                        bool r34 = true;
+                        if (r34)
+                        { // may a35
+                            bool a35 = false;
                             {
-                                Checkpoint(parser); // r35
+                                Checkpoint(parser); // r36
 
-                                bool r35 = true;
-                                r35 = r35 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r35, parser);
-                                a34 = r35;
+                                bool r36 = true;
+                                r36 = r36 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r36, parser);
+                                a35 = r36;
                             }
 
-                            r33 |= a34;
-                        } // end may a34
+                            r34 |= a35;
+                        } // end may a35
 
-                        r33 = r33 && Match(parser, new Jhu.Graywulf.Sql.Parsing.OrderByClause());
-                        CommitOrRollback(r33, parser);
-                        a32 = r33;
+                        r34 = r34 && Match(parser, new Jhu.Graywulf.Sql.Parsing.OrderByClause());
+                        CommitOrRollback(r34, parser);
+                        a33 = r34;
                     }
 
-                    r31 |= a32;
-                } // end may a32
+                    r32 |= a33;
+                } // end may a33
 
-                if (r31)
-                { // may a36
-                    bool a36 = false;
+                if (r32)
+                { // may a37
+                    bool a37 = false;
                     {
-                        Checkpoint(parser); // r37
+                        Checkpoint(parser); // r38
 
-                        bool r37 = true;
-                        if (r37)
-                        { // may a38
-                            bool a38 = false;
+                        bool r38 = true;
+                        if (r38)
+                        { // may a39
+                            bool a39 = false;
                             {
-                                Checkpoint(parser); // r39
+                                Checkpoint(parser); // r40
 
-                                bool r39 = true;
-                                r39 = r39 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r39, parser);
-                                a38 = r39;
+                                bool r40 = true;
+                                r40 = r40 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r40, parser);
+                                a39 = r40;
                             }
 
-                            r37 |= a38;
-                        } // end may a38
+                            r38 |= a39;
+                        } // end may a39
 
-                        r37 = r37 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryHintClause());
-                        CommitOrRollback(r37, parser);
-                        a36 = r37;
+                        r38 = r38 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryHintClause());
+                        CommitOrRollback(r38, parser);
+                        a37 = r38;
                     }
 
-                    r31 |= a36;
-                } // end may a36
+                    r32 |= a37;
+                } // end may a37
 
-                CommitOrRollback(r31, parser);
-                res = r31;
+                CommitOrRollback(r32, parser);
+                res = r32;
             }
 
 
@@ -503,84 +513,84 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r40
+                Checkpoint(parser); // r41
 
-                bool r40 = true;
-                if (r40)
-                { // alternatives a41 must
-                    bool a41 = false;
-                    if (!a41)
-                    {
-                        Checkpoint(parser); // r42
-
-                        bool r42 = true;
-                        r42 = r42 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpressionBrackets());
-                        CommitOrRollback(r42, parser);
-                        a41 = r42;
-                    }
-
-                    if (!a41)
+                bool r41 = true;
+                if (r41)
+                { // alternatives a42 must
+                    bool a42 = false;
+                    if (!a42)
                     {
                         Checkpoint(parser); // r43
 
                         bool r43 = true;
-                        r43 = r43 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQuerySpecification());
+                        r43 = r43 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpressionBrackets());
                         CommitOrRollback(r43, parser);
-                        a41 = r43;
+                        a42 = r43;
                     }
 
-                    r40 &= a41;
-
-                } // end alternatives a41
-
-                if (r40)
-                { // may a44
-                    bool a44 = false;
+                    if (!a42)
                     {
-                        Checkpoint(parser); // r45
+                        Checkpoint(parser); // r44
 
-                        bool r45 = true;
-                        if (r45)
-                        { // may a46
-                            bool a46 = false;
-                            {
-                                Checkpoint(parser); // r47
-
-                                bool r47 = true;
-                                r47 = r47 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r47, parser);
-                                a46 = r47;
-                            }
-
-                            r45 |= a46;
-                        } // end may a46
-
-                        r45 = r45 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryOperator());
-                        if (r45)
-                        { // may a48
-                            bool a48 = false;
-                            {
-                                Checkpoint(parser); // r49
-
-                                bool r49 = true;
-                                r49 = r49 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r49, parser);
-                                a48 = r49;
-                            }
-
-                            r45 |= a48;
-                        } // end may a48
-
-                        r45 = r45 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpression());
-                        CommitOrRollback(r45, parser);
-                        a44 = r45;
+                        bool r44 = true;
+                        r44 = r44 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQuerySpecification());
+                        CommitOrRollback(r44, parser);
+                        a42 = r44;
                     }
 
-                    r40 |= a44;
-                } // end may a44
+                    r41 &= a42;
 
-                CommitOrRollback(r40, parser);
-                res = r40;
+                } // end alternatives a42
+
+                if (r41)
+                { // may a45
+                    bool a45 = false;
+                    {
+                        Checkpoint(parser); // r46
+
+                        bool r46 = true;
+                        if (r46)
+                        { // may a47
+                            bool a47 = false;
+                            {
+                                Checkpoint(parser); // r48
+
+                                bool r48 = true;
+                                r48 = r48 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r48, parser);
+                                a47 = r48;
+                            }
+
+                            r46 |= a47;
+                        } // end may a47
+
+                        r46 = r46 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryOperator());
+                        if (r46)
+                        { // may a49
+                            bool a49 = false;
+                            {
+                                Checkpoint(parser); // r50
+
+                                bool r50 = true;
+                                r50 = r50 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r50, parser);
+                                a49 = r50;
+                            }
+
+                            r46 |= a49;
+                        } // end may a49
+
+                        r46 = r46 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpression());
+                        CommitOrRollback(r46, parser);
+                        a45 = r46;
+                    }
+
+                    r41 |= a45;
+                } // end may a45
+
+                CommitOrRollback(r41, parser);
+                res = r41;
             }
 
 
@@ -616,44 +626,44 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r50
+                Checkpoint(parser); // r51
 
-                bool r50 = true;
-                r50 = r50 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
-                if (r50)
-                { // may a51
-                    bool a51 = false;
+                bool r51 = true;
+                r51 = r51 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
+                if (r51)
+                { // may a52
+                    bool a52 = false;
                     {
-                        Checkpoint(parser); // r52
+                        Checkpoint(parser); // r53
 
-                        bool r52 = true;
-                        r52 = r52 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r52, parser);
-                        a51 = r52;
+                        bool r53 = true;
+                        r53 = r53 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r53, parser);
+                        a52 = r53;
                     }
 
-                    r50 |= a51;
-                } // end may a51
+                    r51 |= a52;
+                } // end may a52
 
-                r50 = r50 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryExpression());
-                if (r50)
-                { // may a53
-                    bool a53 = false;
+                r51 = r51 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionQueryExpression());
+                if (r51)
+                { // may a54
+                    bool a54 = false;
                     {
-                        Checkpoint(parser); // r54
+                        Checkpoint(parser); // r55
 
-                        bool r54 = true;
-                        r54 = r54 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r54, parser);
-                        a53 = r54;
+                        bool r55 = true;
+                        r55 = r55 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r55, parser);
+                        a54 = r55;
                     }
 
-                    r50 |= a53;
-                } // end may a53
+                    r51 |= a54;
+                } // end may a54
 
-                r50 = r50 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
-                CommitOrRollback(r50, parser);
-                res = r50;
+                r51 = r51 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
+                CommitOrRollback(r51, parser);
+                res = r51;
             }
 
 
@@ -689,261 +699,261 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r55
+                Checkpoint(parser); // r56
 
-                bool r55 = true;
-                r55 = r55 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"SELECT"));
-                if (r55)
-                { // may a56
-                    bool a56 = false;
+                bool r56 = true;
+                r56 = r56 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"SELECT"));
+                if (r56)
+                { // may a57
+                    bool a57 = false;
                     {
-                        Checkpoint(parser); // r57
+                        Checkpoint(parser); // r58
 
-                        bool r57 = true;
-                        r57 = r57 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        if (r57)
-                        { // alternatives a58 must
-                            bool a58 = false;
-                            if (!a58)
-                            {
-                                Checkpoint(parser); // r59
-
-                                bool r59 = true;
-                                r59 = r59 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"ALL"));
-                                CommitOrRollback(r59, parser);
-                                a58 = r59;
-                            }
-
-                            if (!a58)
+                        bool r58 = true;
+                        r58 = r58 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        if (r58)
+                        { // alternatives a59 must
+                            bool a59 = false;
+                            if (!a59)
                             {
                                 Checkpoint(parser); // r60
 
                                 bool r60 = true;
-                                r60 = r60 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"DISTINCT"));
+                                r60 = r60 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"ALL"));
                                 CommitOrRollback(r60, parser);
-                                a58 = r60;
+                                a59 = r60;
                             }
 
-                            r57 &= a58;
-
-                        } // end alternatives a58
-
-                        CommitOrRollback(r57, parser);
-                        a56 = r57;
-                    }
-
-                    r55 |= a56;
-                } // end may a56
-
-                if (r55)
-                { // may a61
-                    bool a61 = false;
-                    {
-                        Checkpoint(parser); // r62
-
-                        bool r62 = true;
-                        r62 = r62 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        r62 = r62 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TopExpression());
-                        CommitOrRollback(r62, parser);
-                        a61 = r62;
-                    }
-
-                    r55 |= a61;
-                } // end may a61
-
-                if (r55)
-                { // may a63
-                    bool a63 = false;
-                    {
-                        Checkpoint(parser); // r64
-
-                        bool r64 = true;
-                        r64 = r64 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r64, parser);
-                        a63 = r64;
-                    }
-
-                    r55 |= a63;
-                } // end may a63
-
-                r55 = r55 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SelectList());
-                if (r55)
-                { // may a65
-                    bool a65 = false;
-                    {
-                        Checkpoint(parser); // r66
-
-                        bool r66 = true;
-                        if (r66)
-                        { // may a67
-                            bool a67 = false;
+                            if (!a59)
                             {
-                                Checkpoint(parser); // r68
+                                Checkpoint(parser); // r61
 
-                                bool r68 = true;
-                                r68 = r68 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r68, parser);
-                                a67 = r68;
+                                bool r61 = true;
+                                r61 = r61 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"DISTINCT"));
+                                CommitOrRollback(r61, parser);
+                                a59 = r61;
                             }
 
-                            r66 |= a67;
-                        } // end may a67
+                            r58 &= a59;
 
-                        r66 = r66 && Match(parser, new Jhu.Graywulf.Sql.Parsing.IntoClause());
-                        CommitOrRollback(r66, parser);
-                        a65 = r66;
+                        } // end alternatives a59
+
+                        CommitOrRollback(r58, parser);
+                        a57 = r58;
                     }
 
-                    r55 |= a65;
-                } // end may a65
+                    r56 |= a57;
+                } // end may a57
 
-                if (r55)
-                { // may a69
-                    bool a69 = false;
+                if (r56)
+                { // may a62
+                    bool a62 = false;
                     {
-                        Checkpoint(parser); // r70
+                        Checkpoint(parser); // r63
 
-                        bool r70 = true;
-                        if (r70)
-                        { // may a71
-                            bool a71 = false;
-                            {
-                                Checkpoint(parser); // r72
-
-                                bool r72 = true;
-                                r72 = r72 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r72, parser);
-                                a71 = r72;
-                            }
-
-                            r70 |= a71;
-                        } // end may a71
-
-                        r70 = r70 && Match(parser, new Jhu.Graywulf.Sql.Parsing.FromClause());
-                        CommitOrRollback(r70, parser);
-                        a69 = r70;
+                        bool r63 = true;
+                        r63 = r63 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        r63 = r63 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TopExpression());
+                        CommitOrRollback(r63, parser);
+                        a62 = r63;
                     }
 
-                    r55 |= a69;
-                } // end may a69
+                    r56 |= a62;
+                } // end may a62
 
-                if (r55)
-                { // may a73
-                    bool a73 = false;
+                if (r56)
+                { // may a64
+                    bool a64 = false;
                     {
-                        Checkpoint(parser); // r74
+                        Checkpoint(parser); // r65
 
-                        bool r74 = true;
-                        if (r74)
-                        { // may a75
-                            bool a75 = false;
-                            {
-                                Checkpoint(parser); // r76
-
-                                bool r76 = true;
-                                r76 = r76 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r76, parser);
-                                a75 = r76;
-                            }
-
-                            r74 |= a75;
-                        } // end may a75
-
-                        r74 = r74 && Match(parser, new Jhu.Graywulf.Sql.Parsing.WhereClause());
-                        CommitOrRollback(r74, parser);
-                        a73 = r74;
+                        bool r65 = true;
+                        r65 = r65 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r65, parser);
+                        a64 = r65;
                     }
 
-                    r55 |= a73;
-                } // end may a73
+                    r56 |= a64;
+                } // end may a64
 
-                if (r55)
+                r56 = r56 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SelectList());
+                if (r56)
+                { // may a66
+                    bool a66 = false;
+                    {
+                        Checkpoint(parser); // r67
+
+                        bool r67 = true;
+                        if (r67)
+                        { // may a68
+                            bool a68 = false;
+                            {
+                                Checkpoint(parser); // r69
+
+                                bool r69 = true;
+                                r69 = r69 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r69, parser);
+                                a68 = r69;
+                            }
+
+                            r67 |= a68;
+                        } // end may a68
+
+                        r67 = r67 && Match(parser, new Jhu.Graywulf.Sql.Parsing.IntoClause());
+                        CommitOrRollback(r67, parser);
+                        a66 = r67;
+                    }
+
+                    r56 |= a66;
+                } // end may a66
+
+                if (r56)
+                { // may a70
+                    bool a70 = false;
+                    {
+                        Checkpoint(parser); // r71
+
+                        bool r71 = true;
+                        if (r71)
+                        { // may a72
+                            bool a72 = false;
+                            {
+                                Checkpoint(parser); // r73
+
+                                bool r73 = true;
+                                r73 = r73 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r73, parser);
+                                a72 = r73;
+                            }
+
+                            r71 |= a72;
+                        } // end may a72
+
+                        r71 = r71 && Match(parser, new Jhu.Graywulf.Sql.Parsing.FromClause());
+                        CommitOrRollback(r71, parser);
+                        a70 = r71;
+                    }
+
+                    r56 |= a70;
+                } // end may a70
+
+                if (r56)
+                { // may a74
+                    bool a74 = false;
+                    {
+                        Checkpoint(parser); // r75
+
+                        bool r75 = true;
+                        if (r75)
+                        { // may a76
+                            bool a76 = false;
+                            {
+                                Checkpoint(parser); // r77
+
+                                bool r77 = true;
+                                r77 = r77 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r77, parser);
+                                a76 = r77;
+                            }
+
+                            r75 |= a76;
+                        } // end may a76
+
+                        r75 = r75 && Match(parser, new Jhu.Graywulf.Sql.Parsing.WhereClause());
+                        CommitOrRollback(r75, parser);
+                        a74 = r75;
+                    }
+
+                    r56 |= a74;
+                } // end may a74
+
+                if (r56)
                 {
-                    Checkpoint(parser); // r77
+                    Checkpoint(parser); // r78
 
-                    bool r77 = true;
-                    if (r77)
-                    { // may a78
-                        bool a78 = false;
+                    bool r78 = true;
+                    if (r78)
+                    { // may a79
+                        bool a79 = false;
                         {
-                            Checkpoint(parser); // r79
+                            Checkpoint(parser); // r80
 
-                            bool r79 = true;
-                            r79 = r79 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                            CommitOrRollback(r79, parser);
-                            a78 = r79;
+                            bool r80 = true;
+                            r80 = r80 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                            CommitOrRollback(r80, parser);
+                            a79 = r80;
                         }
 
-                        r77 |= a78;
-                    } // end may a78
+                        r78 |= a79;
+                    } // end may a79
 
-                    r77 = r77 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionClause());
-                    CommitOrRollback(r77, parser);
-                    r55 = r77;
+                    r78 = r78 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionClause());
+                    CommitOrRollback(r78, parser);
+                    r56 = r78;
                 }
 
-                if (r55)
-                { // may a80
-                    bool a80 = false;
+                if (r56)
+                { // may a81
+                    bool a81 = false;
                     {
-                        Checkpoint(parser); // r81
+                        Checkpoint(parser); // r82
 
-                        bool r81 = true;
-                        if (r81)
-                        { // may a82
-                            bool a82 = false;
+                        bool r82 = true;
+                        if (r82)
+                        { // may a83
+                            bool a83 = false;
                             {
-                                Checkpoint(parser); // r83
+                                Checkpoint(parser); // r84
 
-                                bool r83 = true;
-                                r83 = r83 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r83, parser);
-                                a82 = r83;
+                                bool r84 = true;
+                                r84 = r84 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r84, parser);
+                                a83 = r84;
                             }
 
-                            r81 |= a82;
-                        } // end may a82
+                            r82 |= a83;
+                        } // end may a83
 
-                        r81 = r81 && Match(parser, new Jhu.Graywulf.Sql.Parsing.GroupByClause());
-                        CommitOrRollback(r81, parser);
-                        a80 = r81;
+                        r82 = r82 && Match(parser, new Jhu.Graywulf.Sql.Parsing.GroupByClause());
+                        CommitOrRollback(r82, parser);
+                        a81 = r82;
                     }
 
-                    r55 |= a80;
-                } // end may a80
+                    r56 |= a81;
+                } // end may a81
 
-                if (r55)
-                { // may a84
-                    bool a84 = false;
+                if (r56)
+                { // may a85
+                    bool a85 = false;
                     {
-                        Checkpoint(parser); // r85
+                        Checkpoint(parser); // r86
 
-                        bool r85 = true;
-                        if (r85)
-                        { // may a86
-                            bool a86 = false;
+                        bool r86 = true;
+                        if (r86)
+                        { // may a87
+                            bool a87 = false;
                             {
-                                Checkpoint(parser); // r87
+                                Checkpoint(parser); // r88
 
-                                bool r87 = true;
-                                r87 = r87 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r87, parser);
-                                a86 = r87;
+                                bool r88 = true;
+                                r88 = r88 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r88, parser);
+                                a87 = r88;
                             }
 
-                            r85 |= a86;
-                        } // end may a86
+                            r86 |= a87;
+                        } // end may a87
 
-                        r85 = r85 && Match(parser, new Jhu.Graywulf.Sql.Parsing.HavingClause());
-                        CommitOrRollback(r85, parser);
-                        a84 = r85;
+                        r86 = r86 && Match(parser, new Jhu.Graywulf.Sql.Parsing.HavingClause());
+                        CommitOrRollback(r86, parser);
+                        a85 = r86;
                     }
 
-                    r55 |= a84;
-                } // end may a84
+                    r56 |= a85;
+                } // end may a85
 
-                CommitOrRollback(r55, parser);
-                res = r55;
+                CommitOrRollback(r56, parser);
+                res = r56;
             }
 
 
@@ -979,40 +989,40 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r88
+                Checkpoint(parser); // r89
 
-                bool r88 = true;
-                r88 = r88 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"REGION"));
-                r88 = r88 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                if (r88)
-                { // alternatives a89 must
-                    bool a89 = false;
-                    if (!a89)
-                    {
-                        Checkpoint(parser); // r90
-
-                        bool r90 = true;
-                        r90 = r90 && Match(parser, new Jhu.Graywulf.Sql.Parsing.StringConstant());
-                        CommitOrRollback(r90, parser);
-                        a89 = r90;
-                    }
-
-                    if (!a89)
+                bool r89 = true;
+                r89 = r89 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"REGION"));
+                r89 = r89 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                if (r89)
+                { // alternatives a90 must
+                    bool a90 = false;
+                    if (!a90)
                     {
                         Checkpoint(parser); // r91
 
                         bool r91 = true;
-                        r91 = r91 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpression());
+                        r91 = r91 && Match(parser, new Jhu.Graywulf.Sql.Parsing.StringConstant());
                         CommitOrRollback(r91, parser);
-                        a89 = r91;
+                        a90 = r91;
                     }
 
-                    r88 &= a89;
+                    if (!a90)
+                    {
+                        Checkpoint(parser); // r92
 
-                } // end alternatives a89
+                        bool r92 = true;
+                        r92 = r92 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpression());
+                        CommitOrRollback(r92, parser);
+                        a90 = r92;
+                    }
 
-                CommitOrRollback(r88, parser);
-                res = r88;
+                    r89 &= a90;
+
+                } // end alternatives a90
+
+                CommitOrRollback(r89, parser);
+                res = r89;
             }
 
 
@@ -1048,84 +1058,84 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r92
+                Checkpoint(parser); // r93
 
-                bool r92 = true;
-                if (r92)
-                { // alternatives a93 must
-                    bool a93 = false;
-                    if (!a93)
-                    {
-                        Checkpoint(parser); // r94
-
-                        bool r94 = true;
-                        r94 = r94 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionShape());
-                        CommitOrRollback(r94, parser);
-                        a93 = r94;
-                    }
-
-                    if (!a93)
+                bool r93 = true;
+                if (r93)
+                { // alternatives a94 must
+                    bool a94 = false;
+                    if (!a94)
                     {
                         Checkpoint(parser); // r95
 
                         bool r95 = true;
-                        r95 = r95 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpressionBrackets());
+                        r95 = r95 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionShape());
                         CommitOrRollback(r95, parser);
-                        a93 = r95;
+                        a94 = r95;
                     }
 
-                    r92 &= a93;
-
-                } // end alternatives a93
-
-                if (r92)
-                { // may a96
-                    bool a96 = false;
+                    if (!a94)
                     {
-                        Checkpoint(parser); // r97
+                        Checkpoint(parser); // r96
 
-                        bool r97 = true;
-                        if (r97)
-                        { // may a98
-                            bool a98 = false;
-                            {
-                                Checkpoint(parser); // r99
-
-                                bool r99 = true;
-                                r99 = r99 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r99, parser);
-                                a98 = r99;
-                            }
-
-                            r97 |= a98;
-                        } // end may a98
-
-                        r97 = r97 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionOperator());
-                        if (r97)
-                        { // may a100
-                            bool a100 = false;
-                            {
-                                Checkpoint(parser); // r101
-
-                                bool r101 = true;
-                                r101 = r101 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r101, parser);
-                                a100 = r101;
-                            }
-
-                            r97 |= a100;
-                        } // end may a100
-
-                        r97 = r97 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpression());
-                        CommitOrRollback(r97, parser);
-                        a96 = r97;
+                        bool r96 = true;
+                        r96 = r96 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpressionBrackets());
+                        CommitOrRollback(r96, parser);
+                        a94 = r96;
                     }
 
-                    r92 |= a96;
-                } // end may a96
+                    r93 &= a94;
 
-                CommitOrRollback(r92, parser);
-                res = r92;
+                } // end alternatives a94
+
+                if (r93)
+                { // may a97
+                    bool a97 = false;
+                    {
+                        Checkpoint(parser); // r98
+
+                        bool r98 = true;
+                        if (r98)
+                        { // may a99
+                            bool a99 = false;
+                            {
+                                Checkpoint(parser); // r100
+
+                                bool r100 = true;
+                                r100 = r100 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r100, parser);
+                                a99 = r100;
+                            }
+
+                            r98 |= a99;
+                        } // end may a99
+
+                        r98 = r98 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionOperator());
+                        if (r98)
+                        { // may a101
+                            bool a101 = false;
+                            {
+                                Checkpoint(parser); // r102
+
+                                bool r102 = true;
+                                r102 = r102 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r102, parser);
+                                a101 = r102;
+                            }
+
+                            r98 |= a101;
+                        } // end may a101
+
+                        r98 = r98 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpression());
+                        CommitOrRollback(r98, parser);
+                        a97 = r98;
+                    }
+
+                    r93 |= a97;
+                } // end may a97
+
+                CommitOrRollback(r93, parser);
+                res = r93;
             }
 
 
@@ -1161,44 +1171,44 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r102
+                Checkpoint(parser); // r103
 
-                bool r102 = true;
-                r102 = r102 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
-                if (r102)
-                { // may a103
-                    bool a103 = false;
+                bool r103 = true;
+                r103 = r103 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
+                if (r103)
+                { // may a104
+                    bool a104 = false;
                     {
-                        Checkpoint(parser); // r104
+                        Checkpoint(parser); // r105
 
-                        bool r104 = true;
-                        r104 = r104 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r104, parser);
-                        a103 = r104;
+                        bool r105 = true;
+                        r105 = r105 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r105, parser);
+                        a104 = r105;
                     }
 
-                    r102 |= a103;
-                } // end may a103
+                    r103 |= a104;
+                } // end may a104
 
-                r102 = r102 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpression());
-                if (r102)
-                { // may a105
-                    bool a105 = false;
+                r103 = r103 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionExpression());
+                if (r103)
+                { // may a106
+                    bool a106 = false;
                     {
-                        Checkpoint(parser); // r106
+                        Checkpoint(parser); // r107
 
-                        bool r106 = true;
-                        r106 = r106 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r106, parser);
-                        a105 = r106;
+                        bool r107 = true;
+                        r107 = r107 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r107, parser);
+                        a106 = r107;
                     }
 
-                    r102 |= a105;
-                } // end may a105
+                    r103 |= a106;
+                } // end may a106
 
-                r102 = r102 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
-                CommitOrRollback(r102, parser);
-                res = r102;
+                r103 = r103 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
+                CommitOrRollback(r103, parser);
+                res = r103;
             }
 
 
@@ -1234,48 +1244,48 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r107
+                Checkpoint(parser); // r108
 
-                bool r107 = true;
-                if (r107)
-                { // alternatives a108 must
-                    bool a108 = false;
-                    if (!a108)
-                    {
-                        Checkpoint(parser); // r109
-
-                        bool r109 = true;
-                        r109 = r109 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"UNION"));
-                        CommitOrRollback(r109, parser);
-                        a108 = r109;
-                    }
-
-                    if (!a108)
+                bool r108 = true;
+                if (r108)
+                { // alternatives a109 must
+                    bool a109 = false;
+                    if (!a109)
                     {
                         Checkpoint(parser); // r110
 
                         bool r110 = true;
-                        r110 = r110 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"INTERSECT"));
+                        r110 = r110 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"UNION"));
                         CommitOrRollback(r110, parser);
-                        a108 = r110;
+                        a109 = r110;
                     }
 
-                    if (!a108)
+                    if (!a109)
                     {
                         Checkpoint(parser); // r111
 
                         bool r111 = true;
-                        r111 = r111 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"EXCEPT"));
+                        r111 = r111 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"INTERSECT"));
                         CommitOrRollback(r111, parser);
-                        a108 = r111;
+                        a109 = r111;
                     }
 
-                    r107 &= a108;
+                    if (!a109)
+                    {
+                        Checkpoint(parser); // r112
 
-                } // end alternatives a108
+                        bool r112 = true;
+                        r112 = r112 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"EXCEPT"));
+                        CommitOrRollback(r112, parser);
+                        a109 = r112;
+                    }
 
-                CommitOrRollback(r107, parser);
-                res = r107;
+                    r108 &= a109;
+
+                } // end alternatives a109
+
+                CommitOrRollback(r108, parser);
+                res = r108;
             }
 
 
@@ -1311,30 +1321,30 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r112
+                Checkpoint(parser); // r113
 
-                bool r112 = true;
-                r112 = r112 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionShapeType());
-                r112 = r112 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
-                r112 = r112 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionArgumentList());
-                if (r112)
-                { // may a113
-                    bool a113 = false;
+                bool r113 = true;
+                r113 = r113 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionShapeType());
+                r113 = r113 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
+                r113 = r113 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionArgumentList());
+                if (r113)
+                { // may a114
+                    bool a114 = false;
                     {
-                        Checkpoint(parser); // r114
+                        Checkpoint(parser); // r115
 
-                        bool r114 = true;
-                        r114 = r114 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r114, parser);
-                        a113 = r114;
+                        bool r115 = true;
+                        r115 = r115 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r115, parser);
+                        a114 = r115;
                     }
 
-                    r112 |= a113;
-                } // end may a113
+                    r113 |= a114;
+                } // end may a114
 
-                r112 = r112 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
-                CommitOrRollback(r112, parser);
-                res = r112;
+                r113 = r113 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
+                CommitOrRollback(r113, parser);
+                res = r113;
             }
 
 
@@ -1370,98 +1380,98 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r115
+                Checkpoint(parser); // r116
 
-                bool r115 = true;
-                if (r115)
-                { // alternatives a116 must
-                    bool a116 = false;
-                    if (!a116)
-                    {
-                        Checkpoint(parser); // r117
-
-                        bool r117 = true;
-                        r117 = r117 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CIRCLE"));
-                        CommitOrRollback(r117, parser);
-                        a116 = r117;
-                    }
-
-                    if (!a116)
+                bool r116 = true;
+                if (r116)
+                { // alternatives a117 must
+                    bool a117 = false;
+                    if (!a117)
                     {
                         Checkpoint(parser); // r118
 
                         bool r118 = true;
-                        r118 = r118 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CIRC"));
+                        r118 = r118 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CIRCLE"));
                         CommitOrRollback(r118, parser);
-                        a116 = r118;
+                        a117 = r118;
                     }
 
-                    if (!a116)
+                    if (!a117)
                     {
                         Checkpoint(parser); // r119
 
                         bool r119 = true;
-                        r119 = r119 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"RECTANGLE"));
+                        r119 = r119 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CIRC"));
                         CommitOrRollback(r119, parser);
-                        a116 = r119;
+                        a117 = r119;
                     }
 
-                    if (!a116)
+                    if (!a117)
                     {
                         Checkpoint(parser); // r120
 
                         bool r120 = true;
-                        r120 = r120 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"RECT"));
+                        r120 = r120 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"RECTANGLE"));
                         CommitOrRollback(r120, parser);
-                        a116 = r120;
+                        a117 = r120;
                     }
 
-                    if (!a116)
+                    if (!a117)
                     {
                         Checkpoint(parser); // r121
 
                         bool r121 = true;
-                        r121 = r121 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"POLYGON"));
+                        r121 = r121 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"RECT"));
                         CommitOrRollback(r121, parser);
-                        a116 = r121;
+                        a117 = r121;
                     }
 
-                    if (!a116)
+                    if (!a117)
                     {
                         Checkpoint(parser); // r122
 
                         bool r122 = true;
-                        r122 = r122 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"POLY"));
+                        r122 = r122 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"POLYGON"));
                         CommitOrRollback(r122, parser);
-                        a116 = r122;
+                        a117 = r122;
                     }
 
-                    if (!a116)
+                    if (!a117)
                     {
                         Checkpoint(parser); // r123
 
                         bool r123 = true;
-                        r123 = r123 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CONVEX_HULL"));
+                        r123 = r123 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"POLY"));
                         CommitOrRollback(r123, parser);
-                        a116 = r123;
+                        a117 = r123;
                     }
 
-                    if (!a116)
+                    if (!a117)
                     {
                         Checkpoint(parser); // r124
 
                         bool r124 = true;
-                        r124 = r124 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CHULL"));
+                        r124 = r124 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CONVEX_HULL"));
                         CommitOrRollback(r124, parser);
-                        a116 = r124;
+                        a117 = r124;
                     }
 
-                    r115 &= a116;
+                    if (!a117)
+                    {
+                        Checkpoint(parser); // r125
 
-                } // end alternatives a116
+                        bool r125 = true;
+                        r125 = r125 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CHULL"));
+                        CommitOrRollback(r125, parser);
+                        a117 = r125;
+                    }
 
-                CommitOrRollback(r115, parser);
-                res = r115;
+                    r116 &= a117;
+
+                } // end alternatives a117
+
+                CommitOrRollback(r116, parser);
+                res = r116;
             }
 
 
@@ -1497,12 +1507,12 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r125
+                Checkpoint(parser); // r126
 
-                bool r125 = true;
-                r125 = r125 && Match(parser, new Jhu.Graywulf.Sql.Parsing.NumericConstant());
-                CommitOrRollback(r125, parser);
-                res = r125;
+                bool r126 = true;
+                r126 = r126 && Match(parser, new Jhu.Graywulf.Sql.Parsing.NumericConstant());
+                CommitOrRollback(r126, parser);
+                res = r126;
             }
 
 
@@ -1538,58 +1548,58 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r126
+                Checkpoint(parser); // r127
 
-                bool r126 = true;
-                if (r126)
-                { // may a127
-                    bool a127 = false;
+                bool r127 = true;
+                if (r127)
+                { // may a128
+                    bool a128 = false;
                     {
-                        Checkpoint(parser); // r128
+                        Checkpoint(parser); // r129
 
-                        bool r128 = true;
-                        r128 = r128 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r128, parser);
-                        a127 = r128;
+                        bool r129 = true;
+                        r129 = r129 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r129, parser);
+                        a128 = r129;
                     }
 
-                    r126 |= a127;
-                } // end may a127
+                    r127 |= a128;
+                } // end may a128
 
-                r126 = r126 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionArgument());
-                if (r126)
-                { // may a129
-                    bool a129 = false;
+                r127 = r127 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionArgument());
+                if (r127)
+                { // may a130
+                    bool a130 = false;
                     {
-                        Checkpoint(parser); // r130
+                        Checkpoint(parser); // r131
 
-                        bool r130 = true;
-                        if (r130)
-                        { // may a131
-                            bool a131 = false;
+                        bool r131 = true;
+                        if (r131)
+                        { // may a132
+                            bool a132 = false;
                             {
-                                Checkpoint(parser); // r132
+                                Checkpoint(parser); // r133
 
-                                bool r132 = true;
-                                r132 = r132 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r132, parser);
-                                a131 = r132;
+                                bool r133 = true;
+                                r133 = r133 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r133, parser);
+                                a132 = r133;
                             }
 
-                            r130 |= a131;
-                        } // end may a131
+                            r131 |= a132;
+                        } // end may a132
 
-                        r130 = r130 && Match(parser, new Jhu.Graywulf.Sql.Parsing.Comma());
-                        r130 = r130 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionArgumentList());
-                        CommitOrRollback(r130, parser);
-                        a129 = r130;
+                        r131 = r131 && Match(parser, new Jhu.Graywulf.Sql.Parsing.Comma());
+                        r131 = r131 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionArgumentList());
+                        CommitOrRollback(r131, parser);
+                        a130 = r131;
                     }
 
-                    r126 |= a129;
-                } // end may a129
+                    r127 |= a130;
+                } // end may a130
 
-                CommitOrRollback(r126, parser);
-                res = r126;
+                CommitOrRollback(r127, parser);
+                res = r127;
             }
 
 
@@ -1625,72 +1635,72 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r133
+                Checkpoint(parser); // r134
 
-                bool r133 = true;
-                r133 = r133 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchQueryExpression());
-                if (r133)
-                { // may a134
-                    bool a134 = false;
+                bool r134 = true;
+                r134 = r134 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchQueryExpression());
+                if (r134)
+                { // may a135
+                    bool a135 = false;
                     {
-                        Checkpoint(parser); // r135
+                        Checkpoint(parser); // r136
 
-                        bool r135 = true;
-                        if (r135)
-                        { // may a136
-                            bool a136 = false;
+                        bool r136 = true;
+                        if (r136)
+                        { // may a137
+                            bool a137 = false;
                             {
-                                Checkpoint(parser); // r137
+                                Checkpoint(parser); // r138
 
-                                bool r137 = true;
-                                r137 = r137 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r137, parser);
-                                a136 = r137;
+                                bool r138 = true;
+                                r138 = r138 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r138, parser);
+                                a137 = r138;
                             }
 
-                            r135 |= a136;
-                        } // end may a136
+                            r136 |= a137;
+                        } // end may a137
 
-                        r135 = r135 && Match(parser, new Jhu.Graywulf.Sql.Parsing.OrderByClause());
-                        CommitOrRollback(r135, parser);
-                        a134 = r135;
+                        r136 = r136 && Match(parser, new Jhu.Graywulf.Sql.Parsing.OrderByClause());
+                        CommitOrRollback(r136, parser);
+                        a135 = r136;
                     }
 
-                    r133 |= a134;
-                } // end may a134
+                    r134 |= a135;
+                } // end may a135
 
-                if (r133)
-                { // may a138
-                    bool a138 = false;
+                if (r134)
+                { // may a139
+                    bool a139 = false;
                     {
-                        Checkpoint(parser); // r139
+                        Checkpoint(parser); // r140
 
-                        bool r139 = true;
-                        if (r139)
-                        { // may a140
-                            bool a140 = false;
+                        bool r140 = true;
+                        if (r140)
+                        { // may a141
+                            bool a141 = false;
                             {
-                                Checkpoint(parser); // r141
+                                Checkpoint(parser); // r142
 
-                                bool r141 = true;
-                                r141 = r141 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r141, parser);
-                                a140 = r141;
+                                bool r142 = true;
+                                r142 = r142 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r142, parser);
+                                a141 = r142;
                             }
 
-                            r139 |= a140;
-                        } // end may a140
+                            r140 |= a141;
+                        } // end may a141
 
-                        r139 = r139 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryHintClause());
-                        CommitOrRollback(r139, parser);
-                        a138 = r139;
+                        r140 = r140 && Match(parser, new Jhu.Graywulf.Sql.Parsing.QueryHintClause());
+                        CommitOrRollback(r140, parser);
+                        a139 = r140;
                     }
 
-                    r133 |= a138;
-                } // end may a138
+                    r134 |= a139;
+                } // end may a139
 
-                CommitOrRollback(r133, parser);
-                res = r133;
+                CommitOrRollback(r134, parser);
+                res = r134;
             }
 
 
@@ -1726,12 +1736,12 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r142
+                Checkpoint(parser); // r143
 
-                bool r142 = true;
-                r142 = r142 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchQuerySpecification());
-                CommitOrRollback(r142, parser);
-                res = r142;
+                bool r143 = true;
+                r143 = r143 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchQuerySpecification());
+                CommitOrRollback(r143, parser);
+                res = r143;
             }
 
 
@@ -1767,134 +1777,134 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r143
+                Checkpoint(parser); // r144
 
-                bool r143 = true;
-                r143 = r143 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"SELECT"));
-                if (r143)
-                { // may a144
-                    bool a144 = false;
+                bool r144 = true;
+                r144 = r144 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"SELECT"));
+                if (r144)
+                { // may a145
+                    bool a145 = false;
                     {
-                        Checkpoint(parser); // r145
+                        Checkpoint(parser); // r146
 
-                        bool r145 = true;
-                        r145 = r145 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r145, parser);
-                        a144 = r145;
+                        bool r146 = true;
+                        r146 = r146 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r146, parser);
+                        a145 = r146;
                     }
 
-                    r143 |= a144;
-                } // end may a144
+                    r144 |= a145;
+                } // end may a145
 
-                r143 = r143 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SelectList());
-                if (r143)
-                { // may a146
-                    bool a146 = false;
+                r144 = r144 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SelectList());
+                if (r144)
+                { // may a147
+                    bool a147 = false;
                     {
-                        Checkpoint(parser); // r147
+                        Checkpoint(parser); // r148
 
-                        bool r147 = true;
-                        if (r147)
-                        { // may a148
-                            bool a148 = false;
+                        bool r148 = true;
+                        if (r148)
+                        { // may a149
+                            bool a149 = false;
                             {
-                                Checkpoint(parser); // r149
+                                Checkpoint(parser); // r150
 
-                                bool r149 = true;
-                                r149 = r149 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r149, parser);
-                                a148 = r149;
+                                bool r150 = true;
+                                r150 = r150 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r150, parser);
+                                a149 = r150;
                             }
 
-                            r147 |= a148;
-                        } // end may a148
+                            r148 |= a149;
+                        } // end may a149
 
-                        r147 = r147 && Match(parser, new Jhu.Graywulf.Sql.Parsing.IntoClause());
-                        CommitOrRollback(r147, parser);
-                        a146 = r147;
+                        r148 = r148 && Match(parser, new Jhu.Graywulf.Sql.Parsing.IntoClause());
+                        CommitOrRollback(r148, parser);
+                        a147 = r148;
                     }
 
-                    r143 |= a146;
-                } // end may a146
+                    r144 |= a147;
+                } // end may a147
 
-                if (r143)
-                { // may a150
-                    bool a150 = false;
+                if (r144)
+                { // may a151
+                    bool a151 = false;
                     {
-                        Checkpoint(parser); // r151
+                        Checkpoint(parser); // r152
 
-                        bool r151 = true;
-                        r151 = r151 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r151, parser);
-                        a150 = r151;
+                        bool r152 = true;
+                        r152 = r152 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r152, parser);
+                        a151 = r152;
                     }
 
-                    r143 |= a150;
-                } // end may a150
+                    r144 |= a151;
+                } // end may a151
 
-                r143 = r143 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchFromClause());
-                if (r143)
-                { // may a152
-                    bool a152 = false;
+                r144 = r144 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchFromClause());
+                if (r144)
+                { // may a153
+                    bool a153 = false;
                     {
-                        Checkpoint(parser); // r153
+                        Checkpoint(parser); // r154
 
-                        bool r153 = true;
-                        if (r153)
-                        { // may a154
-                            bool a154 = false;
+                        bool r154 = true;
+                        if (r154)
+                        { // may a155
+                            bool a155 = false;
                             {
-                                Checkpoint(parser); // r155
+                                Checkpoint(parser); // r156
 
-                                bool r155 = true;
-                                r155 = r155 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r155, parser);
-                                a154 = r155;
+                                bool r156 = true;
+                                r156 = r156 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r156, parser);
+                                a155 = r156;
                             }
 
-                            r153 |= a154;
-                        } // end may a154
+                            r154 |= a155;
+                        } // end may a155
 
-                        r153 = r153 && Match(parser, new Jhu.Graywulf.Sql.Parsing.WhereClause());
-                        CommitOrRollback(r153, parser);
-                        a152 = r153;
+                        r154 = r154 && Match(parser, new Jhu.Graywulf.Sql.Parsing.WhereClause());
+                        CommitOrRollback(r154, parser);
+                        a153 = r154;
                     }
 
-                    r143 |= a152;
-                } // end may a152
+                    r144 |= a153;
+                } // end may a153
 
-                if (r143)
-                { // may a156
-                    bool a156 = false;
+                if (r144)
+                { // may a157
+                    bool a157 = false;
                     {
-                        Checkpoint(parser); // r157
+                        Checkpoint(parser); // r158
 
-                        bool r157 = true;
-                        if (r157)
-                        { // may a158
-                            bool a158 = false;
+                        bool r158 = true;
+                        if (r158)
+                        { // may a159
+                            bool a159 = false;
                             {
-                                Checkpoint(parser); // r159
+                                Checkpoint(parser); // r160
 
-                                bool r159 = true;
-                                r159 = r159 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r159, parser);
-                                a158 = r159;
+                                bool r160 = true;
+                                r160 = r160 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r160, parser);
+                                a159 = r160;
                             }
 
-                            r157 |= a158;
-                        } // end may a158
+                            r158 |= a159;
+                        } // end may a159
 
-                        r157 = r157 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionClause());
-                        CommitOrRollback(r157, parser);
-                        a156 = r157;
+                        r158 = r158 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.RegionClause());
+                        CommitOrRollback(r158, parser);
+                        a157 = r158;
                     }
 
-                    r143 |= a156;
-                } // end may a156
+                    r144 |= a157;
+                } // end may a157
 
-                CommitOrRollback(r143, parser);
-                res = r143;
+                CommitOrRollback(r144, parser);
+                res = r144;
             }
 
 
@@ -1930,28 +1940,28 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r160
+                Checkpoint(parser); // r161
 
-                bool r160 = true;
-                r160 = r160 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"FROM"));
-                if (r160)
-                { // may a161
-                    bool a161 = false;
+                bool r161 = true;
+                r161 = r161 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"FROM"));
+                if (r161)
+                { // may a162
+                    bool a162 = false;
                     {
-                        Checkpoint(parser); // r162
+                        Checkpoint(parser); // r163
 
-                        bool r162 = true;
-                        r162 = r162 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r162, parser);
-                        a161 = r162;
+                        bool r163 = true;
+                        r163 = r163 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r163, parser);
+                        a162 = r163;
                     }
 
-                    r160 |= a161;
-                } // end may a161
+                    r161 |= a162;
+                } // end may a162
 
-                r160 = r160 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableSourceExpression());
-                CommitOrRollback(r160, parser);
-                res = r160;
+                r161 = r161 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableSourceExpression());
+                CommitOrRollback(r161, parser);
+                res = r161;
             }
 
 
@@ -1987,42 +1997,42 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r163
+                Checkpoint(parser); // r164
 
-                bool r163 = true;
-                r163 = r163 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableSourceSpecification());
-                if (r163)
-                { // may a164
-                    bool a164 = false;
+                bool r164 = true;
+                r164 = r164 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableSourceSpecification());
+                if (r164)
+                { // may a165
+                    bool a165 = false;
                     {
-                        Checkpoint(parser); // r165
+                        Checkpoint(parser); // r166
 
-                        bool r165 = true;
-                        if (r165)
-                        { // may a166
-                            bool a166 = false;
+                        bool r166 = true;
+                        if (r166)
+                        { // may a167
+                            bool a167 = false;
                             {
-                                Checkpoint(parser); // r167
+                                Checkpoint(parser); // r168
 
-                                bool r167 = true;
-                                r167 = r167 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r167, parser);
-                                a166 = r167;
+                                bool r168 = true;
+                                r168 = r168 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r168, parser);
+                                a167 = r168;
                             }
 
-                            r165 |= a166;
-                        } // end may a166
+                            r166 |= a167;
+                        } // end may a167
 
-                        r165 = r165 && Match(parser, new Jhu.Graywulf.Sql.Parsing.JoinedTable());
-                        CommitOrRollback(r165, parser);
-                        a164 = r165;
+                        r166 = r166 && Match(parser, new Jhu.Graywulf.Sql.Parsing.JoinedTable());
+                        CommitOrRollback(r166, parser);
+                        a165 = r166;
                     }
 
-                    r163 |= a164;
-                } // end may a164
+                    r164 |= a165;
+                } // end may a165
 
-                CommitOrRollback(r163, parser);
-                res = r163;
+                CommitOrRollback(r164, parser);
+                res = r164;
             }
 
 
@@ -2058,138 +2068,138 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r168
+                Checkpoint(parser); // r169
 
-                bool r168 = true;
-                r168 = r168 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"XMATCH"));
-                if (r168)
-                { // may a169
-                    bool a169 = false;
+                bool r169 = true;
+                r169 = r169 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"XMATCH"));
+                if (r169)
+                { // may a170
+                    bool a170 = false;
                     {
-                        Checkpoint(parser); // r170
+                        Checkpoint(parser); // r171
 
-                        bool r170 = true;
-                        r170 = r170 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r170, parser);
-                        a169 = r170;
+                        bool r171 = true;
+                        r171 = r171 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r171, parser);
+                        a170 = r171;
                     }
 
-                    r168 |= a169;
-                } // end may a169
+                    r169 |= a170;
+                } // end may a170
 
-                r168 = r168 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
-                if (r168)
-                { // may a171
-                    bool a171 = false;
+                r169 = r169 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketOpen());
+                if (r169)
+                { // may a172
+                    bool a172 = false;
                     {
-                        Checkpoint(parser); // r172
+                        Checkpoint(parser); // r173
 
-                        bool r172 = true;
-                        r172 = r172 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r172, parser);
-                        a171 = r172;
+                        bool r173 = true;
+                        r173 = r173 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r173, parser);
+                        a172 = r173;
                     }
 
-                    r168 |= a171;
-                } // end may a171
+                    r169 |= a172;
+                } // end may a172
 
-                r168 = r168 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableList());
-                if (r168)
-                { // may a173
-                    bool a173 = false;
+                r169 = r169 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableList());
+                if (r169)
+                { // may a174
+                    bool a174 = false;
                     {
-                        Checkpoint(parser); // r174
+                        Checkpoint(parser); // r175
 
-                        bool r174 = true;
-                        r174 = r174 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r174, parser);
-                        a173 = r174;
+                        bool r175 = true;
+                        r175 = r175 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r175, parser);
+                        a174 = r175;
                     }
 
-                    r168 |= a173;
-                } // end may a173
+                    r169 |= a174;
+                } // end may a174
 
-                r168 = r168 && Match(parser, new Jhu.Graywulf.Sql.Parsing.Comma());
-                if (r168)
-                { // may a175
-                    bool a175 = false;
+                r169 = r169 && Match(parser, new Jhu.Graywulf.Sql.Parsing.Comma());
+                if (r169)
+                { // may a176
+                    bool a176 = false;
                     {
-                        Checkpoint(parser); // r176
+                        Checkpoint(parser); // r177
 
-                        bool r176 = true;
-                        r176 = r176 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r176, parser);
-                        a175 = r176;
+                        bool r177 = true;
+                        r177 = r177 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r177, parser);
+                        a176 = r177;
                     }
 
-                    r168 |= a175;
-                } // end may a175
+                    r169 |= a176;
+                } // end may a176
 
-                r168 = r168 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchConstraint());
-                if (r168)
-                { // may a177
-                    bool a177 = false;
+                r169 = r169 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchConstraint());
+                if (r169)
+                { // may a178
+                    bool a178 = false;
                     {
-                        Checkpoint(parser); // r178
+                        Checkpoint(parser); // r179
 
-                        bool r178 = true;
-                        r178 = r178 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r178, parser);
-                        a177 = r178;
+                        bool r179 = true;
+                        r179 = r179 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r179, parser);
+                        a178 = r179;
                     }
 
-                    r168 |= a177;
-                } // end may a177
+                    r169 |= a178;
+                } // end may a178
 
-                r168 = r168 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
-                if (r168)
-                { // may a179
-                    bool a179 = false;
+                r169 = r169 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BracketClose());
+                if (r169)
+                { // may a180
+                    bool a180 = false;
                     {
-                        Checkpoint(parser); // r180
+                        Checkpoint(parser); // r181
 
-                        bool r180 = true;
-                        r180 = r180 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r180, parser);
-                        a179 = r180;
+                        bool r181 = true;
+                        r181 = r181 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r181, parser);
+                        a180 = r181;
                     }
 
-                    r168 |= a179;
-                } // end may a179
+                    r169 |= a180;
+                } // end may a180
 
-                if (r168)
-                { // may a181
-                    bool a181 = false;
+                if (r169)
+                { // may a182
+                    bool a182 = false;
                     {
-                        Checkpoint(parser); // r182
+                        Checkpoint(parser); // r183
 
-                        bool r182 = true;
-                        r182 = r182 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"AS"));
-                        if (r182)
-                        { // may a183
-                            bool a183 = false;
+                        bool r183 = true;
+                        r183 = r183 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"AS"));
+                        if (r183)
+                        { // may a184
+                            bool a184 = false;
                             {
-                                Checkpoint(parser); // r184
+                                Checkpoint(parser); // r185
 
-                                bool r184 = true;
-                                r184 = r184 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r184, parser);
-                                a183 = r184;
+                                bool r185 = true;
+                                r185 = r185 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r185, parser);
+                                a184 = r185;
                             }
 
-                            r182 |= a183;
-                        } // end may a183
+                            r183 |= a184;
+                        } // end may a184
 
-                        CommitOrRollback(r182, parser);
-                        a181 = r182;
+                        CommitOrRollback(r183, parser);
+                        a182 = r183;
                     }
 
-                    r168 |= a181;
-                } // end may a181
+                    r169 |= a182;
+                } // end may a182
 
-                r168 = r168 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TableAlias());
-                CommitOrRollback(r168, parser);
-                res = r168;
+                r169 = r169 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TableAlias());
+                CommitOrRollback(r169, parser);
+                res = r169;
             }
 
 
@@ -2225,58 +2235,58 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r185
+                Checkpoint(parser); // r186
 
-                bool r185 = true;
-                r185 = r185 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableSpecification());
-                if (r185)
-                { // may a186
-                    bool a186 = false;
+                bool r186 = true;
+                r186 = r186 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableSpecification());
+                if (r186)
+                { // may a187
+                    bool a187 = false;
                     {
-                        Checkpoint(parser); // r187
+                        Checkpoint(parser); // r188
 
-                        bool r187 = true;
-                        if (r187)
-                        { // may a188
-                            bool a188 = false;
+                        bool r188 = true;
+                        if (r188)
+                        { // may a189
+                            bool a189 = false;
                             {
-                                Checkpoint(parser); // r189
+                                Checkpoint(parser); // r190
 
-                                bool r189 = true;
-                                r189 = r189 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r189, parser);
-                                a188 = r189;
+                                bool r190 = true;
+                                r190 = r190 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r190, parser);
+                                a189 = r190;
                             }
 
-                            r187 |= a188;
-                        } // end may a188
+                            r188 |= a189;
+                        } // end may a189
 
-                        r187 = r187 && Match(parser, new Jhu.Graywulf.Sql.Parsing.Comma());
-                        if (r187)
-                        { // may a190
-                            bool a190 = false;
+                        r188 = r188 && Match(parser, new Jhu.Graywulf.Sql.Parsing.Comma());
+                        if (r188)
+                        { // may a191
+                            bool a191 = false;
                             {
-                                Checkpoint(parser); // r191
+                                Checkpoint(parser); // r192
 
-                                bool r191 = true;
-                                r191 = r191 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                                CommitOrRollback(r191, parser);
-                                a190 = r191;
+                                bool r192 = true;
+                                r192 = r192 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                                CommitOrRollback(r192, parser);
+                                a191 = r192;
                             }
 
-                            r187 |= a190;
-                        } // end may a190
+                            r188 |= a191;
+                        } // end may a191
 
-                        r187 = r187 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableList());
-                        CommitOrRollback(r187, parser);
-                        a186 = r187;
+                        r188 = r188 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableList());
+                        CommitOrRollback(r188, parser);
+                        a187 = r188;
                     }
 
-                    r185 |= a186;
-                } // end may a186
+                    r186 |= a187;
+                } // end may a187
 
-                CommitOrRollback(r185, parser);
-                res = r185;
+                CommitOrRollback(r186, parser);
+                res = r186;
             }
 
 
@@ -2312,14 +2322,14 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r192
+                Checkpoint(parser); // r193
 
-                bool r192 = true;
-                r192 = r192 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableInclusion());
-                r192 = r192 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r192 = r192 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SimpleTableSource());
-                CommitOrRollback(r192, parser);
-                res = r192;
+                bool r193 = true;
+                r193 = r193 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchTableInclusion());
+                r193 = r193 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                r193 = r193 && Match(parser, new Jhu.Graywulf.Sql.Parsing.SimpleTableSource());
+                CommitOrRollback(r193, parser);
+                res = r193;
             }
 
 
@@ -2355,66 +2365,66 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r193
+                Checkpoint(parser); // r194
 
-                bool r193 = true;
-                if (r193)
-                { // may a194
-                    bool a194 = false;
+                bool r194 = true;
+                if (r194)
+                { // may a195
+                    bool a195 = false;
                     {
-                        Checkpoint(parser); // r195
+                        Checkpoint(parser); // r196
 
-                        bool r195 = true;
-                        if (r195)
-                        { // alternatives a196 must
-                            bool a196 = false;
-                            if (!a196)
-                            {
-                                Checkpoint(parser); // r197
-
-                                bool r197 = true;
-                                r197 = r197 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"MUST"));
-                                CommitOrRollback(r197, parser);
-                                a196 = r197;
-                            }
-
-                            if (!a196)
+                        bool r196 = true;
+                        if (r196)
+                        { // alternatives a197 must
+                            bool a197 = false;
+                            if (!a197)
                             {
                                 Checkpoint(parser); // r198
 
                                 bool r198 = true;
-                                r198 = r198 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"MAY"));
+                                r198 = r198 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"MUST"));
                                 CommitOrRollback(r198, parser);
-                                a196 = r198;
+                                a197 = r198;
                             }
 
-                            if (!a196)
+                            if (!a197)
                             {
                                 Checkpoint(parser); // r199
 
                                 bool r199 = true;
-                                r199 = r199 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"NOT"));
+                                r199 = r199 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"MAY"));
                                 CommitOrRollback(r199, parser);
-                                a196 = r199;
+                                a197 = r199;
                             }
 
-                            r195 &= a196;
+                            if (!a197)
+                            {
+                                Checkpoint(parser); // r200
 
-                        } // end alternatives a196
+                                bool r200 = true;
+                                r200 = r200 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"NOT"));
+                                CommitOrRollback(r200, parser);
+                                a197 = r200;
+                            }
 
-                        r195 = r195 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r195, parser);
-                        a194 = r195;
+                            r196 &= a197;
+
+                        } // end alternatives a197
+
+                        r196 = r196 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                        CommitOrRollback(r196, parser);
+                        a195 = r196;
                     }
 
-                    r193 |= a194;
-                } // end may a194
+                    r194 |= a195;
+                } // end may a195
 
-                r193 = r193 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"EXIST"));
-                r193 = r193 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r193 = r193 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"IN"));
-                CommitOrRollback(r193, parser);
-                res = r193;
+                r194 = r194 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"EXIST"));
+                r194 = r194 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                r194 = r194 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"IN"));
+                CommitOrRollback(r194, parser);
+                res = r194;
             }
 
 
@@ -2450,44 +2460,44 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r200
+                Checkpoint(parser); // r201
 
-                bool r200 = true;
-                r200 = r200 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"LIMIT"));
-                r200 = r200 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r200 = r200 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchAlgorithm());
-                r200 = r200 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r200 = r200 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"TO"));
-                r200 = r200 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                if (r200)
-                { // alternatives a201 must
-                    bool a201 = false;
-                    if (!a201)
-                    {
-                        Checkpoint(parser); // r202
-
-                        bool r202 = true;
-                        r202 = r202 && Match(parser, new Jhu.Graywulf.Sql.Parsing.NumericConstant());
-                        CommitOrRollback(r202, parser);
-                        a201 = r202;
-                    }
-
-                    if (!a201)
+                bool r201 = true;
+                r201 = r201 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"LIMIT"));
+                r201 = r201 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                r201 = r201 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.XMatchAlgorithm());
+                r201 = r201 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                r201 = r201 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"TO"));
+                r201 = r201 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
+                if (r201)
+                { // alternatives a202 must
+                    bool a202 = false;
+                    if (!a202)
                     {
                         Checkpoint(parser); // r203
 
                         bool r203 = true;
-                        r203 = r203 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TableHint());
+                        r203 = r203 && Match(parser, new Jhu.Graywulf.Sql.Parsing.NumericConstant());
                         CommitOrRollback(r203, parser);
-                        a201 = r203;
+                        a202 = r203;
                     }
 
-                    r200 &= a201;
+                    if (!a202)
+                    {
+                        Checkpoint(parser); // r204
 
-                } // end alternatives a201
+                        bool r204 = true;
+                        r204 = r204 && Match(parser, new Jhu.Graywulf.Sql.Parsing.TableHint());
+                        CommitOrRollback(r204, parser);
+                        a202 = r204;
+                    }
 
-                CommitOrRollback(r200, parser);
-                res = r200;
+                    r201 &= a202;
+
+                } // end alternatives a202
+
+                CommitOrRollback(r201, parser);
+                res = r201;
             }
 
 
@@ -2523,441 +2533,38 @@ namespace Jhu.SkyQuery.Sql.Parsing
             bool res = true;
 
             {
-                Checkpoint(parser); // r204
+                Checkpoint(parser); // r205
 
-                bool r204 = true;
-                if (r204)
-                { // alternatives a205 must
-                    bool a205 = false;
-                    if (!a205)
-                    {
-                        Checkpoint(parser); // r206
-
-                        bool r206 = true;
-                        r206 = r206 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"BAYESFACTOR"));
-                        CommitOrRollback(r206, parser);
-                        a205 = r206;
-                    }
-
-                    if (!a205)
+                bool r205 = true;
+                if (r205)
+                { // alternatives a206 must
+                    bool a206 = false;
+                    if (!a206)
                     {
                         Checkpoint(parser); // r207
 
                         bool r207 = true;
-                        r207 = r207 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CONE"));
+                        r207 = r207 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"BAYESFACTOR"));
                         CommitOrRollback(r207, parser);
-                        a205 = r207;
+                        a206 = r207;
                     }
 
-                    r204 &= a205;
-
-                } // end alternatives a205
-
-                CommitOrRollback(r204, parser);
-                res = r204;
-            }
-
-
-
-            return res;
-        }
-    }
-
-    public partial class StatementBlock : Jhu.Graywulf.Sql.Parsing.StatementBlock, ICloneable
-    {
-        public StatementBlock()
-            :base()
-        {
-        }
-
-        public StatementBlock(params Jhu.Graywulf.Parsing.Token[] tokens)
-            :base(tokens)
-        {
-        }
-
-        public StatementBlock(Jhu.SkyQuery.Sql.Parsing.StatementBlock old)
-            :base(old)
-        {
-        }
-
-        public override object Clone()
-        {
-            return new Jhu.SkyQuery.Sql.Parsing.StatementBlock(this);
-        }
-
-        public override bool Match(Jhu.Graywulf.Parsing.Parser parser)
-        {
-            bool res = true;
-
-            {
-                Checkpoint(parser); // r208
-
-                bool r208 = true;
-                if (r208)
-                { // may a209
-                    bool a209 = false;
+                    if (!a206)
                     {
-                        Checkpoint(parser); // r210
+                        Checkpoint(parser); // r208
 
-                        bool r210 = true;
-                        r210 = r210 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r210, parser);
-                        a209 = r210;
+                        bool r208 = true;
+                        r208 = r208 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CONE"));
+                        CommitOrRollback(r208, parser);
+                        a206 = r208;
                     }
 
-                    r208 |= a209;
-                } // end may a209
+                    r205 &= a206;
 
-                if (r208)
-                { // may a211
-                    bool a211 = false;
-                    {
-                        Checkpoint(parser); // r212
+                } // end alternatives a206
 
-                        bool r212 = true;
-                        r212 = r212 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.Statement());
-                        CommitOrRollback(r212, parser);
-                        a211 = r212;
-                    }
-
-                    r208 |= a211;
-                } // end may a211
-
-                if (r208)
-                { // may a213
-                    bool a213 = false;
-                    {
-                        Checkpoint(parser); // r214
-
-                        bool r214 = true;
-                        r214 = r214 && Match(parser, new Jhu.Graywulf.Sql.Parsing.StatementSeparator());
-                        if (r214)
-                        { // may a215
-                            bool a215 = false;
-                            {
-                                Checkpoint(parser); // r216
-
-                                bool r216 = true;
-                                r216 = r216 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.StatementBlock());
-                                CommitOrRollback(r216, parser);
-                                a215 = r216;
-                            }
-
-                            r214 |= a215;
-                        } // end may a215
-
-                        CommitOrRollback(r214, parser);
-                        a213 = r214;
-                    }
-
-                    r208 |= a213;
-                } // end may a213
-
-                if (r208)
-                { // may a217
-                    bool a217 = false;
-                    {
-                        Checkpoint(parser); // r218
-
-                        bool r218 = true;
-                        r218 = r218 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r218, parser);
-                        a217 = r218;
-                    }
-
-                    r208 |= a217;
-                } // end may a217
-
-                CommitOrRollback(r208, parser);
-                res = r208;
-            }
-
-
-
-            return res;
-        }
-    }
-
-    public partial class BeginEndStatement : Jhu.Graywulf.Sql.Parsing.BeginEndStatement, ICloneable
-    {
-        public BeginEndStatement()
-            :base()
-        {
-        }
-
-        public BeginEndStatement(params Jhu.Graywulf.Parsing.Token[] tokens)
-            :base(tokens)
-        {
-        }
-
-        public BeginEndStatement(Jhu.SkyQuery.Sql.Parsing.BeginEndStatement old)
-            :base(old)
-        {
-        }
-
-        public override object Clone()
-        {
-            return new Jhu.SkyQuery.Sql.Parsing.BeginEndStatement(this);
-        }
-
-        public override bool Match(Jhu.Graywulf.Parsing.Parser parser)
-        {
-            bool res = true;
-
-            {
-                Checkpoint(parser); // r219
-
-                bool r219 = true;
-                r219 = r219 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"BEGIN"));
-                r219 = r219 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.StatementBlock());
-                r219 = r219 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"END"));
-                CommitOrRollback(r219, parser);
-                res = r219;
-            }
-
-
-
-            return res;
-        }
-    }
-
-    public partial class TryCatchStatement : Jhu.Graywulf.Sql.Parsing.TryCatchStatement, ICloneable
-    {
-        public TryCatchStatement()
-            :base()
-        {
-        }
-
-        public TryCatchStatement(params Jhu.Graywulf.Parsing.Token[] tokens)
-            :base(tokens)
-        {
-        }
-
-        public TryCatchStatement(Jhu.SkyQuery.Sql.Parsing.TryCatchStatement old)
-            :base(old)
-        {
-        }
-
-        public override object Clone()
-        {
-            return new Jhu.SkyQuery.Sql.Parsing.TryCatchStatement(this);
-        }
-
-        public override bool Match(Jhu.Graywulf.Parsing.Parser parser)
-        {
-            bool res = true;
-
-            {
-                Checkpoint(parser); // r220
-
-                bool r220 = true;
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"BEGIN"));
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"TRY"));
-                r220 = r220 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.StatementBlock());
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"END"));
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"TRY"));
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"BEGIN"));
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CATCH"));
-                if (r220)
-                { // alternatives a221 must
-                    bool a221 = false;
-                    if (!a221)
-                    {
-                        Checkpoint(parser); // r222
-
-                        bool r222 = true;
-                        r222 = r222 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.StatementBlock());
-                        CommitOrRollback(r222, parser);
-                        a221 = r222;
-                    }
-
-                    if (!a221)
-                    {
-                        Checkpoint(parser); // r223
-
-                        bool r223 = true;
-                        r223 = r223 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r223, parser);
-                        a221 = r223;
-                    }
-
-                    r220 &= a221;
-
-                } // end alternatives a221
-
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"END"));
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                r220 = r220 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"CATCH"));
-                CommitOrRollback(r220, parser);
-                res = r220;
-            }
-
-
-
-            return res;
-        }
-    }
-
-    public partial class WhileStatement : Jhu.Graywulf.Sql.Parsing.WhileStatement, ICloneable
-    {
-        public WhileStatement()
-            :base()
-        {
-        }
-
-        public WhileStatement(params Jhu.Graywulf.Parsing.Token[] tokens)
-            :base(tokens)
-        {
-        }
-
-        public WhileStatement(Jhu.SkyQuery.Sql.Parsing.WhileStatement old)
-            :base(old)
-        {
-        }
-
-        public override object Clone()
-        {
-            return new Jhu.SkyQuery.Sql.Parsing.WhileStatement(this);
-        }
-
-        public override bool Match(Jhu.Graywulf.Parsing.Parser parser)
-        {
-            bool res = true;
-
-            {
-                Checkpoint(parser); // r224
-
-                bool r224 = true;
-                r224 = r224 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"WHILE"));
-                if (r224)
-                { // may a225
-                    bool a225 = false;
-                    {
-                        Checkpoint(parser); // r226
-
-                        bool r226 = true;
-                        r226 = r226 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r226, parser);
-                        a225 = r226;
-                    }
-
-                    r224 |= a225;
-                } // end may a225
-
-                r224 = r224 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BooleanExpression());
-                if (r224)
-                { // may a227
-                    bool a227 = false;
-                    {
-                        Checkpoint(parser); // r228
-
-                        bool r228 = true;
-                        r228 = r228 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r228, parser);
-                        a227 = r228;
-                    }
-
-                    r224 |= a227;
-                } // end may a227
-
-                r224 = r224 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.Statement());
-                CommitOrRollback(r224, parser);
-                res = r224;
-            }
-
-
-
-            return res;
-        }
-    }
-
-    public partial class IfStatement : Jhu.Graywulf.Sql.Parsing.IfStatement, ICloneable
-    {
-        public IfStatement()
-            :base()
-        {
-        }
-
-        public IfStatement(params Jhu.Graywulf.Parsing.Token[] tokens)
-            :base(tokens)
-        {
-        }
-
-        public IfStatement(Jhu.SkyQuery.Sql.Parsing.IfStatement old)
-            :base(old)
-        {
-        }
-
-        public override object Clone()
-        {
-            return new Jhu.SkyQuery.Sql.Parsing.IfStatement(this);
-        }
-
-        public override bool Match(Jhu.Graywulf.Parsing.Parser parser)
-        {
-            bool res = true;
-
-            {
-                Checkpoint(parser); // r229
-
-                bool r229 = true;
-                r229 = r229 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"IF"));
-                if (r229)
-                { // may a230
-                    bool a230 = false;
-                    {
-                        Checkpoint(parser); // r231
-
-                        bool r231 = true;
-                        r231 = r231 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r231, parser);
-                        a230 = r231;
-                    }
-
-                    r229 |= a230;
-                } // end may a230
-
-                r229 = r229 && Match(parser, new Jhu.Graywulf.Sql.Parsing.BooleanExpression());
-                if (r229)
-                { // may a232
-                    bool a232 = false;
-                    {
-                        Checkpoint(parser); // r233
-
-                        bool r233 = true;
-                        r233 = r233 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        CommitOrRollback(r233, parser);
-                        a232 = r233;
-                    }
-
-                    r229 |= a232;
-                } // end may a232
-
-                r229 = r229 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.Statement());
-                if (r229)
-                { // may a234
-                    bool a234 = false;
-                    {
-                        Checkpoint(parser); // r235
-
-                        bool r235 = true;
-                        r235 = r235 && Match(parser, new Jhu.Graywulf.Sql.Parsing.StatementSeparator());
-                        r235 = r235 && Match(parser, new Jhu.Graywulf.Parsing.Literal(@"ELSE"));
-                        r235 = r235 && Match(parser, new Jhu.Graywulf.Sql.Parsing.CommentOrWhitespace());
-                        r235 = r235 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.Statement());
-                        CommitOrRollback(r235, parser);
-                        a234 = r235;
-                    }
-
-                    r229 |= a234;
-                } // end may a234
-
-                CommitOrRollback(r229, parser);
-                res = r229;
+                CommitOrRollback(r205, parser);
+                res = r205;
             }
 
 
