@@ -378,7 +378,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             var table = Query.XMatchTables[step.XMatchTable];
@@ -412,7 +412,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             var table = Query.XMatchTables[step.XMatchTable];
@@ -470,7 +470,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             // Generate augmented query for select
@@ -542,7 +542,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             var pstep = Partition.Steps[step.StepNumber - 1];
@@ -623,7 +623,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             // Table 1 is, with the exception of the very first step, the match table of a previous xmatch step.
@@ -823,7 +823,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             var indexname = String.Format("[PK_{0}_{1}]", matchtable.SchemaName, matchtable.TableName);
@@ -908,7 +908,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             var pstep = Partition.Steps[step.StepNumber - 1];
@@ -1015,7 +1015,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             // The zone index has to contain the primary key columns of all previously

@@ -113,7 +113,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings();
-                AddSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
+                AddRemoteSourceTableMappings(Partition.Parameters.SourceDatabaseVersionName, null);
             }
 
             var options = new AugmentedTableQueryOptions(step, table.TableSource, region)

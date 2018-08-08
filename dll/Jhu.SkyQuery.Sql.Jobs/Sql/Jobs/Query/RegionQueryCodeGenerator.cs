@@ -342,7 +342,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
             if (queryObject.Parameters.ExecutionMode == ExecutionMode.Graywulf)
             {
                 AddSystemDatabaseMappings(tableSource);
-                AddSourceTableMappings(queryObject.Parameters.StatDatabaseVersionName, queryObject.Parameters.SourceDatabaseVersionName);
+                AddRemoteSourceTableMappings(queryObject.Parameters.StatDatabaseVersionName, queryObject.Parameters.SourceDatabaseVersionName);
                 AddOutputTableMappings();
             }
 
