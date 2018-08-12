@@ -9,7 +9,7 @@ using Jhu.Graywulf.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
-    public class SkyQueryValidator : SqlValidator
+    public class SkyQueryValidator : Jhu.Graywulf.Sql.Extensions.Validation.GraywulfSqlValidator
     {
         #region Constructors and initializers
 
@@ -24,7 +24,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         #endregion
         
-        protected override void OnValidateStatement(IStatement statement)
+        protected override void OnValidateStatement(Statement statement)
         {
             // and make sure xmatch queries are single-statement scripts
 
@@ -63,6 +63,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         private void ValidateXMatchQuery(XMatchSelectStatement selectStatement, int depth)
         {
+            throw new NotImplementedException();
+
+            /*
             int qsi = 0;    // counts query specifications
             int xmi = 0;    // counts xmatch constructs
             foreach (var qs in selectStatement.QueryExpression.EnumerateQuerySpecifications())
@@ -80,8 +83,10 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
                 qsi++;
             }
+            */
         }
 
+#if false
         private void ValidateSourceTable(ITableSource ts, ref int xmi, int depth)
         {
             if (ts is XMatchTableSourceSpecification)
@@ -126,5 +131,6 @@ namespace Jhu.SkyQuery.Sql.Parsing
                 }
             }
         }
+#endif
     }
 }

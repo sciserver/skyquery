@@ -3,6 +3,8 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Jhu.Graywulf.Sql.Parsing;
+using Jhu.Graywulf.Sql.Extensions.Parsing;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
@@ -10,7 +12,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
     /// Summary description for UnitTest1
     /// </summary>
     [TestClass]
-    public class SkyQueryParserTest : SkyQueryParserTestBase
+    public class SkyQueryParserTest : SkyQueryTestBase
     {
         
         [TestMethod]
@@ -23,22 +25,14 @@ namespace Jhu.SkyQuery.Sql.Parsing
             Assert.IsNull(qs.FindDescendant<XMatchQuerySpecification>());
         }
 
-        
-
         [TestMethod]
         public void TableValuedFunctionTest()
         {
-            var sql = @"
-SELECT htm.htmidstart, htm.htmidend
+            var sql = 
+@"SELECT htm.htmidstart, htm.htmidend
 INTO SqlQueryTest_TableValuedFunctionJoinTest
-FROM dbo.fHtmCoverCircleEq(100) AS htm
-";
-
-            var qs = Parse(sql);
-
-            var ts = qs.EnumerateSourceTables(false).Cast<Jhu.Graywulf.Sql.Parsing.FunctionTableSource>().ToArray();
-
-            Assert.AreEqual(1, ts.Length);
+FROM dbo.fHtmCoverCircleEq(100) AS htm";
+            var qs = Parse<QuerySpecification>(sql);
         }
 
         [TestMethod]
@@ -51,11 +45,7 @@ FROM dbo.fHtmCoverCircleEq (0, 0, 10) AS htm
 INNER JOIN SDSSDR7:PhotoObj p
     ON p.htmid BETWEEN htm.htmidstart AND htm.htmidend";
 
-            var qs = Parse(sql);
-
-            var ts = qs.EnumerateSourceTables(false).ToArray();
-
-            Assert.AreEqual(2, ts.Length);
+            var qs = Parse<QuerySpecification>(sql);
         }
 
         [TestMethod]
@@ -70,10 +60,7 @@ FROM XMATCH
       LIMIT BAYESFACTOR TO 1e3) x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
 
-            var qs = Parse(sql);
-
-            var ts = qs.EnumerateSourceTables(false).ToArray();
-            Assert.AreEqual(3, ts.Length);
+            var qs = Parse<XMatchQuerySpecification>(sql);
         }
 
         [TestMethod]
@@ -84,10 +71,7 @@ WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
 INTO PartitionedSqlQueryTest_SimpleQueryTest
 FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid";
 
-            var qs = Parse(sql);
-
-            var ts = qs.EnumerateSourceTables(false).ToArray();
-            Assert.AreEqual(1, ts.Length);
+            var qs = Parse<PartitionedQuerySpecification>(sql);
         }
 
         [TestMethod]
@@ -99,9 +83,6 @@ INTO PartitionedSqlQueryTest_SimpleQueryTest
 FROM SDSSDR7:PhotoObjAll a
 REGION CIRCLE(20, 30, 10)";
             var qs = Parse(sql);
-
-            Assert.IsTrue(qs.FindAscendant<XMatchSelectStatement>() == null);
-            Assert.IsTrue(qs.FindAscendant<RegionSelectStatement>() != null);
         }
     }
 }

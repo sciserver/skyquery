@@ -27,7 +27,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             ((IColumns)this.DatabaseObject).Columns.TryAdd(col.Name, col);
 
             ColumnReference cr = new ColumnReference(null, this, name, new DataTypeReference(type));
-            this.ColumnReferences.Add(cr);
+            this.ColumnReferences.Add(cr.ColumnName, cr);
 
             return col;
         }

@@ -27,14 +27,14 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         private SimpleTableSource table;
 
-        private TableHint pointHint;
-        private Expression[] pointHintArguments;
-        private TableHint htmIdHint;
-        private Expression[] htmIdHintArguments;
-        private TableHint zoneIdHint;
-        private Expression[] zoneIdHintArguments;
-        private TableHint errorHint;
-        private Expression[] errorHintArguments;
+        private Jhu.Graywulf.Sql.Parsing.TableHint pointHint;
+        private Jhu.Graywulf.Sql.Parsing.Expression[] pointHintArguments;
+        private Jhu.Graywulf.Sql.Parsing.TableHint htmIdHint;
+        private Jhu.Graywulf.Sql.Parsing.Expression[] htmIdHintArguments;
+        private Jhu.Graywulf.Sql.Parsing.TableHint zoneIdHint;
+        private Jhu.Graywulf.Sql.Parsing.Expression[] zoneIdHintArguments;
+        private Jhu.Graywulf.Sql.Parsing.TableHint errorHint;
+        private Jhu.Graywulf.Sql.Parsing.Expression[] errorHintArguments;
 
         private bool isEqSpecified;
         private bool isCartesianSpecified;
@@ -94,7 +94,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression RAColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression RAColumnExpression
         {
             get
             {
@@ -102,7 +102,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression DecColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression DecColumnExpression
         {
             get
             {
@@ -110,7 +110,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression XColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression XColumnExpression
         {
             get
             {
@@ -118,7 +118,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression YColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression YColumnExpression
         {
             get
             {
@@ -126,7 +126,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression ZColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ZColumnExpression
         {
             get
             {
@@ -142,7 +142,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             get { return isEqSpecified; }
         }
 
-        public Expression RAHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression RAHintExpression
         {
             get
             {
@@ -150,7 +150,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression DecHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression DecHintExpression
         {
             get
             {
@@ -163,7 +163,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             get { return isCartesianSpecified; }
         }
 
-        public Expression XHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression XHintExpression
         {
             get
             {
@@ -171,7 +171,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression YHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression YHintExpression
         {
             get
             {
@@ -179,7 +179,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression ZHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ZHintExpression
         {
             get
             {
@@ -201,7 +201,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression HtmIdColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression HtmIdColumnExpression
         {
             get
             {
@@ -214,7 +214,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             get { return isHtmIdSpecified; }
         }
 
-        public Expression HtmIdHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression HtmIdHintExpression
         {
             get
             {
@@ -236,7 +236,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression ZoneIdColumnExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ZoneIdColumnExpression
         {
             get
             {
@@ -249,7 +249,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             get { return isZoneIdSpecified; }
         }
 
-        public Expression ZoneIdHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ZoneIdHintExpression
         {
             get
             {
@@ -279,7 +279,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             get { return isErrorLimitsSpecified; }
         }
 
-        public Expression ErrorHintExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ErrorHintExpression
         {
             get
             {
@@ -287,7 +287,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression ErrorHintMinExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ErrorHintMinExpression
         {
             get
             {
@@ -295,7 +295,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public Expression ErrorHintMaxExpression
+        public Jhu.Graywulf.Sql.Parsing.Expression ErrorHintMaxExpression
         {
             get
             {
@@ -351,18 +351,18 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
                 foreach (var hint in hintlist.EnumerateDescendantsRecursive<TableHint>())
                 {
-                    switch (hint.Identifier.Value.ToUpperInvariant())
+                    switch (hint.HintName.Value.ToUpperInvariant())
                     {
-                        case Constants.PointHintIdentifier:
+                        case Constants.PointHintName:
                             InterpretPointHint(hint);
                             break;
-                        case Constants.HtmIdHintIdentifier:
+                        case Constants.HtmIdHintName:
                             InterpretHtmIdHint(hint);
                             break;
-                        case Constants.ZoneIdHintIdentifier:
+                        case Constants.ZoneIdHintName:
                             InterpretZoneIdHint(hint);
                             break;
-                        case Constants.ErrorHintIdentifier:
+                        case Constants.ErrorHintName:
                             InterpretErrorHint(hint);
                             break;
                         default:
@@ -414,11 +414,6 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
 
             isHtmIdSpecified = true;
-
-            if (!htmIdHintArguments[0].IsSingleColumn)
-            {
-                throw CreateException(ExceptionMessages.HtmIdIsNotSingleColumn);
-            }
         }
 
         private void InterpretZoneIdHint(TableHint hint)
@@ -432,11 +427,6 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
 
             isZoneIdSpecified = true;
-
-            if (!ZoneIdHintExpression.IsSingleColumn)
-            {
-                throw CreateException(ExceptionMessages.ZoneIdIsNotSingleColumn);
-            }
         }
 
         private void InterpretErrorHint(TableHint hint)
@@ -462,12 +452,16 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         #endregion
 
-        private Expression CreateColumnExpression(string column)
+        private Jhu.Graywulf.Sql.Parsing.Expression CreateColumnExpression(string column)
         {
+            throw new NotImplementedException();
+
             var c = table.TableReference.TableOrView.Columns[column];
             var tr = table.TableReference;
             var cr = new ColumnReference(c, tr, new DataTypeReference(c.DataType));
-            return Expression.Create(cr);
+
+            // Review how many identifier parts are generated here
+            return Expression.Create(cr, 3);
         }
 
         private ValidatorException CreateException(string message)

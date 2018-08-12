@@ -8,7 +8,7 @@ using Jhu.Graywulf.Sql.NameResolution;
 namespace Jhu.SkyQuery.Sql.Parsing
 {
 
-    public partial class XMatchTableSourceSpecification : ITableReference, ITableSource
+    public partial class XMatchTableSource : ITableReference
     {
         private TableReference tableReference;
         private string uniqueKey;
@@ -19,23 +19,18 @@ namespace Jhu.SkyQuery.Sql.Parsing
             set { tableReference = value; }
         }
 
-        public string UniqueKey
+        public override string UniqueKey
         {
             get { return uniqueKey; }
             set { uniqueKey = value; }
         }
-
-        public override ITableSource SpecificTableSource
-        {
-            get { return this; }
-        }
-
-        public bool IsSubquery
+        
+        public override bool IsSubquery
         {
             get { return false; }
         }
 
-        public bool IsMultiTable
+        public override bool IsMultiTable
         {
             get { return true; }
         }
@@ -61,18 +56,20 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
             base.OnCopyMembers(other);
 
-            var old = (XMatchTableSourceSpecification)other;
+            var old = (XMatchTableSource)other;
 
             if (old != null)
             {
                 this.tableReference = old.tableReference;
             }
         }
-        
+
+#if false
         public IEnumerable<XMatchTableSpecification> EnumerateXMatchTableSpecifications()
         {
             return this.FindDescendant<XMatchTableList>().EnumerateDescendants<XMatchTableSpecification>();
         }
+
 
         public IEnumerable<ITableSource> EnumerateSubqueryTableSources(bool recursive)
         {
@@ -86,5 +83,6 @@ namespace Jhu.SkyQuery.Sql.Parsing
                 yield return xts.TableSource;
             }
         }
+#endif
     }
 }

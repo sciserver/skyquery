@@ -12,4 +12,12 @@ namespace Jhu.SkyQuery.Sql.Parsing
         May = 1,
         Drop = 2,
     }
+
+    public enum RegionOperatorType
+    {
+        Not,
+        Union,
+        Intersect,
+        Except
+    }
 }

@@ -5,27 +5,27 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
-    public class ConeXMatchTableSourceSpecification : XMatchTableSourceSpecification
+    public class ConeXMatchTableSource : XMatchTableSource
     {
         #region Constructors and initialiters
 
-        public ConeXMatchTableSourceSpecification()
+        public ConeXMatchTableSource()
         {
         }
 
-        public ConeXMatchTableSourceSpecification(XMatchTableSourceSpecification old)
+        public ConeXMatchTableSource(XMatchTableSourceSpecification old)
             :base(old)
         {
         }
 
-        public ConeXMatchTableSourceSpecification(ConeXMatchTableSourceSpecification old)
+        public ConeXMatchTableSource(ConeXMatchTableSource old)
             : base(old)
         {
         }
 
         public override object Clone()
         {
-            return new ConeXMatchTableSourceSpecification(this);
+            return new ConeXMatchTableSource(this);
         }
 
         #endregion

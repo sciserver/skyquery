@@ -26,10 +26,16 @@ namespace Jhu.SkyQuery.Sql.Parsing
             var select = statement.FindDescendant<XMatchSelectStatement>();
             var qs = select.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
 
-            var nr = new SkyQueryNameResolver();
-            nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
-            nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
-            nr.DefaultDataTypeDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
+            var nr = new SkyQueryNameResolver()
+            {
+                Options = new Graywulf.Sql.Extensions.NameResolution.GraywulfSqlNameResolverOptions()
+                {
+                    DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName,
+                    DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName,
+                    DefaultDataTypeDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName,
+                    DefaultOutputDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName,
+                }
+            };
             nr.SchemaManager = CreateSchemaManager();
             var q = nr.Execute(script);
 

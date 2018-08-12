@@ -5,27 +5,27 @@ using System.Text;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
-    public class BayesFactorXMatchTableSourceSpecification : XMatchTableSourceSpecification
+    public class BayesFactorXMatchTableSource : XMatchTableSource
     {
         #region Constructors and initialiters
 
-        public BayesFactorXMatchTableSourceSpecification()
+        public BayesFactorXMatchTableSource()
         {
         }
 
-        public BayesFactorXMatchTableSourceSpecification(XMatchTableSourceSpecification old)
+        public BayesFactorXMatchTableSource(XMatchTableSourceSpecification old)
             :base(old)
         {
         }
 
-        public BayesFactorXMatchTableSourceSpecification(BayesFactorXMatchTableSourceSpecification old)
+        public BayesFactorXMatchTableSource(BayesFactorXMatchTableSource old)
             : base(old)
         {
         }
 
         public override object Clone()
         {
-            return new BayesFactorXMatchTableSourceSpecification(this);
+            return new BayesFactorXMatchTableSource(this);
         }
 
         #endregion

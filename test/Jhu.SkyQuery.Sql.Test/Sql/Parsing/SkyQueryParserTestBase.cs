@@ -8,7 +8,7 @@ using Jhu.Graywulf.Sql.Schema.SqlServer;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
-    public abstract class SkyQueryParserTestBase
+    public abstract class SkyQueryParserTestBase : SkyQueryTestBase
     {
         protected SqlServerDataset CodeDataset
         {
@@ -39,19 +39,20 @@ namespace Jhu.SkyQuery.Sql.Parsing
             return qs;
         }
 
-        protected Jhu.Graywulf.Sql.QueryGeneration.SqlServer.SqlServerQueryGenerator CodeGenerator
+        protected Jhu.Graywulf.Sql.QueryRendering.SqlServer.SqlServerQueryRenderer QueryRenderer
         {
             get
             {
-                return new Jhu.Graywulf.Sql.QueryGeneration.SqlServer.SqlServerQueryGenerator()
+                return new Jhu.Graywulf.Sql.QueryRendering.SqlServer.SqlServerQueryRenderer()
                 {
-                    //ResolveNames = true
-                    // TODO: use *Rendering properties
-                    TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                    TableAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Default,
-                    ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                    ColumnAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Default,
-                    DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                    Options = new Graywulf.Sql.QueryRendering.QueryRendererOptions()
+                    {
+                        TableNameRendering = Graywulf.Sql.QueryRendering.NameRendering.FullyQualified,
+                        TableAliasRendering = Graywulf.Sql.QueryRendering.AliasRendering.Default,
+                        ColumnNameRendering = Graywulf.Sql.QueryRendering.NameRendering.FullyQualified,
+                        ColumnAliasRendering = Graywulf.Sql.QueryRendering.AliasRendering.Default,
+                        DataTypeNameRendering = Graywulf.Sql.QueryRendering.NameRendering.FullyQualified,
+                    }
                 };
             }
         }
