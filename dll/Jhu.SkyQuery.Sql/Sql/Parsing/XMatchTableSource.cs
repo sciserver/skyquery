@@ -34,15 +34,15 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
             get { return true; }
         }
-
-        public string Algorithm
-        {
-            get { return FindDescendantRecursive<XMatchAlgorithm>().Value; }
-        }
         
         public string Alias
         {
             get { return FindDescendant<TableAlias>().Value; }
+        }
+
+        public XMatchConstraint Constraint
+        {
+            get { return FindDescendant<XMatchConstraint>(); }
         }
 
         protected override void OnInitializeMembers()
@@ -64,25 +64,21 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-#if false
-        public IEnumerable<XMatchTableSpecification> EnumerateXMatchTableSpecifications()
+        public override void Interpret()
         {
-            return this.FindDescendant<XMatchTableList>().EnumerateDescendants<XMatchTableSpecification>();
-        }
+            base.Interpret();
 
-
-        public IEnumerable<ITableSource> EnumerateSubqueryTableSources(bool recursive)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<ITableSource> EnumerateMultiTableSources()
-        {
-            foreach (var xts in EnumerateDescendantsRecursive<XMatchTableSpecification>())
+            switch (Constraint.Algorithm)
             {
-                yield return xts.TableSource;
+                case Constants.AlgorithmBayesFactor:
+                    ReplaceWith(new BayesFactorXMatchTableSource(this));
+                    break;
+                case Constants.AlgorithmCone:
+                    ReplaceWith(new ConeXMatchTableSource(this));
+                    break;
+                case Constants.AlgorithmChi2:
+                    throw new NotImplementedException();
             }
         }
-#endif
     }
 }

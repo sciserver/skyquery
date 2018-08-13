@@ -13,6 +13,18 @@ namespace Jhu.SkyQuery.Sql.NameResolution
     [TestClass]
     public class CoordinateHintTest : SkyQueryTestBase
     {
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            StartLogger();
+        }
+
+        [ClassCleanup]
+        public static void CleanUp()
+        {
+            StopLogger();
+        }
+
         [TestMethod]
         public void SimpleCoordinateHintTest()
         {
@@ -66,11 +78,11 @@ FROM
 @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
 FROM 
     XMATCH
-        (MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1), HTMID(c1.htmID)),
-         MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5), HTMID(c2.htmID)),
+        (MUST EXIST IN SDSSDR7:PhotoObj AS c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1), HTMID(c1.htmID)),
+         MUST EXIST IN TwoMASS:PhotoPSC AS c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err_ang, 0.1, 0.5), HTMID(c2.htmID)),
          LIMIT BAYESFACTOR TO 1000) AS x";
 
-            var qs = Parse(sql).FindDescendantRecursive<XMatchQuerySpecification>();
+            var qs = ParseAndResolveNames<XMatchQuerySpecification>(sql);
 
             var ts = qs.SourceTableReferences.Values.ToArray();
 

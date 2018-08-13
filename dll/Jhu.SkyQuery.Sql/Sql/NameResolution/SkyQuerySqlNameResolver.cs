@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Sql.QueryTraversal;
 using Jhu.SkyQuery.Sql.QueryTraversal;
+using Jhu.SkyQuery.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Sql.NameResolution
 {
@@ -57,6 +59,22 @@ namespace Jhu.SkyQuery.Sql.NameResolution
         }
 
         #endregion
+        #region Visitor dispatch functions
+
+        protected override void AcceptVisitor(SqlQueryVisitor visitor, Token node)
+        {
+            Accept((dynamic)node);
+        }
+
+        #endregion
+        #region XMatch table source
+
+        protected virtual void Accept(XMatchTableSource node)
+        {
+            //node.TableReference = //
+        }
+
+        #endregion
         #region Reference resolution
 
         protected override bool IsSystemFunctionName(string name)
@@ -66,7 +84,7 @@ namespace Jhu.SkyQuery.Sql.NameResolution
 
         protected override bool IsSystemVariableName(string name)
         {
-            return base.IsSystemVariableName(name) || Constants.SkyQuerySystemFunctionNames.Contains(name);
+            return base.IsSystemVariableName(name) || Constants.SkyQuerySystemVariableNames.Contains(name);
         }
 
         #endregion

@@ -12,5 +12,9 @@ namespace Jhu.SkyQuery.Sql.NameResolution
         {
             "POINT"
         };
+
+        public static readonly HashSet<string> SkyQuerySystemVariableNames = new HashSet<string>(Jhu.Graywulf.Sql.Schema.SchemaManager.Comparer)
+        {
+        };
     }
 }

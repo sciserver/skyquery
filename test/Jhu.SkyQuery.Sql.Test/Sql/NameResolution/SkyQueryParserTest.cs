@@ -36,34 +36,58 @@ namespace Jhu.SkyQuery.Sql.NameResolution
         }
 
         [TestMethod]
-        public void TableValuedFunctionTest()
+        public void PartitionedQueryTest()
         {
-            var sql = 
-@"SELECT htm.htmidstart, htm.htmidend
-INTO SqlQueryTest_TableValuedFunctionJoinTest
-FROM dbo.fHtmCoverCircleEq(100) AS htm";
+            var sql =
+        @"SELECT TOP 100 a.objid, a.ra, a.dec
+INTO PartitionedSqlQueryTest_SimpleQueryTest
+FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid";
 
-            var qs = Parse<Jhu.Graywulf.Sql.Parsing.QuerySpecification>(sql);
-
-            var ts = qs.SourceTableReferences.Values.Cast<Jhu.Graywulf.Sql.Parsing.FunctionTableSource>().ToArray();
-
-            Assert.AreEqual(1, ts.Length);
+            var qs = ParseAndResolveNames(sql);
         }
 
         [TestMethod]
-        public void JoinedTableValuedFunctionTest()
+        public void RegionQueryTest()
         {
             var sql =
-@"SELECT TOP 100 objid, ra, dec
-INTO SqlQueryTest_TableValuedFunctionJoinTest
-FROM dbo.fHtmCoverCircleEq (0, 0, 10) AS htm
-INNER JOIN SDSSDR7:PhotoObj p
-    ON p.htmid BETWEEN htm.htmidstart AND htm.htmidend";
+        @"SELECT TOP 100 a.objid, a.ra, a.dec
+INTO PartitionedSqlQueryTest_SimpleQueryTest
+FROM SDSSDR7:PhotoObjAll a
+REGION CIRCLE(20, 30, 10)";
 
-            var qs = ParseAndResolveNames<Jhu.Graywulf.Sql.Parsing.QuerySpecification>(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
+            var qs = ParseAndResolveNames(sql);
+        }
 
-            Assert.AreEqual(2, ts.Length);
+        [TestMethod]
+        public void ConeXMatchTest()
+        {
+            var sql =
+@"SELECT x.ra, x.dec, s.ra, s.dec, t.ra, t.dec
+FROM x AS XMATCH
+(
+    MUST EXIST IN SDSSDR7:SpecObj AS s,
+    MUST EXIST IN TwoMASS:PhotoPSC AS t,
+    LIMIT CONE TO CIRCLE(s.RA, s.Dec, 2)
+)";
+
+            var qs = ParseAndResolveNames(sql);
+            Assert.IsNotNull(qs.ParsingTree.FindDescendantRecursive<ConeXMatchTableSource>());
+        }
+
+        [TestMethod]
+        public void BayesFactorXMatchTest()
+        {
+            var sql =
+@"SELECT x.ra, x.dec, s.ra, s.dec, t.ra, t.dec
+FROM x AS XMATCH
+(
+    MUST EXIST IN SDSSDR7:SpecObj AS s,
+    MUST EXIST IN TwoMASS:PhotoPSC AS t,
+    LIMIT BAYESFACTOR TO 1e3
+)";
+
+            var qs = ParseAndResolveNames(sql);
+            Assert.IsNotNull(qs.ParsingTree.FindDescendantRecursive<BayesFactorXMatchTableSource>());
         }
 
         [TestMethod]
@@ -78,36 +102,7 @@ FROM XMATCH
       LIMIT BAYESFACTOR TO 1e3) x
 WHERE s.ra BETWEEN 0 AND 0.5 AND s.dec BETWEEN 0 AND 0.5";
 
-            var qs = ParseAndResolveNames<XMatchQuerySpecification>(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
-            Assert.AreEqual(3, ts.Length);
-        }
-
-        [TestMethod]
-        public void PartitionedQueryTest()
-        {
-            var sql =
-        @"SELECT TOP 100 a.objid, a.ra, a.dec
-INTO PartitionedSqlQueryTest_SimpleQueryTest
-FROM SDSSDR7:PhotoObjAll a PARTITION BY a.objid";
-
-            var qs = ParseAndResolveNames<Jhu.Graywulf.Sql.Parsing.QuerySpecification>(sql);
-            var ts = qs.SourceTableReferences.Values.ToArray();
-            Assert.AreEqual(1, ts.Length);
-        }
-
-        [TestMethod]
-        public void RegionQueryTest()
-        {
-            var sql =
-        @"SELECT TOP 100 a.objid, a.ra, a.dec
-INTO PartitionedSqlQueryTest_SimpleQueryTest
-FROM SDSSDR7:PhotoObjAll a
-REGION CIRCLE(20, 30, 10)";
-            var qs = Parse(sql);
-
-            Assert.IsTrue(qs.FindAscendant<XMatchSelectStatement>() == null);
-            //Assert.IsTrue(qs.FindAscendant<RegionSelectStatement>() != null);
+            var qs = ParseAndResolveNames(sql);
         }
     }
 }

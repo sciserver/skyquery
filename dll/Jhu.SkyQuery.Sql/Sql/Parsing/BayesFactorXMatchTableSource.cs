@@ -13,7 +13,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
         }
 
-        public BayesFactorXMatchTableSource(XMatchTableSourceSpecification old)
+        public BayesFactorXMatchTableSource(XMatchTableSource old)
             :base(old)
         {
         }
@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
  	        base.Interpret();
 
-            TableReference = new BayesFactorXMatchTableReference()
+            TableReference = new NameResolution.BayesFactorXMatchTableReference()
             {
                 Alias = this.Alias
             };

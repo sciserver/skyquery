@@ -13,7 +13,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
         }
 
-        public ConeXMatchTableSource(XMatchTableSourceSpecification old)
+        public ConeXMatchTableSource(XMatchTableSource old)
             :base(old)
         {
         }
@@ -34,7 +34,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
  	        base.Interpret();
 
-            TableReference = new ConeXMatchTableReference()
+            TableReference = new NameResolution.ConeXMatchTableReference()
             {
                 Alias = this.Alias
             };

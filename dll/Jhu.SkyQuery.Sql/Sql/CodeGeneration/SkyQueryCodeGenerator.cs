@@ -63,7 +63,7 @@ FROM XMATCH (
 
             // Add xmatch columns
             {
-                var tr = new BayesFactorXMatchTableReference()
+                var tr = new NameResolution.BayesFactorXMatchTableReference()
                 {
                     Alias = Constants.XMatchDefaultAlias
                 };

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.Schema;
 
-namespace Jhu.SkyQuery.Sql.Parsing
+namespace Jhu.SkyQuery.Sql.NameResolution
 {
     public abstract class XMatchTableReference : TableReference
     {
