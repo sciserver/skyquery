@@ -266,17 +266,34 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
             Inherit
             (
                 TableSource,
-                Sequence
+                Must
                 (
-                    Keyword("XMATCH"),
-                    May(CommentOrWhitespace), BracketOpen,
-                    May(CommentOrWhitespace), XMatchTableList,
-                    May(CommentOrWhitespace), Comma,
-                    May(CommentOrWhitespace), XMatchConstraint,
-                    May(CommentOrWhitespace), BracketClose,
-                    May(CommentOrWhitespace),
-                    May(Sequence(Keyword("AS"), May(CommentOrWhitespace))),
-                    TableAlias
+                    Sequence
+                    (
+                        Keyword("XMATCH"),
+                        May(CommentOrWhitespace), BracketOpen,
+                        May(CommentOrWhitespace), XMatchTableList,
+                        May(CommentOrWhitespace), Comma,
+                        May(CommentOrWhitespace), XMatchConstraint,
+                        May(CommentOrWhitespace), BracketClose,
+                        May(CommentOrWhitespace),
+                        May(Sequence(Keyword("AS"), May(CommentOrWhitespace))),
+                        TableAlias
+                    ),
+                    Sequence
+                    (
+                        TableAlias,
+                        May(CommentOrWhitespace),
+                        Keyword("AS"),
+                        May(CommentOrWhitespace),
+                        Keyword("XMATCH"),
+                        May(CommentOrWhitespace),
+                        May(CommentOrWhitespace), BracketOpen,
+                        May(CommentOrWhitespace), XMatchTableList,
+                        May(CommentOrWhitespace), Comma,
+                        May(CommentOrWhitespace), XMatchConstraint,
+                        May(CommentOrWhitespace), BracketClose                        
+                    )
                 )
             );
 

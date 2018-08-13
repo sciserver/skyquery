@@ -75,7 +75,12 @@
     <Compile Include="Sql\Parsing\RegionParserTest.cs" />
     <Compile Include="Sql\Parsing\SkyQueryParserTest.cs" />
     <Compile Include="Sql\Parsing\XMatchTableListTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionPrefixTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionPostfixTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionInfixTest.cs" />
+    <Compile Include="Sql\QueryTraversal\XMatchSelectStatementTest.cs" />
     <Compile Include="Sql\QueryTraversal\RegionSelectStatementTest.cs" />
+    <Compile Include="Sql\QueryTraversal\SkyQueryTestVisitorSink.cs" />
     <Compile Include="Sql\SkyQueryTestBase.cs" />
   </ItemGroup>
   <ItemGroup>

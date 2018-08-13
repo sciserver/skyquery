@@ -15,7 +15,7 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
         private string Execute(string code)
         {
             var exp = Parse(code);
-            return new TestVisitorSink().Execute(exp);
+            return new SkyQueryTestVisitorSink().Execute(exp);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ GROUP BY ID, Data
 HAVING AVG(Data2) > 10
 ";
 
-            var gt = "FROM Tab1 AS WITH ( TABLOCKX ) INNER LOOP JOIN Tab2 WITH ( TABLOCK ) ON t . ID = t2 . ID WHERE ID IN ( 1 , 2 , 4 ) GROUP BY ID , Data HAVING AVG ( Data2 ) > 10 SELECT TOP 10 PERCENT ID AS Col1 , Col2 = Data , AVG ( Data2 ) INTO outtable UNION ALL FROM Tab2 SELECT DISTINCT ID , Data ";
+            var gt = "FROM Tab1 AS t WITH ( TABLOCKX ) INNER LOOP JOIN Tab2 t2 WITH ( TABLOCK ) ON t . ID = t2 . ID WHERE ID IN ( 1 , 2 , 4 ) GROUP BY ID , Data HAVING AVG ( Data2 ) > 10 SELECT DISTINCT TOP 10 PERCENT ID AS Col1 , Col2 = Data , AVG ( Data2 ) INTO outtable REGION CIRCLE ( 10 , 10 , 20 ) ";
 
             var res = Execute(sql);
             Assert.AreEqual(gt, res);
@@ -53,7 +53,7 @@ HAVING AVG(Data2) > 10
 UNION ALL
 SELECT DISTINCT ID, Data FROM Tab2";
 
-            var gt = "FROM Tab1 AS WITH ( TABLOCKX ) INNER LOOP JOIN Tab2 WITH ( TABLOCK ) ON t . ID = t2 . ID WHERE ID IN ( 1 , 2 , 4 ) GROUP BY ID , Data HAVING AVG ( Data2 ) > 10 SELECT TOP 10 PERCENT ID AS Col1 , Col2 = Data , AVG ( Data2 ) INTO outtable UNION ALL FROM Tab2 SELECT DISTINCT ID , Data ";
+            var gt = "FROM Tab1 AS t WITH ( TABLOCKX ) INNER LOOP JOIN Tab2 t2 WITH ( TABLOCK ) ON t . ID = t2 . ID WHERE ID IN ( 1 , 2 , 4 ) GROUP BY ID , Data HAVING AVG ( Data2 ) > 10 SELECT DISTINCT TOP 10 PERCENT ID AS Col1 , Col2 = Data , AVG ( Data2 ) INTO outtable REGION CIRCLE ( 10 , 10 , 20 ) UNION ALL FROM Tab2 SELECT DISTINCT ID , Data ";
 
             var res = Execute(sql);
             Assert.AreEqual(gt, res);

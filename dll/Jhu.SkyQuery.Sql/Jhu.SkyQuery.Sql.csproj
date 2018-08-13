@@ -139,7 +139,8 @@
     <Compile Include="Sql\Parsing\XMatchTableSource.cs" />
     <Compile Include="Sql\Parsing\XMatchTableSpecification.cs" />
     <Compile Include="Sql\QueryRewriting\SkyQuerySqlQueryRewriter.cs" />
-    <Compile Include="Sql\QueryTraversal\Enum.cs" />
+    <Compile Include="Sql\QueryTraversal\QueryContextExtensions.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionRules.cs" />
     <Compile Include="Sql\QueryTraversal\SkyQuerySqlQueryVisitor.cs" />
     <Compile Include="Sql\QueryTraversal\SkyQuerySqlQueryVisitorOptions.cs" />
     <Compile Include="Sql\QueryValidation\SkyQueryValidator.cs" />

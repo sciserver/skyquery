@@ -41,16 +41,33 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
 
         #endregion
 
+        public void Execute(RegionExpression node)
+        {
+            PushAllContextNone();
+            TraverseRegionExpression(node);
+            PopAllContext();
+        }
+
+        protected override void DispatchInlineNode(Token node)
+        {
+            switch (node)
+            {
+                case RegionShape n:
+                    TraverseRegionShape(n);
+                    break;
+                default:
+                    base.DispatchInlineNode(node);
+                    break;
+            }
+        }
+        
         protected override void DispatchQuerySpecification(Graywulf.Sql.Parsing.QuerySpecification node)
         {
             switch (node)
             {
-                case XMatchQuerySpecification n:
+                case RegionQuerySpecification n:
                     TraverseRegionQuerySpecification(n);
                     break;
-                //case RegionQuerySpecification n:
-                //    TraverseRegionQuerySpecification(n);
-                //    break;
                 default:
                     base.DispatchQuerySpecification(node);
                     break;
@@ -59,11 +76,6 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
 
         protected override void DispatchTableSource(TableSource node)
         {
-
-            // Xmatchtable source that inherits from table source
-
-            // but need to traverse xmatchspecification separately
-
             switch (node)
             {
                 case XMatchTableSource n:
@@ -75,18 +87,150 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
             }
         }
 
+        #region XMatch
+
+        private void TraverseXMatchTableSource(XMatchTableSource node)
+        {
+            foreach (var nn in node.Stack)
+            {
+                switch (nn)
+                {
+                    case Literal n:
+                        VisitNode(n);
+                        break;
+                    case BracketOpen n:
+                        VisitNode(n);
+                        break;
+                    case BracketClose n:
+                        VisitNode(n);
+                        break;
+                    case Comma n:
+                        VisitNode(n);
+                        break;
+                    case TableAlias n:
+                        VisitNode(n);
+                        break;
+                    case XMatchTableList n:
+                        TraverseXMatchTableList(n);
+                        break;
+                    case XMatchConstraint n:
+                        TraverseXMatchConstraint(n);
+                        break;
+                }
+            }
+
+            VisitNode(node);
+        }
+
+        private void TraverseXMatchTableList(XMatchTableList node)
+        {
+            foreach (var nn in node.Stack)
+            {
+                switch (nn)
+                {
+                    case Comma n:
+                        VisitNode(n);
+                        break;
+                    case XMatchTableSpecification n:
+                        TraverseXMatchTableSpecification(n);
+                        break;
+                    case XMatchTableList n:
+                        TraverseXMatchTableList(n);
+                        break;
+                }
+            }
+        }
+
+        private void TraverseXMatchTableSpecification(XMatchTableSpecification node)
+        {
+            foreach (var nn in node.Stack)
+            {
+                switch (nn)
+                {
+                    case XMatchTableInclusion n:
+                        TraverseXMatchTableInclusion(n);
+                        break;
+                    case TableSource n:
+                        DispatchTableSource(n);
+                        break;
+                }
+            }
+
+            VisitNode(node);
+        }
+
+        private void TraverseXMatchTableInclusion(XMatchTableInclusion node)
+        {
+            foreach (var nn in node.Stack)
+            {
+                switch (nn)
+                {
+                    case Literal n:
+                        VisitNode(n);
+                        break;
+                }
+            }
+
+            VisitNode(node);
+        }
+
+        private void TraverseXMatchConstraint(XMatchConstraint node)
+        {
+            foreach (var nn in node.Stack)
+            {
+                switch (nn)
+                {
+                    case Literal n:
+                        VisitNode(n);
+                        break;
+                    case XMatchAlgorithm n:
+                        TraverseXMatchAlgorithm(n);
+                        break;
+                    case NumericConstant n:
+                        VisitNode(n);
+                        break;
+                    case Sql.Parsing.TableHint n:
+                        TraverseTableHint(n);
+                        break;
+                }
+            }
+
+            VisitNode(node);
+        }
+
+        private void TraverseXMatchAlgorithm(XMatchAlgorithm node)
+        {
+            foreach (var nn in node.Stack)
+            {
+                switch (nn)
+                {
+                    case Literal n:
+                        VisitNode(n);
+                        break;
+                }
+            }
+        }
+
+        protected override void TraverseSimpleTableSource(Graywulf.Sql.Parsing.SimpleTableSource node)
+        {
+            // Figure out if it's an XMatched table and do the necessary stuff
+
+            base.TraverseSimpleTableSource(node);
+        }
+
+        #endregion
         #region Region clause
 
         protected void TraverseRegionQuerySpecification(RegionQuerySpecification node)
         {
+            base.TraverseQuerySpecification(node);
+
             var region = node.FindDescendant<RegionClause>();
 
             if (region != null)
             {
                 TraverseRegionClause(region);
             }
-
-            base.TraverseQuerySpecification(node);
         }
 
         protected void TraverseRegionClause(RegionClause node)
@@ -96,6 +240,7 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
                 switch (nn)
                 {
                     case Literal n:
+                        VisitNode(n);
                         break;
                     case StringConstant n:
                         VisitNode(n);
@@ -106,14 +251,16 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
                 }
             }
         }
-
-        protected void TraverseRegionExpression(RegionExpression node)
+                
+        private void TraverseRegionExpression(RegionExpression node)
         {
-            // TODO: create reshuffler and select context if necessary
+            PushQueryContext(QueryContext | QueryContextExtensions.RegionExpression);
 
-            //CreateLogicalExpressionReshuffler();
+            PushExpressionReshuffler(Options.RegionExpressionTraversal, new RegionExpressionRules());
             TraverseRegionExpressionNode(node);
-            //DestroyExpressionReshuffler();
+            PopExpressionReshuffler();
+
+            PopQueryContext();
         }
 
         private void TraverseRegionExpressionNode(RegionExpression node)
@@ -162,13 +309,13 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
 
         private void TraverseRegionShape(RegionShape node)
         {
-            if (QueryContext.HasFlag(QueryTraversal.QueryContext.RegionExpression))
+            if (QueryContext.HasFlag(QueryContextExtensions.RegionExpression))
             {
                 VisitInlineNode(node);
             }
             else
             {
-                foreach (var nn in ((Node)node.Stack.First).Stack)
+                foreach (var nn in node.Stack)
                 {
                     switch (nn)
                     {
@@ -186,8 +333,6 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
                             break;
                     }
                 }
-
-                VisitNode(node);
             }
         }
 
@@ -214,13 +359,6 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
         {
             VisitNode((NumericConstant)node.Stack.First);
             VisitNode(node);
-        }
-
-        #endregion
-        #region XMatch
-
-        private void TraverseXMatchTableSource(XMatchTableSource node)
-        {
         }
 
         #endregion

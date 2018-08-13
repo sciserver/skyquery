@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Jhu.Graywulf.Sql.QueryTraversal;
 
 namespace Jhu.SkyQuery.Sql.QueryTraversal
 {
-    public enum QueryContext
+    public static class QueryContextExtensions
     {
-        RegionExpression = 0x04000000
+        public static QueryContext RegionExpression => (QueryContext)0x04000000;
     }
+
+
 }
