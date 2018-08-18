@@ -365,6 +365,31 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
+    public partial class CoordinatesTableSource : Jhu.SkyQuery.Sql.Parsing.SimpleTableSource, ICloneable
+    {
+        public CoordinatesTableSource()
+            :base()
+        {
+        }
+
+        public CoordinatesTableSource(params Jhu.Graywulf.Parsing.Token[] tokens)
+            :base(tokens)
+        {
+        }
+
+        public CoordinatesTableSource(Jhu.SkyQuery.Sql.Parsing.CoordinatesTableSource old)
+            :base(old)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new Jhu.SkyQuery.Sql.Parsing.CoordinatesTableSource(this);
+        }
+
+
+    }
+
     public partial class QueryExpression : Jhu.Graywulf.Sql.Extensions.Parsing.QueryExpression, ICloneable
     {
         public QueryExpression()
@@ -504,7 +529,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
-    public partial class RegionQuerySpecification : Jhu.Graywulf.Sql.Parsing.QuerySpecification, ICloneable
+    public partial class RegionQuerySpecification : Jhu.SkyQuery.Sql.Parsing.QuerySpecification, ICloneable
     {
         public RegionQuerySpecification()
             :base()
@@ -1561,7 +1586,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
-    public partial class XMatchSelectStatement : Jhu.Graywulf.Sql.Parsing.SelectStatement, ICloneable
+    public partial class XMatchSelectStatement : Jhu.SkyQuery.Sql.Parsing.SelectStatement, ICloneable
     {
         public XMatchSelectStatement()
             :base()
@@ -1866,7 +1891,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
-    public partial class XMatchFromClause : Jhu.Graywulf.Sql.Parsing.FromClause, ICloneable
+    public partial class XMatchFromClause : Jhu.SkyQuery.Sql.Parsing.FromClause, ICloneable
     {
         public XMatchFromClause()
             :base()
@@ -1923,7 +1948,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
-    public partial class XMatchTableSourceExpression : Jhu.Graywulf.Sql.Parsing.TableSourceExpression, ICloneable
+    public partial class XMatchTableSourceExpression : Jhu.SkyQuery.Sql.Parsing.TableSourceExpression, ICloneable
     {
         public XMatchTableSourceExpression()
             :base()
@@ -1994,7 +2019,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
-    public partial class XMatchTableSourceSpecification : Jhu.Graywulf.Sql.Parsing.TableSourceSpecification, ICloneable
+    public partial class XMatchTableSourceSpecification : Jhu.SkyQuery.Sql.Parsing.TableSourceSpecification, ICloneable
     {
         public XMatchTableSourceSpecification()
             :base()
@@ -2442,7 +2467,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
     }
 
-    public partial class XMatchTableSpecification : Jhu.Graywulf.Sql.Parsing.TableSourceSpecification, ICloneable
+    public partial class XMatchTableSpecification : Jhu.SkyQuery.Sql.Parsing.TableSourceSpecification, ICloneable
     {
         public XMatchTableSpecification()
             :base()
@@ -2488,7 +2513,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                     r216 |= a217;
                 } // end may a217
 
-                r216 = r216 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.SimpleTableSource());
+                r216 = r216 && Match(parser, new Jhu.SkyQuery.Sql.Parsing.CoordinatesTableSource());
                 CommitOrRollback(r216, parser);
                 res = r216;
             }

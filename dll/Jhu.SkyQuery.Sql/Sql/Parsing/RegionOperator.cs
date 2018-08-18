@@ -34,9 +34,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
             get { return false; }
         }
 
-        public override void Interpret()
+        protected override void OnInterpret()
         {
-            base.Interpret();
+            base.OnInterpret();
 
             switch (this.Value.ToUpperInvariant())
             {

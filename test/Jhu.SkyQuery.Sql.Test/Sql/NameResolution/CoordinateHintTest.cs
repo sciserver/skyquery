@@ -30,14 +30,18 @@ namespace Jhu.SkyQuery.Sql.NameResolution
         {
             var sql =
 @"SELECT ra, dec
-FROM dummytable WITH(POINT(ra,dec), ERROR(1.0))
+FROM SDSSDR7:PhotoObj WITH(POINT(ra,dec), ERROR(1.0))
 REGION 'CIRCLE J2000 10 10 0'";
 
             var ss = ParseAndResolveNames<SelectStatement>(sql);
             var qs = ss.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
             var t = (TableSourceSpecification)qs.FindDescendantRecursive<TableSourceSpecification>();
 
-            var coords = new TableCoordinates((CoordinatesTableSource)t.SpecificTableSource);
+            var coords = ((CoordinatesTableSource)qs.SourceTableReferences["PhotoObj"].TableSource).Coordinates;
+            Assert.AreEqual("[c1].[ra]", QueryRenderer.Execute(coords.RAHintExpression));
+            Assert.AreEqual("[c1].[dec]", QueryRenderer.Execute(coords.DecHintExpression));
+            Assert.AreEqual("0.1", QueryRenderer.Execute(coords.ErrorHintExpression));
+            Assert.IsTrue(coords.IsConstantError);
         }
 
         [TestMethod]
@@ -47,8 +51,8 @@ REGION 'CIRCLE J2000 10 10 0'";
 @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
 FROM 
     XMATCH
-        (MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
-         MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5)),
+        (MUST EXIST IN SDSSDR7:SpecObj AS c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1)),
+         MUST EXIST IN SDSSDR7:PhotoObj AS c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.raErr, 0.1, 0.5)),
          LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = ParseAndResolveNames<XMatchQuerySpecification>(sql);
@@ -88,13 +92,13 @@ FROM
 
             Assert.AreEqual(3, ts.Length);
 
-            var coords = new TableCoordinates((CoordinatesTableSource)ts[1].TableSource);
+            var coords = ((CoordinatesTableSource)ts[1].TableSource).Coordinates;
             Assert.AreEqual("[c1].[ra]", QueryRenderer.Execute(coords.RAHintExpression));
             Assert.AreEqual("[c1].[dec]", QueryRenderer.Execute(coords.DecHintExpression));
             Assert.AreEqual("[c1].[htmID]", QueryRenderer.Execute(coords.HtmIdHintExpression));
 
-            coords = new TableCoordinates((CoordinatesTableSource)ts[2].TableSource);
-            Assert.AreEqual("[c2].[htmID]", QueryRenderer.Execute(coords.HtmIdHintExpression));
+            coords = ((CoordinatesTableSource)ts[2].TableSource).Coordinates;
+            Assert.AreEqual("[c2].[htmid]", QueryRenderer.Execute(coords.HtmIdHintExpression));
         }
 
         [TestMethod]
@@ -105,8 +109,8 @@ FROM
     @"SELECT c1.ra, c1.dec, c2.ra, c2.dec
 FROM 
     XMATCH
-        (MUST EXIST IN d1:c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1), ZONEID(c1.zoneID)),
-         MUST EXIST IN d2:c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err, 0.1, 0.5), ZONEID(c2.zoneID)),
+        (MUST EXIST IN SDSSDR7:PhotoObj c1 WITH(POINT(c1.ra, c1.dec), ERROR(0.1), ZONEID(c1.zoneID)),
+         MUST EXIST IN TwoMASS:PhotoPSC c2 WITH(POINT(c2.ra, c2.dec), ERROR(c2.err_ang, 0.1, 0.5), ZONEID(c2.zoneID)),
          LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = ParseAndResolveNames<XMatchQuerySpecification>(sql);
@@ -114,13 +118,13 @@ FROM
 
             Assert.AreEqual(3, ts.Length);
 
-            var coords = new TableCoordinates((CoordinatesTableSource)ts[1].TableSource);
+            var coords =((CoordinatesTableSource)ts[1].TableSource).Coordinates;
             Assert.AreEqual("[c1].[ra]", QueryRenderer.Execute(coords.RAHintExpression));
             Assert.AreEqual("[c1].[dec]", QueryRenderer.Execute(coords.DecHintExpression));
             Assert.AreEqual("[c1].[zoneID]", QueryRenderer.Execute(coords.ZoneIdHintExpression));
 
-            coords = new TableCoordinates((CoordinatesTableSource)ts[2].TableSource);
-            Assert.AreEqual("[c2].[zoneID]", QueryRenderer.Execute(coords.ZoneIdHintExpression));
+            coords = ((CoordinatesTableSource)ts[2].TableSource).Coordinates;
+            Assert.AreEqual("[c2].[zoneid]", QueryRenderer.Execute(coords.ZoneIdHintExpression));
         }
 
         [TestMethod]

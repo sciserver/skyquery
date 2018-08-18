@@ -64,17 +64,17 @@ namespace Jhu.SkyQuery.Sql.Parsing
             }
         }
 
-        public override void Interpret()
+        protected override void OnInterpret()
         {
-            base.Interpret();
+            base.OnInterpret();
 
             switch (Constraint.Algorithm)
             {
                 case Constants.AlgorithmBayesFactor:
-                    ReplaceWith(new BayesFactorXMatchTableSource(this));
+                    ReplaceWith(new BayesFactorXMatchTableSource(this)).Interpret();
                     break;
                 case Constants.AlgorithmCone:
-                    ReplaceWith(new ConeXMatchTableSource(this));
+                    ReplaceWith(new ConeXMatchTableSource(this)).Interpret();
                     break;
                 case Constants.AlgorithmChi2:
                     throw new NotImplementedException();

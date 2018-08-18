@@ -56,6 +56,8 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 )
             );
 
+        public static Expression<Rule> CoordinatesTableSource = () => Inherit(SimpleTableSource);
+
         #region Region grammar
 
         // Any query construct can be extended with the REGION clause because we know
@@ -318,7 +320,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 (
                     XMatchTableInclusion,
                     May(CommentOrWhitespace),
-                    SimpleTableSource
+                    CoordinatesTableSource
                 )
             );
 

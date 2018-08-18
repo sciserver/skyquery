@@ -7,6 +7,7 @@ using Jhu.Graywulf.Parsing;
 using Jhu.Graywulf.Sql.QueryTraversal;
 using Jhu.SkyQuery.Sql.QueryTraversal;
 using Jhu.SkyQuery.Sql.Parsing;
+using Jhu.Graywulf.Sql.NameResolution;
 
 namespace Jhu.SkyQuery.Sql.NameResolution
 {
@@ -69,9 +70,27 @@ namespace Jhu.SkyQuery.Sql.NameResolution
         #endregion
         #region XMatch table source
 
+        protected virtual void Accept(CoordinatesTableSource node)
+        {
+            var coords = new TableCoordinates(node);
+            coords.InterpretTableHints();
+            node.Coordinates = coords;
+        }
+
         protected virtual void Accept(XMatchTableSource node)
         {
-            //node.TableReference = //
+            if (Visitor.Pass == 0)
+            {
+                var sourceTableCollection =
+                        Visitor.CurrentQuerySpecification as ISourceTableProvider ??
+                        Visitor.CurrentStatement as ISourceTableProvider;
+
+                var tr = node.TableReference;
+
+                tr.TableContext |= Visitor.TableContext;
+
+                CollectSourceTableReference(tr);
+            }
         }
 
         #endregion

@@ -25,7 +25,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         #endregion
         #region Private member varibles
 
-        private SimpleTableSource table;
+        private Jhu.Graywulf.Sql.Parsing.SimpleTableSource table;
 
         private Jhu.Graywulf.Sql.Parsing.TableHint pointHint;
         private Jhu.Graywulf.Sql.Parsing.Expression[] pointHintArguments;
@@ -49,7 +49,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         #endregion
         #region Properties
 
-        public SimpleTableSource Table
+        public Jhu.Graywulf.Sql.Parsing.SimpleTableSource Table
         {
             get { return table; }
         }
@@ -306,12 +306,11 @@ namespace Jhu.SkyQuery.Sql.Parsing
         #endregion
         #region Constructors and initializers
 
-        public TableCoordinates(SimpleTableSource table)
+        public TableCoordinates(Jhu.Graywulf.Sql.Parsing.SimpleTableSource table)
         {
             InitializeMembers();
 
             this.table = table;
-            InterpretTableHints();
         }
 
         private void InitializeMembers()
@@ -341,7 +340,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         #endregion
         #region Hint interpretation functions
 
-        private void InterpretTableHints()
+        public void InterpretTableHints()
         {
             var hints = table.FindDescendant<TableHintClause>();
 
@@ -454,13 +453,10 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         private Jhu.Graywulf.Sql.Parsing.Expression CreateColumnExpression(string column)
         {
-            throw new NotImplementedException();
-
             var c = table.TableReference.TableOrView.Columns[column];
             var tr = table.TableReference;
             var cr = new ColumnReference(c, tr, new DataTypeReference(c.DataType));
 
-            // Review how many identifier parts are generated here
             return Expression.Create(cr, 3);
         }
 

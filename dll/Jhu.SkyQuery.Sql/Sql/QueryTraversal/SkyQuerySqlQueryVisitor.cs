@@ -91,6 +91,8 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
 
         private void TraverseXMatchTableSource(XMatchTableSource node)
         {
+            VisitNode(node, 0);
+
             foreach (var nn in node.Stack)
             {
                 switch (nn)
@@ -119,7 +121,7 @@ namespace Jhu.SkyQuery.Sql.QueryTraversal
                 }
             }
 
-            VisitNode(node);
+            VisitNode(node, 1);
         }
 
         private void TraverseXMatchTableList(XMatchTableList node)

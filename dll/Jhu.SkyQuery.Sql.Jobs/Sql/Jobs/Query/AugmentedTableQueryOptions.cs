@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Jhu.Graywulf.Sql.NameResolution;
+using Jhu.Graywulf.Sql.QueryTraversal;
 using Jhu.Spherical;
 
 namespace Jhu.SkyQuery.Sql.Jobs.Query

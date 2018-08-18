@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Jhu.Graywulf.Sql.Jobs.Query;
+using Jhu.SkyQuery.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Sql.Jobs.Query
 {

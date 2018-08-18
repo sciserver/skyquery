@@ -30,10 +30,8 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         #endregion
 
-        public override void Interpret()
+        protected override void OnInterpret()
         {
- 	        base.Interpret();
-
             TableReference = new NameResolution.BayesFactorXMatchTableReference()
             {
                 Alias = this.Alias
