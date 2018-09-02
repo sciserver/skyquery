@@ -1,0 +1,69 @@
+SkyQuery features
+
+SkyQuery is a parallel database front-end to run astronomical catalog cross-identification based on spherical coordinates. It uses a cluster of SQL Servers serving identical copies of the catalogs to allow multi-way parallelization of query execution for scalability and redundancy. The cross-match algorithm itself uses Tamas' Bayesian approach with Jim Gray's zone algorithm but the underlying library supports lots of generic functions that are required to orchestrate distributed query execution. SkyQuery is also capable of using external databases (those that are not available on the worker nodes and not have exact mirrors on every node -- MyDBs, for example), by fetching tables from the external DBs automatically before query execution. Below is a detailed description of the generic features of the API. SkyQuery can access dedicated user workspaces (MyDB) and a 100TB large scratch database for data staging (MyScratch).
+
+- IO library:
+
+It consists of an extensible set of classes that allow reading data files (currently CSV, TSV, VOTable, FITS and SQL native bulk-copy files written by bcp -n) via the DbDataReader .Net interface and feeding them directly into SqlBulkCopy, the .Net library class that does the bulk-inserts. This is probably not the fastest possible way of bulk-insert because there's managed code involved in processing the files, but everything can be wired up in an async, streaming manner, e.g. I can read a FITS file from a network stream and bulk-insert it asynchronously into a database, no data staging is necessary. Since every layer is async, it scales up to many streams if network is slow since async uses a small thread pool instead of many blocking threads.
+
+The IO library is also responsible for copying tables between database servers, again using bulk-insert. All IO operations are co-located with the database servers, so there is no head node in the system that all data has to go through. I have a windows service running on each machine which listens for bulk copy requests and executes them. This way a table copy between machines A and B won't require the involvement of the head node which processes the job queue. Also, file imports and exports can be delegated to the worker nodes. The reason to make it a service as opposed to use SQL Server features for bulk-copy is to be able to use my own file reader implementation that supports efficient streaming and async IO.
+
+- Parse and analyze SQL scripts:
+
+In the current version only SELECT statement, full grammar is 98% done, so I can soon execute T-SQL scripts. I can resolve all identifiers against the DB schema, so I can tell which tables/columns/functions are required to run the query. I can dissect the where clause and the join 'on' conditions to figure out which is the most restrictive constraint on a table that I can apply without losing query results. This latter is important when I need to copy tables from remote database servers. Once the full SQL grammar is implemented (not all DDL features but CREATE TABLE will be there), it will allow users to create temp tables which will be redirected to the worker nodes' tempdb instead of MyDB (or maybe MyScratch depending on output size). This feature will be done by the end of the summer.
+
+- On-the-fly statistics
+
+I have a small version of every catalog so I can take any query and run it in a matter of seconds. Based on the distribution of values in the resultset, I can partition the queries and run them in parallel without much skew. Precomputed statistics wouldn't do in my case because the query constraint can vary significantly between tiny region searched to full-catalog statistics.
+
+- Query rewriting
+
+One queries are parsed and identifiers are resolved, I can do many kind of query rewriting. The cross-match algorithm itself is quite special which requires execution a series of steps including building indexes on the fly. Here I use some heuristics to pick up an appropriate index if it already exists but I have no query planner and optimizer, it's just a set of hard-coded rules I use. An example of tricky query rewriting is the ability to add a spherical region constraint to otherwise standard SQL queries, e.g.
+
+SELECT objID, ra, dec
+FROM mycatalog WITH (POINT(ra, dec))
+REGION CIRCLE J2000 10 10 10
+
+will be rewritten into a query that returns all objects in a constant circle. Because it uses tricky query rewriting, SkyQuery supports all kinds of fancy joins, aggregates etc. The search region must be constant, however. I have a few ideas on how to do a join by varying regions, e.g. cross-match with ellipses instead of the Bayesian zone algorithm but it's not implemented yet.
+
+The query rewriting is designed to support future extensions. One plan is to extend the syntax with arrays and use the array library as a back-end. This would give access to LAPACK etc. from SQL without calling functions with very long names manually.
+
+I have some logic implemented to figure out the search predicates that apply to the individual tables, determine of these apply to a single table only and can rewrite logical expressions into CNF for easier processing. I don't take foreign keys into account at the moment.
+
+- Parallel query execution
+
+Since I have all catalogs mirrored on all worker nodes, I can execute a query on any of these nodes. If I split up a query along a column (objid, but usually one of the coordinates) I can run partitions of a query in parallel. I then just gather the results. This parallelization already works for simple queries (they can be joins but joins run locally on each node so the users must be aware of it) and cross-match queries. No support for aggregation yet but I can use user-defined functions. And I do use them extensively during spatial filtering and cross-matching. Once a distributed query completes, I gather the results and copy everything to an output table on the MyDB server. I generate ID columns such way that no collision will occur.
+
+The tricky part is when someone writes a query which joins in a table that's not available on the worker nodes. These are typically smaller user tables in MyDB, so I simply identify these tables and copy them to the worker nodes before query execution. This is probably not the most optimal but it works and since it's a batch system with relatively long jobs - o(10 min) - the overheads on a few seconds is not terrible. Of course, I can do some filtering of the tables before copying them to the worker nodes. I apply the most restrictive where clause that wouldn't lose any results and only copy the primary key columns and those that are necessary to execute the final query.
+
+SqlQuery uses parallelization to execute a partitioned query on a mirrored set of databases, uses as many nodes are possible for faster operation. It can trivially be generalized to run on top of sharded databases ensuring that the query is executed on every shard of a distributed db. This is not currently implemented but some of the necessary features are already there.
+
+- Used-defined functions
+
+On each database server, I create a SkyQuery_CODE database which has all the user-defined CLR stuff I need to execute the cross-match and more. Since I rewrite the queries, I can replace all references to tables, functions, etc. in a very flexible way. This allows adding all kinds of libraries to the system. Currently we have the spherical lib available but adding the array lib (with SQL syntactic sugars) and cosmology libraries isn't a big issue.
+
+- System and job management
+
+I have a detailed registry of the system which is in a SQL databases that can be accessed by all components. All communication among the components (services, web site) goes through this database. There is also a batch job scheduler which can in parallel on multiple machines for fail-over. It runs pre-computed workflows that are built up from tasks such as table copy, index build, query execution, etc. I use the .net workflow framework for this which gives me parallel, async execution of tasks for free. The scheduler is also designed to be responsible for system status, and only schedule jobs on servers which are available, though this functionality is still rather patchy. There are two web sites (user, admin) and a set of rest web services to export functions to admins and end-users.
+
+- System integration
+
+Since SkyQuery is integrated into the SciServer infrastructure, I modularized user authentication and it can support any scheme by implementing a plugin. The same is true for logging and file export/import. For example, SciDrive export/import is a plugin which can be turned on and off. Actually, the entire software stack of SkyQuery is split into two: the graywulf library implements all the features outlined above and SkyQuery is just an application that happens to run cross-match on top of it but calls into the underlying API to do all the generic works such as query parsing, table copies, etc.
+
+Via the REST interfaces, SkyQuery can be access from python, even from jupyter notebooks running on SciServer. I'm looking into how to extend the features because currently you have to write the queries yourself as a string and send it to the service via a function call. It would be maybe better to have some sort of python lib that hides the DB layer and allows describing cross-matches with python classes. The same applies to spatial search using REGION constraints.
+
+- System setup
+
+I have a large set of scripts to install the system from scratch from a build machine to entire cluster (currently about 12 machines including the MyDB and web servers). The process goes from build to deploy so it wouldn't take long to modify it into a continuous deployment scenario. The setup process really takes care of every step, from installing services to configuring the web servers and installing CLR libs in databases. It also has a complete tear-down feature, I had to automate all this simply for debugging reasons. Manual setup took so long that spending a week or two on the setup script was worth it.
+
+- Current and future work
+
+I'm working on the full SQL parser right now, and hopefully finishing it next week. Now I have UDT support which wasn't trivial to put in due to the arbitrary number of property and method calls that can follow column names. I'm basically debugging, there are 650 unit test cases that need to be in green.
+
+THere's a feature that we badly need, I call it lazy joins. We currently have all DBs mirrored on the worker nodes which significantly limits useful space. The plan is to keep the most important columns on the central all-solid-state worker nodes and put the rest of the databases to bigger but slower machines. The users wouldn't see anything, they would write the same queries as all columns were available. We then figure out how to execute the query by bringing in the necessary columns. The idea is to run all joins first, then send the resulting primary keys to the big machines, do a join and fetch the missing columns. I'm planning to start working on it once I pushed the current version out.
+
+With my student we are also working on a VO TAP adapter that will allow bringing data in from remote VO data sets. The adapter itself works but integration hasn't been tested yet so this feauture will not make it into the next release. Also, I need the full T-SQL grammar to allow defining remote databases in scripts, with something like DECLARE @mydata AS DATASET tap+https://....
+
+There is also a new version of the footprint service and database that now features a very detailed rest service to manipulate, store and search spherical regions. Some of the web service features are still missing and the web interface is patchy. The idea is to integrate footprints into SkyQuery via the REST API, so that uses won't have to specify regions by hand but they could pick them up from the footprint service. Also, having the catalog footprints will allow computing posteriors, not just the Bayes factor (c.f. Tamas' paper).
+
+Robi Beck, while in Baltimore, wrote a photo-z code that runs inside SQL Server. By having the support for the full T-SQL syntax, I will be able to wire this code up with SkyQuery so user will not only be able to run cross-matching to get multi-band photometry but also run some sort of photo-z. As far as I remember, it's a pure template-based photo-z at the moment, but we can later extend it with empirical algorithms, just have to figure out how to do that with SQL. SQL Server has R and Python now so possibilities are endless.
