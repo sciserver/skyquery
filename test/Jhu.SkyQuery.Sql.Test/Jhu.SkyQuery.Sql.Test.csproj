@@ -68,15 +68,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SkyQueryTestBase.cs" />
     <Compile Include="Sql\CodeGeneration\SkyQueryCodeGeneratorTest.cs" />
+    <Compile Include="Sql\NameResolution\CoordinateHintTest.cs" />
+    <Compile Include="Sql\NameResolution\SkyQueryParserTest.cs" />
     <Compile Include="Sql\Parsing\CoordinateHintTest.cs" />
     <Compile Include="Sql\Parsing\RegionParserTest.cs" />
-    <Compile Include="Sql\Parsing\SkyQueryNameResolverTest.cs" />
     <Compile Include="Sql\Parsing\SkyQueryParserTest.cs" />
-    <Compile Include="Sql\Parsing\SkyQueryParserTestBase.cs" />
-    <Compile Include="Sql\Parsing\SkyQueryValidatorTest.cs" />
     <Compile Include="Sql\Parsing\XMatchTableListTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionPrefixTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionPostfixTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionInfixTest.cs" />
+    <Compile Include="Sql\QueryTraversal\XMatchSelectStatementTest.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionSelectStatementTest.cs" />
+    <Compile Include="Sql\QueryTraversal\SkyQueryTestVisitorSink.cs" />
+    <Compile Include="Sql\SkyQueryTestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\graywulf-plugins\src\Jhu.Graywulf.Plugins\Jhu.Graywulf.Plugins.csproj">
@@ -99,9 +104,9 @@
       <Project>{59bfb28b-3f97-4714-b8d7-a1b40f668831}</Project>
       <Name>Jhu.Graywulf.Registry</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql.Jobs\Jhu.Graywulf.Sql.Jobs.csproj">
-      <Project>{08789ba4-645a-4980-9fdb-15aae7be7754}</Project>
-      <Name>Jhu.Graywulf.Sql.Jobs</Name>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql.Extensions\Jhu.Graywulf.Sql.Extensions.csproj">
+      <Project>{c6f0228b-cfc5-44d2-b474-0613ec496ce7}</Project>
+      <Name>Jhu.Graywulf.Sql.Extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>
@@ -111,17 +116,13 @@
       <Project>{d152dc9a-004c-4851-b0e7-b81a4325c9b7}</Project>
       <Name>Jhu.Graywulf.Logging.Test</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Sql.Jobs.Test\Jhu.Graywulf.Sql.Jobs.Test.csproj">
-      <Project>{7246a5aa-c488-4cb6-adc3-5f85d8bbc04b}</Project>
-      <Name>Jhu.Graywulf.Sql.Jobs.Test</Name>
+    <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Sql.Test\Jhu.Graywulf.Sql.Test.csproj">
+      <Project>{c006350e-76d3-4584-8162-646566b6133c}</Project>
+      <Name>Jhu.Graywulf.Sql.Test</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\test\Jhu.Graywulf.Test\Jhu.Graywulf.Test.csproj">
       <Project>{EA6164BA-B283-46C2-874B-348D6BAD41AD}</Project>
       <Name>Jhu.Graywulf.Test</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Sql.Jobs\Jhu.SkyQuery.Sql.Jobs.csproj">
-      <Project>{2887f181-7f61-4df5-bd89-2800503d5f84}</Project>
-      <Name>Jhu.SkyQuery.Sql.Jobs</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\dll\Jhu.SkyQuery.Sql\Jhu.SkyQuery.Sql.csproj">
       <Project>{8d422c6a-5e21-48a0-9b05-1bca4c71c6d5}</Project>
@@ -135,6 +136,7 @@
     <None Include="post-build.ps1" />
     <None Include="pre-build.ps1" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\build\Jhu.Graywulf.Build.targets" />
 </Project>

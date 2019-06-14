@@ -63,7 +63,7 @@ namespace Jhu.SkyQuery.Sql.Jobs.Query
 
         protected override SchemaManager CreateSchemaManager()
         {
-            var sm =base.CreateSchemaManager();
+            var sm = base.CreateSchemaManager();
             sm.Datasets.TryAdd("TEST", GetTestDataset());
             return sm;
         }

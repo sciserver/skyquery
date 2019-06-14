@@ -1,0 +1,91 @@
+
+
+
+
+Special T-SQL functions
+
+
+- All aggregates can take ALL | DISTINCT before parameter, e.g. AVG(ALL salary) OVER (...)
+
+- COUNT(*), COUNT_BIG(*), 
+- BINARY_CHECKSUM(*), CHECKSUM(*)
+
+- OVER clause can have a ROW or RANGE clause
+  https://docs.microsoft.com/en-us/sql/t-sql/queries/select-over-clause-transact-sql?view=sql-server-2017
+
+- PERCENTILE_CONT, PERCENTILE_DISC can have a WITHIN GROUP part
+  https://docs.microsoft.com/en-us/sql/t-sql/functions/percentile-cont-transact-sql?view=sql-server-2017
+- STRING_AGG ( expression, separator ) [ <order_clause> ] can also have a WITHIN GROUP
+  https://docs.microsoft.com/en-us/sql/t-sql/functions/string-agg-transact-sql?view=sql-server-2017
+  
+- CAST(<expression> AS <data_type>)
+- TRY_CAST(expression AS data_type)
+- CONVERT(<data_type>, <expression>, <style>)
+- TRY_CONVERT(<data_type>, <expression>, <style>)
+  style is an integer number
+- PARSE(<string> AS data_type USING culture)
+- TRY_PARSE(<string> AS data_type USING culture)
+  culture is a string
+
+- IDENTITY can be a function too, so don't make it a keyword
+
+
+- DATEADD(datepart, number, expression)
+- DATEDIFF(datepart, start, end)
+- DATEDIFF_BIG(datepart, start, end)
+- DATENAME(datepart, expression)
+- DATEPART(datepart, expression)
+
+- IIF(<boolean_expression>, ..., ...) but this is a function!
+
+- Text search: CONTAINS, FREETEXT; these are functions that can be used with * in argument or a column list
+
+Special expressions
+
+- NULL
+- DEFAULT (in insert, so check)
+- Unicode string with N'dsfsdf' syntax
+- CURRENT_TIMESTAMP goes without parentheses
+- CURRENT_USER
+- SESSION_USER
+- SYSTEM_USER
+- USER
+
+Collation
+
+- missing entirely
+
+
+Sequences
+
+- missing entirely
+- NEXT VALUE FOR ...
+
+Special table source
+- OPENDATASOURCE
+- OPENJSON
+- OPENQUERY
+- OPENROWSET
+- OPENXML
+
+
+
+Special system function (usually without ())
+
+- $PARTITION
+- MIN_ACTIVE_ROWVERSION  
+
+Special trigger functions
+
+- UPDATE() can appear in triggers even though UPDATE is a keyword
+
+Missing important language features
+
+- Table value constructor (VALUES clause)
+  https://docs.microsoft.com/en-us/sql/t-sql/queries/table-value-constructor-transact-sql?view=sql-server-2017
+- OUTPUT clause for DELETE, INSERT, UPDATE and MERGE
+- Review OPTION clause (query hint)
+- AT TIME ZONE 'Pacific Standard Time' can follow data columns in expressions (and it must be literals, not keywords)
+- review hint syntax
+  https://docs.microsoft.com/en-us/sql/t-sql/queries/hints-transact-sql?view=sql-server-2017
+- PIVOT and UNPIVOT

@@ -34,6 +34,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
         }
 
         // TODO: move this somewhere from here
+        /*
         public Spherical.Region Region
         {
             get
@@ -41,7 +42,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
                 var ss = FindAscendant<XMatchSelectStatement>();
                 return ss.Region;
             }
-        }
+        }*/
 
         #endregion
         #region Constructors and initializers
@@ -64,9 +65,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
 
         #endregion
 
-        public override void Interpret()
+        protected override void OnInterpret()
         {
-            base.Interpret();
+            base.OnInterpret();
 
             inclusionMethod = InterpretInclusionMethod();
         }

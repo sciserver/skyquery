@@ -8,15 +8,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
 {
     public partial class XMatchSelectStatement
     {
-        public override bool IsPartitioned
-        {
-            get { return true; }
-        }
-
         public XMatchQuerySpecification XMatchQuerySpecification
         {
             get { return QueryExpression.FindDescendant<XMatchQuerySpecification>(); }
         }
-
     }
 }

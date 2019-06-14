@@ -14,9 +14,9 @@ namespace Jhu.SkyQuery.Sql.Parsing
         public const string InclusionMethodMay = "MAY";
         public const string InclusionMethodNot = "NOT";
 
-        public const string PointHintIdentifier = "POINT";
-        public const string HtmIdHintIdentifier = "HTMID";
-        public const string ZoneIdHintIdentifier = "ZONEID";
-        public const string ErrorHintIdentifier = "ERROR";
+        public const string PointHintName = "POINT";
+        public const string HtmIdHintName = "HTMID";
+        public const string ZoneIdHintName = "ZONEID";
+        public const string ErrorHintName = "ERROR";
     }
 }

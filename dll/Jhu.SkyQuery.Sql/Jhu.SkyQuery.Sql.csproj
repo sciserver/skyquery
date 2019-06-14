@@ -77,6 +77,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -108,12 +109,14 @@
     <Compile Include="Sql\CodeGeneration\SkyQueryCodeGeneratorException.cs" />
     <Compile Include="Sql\CodeGeneration\SkyQueryColumnListGenerator.cs" />
     <Compile Include="Sql\CodeGeneration\XMatch.cs" />
-    <Compile Include="Sql\Parsing\BayesFactorXMatchQuerySpecification.cs" />
-    <Compile Include="Sql\Parsing\BayesFactorXMatchTableReference.cs" />
-    <Compile Include="Sql\Parsing\BayesFactorXMatchTableSourceSpecification.cs" />
-    <Compile Include="Sql\Parsing\ConeXMatchQuerySpecification.cs" />
-    <Compile Include="Sql\Parsing\ConeXMatchTableReference.cs" />
-    <Compile Include="Sql\Parsing\ConeXMatchTableSourceSpecification.cs" />
+    <Compile Include="Sql\NameResolution\BayesFactorXMatchTableReference.cs" />
+    <Compile Include="Sql\NameResolution\ConeXMatchTableReference.cs" />
+    <Compile Include="Sql\NameResolution\Constants.cs" />
+    <Compile Include="Sql\NameResolution\SkyQuerySqlNameResolver.cs" />
+    <Compile Include="Sql\NameResolution\SkyQuerySqlNameResolverOptions.cs" />
+    <Compile Include="Sql\NameResolution\XMatchTableReference.cs" />
+    <Compile Include="Sql\Parsing\BayesFactorXMatchTableSource.cs" />
+    <Compile Include="Sql\Parsing\ConeXMatchTableSource.cs" />
     <Compile Include="Sql\Parsing\Constants.cs" />
     <Compile Include="Sql\Parsing\CoordinatesTableSource.cs" />
     <Compile Include="Sql\Parsing\Enum.cs" />
@@ -122,19 +125,25 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ExceptionMessages.resx</DependentUpon>
     </Compile>
+    <Compile Include="Sql\Parsing\QuerySpecification.cs" />
     <Compile Include="Sql\Parsing\RegionClause.cs" />
+    <Compile Include="Sql\Parsing\RegionNotOperator.cs" />
+    <Compile Include="Sql\Parsing\RegionOperator.cs" />
     <Compile Include="Sql\Parsing\RegionQuerySpecification.cs" />
-    <Compile Include="Sql\Parsing\RegionSelectStatement.cs" />
-    <Compile Include="Sql\Parsing\SkyQueryNameResolver.cs" />
     <Compile Include="Sql\Parsing\SkyQueryParser.cs" />
     <Compile Include="Sql\Parsing\SkyQueryParser.g.cs" />
-    <Compile Include="Sql\Parsing\SkyQueryValidator.cs" />
     <Compile Include="Sql\Parsing\TableCoordinates.cs" />
+    <Compile Include="Sql\Parsing\XMatchConstraint.cs" />
     <Compile Include="Sql\Parsing\XMatchQuerySpecification.cs" />
     <Compile Include="Sql\Parsing\XMatchSelectStatement.cs" />
-    <Compile Include="Sql\Parsing\XMatchTableReference.cs" />
-    <Compile Include="Sql\Parsing\XMatchTableSourceSpecification.cs" />
+    <Compile Include="Sql\Parsing\XMatchTableSource.cs" />
     <Compile Include="Sql\Parsing\XMatchTableSpecification.cs" />
+    <Compile Include="Sql\QueryRewriting\SkyQuerySqlQueryRewriter.cs" />
+    <Compile Include="Sql\QueryTraversal\QueryContextExtensions.cs" />
+    <Compile Include="Sql\QueryTraversal\RegionExpressionRules.cs" />
+    <Compile Include="Sql\QueryTraversal\SkyQuerySqlQueryVisitor.cs" />
+    <Compile Include="Sql\QueryTraversal\SkyQuerySqlQueryVisitorOptions.cs" />
+    <Compile Include="Sql\QueryValidation\SkyQueryValidator.cs" />
     <EmbeddedResource Include="Sql\CodeGeneration\ExceptionMessages.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
@@ -158,6 +167,10 @@
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Registry\Jhu.Graywulf.Registry.csproj">
       <Project>{59bfb28b-3f97-4714-b8d7-a1b40f668831}</Project>
       <Name>Jhu.Graywulf.Registry</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql.Extensions\Jhu.Graywulf.Sql.Extensions.csproj">
+      <Project>{c6f0228b-cfc5-44d2-b474-0613ec496ce7}</Project>
+      <Name>Jhu.Graywulf.Sql.Extensions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\graywulf\dll\Jhu.Graywulf.Sql\Jhu.Graywulf.Sql.csproj">
       <Project>{AADA04EE-F578-4628-8AE0-D423BB94C738}</Project>

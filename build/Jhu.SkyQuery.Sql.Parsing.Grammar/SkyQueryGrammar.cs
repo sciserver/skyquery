@@ -8,13 +8,13 @@ using Jhu.Graywulf.Parsing.Generator;
 namespace Jhu.SkyQuery.Sql.Parsing.Grammar
 {
     [Grammar(
-        Namespace = "Jhu.SkyQuery.Sql.Parsing", 
+        Namespace = "Jhu.SkyQuery.Sql.Parsing",
         ParserName = "SkyQueryParser",
-        Comparer = "StringComparer.InvariantCultureIgnoreCase", 
+        Comparer = "StringComparer.InvariantCultureIgnoreCase",
         RootToken = "Jhu.SkyQuery.Sql.Parsing.StatementBlock")]
     public class SkyQueryGrammar : Jhu.Graywulf.Sql.Extensions.Grammar.GraywulfSqlGrammar
     {
-        public static new Expression<Rule> Statement = () =>
+        public static new Expression<Rule> AnyStatement = () =>
             Override
             (
                 Must
@@ -47,9 +47,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                     CreateIndexStatement,
                     DropIndexStatement,
 
-                    PartitionedSelectStatement,
-                    XMatchSelectStatement,      //
-                    RegionSelectStatement,      //
+                    XMatchSelectStatement,       //
 
                     SelectStatement,
                     InsertStatement,
@@ -58,41 +56,29 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 )
             );
 
+        public static Expression<Rule> CoordinatesTableSource = () => Inherit(SimpleTableSource);
+
         #region Region grammar
 
-        public static Expression<Rule> RegionSelectStatement = () =>
-            Inherit
-            (
-                SelectStatement,
-                Sequence
-                (
-                    //May(Sequence(CommonTableExpression, May(CommentOrWhitespace))),
-                    RegionQueryExpression,
-                    May(Sequence(May(CommentOrWhitespace), OrderByClause)),
-                    May(Sequence(May(CommentOrWhitespace), QueryHintClause))
-                )
-            );
+        // Any query construct can be extended with the REGION clause because we know
+        // how to rewrite just any select into an HTM-based query
 
-        public static Expression<Rule> RegionQueryExpression = () =>
-            Inherit
+        public static new Expression<Rule> QueryExpression = () =>
+            Override
             (
-                QueryExpression,
                 Sequence
                 (
                     Must
                     (
-                        RegionQueryExpressionBrackets,
-                        RegionQuerySpecification
+                        QueryExpressionBrackets,
+                        Must
+                        (
+                            RegionQuerySpecification,
+                            QuerySpecification
+                        )
                     ),
-                    May(Sequence(May(CommentOrWhitespace), QueryOperator, May(CommentOrWhitespace), RegionQueryExpression))
+                    May(Sequence(May(CommentOrWhitespace), QueryOperator, May(CommentOrWhitespace), QueryExpression))
                 )
-            );
-
-        public static Expression<Rule> RegionQueryExpressionBrackets = () =>
-            Inherit
-            (
-                QueryExpressionBrackets,
-                Sequence(BracketOpen, May(CommentOrWhitespace), RegionQueryExpression, May(CommentOrWhitespace), BracketClose)
             );
 
         public static Expression<Rule> RegionQuerySpecification = () =>
@@ -107,9 +93,9 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                     May(CommentOrWhitespace),
                     SelectList,
                     May(Sequence(May(CommentOrWhitespace), IntoClause)),
-                    May(Sequence(May(CommentOrWhitespace), FromClause)),
+                    May(Sequence(May(CommentOrWhitespace), Must(PartitionedFromClause, FromClause))),
                     May(Sequence(May(CommentOrWhitespace), WhereClause)),
-                    Sequence(May(CommentOrWhitespace), RegionClause),
+                    May(Sequence(May(CommentOrWhitespace), RegionClause)),       //
                     May(Sequence(May(CommentOrWhitespace), GroupByClause)),
                     May(Sequence(May(CommentOrWhitespace), HavingClause))
                 )
@@ -119,17 +105,29 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
             Sequence
             (
                 Keyword("REGION", true),
-                CommentOrWhitespace,
-                Must(StringConstant , RegionExpression)
+                May(CommentOrWhitespace),
+                Must(StringConstant, RegionExpression)
             );
 
         public static Expression<Rule> RegionExpression = () =>
             Sequence
             (
-                // May(RegionInvese) -- TODO: add this if inverse is ever implemented
-                // May(CommentOrWhitespace),
-                Must(RegionShape, RegionExpressionBrackets),
-                May(Sequence(May(CommentOrWhitespace), RegionOperator, May(CommentOrWhitespace), RegionExpression))
+                May(Sequence(RegionNotOperator, May(CommentOrWhitespace))),
+                Must
+                (
+                    RegionShape,
+                    RegionExpressionBrackets
+                ),
+                May
+                (
+                    Sequence
+                    (
+                        May(CommentOrWhitespace),
+                        RegionOperator,
+                        May(CommentOrWhitespace),
+                        RegionExpression
+                    )
+                )
             );
 
         public static Expression<Rule> RegionExpressionBrackets = () =>
@@ -142,26 +140,44 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 BracketClose
             );
 
+        public static Expression<Rule> RegionNotOperator = () =>
+            Inherit
+            (
+                Operator,
+                Must
+                (
+                    Keyword("NOT")
+                )
+            );
+
         public static Expression<Rule> RegionOperator = () =>
-            Must(Keyword("UNION"), Keyword("INTERSECT"), Keyword("EXCEPT"));
+            Inherit
+            (
+                Operator,
+                Must
+                (
+                    Keyword("UNION"),
+                    Keyword("INTERSECT"),
+                    Keyword("EXCEPT")
+                )
+            );
 
         public static Expression<Rule> RegionShape = () =>
             Sequence
             (
-                RegionShapeType,
+                Must
+                (
+                    Literal("CIRCLE"), Literal("CIRC"),
+                    Literal("RECTANGLE"), Literal("RECT"),
+                    Literal("POLYGON"), Literal("POLY"),
+                    Literal("CONVEX_HULL"), Literal("CHULL")
+                ),
+                May(CommentOrWhitespace),
                 BracketOpen,
+                May(CommentOrWhitespace),
                 RegionArgumentList,
                 May(CommentOrWhitespace),
                 BracketClose
-            );
-
-        public static Expression<Rule> RegionShapeType = () =>
-            Must
-            (
-                Literal("CIRCLE"), Literal("CIRC"),
-                Literal("RECTANGLE"), Literal("RECT"),
-                Literal("POLYGON"), Literal("POLY"),
-                Literal("CONVEX_HULL"), Literal("CHULL")
             );
 
         public static Expression<Rule> RegionArgument = () =>
@@ -184,20 +200,20 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
         public static Expression<Rule> XMatchSelectStatement = () =>
             Inherit
             (
-                RegionSelectStatement,
+                SelectStatement,
                 Sequence
                 (
                     //May(Sequence(CommonTableExpression, May(CommentOrWhitespace))),
                     XMatchQueryExpression,
                     May(Sequence(May(CommentOrWhitespace), OrderByClause)),
-                    May(Sequence(May(CommentOrWhitespace), QueryHintClause))
+                    May(Sequence(May(CommentOrWhitespace), OptionClause))
                 )
             );
 
         public static Expression<Rule> XMatchQueryExpression = () =>
             Inherit
             (
-                RegionQueryExpression,
+                QueryExpression,
                 XMatchQuerySpecification
             );
 
@@ -244,17 +260,42 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
             Inherit
             (
                 TableSourceSpecification,
-                Sequence
+                XMatchTableSource
+            );
+
+
+        public static Expression<Rule> XMatchTableSource = () =>
+            Inherit
+            (
+                TableSource,
+                Must
                 (
-                    Keyword("XMATCH"),
-                    May(CommentOrWhitespace), BracketOpen,
-                    May(CommentOrWhitespace), XMatchTableList,
-                    May(CommentOrWhitespace), Comma,
-                    May(CommentOrWhitespace), XMatchConstraint,
-                    May(CommentOrWhitespace), BracketClose,
-                    May(CommentOrWhitespace),
-                    May(Sequence(Keyword("AS"), May(CommentOrWhitespace))),
-                    TableAlias
+                    Sequence
+                    (
+                        Keyword("XMATCH"),
+                        May(CommentOrWhitespace), BracketOpen,
+                        May(CommentOrWhitespace), XMatchTableList,
+                        May(CommentOrWhitespace), Comma,
+                        May(CommentOrWhitespace), XMatchConstraint,
+                        May(CommentOrWhitespace), BracketClose,
+                        May(CommentOrWhitespace),
+                        May(Sequence(Keyword("AS"), May(CommentOrWhitespace))),
+                        TableAlias
+                    ),
+                    Sequence
+                    (
+                        TableAlias,
+                        May(CommentOrWhitespace),
+                        Keyword("AS"),
+                        May(CommentOrWhitespace),
+                        Keyword("XMATCH"),
+                        May(CommentOrWhitespace),
+                        May(CommentOrWhitespace), BracketOpen,
+                        May(CommentOrWhitespace), XMatchTableList,
+                        May(CommentOrWhitespace), Comma,
+                        May(CommentOrWhitespace), XMatchConstraint,
+                        May(CommentOrWhitespace), BracketClose                        
+                    )
                 )
             );
 
@@ -272,11 +313,15 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
             );
 
         public static Expression<Rule> XMatchTableSpecification = () =>
-            Sequence
+            Inherit
             (
-                XMatchTableInclusion,
-                CommentOrWhitespace,
-                SimpleTableSource
+                TableSourceSpecification,
+                Sequence
+                (
+                    XMatchTableInclusion,
+                    May(CommentOrWhitespace),
+                    CoordinatesTableSource
+                )
             );
 
         public static Expression<Rule> XMatchTableInclusion = () =>
@@ -293,7 +338,7 @@ namespace Jhu.SkyQuery.Sql.Parsing.Grammar
                 Literal("LIMIT"),
                 CommentOrWhitespace, XMatchAlgorithm,
                 CommentOrWhitespace, Literal("TO"),
-                CommentOrWhitespace, 
+                CommentOrWhitespace,
                 Must(NumericConstant, TableHint)
             );
 

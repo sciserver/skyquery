@@ -63,14 +63,8 @@ namespace Jhu.SkyQuery.Sql.CodeGeneration
             c2.Columns.AddRange(new[] { "objID", "ra", "dec" });
             xmatch.Catalogs.Add(c2);
 
-            var cg = new SkyQueryCodeGenerator()
-            {
-                ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                FunctionNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-            };
-            var q = cg.GenerateXMatchQuery(xmatch, CreateSchemaManager());
+            var cg = new SkyQueryCodeGenerator();
+            var q = cg.GenerateXMatchQuery(xmatch, SchemaManager);
 
             var gt =
 @"SELECT [x].[MatchID], [x].[RA], [x].[Dec], [s].[objID], [s].[ra], [s].[dec], [t].[objID], [t].[ra], [t].[dec]

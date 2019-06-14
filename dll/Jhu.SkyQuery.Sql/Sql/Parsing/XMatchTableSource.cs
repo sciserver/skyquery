@@ -8,7 +8,7 @@ using Jhu.Graywulf.Sql.NameResolution;
 namespace Jhu.SkyQuery.Sql.Parsing
 {
 
-    public partial class XMatchTableSourceSpecification : ITableReference, ITableSource
+    public partial class XMatchTableSource : ITableReference
     {
         private TableReference tableReference;
         private string uniqueKey;
@@ -19,35 +19,30 @@ namespace Jhu.SkyQuery.Sql.Parsing
             set { tableReference = value; }
         }
 
-        public string UniqueKey
+        public override string UniqueKey
         {
             get { return uniqueKey; }
             set { uniqueKey = value; }
         }
-
-        public override ITableSource SpecificTableSource
-        {
-            get { return this; }
-        }
-
-        public bool IsSubquery
+        
+        public override bool IsSubquery
         {
             get { return false; }
         }
 
-        public bool IsMultiTable
+        public override bool IsMultiTable
         {
             get { return true; }
-        }
-
-        public string Algorithm
-        {
-            get { return FindDescendantRecursive<XMatchAlgorithm>().Value; }
         }
         
         public string Alias
         {
             get { return FindDescendant<TableAlias>().Value; }
+        }
+
+        public XMatchConstraint Constraint
+        {
+            get { return FindDescendant<XMatchConstraint>(); }
         }
 
         protected override void OnInitializeMembers()
@@ -61,29 +56,28 @@ namespace Jhu.SkyQuery.Sql.Parsing
         {
             base.OnCopyMembers(other);
 
-            var old = (XMatchTableSourceSpecification)other;
+            var old = (XMatchTableSource)other;
 
             if (old != null)
             {
                 this.tableReference = old.tableReference;
             }
         }
-        
-        public IEnumerable<XMatchTableSpecification> EnumerateXMatchTableSpecifications()
-        {
-            return this.FindDescendant<XMatchTableList>().EnumerateDescendants<XMatchTableSpecification>();
-        }
 
-        public IEnumerable<ITableSource> EnumerateSubqueryTableSources(bool recursive)
+        protected override void OnInterpret()
         {
-            throw new NotImplementedException();
-        }
+            base.OnInterpret();
 
-        public IEnumerable<ITableSource> EnumerateMultiTableSources()
-        {
-            foreach (var xts in EnumerateDescendantsRecursive<XMatchTableSpecification>())
+            switch (Constraint.Algorithm)
             {
-                yield return xts.TableSource;
+                case Constants.AlgorithmBayesFactor:
+                    ReplaceWith(new BayesFactorXMatchTableSource(this)).Interpret();
+                    break;
+                case Constants.AlgorithmCone:
+                    ReplaceWith(new ConeXMatchTableSource(this)).Interpret();
+                    break;
+                case Constants.AlgorithmChi2:
+                    throw new NotImplementedException();
             }
         }
     }

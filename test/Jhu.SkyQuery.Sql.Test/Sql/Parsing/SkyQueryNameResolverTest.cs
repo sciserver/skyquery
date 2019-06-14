@@ -12,7 +12,7 @@ using Jhu.Graywulf.Sql.Schema.SqlServer;
 namespace Jhu.SkyQuery.Sql.Parsing
 {
     [TestClass]
-    public class SkyQueryNameResolverTest : SkyQueryParserTestBase
+    public class SkyQueryNameResolverTest : SkyQueryTestBase
     {
         private SchemaManager CreateSchemaManager()
         {
@@ -26,30 +26,37 @@ namespace Jhu.SkyQuery.Sql.Parsing
             var select = statement.FindDescendant<SelectStatement>();
             var qs = select.QueryExpression.EnumerateQuerySpecifications().FirstOrDefault();
 
-            var nr = new SkyQueryNameResolver();
-            nr.DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName;
-            nr.DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
-            nr.DefaultDataTypeDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName;
+            var nr = new SkyQueryNameResolver()
+            {
+                Options = new Graywulf.Sql.Extensions.NameResolution.GraywulfSqlNameResolverOptions()
+                {
+                    DefaultTableDatasetName = Jhu.Graywulf.Test.Constants.TestDatasetName,
+                    DefaultFunctionDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName,
+                    DefaultDataTypeDatasetName = Jhu.Graywulf.Test.Constants.CodeDatasetName,
+                }
+            };
             nr.SchemaManager = CreateSchemaManager();
             nr.Execute(script);
 
             return qs;
         }
 
-        private string GenerateCode(QuerySpecification qs)
+        private string RenderQuery(QuerySpecification qs)
         {
-            var cg = new Jhu.Graywulf.Sql.QueryGeneration.SqlServer.SqlServerQueryGenerator()
+            var qr = new Jhu.Graywulf.Sql.QueryRendering.SqlServer.SqlServerQueryRenderer()
             {
-                TableNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                TableAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Default,
-                ColumnNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
-                ColumnAliasRendering = Graywulf.Sql.QueryGeneration.AliasRendering.Always,
-                DataTypeNameRendering = Graywulf.Sql.QueryGeneration.NameRendering.FullyQualified,
+                Options = new Graywulf.Sql.QueryRendering.QueryRendererOptions()
+                {
+                    TableNameRendering = Graywulf.Sql.QueryRendering.NameRendering.FullyQualified,
+                    TableAliasRendering = Graywulf.Sql.QueryRendering.AliasRendering.Default,
+                    ColumnNameRendering = Graywulf.Sql.QueryRendering.NameRendering.FullyQualified,
+                    ColumnAliasRendering = Graywulf.Sql.QueryRendering.AliasRendering.Always,
+                    DataTypeNameRendering = Graywulf.Sql.QueryRendering.NameRendering.FullyQualified,
+                }
             };
 
             var sw = new StringWriter();
-            cg.Execute(sw, qs);
-
+            qr.Execute(sw, qs);
             return sw.ToString();
         }
 
@@ -59,7 +66,7 @@ namespace Jhu.SkyQuery.Sql.Parsing
             var sql = "SELECT objId, ra, dec FROM CatalogA";
 
             var qs = Parse(sql);
-            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
+            var ts = qs.SourceTableReferences.Values.ToArray();
 
             Assert.AreEqual("CatalogA", ts[0].DatabaseObjectName);
         }
@@ -77,7 +84,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
+            var ts = qs.SourceTableReferences.Values.ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSourceSpecification>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
@@ -105,14 +112,14 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
+            var ts = qs.SourceTableReferences.Values.ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSourceSpecification>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", CodeGenerator.Execute(xts[0].Coordinates.XHintExpression));
-            Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
-            Assert.AreEqual("[a].[htmId]", CodeGenerator.Execute(xts[0].Coordinates.HtmIdHintExpression));
-            Assert.AreEqual("[b].[htmId]", CodeGenerator.Execute(xts[1].Coordinates.HtmIdHintExpression));
+            Assert.AreEqual("[a].[cx]", QueryRenderer.Execute(xts[0].Coordinates.XHintExpression));
+            Assert.AreEqual("[b].[cx]", QueryRenderer.Execute(xts[1].Coordinates.XHintExpression));
+            Assert.AreEqual("[a].[htmId]", QueryRenderer.Execute(xts[0].Coordinates.HtmIdHintExpression));
+            Assert.AreEqual("[b].[htmId]", QueryRenderer.Execute(xts[1].Coordinates.HtmIdHintExpression));
         }
 
         // TODO: add test for zoneID, but need to modify catalog schema first
@@ -153,14 +160,14 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
+            var ts = qs.SourceTableReferences.Values.ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSourceSpecification>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", CodeGenerator.Execute(xts[0].Coordinates.XHintExpression));
-            Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
-            Assert.AreEqual("[a].[htmId]", CodeGenerator.Execute(xts[0].Coordinates.HtmIdHintExpression));
-            Assert.AreEqual("[b].[htmId]", CodeGenerator.Execute(xts[1].Coordinates.HtmIdHintExpression));
+            Assert.AreEqual("[a].[cx]", QueryRenderer.Execute(xts[0].Coordinates.XHintExpression));
+            Assert.AreEqual("[b].[cx]", QueryRenderer.Execute(xts[1].Coordinates.XHintExpression));
+            Assert.AreEqual("[a].[htmId]", QueryRenderer.Execute(xts[0].Coordinates.HtmIdHintExpression));
+            Assert.AreEqual("[b].[htmId]", QueryRenderer.Execute(xts[1].Coordinates.HtmIdHintExpression));
         }
 
         [TestMethod]
@@ -176,16 +183,16 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1000) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
+            var ts = qs.SourceTableReferences.Values.ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSourceSpecification>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
-            Assert.AreEqual("[a].[cx]", CodeGenerator.Execute(xts[0].Coordinates.XHintExpression));
-            Assert.AreEqual("[b].[cx]", CodeGenerator.Execute(xts[1].Coordinates.XHintExpression));
-            Assert.AreEqual("[a].[zoneId]", CodeGenerator.Execute(xts[0].Coordinates.ZoneIdHintExpression));
-            Assert.AreEqual("[b].[zoneId]", CodeGenerator.Execute(xts[1].Coordinates.ZoneIdHintExpression));
+            Assert.AreEqual("[a].[cx]", QueryRenderer.Execute(xts[0].Coordinates.XHintExpression));
+            Assert.AreEqual("[b].[cx]", QueryRenderer.Execute(xts[1].Coordinates.XHintExpression));
+            Assert.AreEqual("[a].[zoneId]", QueryRenderer.Execute(xts[0].Coordinates.ZoneIdHintExpression));
+            Assert.AreEqual("[b].[zoneId]", QueryRenderer.Execute(xts[1].Coordinates.ZoneIdHintExpression));
         }
-        
+
         [TestMethod]
         public void InclusionMethodTest()
         {
@@ -199,7 +206,7 @@ FROM XMATCH
      LIMIT BAYESFACTOR TO 1e3) AS x";
 
             var qs = Parse(sql);
-            var ts = qs.EnumerateSourceTableReferences(false).ToArray();
+            var ts = qs.SourceTableReferences.Values.ToArray();
             var xm = qs.FindDescendantRecursive<BayesFactorXMatchTableSourceSpecification>();
             var xts = xm.EnumerateXMatchTableSpecifications().ToArray();
 
@@ -232,7 +239,7 @@ FROM XMATCH
 
             var qs = Parse(sql);
 
-            var res = GenerateCode(qs);
+            var res = RenderQuery(qs);
 
             Assert.AreEqual(gt, res);
         }

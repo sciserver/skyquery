@@ -6,7 +6,7 @@ using Jhu.Graywulf.Sql.Parsing;
 
 namespace Jhu.SkyQuery.Sql.Parsing
 {
-    public partial class CoordinatesTableSource : SimpleTableSource, ICloneable
+    public partial class CoordinatesTableSource
     {
         #region Private member variables
 
@@ -18,13 +18,14 @@ namespace Jhu.SkyQuery.Sql.Parsing
         public TableCoordinates Coordinates
         {
             get { return coordinates; }
+            set { coordinates = value; }
         }
 
         #endregion
         #region Constructors and initializers
 
         public CoordinatesTableSource(SimpleTableSource other)
-            :base(other)
+            : base(other)
         {
         }
 
@@ -38,24 +39,8 @@ namespace Jhu.SkyQuery.Sql.Parsing
         protected override void OnCopyMembers(object other)
         {
             base.OnCopyMembers(other);
-
-            var old = (SimpleTableSource)other;
-
-            this.coordinates = new TableCoordinates(this);
-        }
-
-        public override object Clone()
-        {
-            return new CoordinatesTableSource(this);
         }
 
         #endregion
-
-        public override void Interpret()
-        {
-            base.Interpret();
-
-            coordinates = new TableCoordinates(this);
-        }
     }
 }

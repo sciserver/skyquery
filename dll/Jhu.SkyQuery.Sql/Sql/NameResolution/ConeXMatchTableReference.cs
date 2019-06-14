@@ -5,7 +5,7 @@ using System.Text;
 using Jhu.Graywulf.Sql.NameResolution;
 using Jhu.Graywulf.Sql.Schema;
 
-namespace Jhu.SkyQuery.Sql.Parsing
+namespace Jhu.SkyQuery.Sql.NameResolution
 {
     public class ConeXMatchTableReference : XMatchTableReference
     {
